@@ -47,7 +47,7 @@ const Onboarding = () => {
       <header className="px-5 pt-6 flex justify-end">
         <button
           onClick={() => navigate("/")}
-          className="text-sm text-muted-foreground font-medium"
+          className="text-sm text-muted-foreground font-medium hover:text-foreground transition-colors"
         >
           Pular
         </button>
@@ -61,12 +61,12 @@ const Onboarding = () => {
             className="w-56 h-auto mb-8 animate-scale-in"
           />
         ) : current.icon ? (
-          <div className="w-24 h-24 rounded-3xl gradient-hero flex items-center justify-center mb-8 animate-scale-in">
+          <div className="w-24 h-24 rounded-3xl gradient-hero flex items-center justify-center mb-8 animate-scale-in shadow-glow">
             <current.icon className="w-12 h-12 text-primary-foreground" />
           </div>
         ) : null}
 
-        <h1 className="text-3xl font-bold leading-tight whitespace-pre-line animate-fade-in-up">
+        <h1 className="text-3xl font-bold leading-tight whitespace-pre-line animate-fade-in-up tracking-tight">
           {current.title}
         </h1>
         <p className="text-sm text-muted-foreground mt-4 leading-relaxed max-w-xs animate-fade-in-up" style={{ animationDelay: "100ms" }}>
@@ -82,8 +82,8 @@ const Onboarding = () => {
             <div
               key={i}
               className={cn(
-                "h-1.5 rounded-full transition-all duration-300",
-                i === step ? "w-8 bg-primary" : "w-1.5 bg-border"
+                "h-1.5 rounded-full transition-all duration-500",
+                i === step ? "w-8 gradient-hero" : "w-1.5 bg-border"
               )}
             />
           ))}
@@ -91,7 +91,7 @@ const Onboarding = () => {
 
         <button
           onClick={handleNext}
-          className="w-full gradient-hero text-primary-foreground font-semibold py-4 rounded-xl flex items-center justify-center gap-2 shadow-elevated active:scale-[0.98] transition-transform"
+          className="w-full gradient-hero text-primary-foreground font-bold py-4 rounded-2xl flex items-center justify-center gap-2 shadow-elevated hover:shadow-glow active:scale-[0.98] transition-all duration-300"
         >
           {step === steps.length - 1 ? "Começar" : "Continuar"}
           <ArrowRight className="w-5 h-5" />
