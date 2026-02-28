@@ -8,6 +8,7 @@ import Nutrition from "./pages/Nutrition";
 import Workouts from "./pages/Workouts";
 import Application from "./pages/Application";
 import Profile from "./pages/Profile";
+import HealthHistory from "./pages/HealthHistory";
 import Onboarding from "./pages/Onboarding";
 import NotFound from "./pages/NotFound";
 import BottomNav from "./components/BottomNav";
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="/treinos" element={<Workouts />} />
             <Route path="/aplicacao" element={<Application />} />
             <Route path="/perfil" element={<Profile />} />
+            <Route path="/historico-saude" element={<HealthHistory />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
