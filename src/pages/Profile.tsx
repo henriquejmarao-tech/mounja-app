@@ -1,7 +1,8 @@
-import { ArrowLeft, Crown, Settings, Bell, Shield, HelpCircle, ChevronRight, LogOut, Sparkles } from "lucide-react";
+import { ArrowLeft, Crown, Settings, Bell, Shield, HelpCircle, ChevronRight, LogOut, Sparkles, HeartPulse } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const menuItems = [
+  { icon: HeartPulse, label: "Histórico de Saúde", route: "/historico-saude" },
   { icon: Bell, label: "Notificações", badge: "3" },
   { icon: Settings, label: "Configurações" },
   { icon: Shield, label: "Privacidade" },
@@ -71,6 +72,7 @@ const Profile = () => {
           {menuItems.map((item, i) => (
             <button
               key={i}
+              onClick={() => item.route && navigate(item.route)}
               className="w-full flex items-center gap-3 px-4 py-4 hover:bg-muted/40 transition-colors border-b border-border/50 last:border-0"
             >
               <div className="w-9 h-9 rounded-xl bg-muted/60 flex items-center justify-center">
