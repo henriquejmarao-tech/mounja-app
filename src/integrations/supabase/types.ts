@@ -14,7 +14,222 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      daily_logs: {
+        Row: {
+          appetite: number | null
+          body_fat_pct: number | null
+          created_at: string | null
+          date: string
+          energy: number | null
+          food_notes: string | null
+          food_quality: string | null
+          hip_cm: number | null
+          id: string
+          mood: number | null
+          notes: string | null
+          satiety: number | null
+          symptom_constipation: number | null
+          symptom_diarrhea: number | null
+          symptom_fatigue: number | null
+          symptom_headache: number | null
+          symptom_injection_pain: number | null
+          symptom_nausea: number | null
+          user_id: string
+          waist_cm: number | null
+          water_ml: number | null
+          weight: number | null
+          workout_duration: number | null
+          workout_type: string | null
+        }
+        Insert: {
+          appetite?: number | null
+          body_fat_pct?: number | null
+          created_at?: string | null
+          date: string
+          energy?: number | null
+          food_notes?: string | null
+          food_quality?: string | null
+          hip_cm?: number | null
+          id?: string
+          mood?: number | null
+          notes?: string | null
+          satiety?: number | null
+          symptom_constipation?: number | null
+          symptom_diarrhea?: number | null
+          symptom_fatigue?: number | null
+          symptom_headache?: number | null
+          symptom_injection_pain?: number | null
+          symptom_nausea?: number | null
+          user_id: string
+          waist_cm?: number | null
+          water_ml?: number | null
+          weight?: number | null
+          workout_duration?: number | null
+          workout_type?: string | null
+        }
+        Update: {
+          appetite?: number | null
+          body_fat_pct?: number | null
+          created_at?: string | null
+          date?: string
+          energy?: number | null
+          food_notes?: string | null
+          food_quality?: string | null
+          hip_cm?: number | null
+          id?: string
+          mood?: number | null
+          notes?: string | null
+          satiety?: number | null
+          symptom_constipation?: number | null
+          symptom_diarrhea?: number | null
+          symptom_fatigue?: number | null
+          symptom_headache?: number | null
+          symptom_injection_pain?: number | null
+          symptom_nausea?: number | null
+          user_id?: string
+          waist_cm?: number | null
+          water_ml?: number | null
+          weight?: number | null
+          workout_duration?: number | null
+          workout_type?: string | null
+        }
+        Relationships: []
+      }
+      injections: {
+        Row: {
+          created_at: string | null
+          date: string
+          dose: string
+          id: string
+          notes: string | null
+          site: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          date: string
+          dose: string
+          id?: string
+          notes?: string | null
+          site?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          dose?: string
+          id?: string
+          notes?: string | null
+          site?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          activity_level: string | null
+          age: number | null
+          appetite_effect: number | null
+          application_day: string | null
+          application_frequency: string | null
+          avg_sleep_hours: number | null
+          common_side_effects: Json | null
+          compulsion_effect: number | null
+          created_at: string | null
+          current_dose: string | null
+          current_weight: number | null
+          daily_water_ml: number | null
+          dietary_restrictions: Json | null
+          dose_increase_details: string | null
+          goal: string | null
+          has_increased_dose: boolean | null
+          has_medical_guidance: boolean | null
+          health_conditions: Json | null
+          height_cm: number | null
+          id: string
+          medical_specialty: string | null
+          medications: string | null
+          mounjaro_start_date: string | null
+          name: string | null
+          satiety_effect: number | null
+          sex: string | null
+          side_effects_improvement: string | null
+          side_effects_worsening: string | null
+          tracking_preference: string | null
+          triage_completed: boolean | null
+          updated_at: string | null
+          weekly_workouts: number | null
+        }
+        Insert: {
+          activity_level?: string | null
+          age?: number | null
+          appetite_effect?: number | null
+          application_day?: string | null
+          application_frequency?: string | null
+          avg_sleep_hours?: number | null
+          common_side_effects?: Json | null
+          compulsion_effect?: number | null
+          created_at?: string | null
+          current_dose?: string | null
+          current_weight?: number | null
+          daily_water_ml?: number | null
+          dietary_restrictions?: Json | null
+          dose_increase_details?: string | null
+          goal?: string | null
+          has_increased_dose?: boolean | null
+          has_medical_guidance?: boolean | null
+          health_conditions?: Json | null
+          height_cm?: number | null
+          id: string
+          medical_specialty?: string | null
+          medications?: string | null
+          mounjaro_start_date?: string | null
+          name?: string | null
+          satiety_effect?: number | null
+          sex?: string | null
+          side_effects_improvement?: string | null
+          side_effects_worsening?: string | null
+          tracking_preference?: string | null
+          triage_completed?: boolean | null
+          updated_at?: string | null
+          weekly_workouts?: number | null
+        }
+        Update: {
+          activity_level?: string | null
+          age?: number | null
+          appetite_effect?: number | null
+          application_day?: string | null
+          application_frequency?: string | null
+          avg_sleep_hours?: number | null
+          common_side_effects?: Json | null
+          compulsion_effect?: number | null
+          created_at?: string | null
+          current_dose?: string | null
+          current_weight?: number | null
+          daily_water_ml?: number | null
+          dietary_restrictions?: Json | null
+          dose_increase_details?: string | null
+          goal?: string | null
+          has_increased_dose?: boolean | null
+          has_medical_guidance?: boolean | null
+          health_conditions?: Json | null
+          height_cm?: number | null
+          id?: string
+          medical_specialty?: string | null
+          medications?: string | null
+          mounjaro_start_date?: string | null
+          name?: string | null
+          satiety_effect?: number | null
+          sex?: string | null
+          side_effects_improvement?: string | null
+          side_effects_worsening?: string | null
+          tracking_preference?: string | null
+          triage_completed?: boolean | null
+          updated_at?: string | null
+          weekly_workouts?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
