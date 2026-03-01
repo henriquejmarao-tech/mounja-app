@@ -1,157 +1,196 @@
-import { ArrowLeft, Plus, Sparkles, Flame, Droplets, Wheat, ChevronRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowLeft, Droplets, AlertTriangle, Sparkles, Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import nutritionHero from "@/assets/nutrition-hero.png";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { cn } from "@/lib/utils";
 
-const mealSuggestions = [
-  {
-    time: "Café da manhã",
-    meal: "Iogurte natural com banana e aveia",
-    calories: "280 kcal",
-    tag: "Leve",
-  },
-  {
-    time: "Almoço",
-    meal: "Arroz, feijão, frango grelhado e salada",
-    calories: "450 kcal",
-    tag: "Completo",
-  },
-  {
-    time: "Lanche",
-    meal: "Frutas picadas com castanhas",
-    calories: "180 kcal",
-    tag: "Prático",
-  },
-  {
-    time: "Jantar",
-    meal: "Sopa de legumes com frango desfiado",
-    calories: "320 kcal",
-    tag: "Reconfortante",
-  },
-];
+interface TipCard {
+  id: string;
+  emoji: string;
+  title: string;
+  description: string;
+  priority: number; // lower = higher priority
+  tags: string[];
+}
 
-const tips = [
-  "Coma devagar e em pequenas porções",
-  "Prefira alimentos frios se tiver náusea",
-  "Hidrate-se bem ao longo do dia",
-  "Priorize proteínas em cada refeição",
+const allTips: TipCard[] = [
+  {
+    id: "nausea",
+    emoji: "🤢",
+    title: "Lidando com náusea",
+    description: "Prefira refeições frias ou em temperatura ambiente. Coma devagar, em pequenas porções ao longo do dia. Evite alimentos gordurosos ou muito condimentados. Gengibre (chá ou bala) pode ajudar.",
+    priority: 1,
+    tags: ["nausea"],
+  },
+  {
+    id: "constipation",
+    emoji: "😣",
+    title: "Lidando com constipação",
+    description: "Aumente a ingestão de fibras: frutas com casca, verduras e grãos integrais. Beba bastante água e tente se movimentar — até uma caminhada curta ajuda o intestino.",
+    priority: 2,
+    tags: ["constipation"],
+  },
+  {
+    id: "hydration",
+    emoji: "💧",
+    title: "A importância da hidratação",
+    description: "Beber pelo menos 2 litros de água por dia ajuda a reduzir efeitos colaterais e melhora a disposição. Use um copo grande como referência e vá completando ao longo do dia.",
+    priority: 3,
+    tags: ["always"],
+  },
+  {
+    id: "portions",
+    emoji: "🍽️",
+    title: "Porções menores, mais vezes",
+    description: "Em vez de 3 refeições grandes, tente 5-6 refeições pequenas. Isso ajuda na saciedade, reduz desconforto e mantém a energia estável ao longo do dia.",
+    priority: 4,
+    tags: ["always"],
+  },
+  {
+    id: "protein",
+    emoji: "💪",
+    title: "Mantenha a proteína",
+    description: "Durante a perda de peso, a proteína ajuda a preservar massa muscular. Inclua ovos, frango, peixe, iogurte ou leguminosas em cada refeição principal.",
+    priority: 5,
+    tags: ["always"],
+  },
+  {
+    id: "fatigue-food",
+    emoji: "😴",
+    title: "Alimentação para dias cansados",
+    description: "Se estiver sem energia, aposte em alimentos de fácil digestão: sopas, vitaminas de frutas, iogurte com granola. Não pule refeições — isso pode piorar a fadiga.",
+    priority: 6,
+    tags: ["fatigue"],
+  },
+  {
+    id: "headache",
+    emoji: "🤕",
+    title: "Dor de cabeça frequente?",
+    description: "Pode estar ligada à baixa ingestão de água ou comida. Tente manter uma rotina alimentar regular e beba água ao longo do dia. Evite longos períodos em jejum.",
+    priority: 7,
+    tags: ["headache"],
+  },
 ];
 
 const Nutrition = () => {
   const navigate = useNavigate();
+  const { user, profile } = useAuth();
+  const [recentSymptoms, setRecentSymptoms] = useState<Record<string, number>>({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user) { setLoading(false); return; }
+    const fetch = async () => {
+      const { data } = await supabase
+        .from("daily_logs")
+        .select("symptom_nausea, symptom_fatigue, symptom_headache, symptom_constipation, symptom_diarrhea")
+        .eq("user_id", user.id)
+        .order("date", { ascending: false })
+        .limit(7);
+      const logs = (data as any[]) || [];
+      if (logs.length > 0) {
+        const avg = (key: string) => logs.reduce((s, l) => s + (l[key] || 0), 0) / logs.length;
+        setRecentSymptoms({
+          nausea: avg("symptom_nausea"),
+          fatigue: avg("symptom_fatigue"),
+          headache: avg("symptom_headache"),
+          constipation: avg("symptom_constipation"),
+        });
+      }
+      setLoading(false);
+    };
+    fetch();
+  }, [user]);
+
+  // Prioritize tips based on user symptoms
+  const sortedTips = [...allTips].sort((a, b) => {
+    const aRelevant = a.tags.some((t) => t === "always" || (recentSymptoms[t] && recentSymptoms[t] >= 3));
+    const bRelevant = b.tags.some((t) => t === "always" || (recentSymptoms[t] && recentSymptoms[t] >= 3));
+    if (aRelevant && !bRelevant) return -1;
+    if (!aRelevant && bRelevant) return 1;
+    return a.priority - b.priority;
+  });
+
+  const hasHighSymptoms = Object.values(recentSymptoms).some((v) => v >= 4);
 
   return (
     <div className="min-h-screen bg-background pb-28">
-      {/* Header with gradient */}
       <header className="relative overflow-hidden">
         <div className="absolute inset-0 gradient-hero opacity-95" />
-        <div className="relative px-5 pt-6 pb-5">
+        <div className="relative px-5 pt-6 pb-6">
           <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-primary-foreground/80 mb-4">
             <ArrowLeft className="w-5 h-5" />
             <span className="text-sm font-medium">Voltar</span>
           </button>
-          <h1 className="text-2xl font-bold text-primary-foreground">Nutrição</h1>
-          <p className="text-sm text-primary-foreground/80 mt-1">
-            Dicas e sugestões para sua semana 2
-          </p>
+          <h1 className="text-xl font-bold text-primary-foreground">Nutrição</h1>
+          <p className="text-sm text-primary-foreground/70 mt-1">Dicas práticas para se sentir melhor</p>
         </div>
       </header>
 
-      {/* Hero image */}
-      <div className="px-5 -mt-2">
-        <div className="rounded-2xl overflow-hidden shadow-elevated border border-border/50">
-          <img src={nutritionHero} alt="Alimentação saudável" className="w-full h-40 object-cover" />
-        </div>
-      </div>
-
-      <div className="px-5 mt-5 space-y-4">
-        {/* AI Suggestion */}
-        <div className="relative overflow-hidden rounded-2xl p-4 bg-card border border-primary/15 shadow-card animate-fade-in-up">
-          <div className="absolute top-0 left-0 right-0 h-1 gradient-hero" />
-          <div className="relative">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-6 h-6 rounded-lg gradient-hero flex items-center justify-center">
-                <Sparkles className="w-3.5 h-3.5 text-primary-foreground" />
-              </div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-primary">
-                Sugestão Personalizada
-              </span>
-            </div>
-            <p className="text-sm leading-relaxed text-foreground">
-              Baseado no seu relato de náusea ontem, sugerimos refeições mais leves e frias hoje. Evite alimentos gordurosos.
-            </p>
-          </div>
-        </div>
-
-        {/* Macro summary */}
-        <div className="bg-card rounded-2xl p-5 shadow-card border border-border/50">
-          <h3 className="font-bold text-sm mb-4 tracking-tight">Resumo do Dia</h3>
-          <div className="grid grid-cols-3 gap-3">
-            {[
-              { icon: Flame, value: "1.230", label: "Calorias", color: "text-secondary", bg: "bg-secondary/10" },
-              { icon: Droplets, value: "1.5L", label: "Água", color: "text-info", bg: "bg-info/10" },
-              { icon: Wheat, value: "85g", label: "Proteína", color: "text-warning", bg: "bg-warning/10" },
-            ].map((item, i) => (
-              <div key={i} className="text-center">
-                <div className={`w-11 h-11 mx-auto rounded-xl ${item.bg} flex items-center justify-center mb-2`}>
-                  <item.icon className={`w-5 h-5 ${item.color}`} />
-                </div>
-                <p className="text-lg font-bold">{item.value}</p>
-                <p className="text-[10px] text-muted-foreground font-medium">{item.label}</p>
-              </div>
+      <div className="px-5 mt-4 space-y-4">
+        {loading ? (
+          <div className="space-y-3">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-card rounded-2xl p-5 shadow-card border border-border/50 animate-pulse h-28" />
             ))}
           </div>
-        </div>
-
-        {/* Meal suggestions */}
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-bold text-sm tracking-tight">Sugestões de Refeição</h3>
-            <button className="text-xs text-primary font-semibold">Ver todas</button>
-          </div>
-          <div className="space-y-2.5">
-            {mealSuggestions.map((meal, i) => (
-              <div
-                key={i}
-                className="flex items-center justify-between bg-card rounded-2xl p-4 shadow-card border border-border/50 hover:shadow-elevated transition-shadow duration-300 group"
-              >
-                <div className="min-w-0 flex-1">
-                  <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">
-                    {meal.time}
+        ) : (
+          <>
+            {/* Personalized alert */}
+            {hasHighSymptoms && (
+              <div className="bg-warning/8 rounded-2xl p-4 border border-warning/15 flex items-start gap-3 animate-fade-in-up">
+                <Sparkles className="w-5 h-5 text-warning shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-semibold">Conteúdo personalizado para você</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Organizamos as dicas com base nos sintomas que você relatou recentemente.
                   </p>
-                  <p className="text-sm font-semibold mt-1 truncate">{meal.meal}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">{meal.calories}</p>
-                </div>
-                <div className="flex items-center gap-2 shrink-0 ml-3">
-                  <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-sage-light text-primary">
-                    {meal.tag}
-                  </span>
-                  <ChevronRight className="w-4 h-4 text-muted-foreground/40 group-hover:translate-x-0.5 transition-transform" />
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
+            )}
 
-        {/* Quick tips */}
-        <div>
-          <h3 className="font-bold text-sm mb-3 tracking-tight">Dicas para Iniciantes</h3>
-          <div className="space-y-2">
-            {tips.map((tip, i) => (
-              <div key={i} className="flex items-center gap-3 bg-card rounded-xl p-3.5 border border-border/50">
-                <div className="w-6 h-6 rounded-full gradient-hero flex items-center justify-center shrink-0">
-                  <span className="text-[10px] font-bold text-primary-foreground">{i + 1}</span>
-                </div>
-                <p className="text-sm text-foreground">{tip}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+            {/* Disclaimer */}
+            <div className="bg-muted/50 rounded-2xl p-3.5 flex items-start gap-2.5">
+              <Heart className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
+              <p className="text-[11px] text-muted-foreground leading-relaxed">
+                Estas são dicas educativas gerais. Não substituem orientação de nutricionista ou médico.
+              </p>
+            </div>
 
-        {/* Register button */}
-        <button className="w-full gradient-hero text-primary-foreground font-bold py-4 rounded-2xl flex items-center justify-center gap-2 shadow-elevated hover:shadow-glow active:scale-[0.98] transition-all duration-300">
-          <Plus className="w-5 h-5" />
-          Registrar Refeição
-        </button>
+            {/* Tips */}
+            <div className="space-y-3">
+              {sortedTips.map((tip, i) => {
+                const isHighlighted = tip.tags.some((t) => t !== "always" && recentSymptoms[t] && recentSymptoms[t] >= 3);
+                return (
+                  <div
+                    key={tip.id}
+                    className={cn(
+                      "rounded-2xl p-4 shadow-card border animate-fade-in-up",
+                      isHighlighted
+                        ? "bg-primary/5 border-primary/15"
+                        : "bg-card border-border/50"
+                    )}
+                    style={{ animationDelay: `${i * 60}ms` }}
+                  >
+                    {isHighlighted && (
+                      <span className="text-[9px] font-bold uppercase tracking-wider text-primary mb-2 block">
+                        Relevante para você
+                      </span>
+                    )}
+                    <div className="flex items-start gap-3">
+                      <span className="text-2xl shrink-0">{tip.emoji}</span>
+                      <div>
+                        <h3 className="font-semibold text-sm">{tip.title}</h3>
+                        <p className="text-xs text-muted-foreground leading-relaxed mt-1.5">{tip.description}</p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
