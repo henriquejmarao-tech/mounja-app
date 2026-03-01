@@ -1,20 +1,25 @@
-import { ArrowLeft, Crown, Settings, Bell, Shield, HelpCircle, ChevronRight, LogOut, Sparkles, HeartPulse } from "lucide-react";
+import { ArrowLeft, User, Bell, Shield, HelpCircle, ChevronRight, LogOut, Crown, Sparkles, FileText } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
-const menuItems = [
-  { icon: HeartPulse, label: "Histórico de Saúde", route: "/historico-saude" },
-  { icon: Bell, label: "Notificações", badge: "3" },
-  { icon: Settings, label: "Configurações" },
-  { icon: Shield, label: "Privacidade" },
-  { icon: HelpCircle, label: "Ajuda e Suporte" },
-];
-
-const Profile = () => {
+const Settings = () => {
   const navigate = useNavigate();
+  const { profile, signOut, user } = useAuth();
+
+  const menuItems = [
+    { icon: User, label: "Minha Triagem", route: "/triagem", description: "Editar dados da triagem inicial" },
+    { icon: Bell, label: "Notificações", description: "Lembretes e alertas" },
+    { icon: Shield, label: "Privacidade", description: "Dados e segurança" },
+    { icon: HelpCircle, label: "Ajuda e Suporte", description: "Dúvidas frequentes" },
+  ];
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/auth");
+  };
 
   return (
     <div className="min-h-screen bg-background pb-28">
-      {/* Header with gradient */}
       <header className="relative overflow-hidden">
         <div className="absolute inset-0 gradient-hero opacity-95" />
         <div className="relative px-5 pt-6 pb-8">
@@ -24,11 +29,14 @@ const Profile = () => {
           </button>
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-2xl bg-primary-foreground/20 backdrop-blur-sm flex items-center justify-center text-primary-foreground text-xl font-bold border border-primary-foreground/10">
-              C
+              {profile?.name?.[0]?.toUpperCase() || "U"}
             </div>
             <div>
-              <h1 className="text-xl font-bold text-primary-foreground">Carla Silva</h1>
-              <p className="text-sm text-primary-foreground/80">Semana 2 · Mounjaro 2.5mg</p>
+              <h1 className="text-xl font-bold text-primary-foreground">{profile?.name || "Usuário"}</h1>
+              <p className="text-sm text-primary-foreground/80">{user?.email}</p>
+              {profile?.current_dose && (
+                <p className="text-xs text-primary-foreground/60 mt-0.5">Mounjaro {profile.current_dose}</p>
+              )}
             </div>
           </div>
         </div>
@@ -56,12 +64,12 @@ const Profile = () => {
         {/* Stats */}
         <div className="grid grid-cols-3 gap-2.5">
           {[
-            { value: "14", label: "Dias ativos", color: "text-primary" },
-            { value: "3", label: "Aplicações", color: "text-secondary" },
-            { value: "8", label: "Treinos", color: "text-foreground" },
+            { value: profile?.weekly_workouts || 0, label: "Treinos/sem", color: "text-primary" },
+            { value: profile?.current_dose || "—", label: "Dose atual", color: "text-secondary" },
+            { value: profile?.activity_level === "sedentary" ? "Sedentário" : profile?.activity_level === "light" ? "Leve" : profile?.activity_level === "moderate" ? "Moderado" : "Alto", label: "Atividade", color: "text-foreground" },
           ].map((stat, i) => (
             <div key={i} className="bg-card rounded-2xl p-3.5 shadow-card border border-border/50 text-center">
-              <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
+              <p className={`text-lg font-bold ${stat.color}`}>{stat.value}</p>
               <p className="text-[10px] text-muted-foreground mt-1 font-medium">{stat.label}</p>
             </div>
           ))}
@@ -76,21 +84,22 @@ const Profile = () => {
               className="w-full flex items-center gap-3 px-4 py-4 hover:bg-muted/40 transition-colors border-b border-border/50 last:border-0"
             >
               <div className="w-9 h-9 rounded-xl bg-muted/60 flex items-center justify-center">
-                <item.icon className="w-4.5 h-4.5 text-muted-foreground" />
+                <item.icon className="w-4 h-4 text-muted-foreground" />
               </div>
-              <span className="flex-1 text-sm font-medium text-left">{item.label}</span>
-              {item.badge && (
-                <span className="text-[10px] font-bold bg-secondary text-secondary-foreground w-5 h-5 rounded-full flex items-center justify-center">
-                  {item.badge}
-                </span>
-              )}
+              <div className="flex-1 text-left">
+                <span className="text-sm font-medium block">{item.label}</span>
+                {item.description && <span className="text-[10px] text-muted-foreground">{item.description}</span>}
+              </div>
               <ChevronRight className="w-4 h-4 text-muted-foreground/40" />
             </button>
           ))}
         </div>
 
         {/* Logout */}
-        <button className="w-full flex items-center justify-center gap-2 py-3.5 text-destructive text-sm font-semibold rounded-2xl hover:bg-destructive/5 transition-colors">
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center justify-center gap-2 py-3.5 text-destructive text-sm font-semibold rounded-2xl hover:bg-destructive/5 transition-colors"
+        >
           <LogOut className="w-4 h-4" />
           Sair da conta
         </button>
@@ -99,4 +108,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default Settings;
