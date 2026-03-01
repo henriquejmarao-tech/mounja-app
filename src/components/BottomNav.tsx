@@ -1,13 +1,13 @@
-import { Home, Plus, Clock, Zap, Settings } from "lucide-react";
+import { Home, Plus, Clock, Apple, Dumbbell } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { icon: Home, label: "Dashboard", path: "/" },
+  { icon: Home, label: "Início", path: "/" },
   { icon: Clock, label: "Histórico", path: "/historico" },
   { icon: Plus, label: "Registrar", path: "/registrar", highlight: true },
-  { icon: Zap, label: "Insights", path: "/insights" },
-  { icon: Settings, label: "Config", path: "/configuracoes" },
+  { icon: Apple, label: "Nutrição", path: "/nutricao" },
+  { icon: Dumbbell, label: "Treino", path: "/treinos" },
 ];
 
 const BottomNav = () => {
