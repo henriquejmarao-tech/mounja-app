@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { ArrowLeft, User, Bell, Shield, HelpCircle, ChevronRight, LogOut, Crown, Sparkles, MessageSquare, Star, Send, Bug, Lightbulb, X, BookOpen } from "lucide-react";
+import { ArrowLeft, User, Bell, Shield, HelpCircle, ChevronRight, LogOut, Crown, Sparkles, MessageSquare, Star, Send, Bug, Lightbulb, X, BookOpen, Syringe } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useTutorial } from "@/hooks/useTutorial";
+import { useApplicationData } from "@/hooks/useApplicationData";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -17,13 +18,35 @@ const feedbackTypes = [
 
 const Settings = () => {
   const navigate = useNavigate();
-  const { profile, signOut, user } = useAuth();
+  const { profile, signOut, user, refreshProfile } = useAuth();
   const { setShowStartDialog } = useTutorial();
+  const { refresh, dose } = useApplicationData();
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedbackType, setFeedbackType] = useState<FeedbackType>("rating");
   const [rating, setRating] = useState(0);
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
+  const [intervalDays, setIntervalDays] = useState<string>(String(dose.applicationIntervalDays || (profile as any)?.application_interval_days || 7));
+  const [savingInterval, setSavingInterval] = useState(false);
+
+  const handleSaveInterval = async () => {
+    if (!user) return;
+    const val = parseInt(intervalDays);
+    if (!val || val < 1) {
+      toast.error("Intervalo deve ser um número inteiro positivo.");
+      return;
+    }
+    setSavingInterval(true);
+    const { error } = await supabase.from("profiles").update({ application_interval_days: val } as any).eq("id", user.id);
+    if (error) {
+      toast.error("Erro ao salvar.");
+    } else {
+      await refreshProfile();
+      await refresh();
+      toast.success("Intervalo atualizado. ✅");
+    }
+    setSavingInterval(false);
+  };
 
   const menuItems = [
     { icon: User, label: "Minha Triagem", route: "/minha-triagem", description: "Editar peso, objetivo e dados pessoais" },
@@ -106,6 +129,28 @@ const Settings = () => {
               <p className="text-[10px] text-muted-foreground mt-1 font-medium">{stat.label}</p>
             </div>
           ))}
+        </div>
+
+        {/* Application interval */}
+        <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50 space-y-3">
+          <div className="flex items-center gap-2">
+            <Syringe className="w-4 h-4 text-primary" />
+            <h3 className="font-semibold text-sm">Aplicações</h3>
+          </div>
+          <div>
+            <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Intervalo entre aplicações (dias)</label>
+            <div className="flex gap-2">
+              <input
+                type="number" min="1" value={intervalDays}
+                onChange={(e) => setIntervalDays(e.target.value)}
+                className="flex-1 px-4 py-3 rounded-xl border border-border bg-card text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+              />
+              <button onClick={handleSaveInterval} disabled={savingInterval}
+                className="px-4 py-3 rounded-xl gradient-hero text-primary-foreground text-xs font-bold disabled:opacity-50">
+                {savingInterval ? "..." : "Salvar"}
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Menu */}

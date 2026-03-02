@@ -204,6 +204,7 @@ export type Database = {
           appetite_effect: number | null
           application_day: string | null
           application_frequency: string | null
+          application_interval_days: number | null
           avg_sleep_hours: number | null
           common_side_effects: Json | null
           compulsion_effect: number | null
@@ -243,6 +244,7 @@ export type Database = {
           appetite_effect?: number | null
           application_day?: string | null
           application_frequency?: string | null
+          application_interval_days?: number | null
           avg_sleep_hours?: number | null
           common_side_effects?: Json | null
           compulsion_effect?: number | null
@@ -282,6 +284,7 @@ export type Database = {
           appetite_effect?: number | null
           application_day?: string | null
           application_frequency?: string | null
+          application_interval_days?: number | null
           avg_sleep_hours?: number | null
           common_side_effects?: Json | null
           compulsion_effect?: number | null

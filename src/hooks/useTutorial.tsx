@@ -14,21 +14,16 @@ export interface TutorialStep {
 }
 
 const FULL_STEPS: TutorialStep[] = [
-  // Dashboard
   { id: "dose", page: "/", title: "Sua dose e próxima aplicação", description: "Aqui você acompanha sua dose atual e quantos dias faltam para a próxima aplicação.", targetSelector: "[data-tutorial='dose-card']", position: "bottom" },
   { id: "suggestion", page: "/", title: "Sugestão do dia", description: "Receba dicas de alimentação e movimento adaptadas ao seu momento.", targetSelector: "[data-tutorial='suggestion-card']", position: "bottom" },
   { id: "register-btn", page: "/", title: "Registre seu dia", description: "Toque aqui para registrar peso, sintomas, treino ou aplicação. Cada passo conta.", targetSelector: "[data-tutorial='register-btn']", position: "top" },
-  // Register
   { id: "register-tabs", page: "/registrar", title: "Três tipos de registro", description: "Dia para o diário, Treino para exercícios e Aplicação para a injeção.", targetSelector: "[data-tutorial='register-tabs']", position: "bottom" },
   { id: "register-why", page: "/registrar", title: "Registre com frequência", description: "Quanto mais você registra, mais o Mounjá entende seu ritmo e te ajuda melhor.", targetSelector: "[data-tutorial='register-form']", position: "top" },
-  // History
   { id: "history-filter", page: "/historico", title: "Filtre por período", description: "Use 7, 30 ou 90 dias para ver diferentes recortes do seu caminho.", targetSelector: "[data-tutorial='period-filter']", position: "bottom" },
   { id: "history-charts", page: "/historico", title: "Gráficos e evolução", description: "Acompanhe peso, sintomas e treinos de forma visual e tranquila.", targetSelector: "[data-tutorial='charts-area']", position: "top" },
   { id: "history-pdf", page: "/historico", title: "Exporte seu relatório", description: "Gere um PDF completo para compartilhar com seu médico.", targetSelector: "[data-tutorial='export-btn']", position: "bottom" },
-  // Nutrition
   { id: "nutrition-ai", page: "/nutricao", title: "Alimentação personalizada", description: "Gere uma sugestão de cardápio adaptada aos seus sintomas e objetivos.", targetSelector: "[data-tutorial='diet-btn']", position: "bottom" },
   { id: "nutrition-save", page: "/nutricao", title: "Salve sua sugestão", description: "Salve para acompanhar no histórico e no relatório.", targetSelector: "[data-tutorial='diet-btn']", position: "bottom" },
-  // Workouts
   { id: "workout-goal", page: "/treinos", title: "Meta semanal de movimento", description: "Defina quantos treinos quer fazer por semana, no seu ritmo.", targetSelector: "[data-tutorial='workout-goal']", position: "bottom" },
   { id: "workout-adapt", page: "/treinos", title: "Recomendações no seu ritmo", description: "O Mounjá considera seus sintomas e aplicações para sugerir a intensidade ideal.", targetSelector: "[data-tutorial='workout-tips']", position: "top" },
 ];
@@ -52,6 +47,7 @@ interface TutorialContextType {
   showStartDialog: boolean;
   setShowStartDialog: (v: boolean) => void;
   resumeAvailable: boolean;
+  triggerPostTriageTutorial: () => void;
 }
 
 const TutorialContext = createContext<TutorialContextType>({
@@ -69,6 +65,7 @@ const TutorialContext = createContext<TutorialContextType>({
   showStartDialog: false,
   setShowStartDialog: () => {},
   resumeAvailable: false,
+  triggerPostTriageTutorial: () => {},
 });
 
 export const useTutorial = () => useContext(TutorialContext);
@@ -84,9 +81,12 @@ export const TutorialProvider = ({ children }: { children: ReactNode }) => {
   const [resumeAvailable, setResumeAvailable] = useState(false);
   const [initialized, setInitialized] = useState(false);
 
-  // Check if tutorial should show on load
+  // Only show tutorial dialog for users who completed triage but haven't done tutorial
   useEffect(() => {
     if (!user || !profile || initialized) return;
+    // CRITICAL: Do NOT show tutorial if triage is not completed
+    if (!profile.triage_completed) return;
+
     setInitialized(true);
 
     const completed = (profile as any).tutorial_version_completed;
@@ -94,20 +94,23 @@ export const TutorialProvider = ({ children }: { children: ReactNode }) => {
     const seenHints = ((profile as any).tutorial_hints_seen as string[]) || [];
     setHintsSeen(seenHints);
 
-    if (completed === CURRENT_TUTORIAL_VERSION) {
-      // Already completed current version
-      return;
-    }
+    if (completed === CURRENT_TUTORIAL_VERSION) return;
 
     if (savedStep > 0 && !completed) {
-      // Was in progress
       setResumeAvailable(true);
       setShowStartDialog(true);
     } else if (!completed) {
-      // First time
       setShowStartDialog(true);
     }
   }, [user, profile, initialized]);
+
+  // Called immediately after triage completes and user lands on dashboard
+  const triggerPostTriageTutorial = useCallback(() => {
+    if (!profile?.triage_completed) return;
+    const completed = (profile as any).tutorial_version_completed;
+    if (completed === CURRENT_TUTORIAL_VERSION) return;
+    setShowStartDialog(true);
+  }, [profile]);
 
   const startTutorial = useCallback((m: "full" | "quick") => {
     setMode(m);
@@ -132,7 +135,6 @@ export const TutorialProvider = ({ children }: { children: ReactNode }) => {
       setCurrentStep(next);
       saveProgress(next, false);
     } else {
-      // Complete
       setIsActive(false);
       setMode(null);
       saveProgress(steps.length, true);
@@ -174,6 +176,7 @@ export const TutorialProvider = ({ children }: { children: ReactNode }) => {
       startTutorial, nextStep, prevStep, skipTutorial, closeTutorial,
       shouldShowHint, dismissHint,
       showStartDialog, setShowStartDialog, resumeAvailable,
+      triggerPostTriageTutorial,
     }}>
       {children}
     </TutorialContext.Provider>

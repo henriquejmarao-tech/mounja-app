@@ -9,6 +9,7 @@ export interface CanonicalDose {
   lastApplicationAt: string | null; // ISO UTC
   nextPlannedDose: string | null;
   nextApplicationAt: string | null; // ISO UTC
+  applicationIntervalDays: number;
 }
 
 export interface RecentSymptoms {
@@ -37,7 +38,6 @@ export interface ApplicationWorkout {
 }
 
 interface ApplicationDataContextType {
-  // Dose SSOT
   dose: CanonicalDose;
   getCurrentDose: () => string | null;
   getLastConfirmedApplication: () => ApplicationInjection | null;
@@ -45,18 +45,10 @@ interface ApplicationDataContextType {
   setConfirmedApplication: (injection: Omit<ApplicationInjection, "id">) => Promise<void>;
   updateApplication: (id: string, data: Partial<Omit<ApplicationInjection, "id">>) => Promise<void>;
   deleteApplication: (id: string) => Promise<void>;
-
-  // Symptoms (last 7 days)
   recentSymptoms: RecentSymptoms;
-
-  // Workouts (last 7 days)
   weeklyWorkouts: ApplicationWorkout[];
   weeklyWorkoutCount: number;
-
-  // Latest weight
   latestWeight: number | null;
-
-  // Refresh
   refresh: () => Promise<void>;
   loading: boolean;
 }
@@ -69,6 +61,7 @@ const defaultDose: CanonicalDose = {
   lastApplicationAt: null,
   nextPlannedDose: null,
   nextApplicationAt: null,
+  applicationIntervalDays: 7,
 };
 
 const ApplicationDataContext = createContext<ApplicationDataContextType>({
@@ -114,23 +107,18 @@ export const ApplicationDataProvider = ({ children }: { children: ReactNode }) =
 
     // ── Injections & Dose SSOT ──
     const allInj = ((injRes.data as any[]) || []).map((i: any) => ({
-      id: i.id,
-      date: i.date,
-      dose: i.dose,
-      site: i.site,
-      notes: i.notes,
+      id: i.id, date: i.date, dose: i.dose, site: i.site, notes: i.notes,
     })) as ApplicationInjection[];
 
     setInjections(allInj);
 
     const lastConfirmed = allInj[0] || null;
-    const applicationDay = profile?.application_day;
-    const applicationFreq = profile?.application_frequency;
+    // Use application_interval_days from profile (default 7)
+    const intervalDays = (profile as any)?.application_interval_days || 7;
 
     let nextApplicationAt: string | null = null;
     if (lastConfirmed) {
       const lastDate = new Date(lastConfirmed.date + "T12:00:00");
-      const intervalDays = applicationFreq === "biweekly" ? 14 : 7;
       const nextDate = new Date(lastDate.getTime() + intervalDays * 86400000);
       nextApplicationAt = nextDate.toISOString();
     }
@@ -141,6 +129,7 @@ export const ApplicationDataProvider = ({ children }: { children: ReactNode }) =
       lastApplicationAt: lastConfirmed ? new Date(lastConfirmed.date + "T12:00:00").toISOString() : null,
       nextPlannedDose: lastConfirmed?.dose ?? null,
       nextApplicationAt,
+      applicationIntervalDays: intervalDays,
     };
 
     setDose(canonicalDose);
@@ -149,6 +138,7 @@ export const ApplicationDataProvider = ({ children }: { children: ReactNode }) =
       console.log(`[SSOT] currentDose = ${canonicalDose.currentDose}`);
       console.log(`[SSOT] lastApplicationAt = ${canonicalDose.lastApplicationAt}`);
       console.log(`[SSOT] nextApplicationAt = ${canonicalDose.nextApplicationAt}`);
+      console.log(`[SSOT] applicationIntervalDays = ${intervalDays}`);
     }
 
     // ── Symptoms (last 7 days) ──
@@ -161,10 +151,8 @@ export const ApplicationDataProvider = ({ children }: { children: ReactNode }) =
     if (recentLogs.length > 0) {
       const avg = (key: string) => recentLogs.reduce((s, l) => s + (l[key] || 0), 0) / recentLogs.length;
       setRecentSymptoms({
-        nausea: avg("symptom_nausea"),
-        fatigue: avg("symptom_fatigue"),
-        headache: avg("symptom_headache"),
-        constipation: avg("symptom_constipation"),
+        nausea: avg("symptom_nausea"), fatigue: avg("symptom_fatigue"),
+        headache: avg("symptom_headache"), constipation: avg("symptom_constipation"),
         diarrhea: avg("symptom_diarrhea"),
       });
     } else {
@@ -174,52 +162,35 @@ export const ApplicationDataProvider = ({ children }: { children: ReactNode }) =
     // ── Latest weight ──
     const wLog = logs.find(l => l.weight);
     setLatestWeight(wLog?.weight ?? null);
+    if (import.meta.env.DEV) console.log(`[Hub] latest weight loaded = ${wLog?.weight ?? null}`);
 
     // ── Weekly workouts ──
     const wk = ((workoutsRes.data as any[]) || []).map((w: any) => ({
-      id: w.id,
-      date: w.date,
-      workout_type: w.workout_type,
-      duration_minutes: w.duration_minutes,
-      intensity: w.intensity,
-      feeling_after: w.feeling_after,
+      id: w.id, date: w.date, workout_type: w.workout_type,
+      duration_minutes: w.duration_minutes, intensity: w.intensity, feeling_after: w.feeling_after,
     })) as ApplicationWorkout[];
     setWeeklyWorkouts(wk);
 
     setLoading(false);
   }, [user, profile]);
 
-  useEffect(() => {
-    fetchAll();
-  }, [fetchAll]);
+  useEffect(() => { fetchAll(); }, [fetchAll]);
 
-  // ── Access methods ──
   const getCurrentDose = useCallback(() => {
     if (import.meta.env.DEV) console.log(`[SSOT] getCurrentDose() called → ${dose.currentDose}`);
     return dose.currentDose;
   }, [dose.currentDose]);
 
-  const getLastConfirmedApplication = useCallback(() => {
-    return injections[0] || null;
-  }, [injections]);
-
-  const getApplicationTimeline = useCallback(() => {
-    return injections;
-  }, [injections]);
+  const getLastConfirmedApplication = useCallback(() => injections[0] || null, [injections]);
+  const getApplicationTimeline = useCallback(() => injections, [injections]);
 
   const setConfirmedApplication = useCallback(async (injection: Omit<ApplicationInjection, "id">) => {
     if (!user) return;
-
     const { error } = await supabase.from("injections").insert({
-      user_id: user.id,
-      date: injection.date,
-      dose: injection.dose,
-      site: injection.site || null,
-      notes: injection.notes || null,
+      user_id: user.id, date: injection.date, dose: injection.dose,
+      site: injection.site || null, notes: injection.notes || null,
     });
-
     if (error) throw error;
-
     await supabase.from("profiles").update({ current_dose: injection.dose } as any).eq("id", user.id);
     await refreshProfile();
     await fetchAll();
@@ -227,47 +198,27 @@ export const ApplicationDataProvider = ({ children }: { children: ReactNode }) =
 
   const updateApplication = useCallback(async (id: string, data: Partial<Omit<ApplicationInjection, "id">>) => {
     if (!user) return;
-    if (import.meta.env.DEV) console.log(`[Application Edit] before`, { id, data });
-
     const { error } = await supabase.from("injections").update(data).eq("id", id).eq("user_id", user.id);
     if (error) throw error;
-
-    if (import.meta.env.DEV) console.log(`[Application Edit] after`, { id, data });
     await refreshProfile();
     await fetchAll();
-    if (import.meta.env.DEV) console.log(`[SSOT recalculated] currentDose = ${dose.currentDose}`);
-  }, [user, refreshProfile, fetchAll, dose.currentDose]);
+  }, [user, refreshProfile, fetchAll]);
 
   const deleteApplication = useCallback(async (id: string) => {
     if (!user) return;
-    if (import.meta.env.DEV) console.log(`[Application Delete] id = ${id}`);
-
     const { error } = await supabase.from("injections").delete().eq("id", id).eq("user_id", user.id);
     if (error) throw error;
-
     await refreshProfile();
     await fetchAll();
-    if (import.meta.env.DEV) console.log(`[SSOT recalculated] currentDose = ${dose.currentDose}`);
-  }, [user, refreshProfile, fetchAll, dose.currentDose]);
+  }, [user, refreshProfile, fetchAll]);
 
   return (
-    <ApplicationDataContext.Provider
-      value={{
-        dose,
-        getCurrentDose,
-        getLastConfirmedApplication,
-        getApplicationTimeline,
-        setConfirmedApplication,
-        updateApplication,
-        deleteApplication,
-        recentSymptoms,
-        weeklyWorkouts,
-        weeklyWorkoutCount: weeklyWorkouts.length,
-        latestWeight,
-        refresh: fetchAll,
-        loading,
-      }}
-    >
+    <ApplicationDataContext.Provider value={{
+      dose, getCurrentDose, getLastConfirmedApplication, getApplicationTimeline,
+      setConfirmedApplication, updateApplication, deleteApplication,
+      recentSymptoms, weeklyWorkouts, weeklyWorkoutCount: weeklyWorkouts.length,
+      latestWeight, refresh: fetchAll, loading,
+    }}>
       {children}
     </ApplicationDataContext.Provider>
   );

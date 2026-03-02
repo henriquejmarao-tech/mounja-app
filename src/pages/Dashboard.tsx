@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
+import { useTutorial } from "@/hooks/useTutorial";
 import { Settings, Plus, Sparkles, Flame, Utensils, ChevronRight, X, Coffee, Sun, Moon, Cookie } from "lucide-react";
 import { cn } from "@/lib/utils";
 import WorkoutSuggestion from "@/components/dashboard/WorkoutSuggestion";
@@ -30,6 +31,14 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { user, profile } = useAuth();
   const { dose, getLastConfirmedApplication, recentSymptoms: ssotSymptoms, weeklyWorkoutCount, latestWeight: ssotWeight, loading: ssotLoading } = useApplicationData();
+  const { triggerPostTriageTutorial } = useTutorial();
+
+  // Trigger tutorial immediately after first triage
+  useEffect(() => {
+    if (profile?.triage_completed) {
+      triggerPostTriageTutorial();
+    }
+  }, [profile?.triage_completed, triggerPostTriageTutorial]);
   const [lastInjection, setLastInjection] = useState<any>(null);
   const [latestWeight, setLatestWeight] = useState<number | null>(null);
   const [streak, setStreak] = useState(0);
@@ -139,9 +148,13 @@ const Dashboard = () => {
   const firstName = profile?.name?.split(" ")[0] || "Olá";
   // SSOT: dose comes exclusively from ApplicationDataLayer
   const currentDose = dose.currentDose;
-  if (import.meta.env.DEV) console.log(`[Hub] reading from SSOT: currentDose = ${currentDose}`);
-  const daysUntilNext = lastInjection
-    ? Math.max(0, 7 - Math.floor((Date.now() - new Date(lastInjection.date + "T12:00:00").getTime()) / 86400000))
+  if (import.meta.env.DEV) {
+    console.log(`[Hub] reading from SSOT: currentDose = ${currentDose}`);
+    console.log(`[Hub] currentDose loaded = ${currentDose}`);
+  }
+  // SSOT: daysUntilNext from canonical nextApplicationAt
+  const daysUntilNext = dose.nextApplicationAt
+    ? Math.max(0, Math.ceil((new Date(dose.nextApplicationAt).getTime() - Date.now()) / 86400000))
     : null;
 
   const getStreakMessage = () => {
