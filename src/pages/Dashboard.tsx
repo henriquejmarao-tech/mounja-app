@@ -34,26 +34,31 @@ const Dashboard = () => {
   const [weeklyWorkoutGoal, setWeeklyWorkoutGoal] = useState(3);
   const [recentSymptoms, setRecentSymptoms] = useState<any>(null);
   const [insight, setInsight] = useState<string | null>(null);
+  const [savedDiet, setSavedDiet] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!user) return;
     const fetchData = async () => {
       const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString().split("T")[0];
+      const today = new Date().toISOString().split("T")[0];
 
-      const [injRes, logsRes, workoutsRes] = await Promise.all([
+      const [injRes, logsRes, workoutsRes, dietRes] = await Promise.all([
         supabase.from("injections").select("*").eq("user_id", user.id).order("date", { ascending: false }).limit(1),
         supabase.from("daily_logs").select("date, weight, symptom_nausea, symptom_fatigue, symptom_headache, mood, energy").eq("user_id", user.id).order("date", { ascending: false }).limit(60),
         supabase.from("workouts" as any).select("*").eq("user_id", user.id).gte("date", weekAgo),
+        supabase.from("diet_suggestions" as any).select("breakfast, lunch, dinner, context_note").eq("user_id", user.id).eq("date", today).limit(1),
       ]);
 
       const inj = (injRes.data as any[]) || [];
       const logs = (logsRes.data as any[]) || [];
       const workouts = (workoutsRes.data as any[]) || [];
+      const diet = (dietRes.data as any[]) || [];
 
       setLastInjection(inj[0] || null);
       setTotalLogs(logs.length);
       setWeeklyWorkouts(workouts.length);
+      if (diet[0]) setSavedDiet(diet[0]);
 
       const wLog = logs.find((l) => l.weight);
       setLatestWeight(wLog?.weight ?? null);
@@ -68,12 +73,12 @@ const Dashboard = () => {
 
       // Streak
       let s = 0;
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
+      const todayDate = new Date();
+      todayDate.setHours(0, 0, 0, 0);
       for (let i = 0; i < logs.length; i++) {
         const d = new Date(logs[i].date + "T12:00:00");
         d.setHours(0, 0, 0, 0);
-        const expected = new Date(today);
+        const expected = new Date(todayDate);
         expected.setDate(expected.getDate() - i);
         if (d.getTime() === expected.getTime()) s++;
         else break;
@@ -230,16 +235,32 @@ const Dashboard = () => {
             <Sparkles className="w-4 h-4 text-primary" />
             <h3 className="font-semibold text-sm">Sugestão de hoje</h3>
           </div>
-          <div className="space-y-2">
-            <div className="flex items-start gap-2.5 bg-muted/50 rounded-xl px-3 py-2.5">
-              <Utensils className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
-              <p className="text-xs text-foreground leading-relaxed">{suggestion.diet}</p>
+          {savedDiet ? (
+            <div className="space-y-2">
+              {savedDiet.context_note && (
+                <p className="text-[10px] text-primary font-medium mb-1">{savedDiet.context_note}</p>
+              )}
+              <div className="flex items-start gap-2.5 bg-muted/50 rounded-xl px-3 py-2.5">
+                <Utensils className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
+                <p className="text-xs text-foreground leading-relaxed line-clamp-2">☕ {savedDiet.breakfast}{savedDiet.lunch ? ` · 🍽️ ${savedDiet.lunch}` : ""}</p>
+              </div>
+              <div className="flex items-start gap-2.5 bg-muted/50 rounded-xl px-3 py-2.5">
+                <Dumbbell className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
+                <p className="text-xs text-foreground leading-relaxed">{suggestion.workout}</p>
+              </div>
             </div>
-            <div className="flex items-start gap-2.5 bg-muted/50 rounded-xl px-3 py-2.5">
-              <Dumbbell className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
-              <p className="text-xs text-foreground leading-relaxed">{suggestion.workout}</p>
+          ) : (
+            <div className="space-y-2">
+              <div className="flex items-start gap-2.5 bg-muted/50 rounded-xl px-3 py-2.5">
+                <Utensils className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
+                <p className="text-xs text-foreground leading-relaxed">{suggestion.diet}</p>
+              </div>
+              <div className="flex items-start gap-2.5 bg-muted/50 rounded-xl px-3 py-2.5">
+                <Dumbbell className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
+                <p className="text-xs text-foreground leading-relaxed">{suggestion.workout}</p>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Block 3: Streak + badges */}
