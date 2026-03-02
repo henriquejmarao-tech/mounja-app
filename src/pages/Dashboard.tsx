@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { Settings, Plus, Sparkles, Flame, Award, Trophy } from "lucide-react";
+import { Settings, Plus, Sparkles, Flame, Award, Dumbbell, Utensils } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const badges = [
@@ -14,13 +14,13 @@ const badges = [
 ];
 
 const streakMessages = [
-  { min: 0, max: 0, message: "Comece a registrar hoje e inicie sua sequência! 🌱" },
-  { min: 1, max: 1, message: "Primeiro passo dado! Continue amanhã para manter a sequência. ✨" },
-  { min: 2, max: 2, message: "Dois dias seguidos! O hábito está se formando. 💫" },
-  { min: 3, max: 6, message: "Você está criando um hábito incrível! Continue assim! ⚡" },
-  { min: 7, max: 13, message: "Uma semana inteira! Isso mostra dedicação real. 🏅" },
-  { min: 14, max: 29, message: "Duas semanas! Você já é referência em consistência. 🌟" },
-  { min: 30, max: Infinity, message: "Um mês seguido! Você é inspiração pura. 🏆" },
+  { min: 0, max: 0, message: "Comece a registrar hoje! 🌱" },
+  { min: 1, max: 1, message: "Primeiro passo dado! ✨" },
+  { min: 2, max: 2, message: "Dois dias seguidos! 💫" },
+  { min: 3, max: 6, message: "Hábito se formando! ⚡" },
+  { min: 7, max: 13, message: "Uma semana inteira! 🏅" },
+  { min: 14, max: 29, message: "Consistência incrível! 🌟" },
+  { min: 30, max: Infinity, message: "Inspiração pura! 🏆" },
 ];
 
 const Dashboard = () => {
@@ -30,30 +30,48 @@ const Dashboard = () => {
   const [latestWeight, setLatestWeight] = useState<number | null>(null);
   const [streak, setStreak] = useState(0);
   const [totalLogs, setTotalLogs] = useState(0);
+  const [weeklyWorkouts, setWeeklyWorkouts] = useState(0);
+  const [weeklyWorkoutGoal, setWeeklyWorkoutGoal] = useState(3);
+  const [recentSymptoms, setRecentSymptoms] = useState<any>(null);
+  const [insight, setInsight] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!user) return;
     const fetchData = async () => {
-      const [injRes, logsRes] = await Promise.all([
+      const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString().split("T")[0];
+
+      const [injRes, logsRes, workoutsRes] = await Promise.all([
         supabase.from("injections").select("*").eq("user_id", user.id).order("date", { ascending: false }).limit(1),
-        supabase.from("daily_logs").select("date, weight").eq("user_id", user.id).order("date", { ascending: false }).limit(60),
+        supabase.from("daily_logs").select("date, weight, symptom_nausea, symptom_fatigue, symptom_headache, mood, energy").eq("user_id", user.id).order("date", { ascending: false }).limit(60),
+        supabase.from("workouts" as any).select("*").eq("user_id", user.id).gte("date", weekAgo),
       ]);
 
       const inj = (injRes.data as any[]) || [];
       const logs = (logsRes.data as any[]) || [];
+      const workouts = (workoutsRes.data as any[]) || [];
 
       setLastInjection(inj[0] || null);
       setTotalLogs(logs.length);
+      setWeeklyWorkouts(workouts.length);
+
       const wLog = logs.find((l) => l.weight);
       setLatestWeight(wLog?.weight ?? null);
 
-      // Calculate streak
+      // Recent symptoms (last 3 days)
+      const recent3 = logs.slice(0, 3);
+      if (recent3.length > 0) {
+        const avgNausea = recent3.reduce((s: number, l: any) => s + (l.symptom_nausea || 0), 0) / recent3.length;
+        const avgFatigue = recent3.reduce((s: number, l: any) => s + (l.symptom_fatigue || 0), 0) / recent3.length;
+        setRecentSymptoms({ nausea: avgNausea, fatigue: avgFatigue });
+      }
+
+      // Streak
       let s = 0;
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       for (let i = 0; i < logs.length; i++) {
-        const d = new Date(logs[i].date);
+        const d = new Date(logs[i].date + "T12:00:00");
         d.setHours(0, 0, 0, 0);
         const expected = new Date(today);
         expected.setDate(expected.getDate() - i);
@@ -61,34 +79,82 @@ const Dashboard = () => {
         else break;
       }
       setStreak(s);
+
+      // Generate insight (only if 7+ days of data)
+      if (logs.length >= 7) {
+        const injDate = inj[0]?.date;
+        if (injDate) {
+          const daysSinceInj = Math.floor((Date.now() - new Date(injDate + "T12:00:00").getTime()) / 86400000);
+          const postInjLogs = logs.filter((l: any) => {
+            const ld = new Date(l.date + "T12:00:00");
+            const id = new Date(injDate + "T12:00:00");
+            const diff = Math.floor((ld.getTime() - id.getTime()) / 86400000);
+            return diff >= 1 && diff <= 2;
+          });
+          if (postInjLogs.length > 0) {
+            const avgFatigue = postInjLogs.reduce((s: number, l: any) => s + (l.symptom_fatigue || 0), 0) / postInjLogs.length;
+            if (avgFatigue > 4) {
+              setInsight("Nos dias após a aplicação, você costuma sentir mais cansaço. Pegue leve. 💤");
+            }
+          }
+        }
+
+        if (!insight) {
+          const initialW = profile?.current_weight;
+          const currentW = latestWeight ?? wLog?.weight;
+          if (initialW && currentW && initialW - currentW > 0) {
+            setInsight(`Você já perdeu ${(initialW - currentW).toFixed(1)} kg desde o início. Continue assim! 💪`);
+          } else if (workouts.length >= 3) {
+            setInsight(`${workouts.length} treinos esta semana! Seu corpo agradece. 🏋️`);
+          }
+        }
+      }
+
       setLoading(false);
     };
     fetchData();
   }, [user]);
 
+  useEffect(() => {
+    if (profile) {
+      const defaultGoal = profile.activity_level === "sedentary" ? 2 : profile.activity_level === "light" ? 3 : 4;
+      setWeeklyWorkoutGoal(profile.weekly_workout_goal ?? profile.weekly_workouts ?? defaultGoal);
+    }
+  }, [profile]);
+
   const firstName = profile?.name?.split(" ")[0] || "Olá";
   const currentDose = profile?.current_dose || null;
-
   const daysUntilNext = lastInjection
-    ? Math.max(0, 7 - Math.floor((Date.now() - new Date(lastInjection.date).getTime()) / (1000 * 60 * 60 * 24)))
+    ? Math.max(0, 7 - Math.floor((Date.now() - new Date(lastInjection.date + "T12:00:00").getTime()) / 86400000))
     : null;
-
-  const initialWeight = profile?.current_weight;
-  const weightLost = initialWeight && latestWeight ? initialWeight - latestWeight : null;
 
   const getStreakMessage = () => {
     const msg = streakMessages.find((m) => streak >= m.min && streak <= m.max);
     return msg?.message || streakMessages[0].message;
   };
 
-  const getProgressPhrase = () => {
-    if (weightLost && weightLost > 0) {
-      return `Você já perdeu ${weightLost.toFixed(1)} kg. Continue assim! 💪`;
+  // Compute today's suggestion based on context
+  const getTodaySuggestion = () => {
+    const isPostInjection = daysUntilNext !== null && (daysUntilNext >= 6 || daysUntilNext === 0);
+    const hasHighNausea = recentSymptoms?.nausea > 3;
+    const hasHighFatigue = recentSymptoms?.fatigue > 3;
+
+    let diet = "Priorize proteínas e vegetais hoje.";
+    let workout = `Treino sugerido: ${weeklyWorkouts < weeklyWorkoutGoal ? "sim ✅" : "descanso merecido 🧘"}`;
+
+    if (isPostInjection) {
+      diet = "Dia pós-aplicação: prefira refeições leves e em porções menores.";
+      workout = "Prefira uma caminhada leve ou alongamento hoje.";
+    } else if (hasHighNausea) {
+      diet = "Com náusea recente, tente alimentos frios e secos.";
+    } else if (hasHighFatigue) {
+      workout = "Cansaço recente detectado. Um dia leve faz bem.";
     }
-    return "Cada registro conta. Vamos acompanhar sua jornada! 🌱";
+
+    return { diet, workout };
   };
 
-  // Next badge to earn
+  const suggestion = getTodaySuggestion();
   const nextBadge = badges.find((b) => streak < b.threshold);
   const earnedBadges = badges.filter((b) => streak >= b.threshold);
 
@@ -122,7 +188,7 @@ const Dashboard = () => {
       </header>
 
       <div className="px-5 -mt-3 space-y-4 relative z-10">
-        {/* Key metrics card */}
+        {/* Block 1: Dose + Next injection */}
         <div className="bg-card rounded-2xl p-5 shadow-card border border-border/50 animate-fade-in-up">
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -150,96 +216,87 @@ const Dashboard = () => {
               </p>
             </div>
             <div>
-              <p className="text-[11px] text-muted-foreground font-medium mb-1">Total de registros</p>
-              <p className="text-xl font-bold">{totalLogs}</p>
+              <p className="text-[11px] text-muted-foreground font-medium mb-1">Treinos esta semana</p>
+              <p className="text-xl font-bold">
+                {weeklyWorkouts}<span className="text-sm font-medium text-muted-foreground">/{weeklyWorkoutGoal}</span>
+              </p>
             </div>
           </div>
         </div>
 
-        {/* Streak card */}
-        <div className="bg-card rounded-2xl p-5 shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: "60ms" }}>
+        {/* Block 2: Sugestão de hoje */}
+        <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: "60ms" }}>
+          <div className="flex items-center gap-2 mb-3">
+            <Sparkles className="w-4 h-4 text-primary" />
+            <h3 className="font-semibold text-sm">Sugestão de hoje</h3>
+          </div>
+          <div className="space-y-2">
+            <div className="flex items-start gap-2.5 bg-muted/50 rounded-xl px-3 py-2.5">
+              <Utensils className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
+              <p className="text-xs text-foreground leading-relaxed">{suggestion.diet}</p>
+            </div>
+            <div className="flex items-start gap-2.5 bg-muted/50 rounded-xl px-3 py-2.5">
+              <Dumbbell className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
+              <p className="text-xs text-foreground leading-relaxed">{suggestion.workout}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Block 3: Streak + badges */}
+        <div className="bg-card rounded-2xl p-5 shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: "120ms" }}>
           <div className="flex items-center gap-3 mb-3">
             <div className={cn(
-              "w-12 h-12 rounded-2xl flex items-center justify-center",
+              "w-10 h-10 rounded-xl flex items-center justify-center",
               streak >= 7 ? "gradient-hero" : streak >= 3 ? "bg-warning/15" : "bg-muted"
             )}>
               <Flame className={cn(
-                "w-6 h-6",
+                "w-5 h-5",
                 streak >= 7 ? "text-primary-foreground" : streak >= 3 ? "text-warning" : "text-muted-foreground"
               )} />
             </div>
-            <div>
-              <p className="text-2xl font-bold">
-                {streak} <span className="text-sm font-medium text-muted-foreground">{streak === 1 ? "dia" : "dias"} seguidos</span>
+            <div className="flex-1">
+              <p className="text-lg font-bold">
+                {streak} <span className="text-xs font-medium text-muted-foreground">{streak === 1 ? "dia seguido" : "dias seguidos"}</span>
               </p>
-              <p className="text-xs text-muted-foreground">{getStreakMessage()}</p>
+              <p className="text-[11px] text-muted-foreground">{getStreakMessage()}</p>
             </div>
           </div>
-
-          {/* Streak dots visualization */}
-          <div className="flex gap-1 mt-2">
+          <div className="flex gap-1">
             {Array.from({ length: 7 }).map((_, i) => (
-              <div
-                key={i}
-                className={cn(
-                  "h-2 flex-1 rounded-full transition-all",
-                  i < Math.min(streak, 7) ? "gradient-hero" : "bg-muted"
-                )}
-              />
+              <div key={i} className={cn("h-2 flex-1 rounded-full transition-all", i < Math.min(streak, 7) ? "gradient-hero" : "bg-muted")} />
             ))}
           </div>
-          {nextBadge && streak < 7 && (
+          {earnedBadges.length > 0 && (
+            <div className="flex gap-1.5 flex-wrap mt-3">
+              {earnedBadges.map((badge) => (
+                <span key={badge.id} className="text-[10px] font-semibold bg-primary/8 text-primary rounded-lg px-2 py-1 border border-primary/10">
+                  {badge.emoji} {badge.label}
+                </span>
+              ))}
+            </div>
+          )}
+          {nextBadge && (
             <p className="text-[10px] text-muted-foreground mt-2">
-              Mais {nextBadge.threshold - streak} dia{nextBadge.threshold - streak !== 1 ? "s" : ""} para ganhar: {nextBadge.emoji} {nextBadge.label}
+              Mais {nextBadge.threshold - streak} dia{nextBadge.threshold - streak !== 1 ? "s" : ""} para: {nextBadge.emoji} {nextBadge.label}
             </p>
           )}
         </div>
 
-        {/* Earned badges */}
-        {earnedBadges.length > 0 && (
-          <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: "100ms" }}>
-            <div className="flex items-center gap-2 mb-3">
-              <Award className="w-4 h-4 text-primary" />
-              <h3 className="font-semibold text-sm">Conquistas</h3>
-            </div>
-            <div className="flex gap-2 flex-wrap">
-              {earnedBadges.map((badge) => (
-                <div
-                  key={badge.id}
-                  className="flex items-center gap-1.5 bg-primary/8 rounded-xl px-3 py-2 border border-primary/10"
-                >
-                  <span className="text-lg">{badge.emoji}</span>
-                  <span className="text-[10px] font-semibold text-primary">{badge.label}</span>
-                </div>
-              ))}
-            </div>
-            {nextBadge && (
-              <div className="mt-3 flex items-center gap-2 bg-muted/50 rounded-xl px-3 py-2">
-                <span className="text-lg opacity-40">{nextBadge.emoji}</span>
-                <div>
-                  <p className="text-[10px] font-medium text-muted-foreground">Próxima conquista</p>
-                  <p className="text-[11px] font-semibold">{nextBadge.label} — falta{nextBadge.threshold - streak !== 1 ? "m" : ""} {nextBadge.threshold - streak} dia{nextBadge.threshold - streak !== 1 ? "s" : ""}</p>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Progress phrase */}
-        {weightLost && weightLost > 0 && (
-          <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50 animate-fade-in-up flex items-start gap-3" style={{ animationDelay: "140ms" }}>
+        {/* Block 4: Insight (only if data) */}
+        {insight && (
+          <div className="bg-card rounded-2xl px-4 py-3.5 shadow-card border border-border/50 animate-fade-in-up flex items-center gap-3" style={{ animationDelay: "180ms" }}>
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
               <Sparkles className="w-4 h-4 text-primary" />
             </div>
-            <p className="text-sm text-foreground leading-relaxed">{getProgressPhrase()}</p>
+            <p className="text-xs text-foreground leading-relaxed">{insight}</p>
           </div>
         )}
 
-        {/* Big register button */}
+        {/* Block 5: Register button */}
         <button
           onClick={() => navigate("/registrar")}
           className="w-full gradient-hero text-primary-foreground font-bold py-5 rounded-2xl flex items-center justify-center gap-3 shadow-elevated hover:shadow-glow active:scale-[0.98] transition-all duration-300 animate-fade-in-up text-base"
-          style={{ animationDelay: "180ms" }}
+          style={{ animationDelay: "240ms" }}
         >
           <Plus className="w-6 h-6" />
           Registrar hoje
