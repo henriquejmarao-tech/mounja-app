@@ -95,6 +95,51 @@ export type Database = {
         }
         Relationships: []
       }
+      diet_suggestions: {
+        Row: {
+          breakfast: string | null
+          calories_target: number | null
+          context_note: string | null
+          created_at: string | null
+          date: string
+          dinner: string | null
+          id: string
+          lunch: string | null
+          protein_target: number | null
+          snack: string | null
+          tip: string | null
+          user_id: string
+        }
+        Insert: {
+          breakfast?: string | null
+          calories_target?: number | null
+          context_note?: string | null
+          created_at?: string | null
+          date?: string
+          dinner?: string | null
+          id?: string
+          lunch?: string | null
+          protein_target?: number | null
+          snack?: string | null
+          tip?: string | null
+          user_id: string
+        }
+        Update: {
+          breakfast?: string | null
+          calories_target?: number | null
+          context_note?: string | null
+          created_at?: string | null
+          date?: string
+          dinner?: string | null
+          id?: string
+          lunch?: string | null
+          protein_target?: number | null
+          snack?: string | null
+          tip?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       feedback: {
         Row: {
           created_at: string
