@@ -28,7 +28,7 @@ const Register = () => {
           <span className="text-sm font-medium">Voltar</span>
         </button>
         <h1 className="text-xl font-bold">Registrar</h1>
-        <p className="text-sm text-muted-foreground mt-1">Rápido e fácil. Leva menos de 20 segundos.</p>
+        <p className="text-sm text-muted-foreground mt-1">Leva menos de 20 segundos. Cada registro conta.</p>
       </header>
 
       {/* 3-tab selector */}

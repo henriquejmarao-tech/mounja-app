@@ -182,8 +182,8 @@ const Nutrition = () => {
             <ArrowLeft className="w-5 h-5" />
             <span className="text-sm font-medium">Voltar</span>
           </button>
-          <h1 className="text-xl font-bold text-primary-foreground">Nutrição</h1>
-          <p className="text-sm text-primary-foreground/70 mt-1">Dicas práticas para se sentir melhor</p>
+          <h1 className="text-xl font-bold text-primary-foreground">Alimentação</h1>
+          <p className="text-sm text-primary-foreground/70 mt-1">Cuidando do que nutre você</p>
         </div>
       </header>
 

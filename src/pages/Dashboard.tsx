@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Settings, Plus, Sparkles, Flame, Utensils, ChevronRight, X, Coffee, Sun, Moon, Cookie } from "lucide-react";
 import { cn } from "@/lib/utils";
 import WorkoutSuggestion from "@/components/dashboard/WorkoutSuggestion";
+import logoMounja from "@/assets/logo-mounja.png";
 
 const badges = [
   { id: "first", label: "Primeiro registro", emoji: "🌱", threshold: 1 },
@@ -170,12 +171,12 @@ const Dashboard = () => {
     <div className="min-h-screen bg-background pb-28">
       {/* Header */}
       <header className="relative overflow-hidden">
-        <div className="absolute inset-0 gradient-hero opacity-95" />
+        <div className="absolute inset-0 gradient-hero opacity-90" />
         <div className="relative px-5 pt-8 pb-6">
           <div className="flex items-center justify-between mb-5">
             <div>
-              <p className="text-sm text-primary-foreground/80 font-medium">{firstName} 👋</p>
-              <h1 className="text-lg font-bold text-primary-foreground mt-0.5">Sua jornada</h1>
+              <img src={logoMounja} alt="Mounjá" className="h-7 mb-1.5 object-contain brightness-0 invert" />
+              <p className="text-sm text-primary-foreground/80 font-medium">{firstName}, bom te ver 🌿</p>
             </div>
             <button
               onClick={() => navigate("/configuracoes")}
@@ -327,7 +328,7 @@ const Dashboard = () => {
           style={{ animationDelay: "240ms" }}
         >
           <Plus className="w-6 h-6" />
-          Registrar hoje
+          Registrar meu dia
         </button>
       </div>
 

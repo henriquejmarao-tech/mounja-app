@@ -24,12 +24,12 @@ const TutorialStartDialog = () => {
         </div>
 
         <h2 className="text-lg font-bold mb-1">
-          {resumeAvailable ? "Continuar o tour?" : "Bem-vindo ao app! 👋"}
+          {resumeAvailable ? "Continuar o tour?" : "Bem-vindo ao Mounjá! 🌿"}
         </h2>
         <p className="text-sm text-muted-foreground mb-6">
           {resumeAvailable
             ? "Você começou o tour na última vez. Quer continuar de onde parou?"
-            : "Vamos te mostrar como usar tudo em poucos passos."}
+            : "Vamos te mostrar como tudo funciona, com calma."}
         </p>
 
         <div className="space-y-2.5">

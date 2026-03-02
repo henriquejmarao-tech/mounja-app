@@ -1,13 +1,13 @@
-import { Home, Plus, Clock, Apple, Dumbbell } from "lucide-react";
+import { Home, Plus, Clock, Leaf, Heart } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { icon: Home, label: "Início", path: "/" },
-  { icon: Clock, label: "Histórico", path: "/historico" },
+  { icon: Clock, label: "Caminho", path: "/historico" },
   { icon: Plus, label: "Registrar", path: "/registrar", highlight: true },
-  { icon: Apple, label: "Nutrição", path: "/nutricao" },
-  { icon: Dumbbell, label: "Treino", path: "/treinos" },
+  { icon: Leaf, label: "Nutrição", path: "/nutricao" },
+  { icon: Heart, label: "Movimento", path: "/treinos" },
 ];
 
 const BottomNav = () => {

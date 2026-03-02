@@ -14,7 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["'Plus Jakarta Sans'", "sans-serif"],
+        sans: ["'Nunito'", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -50,15 +50,23 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        peach: {
+          DEFAULT: "hsl(var(--peach))",
+          light: "hsl(var(--peach-light))",
+        },
         coral: {
-          DEFAULT: "hsl(var(--coral))",
-          light: "hsl(var(--coral-light))",
+          DEFAULT: "hsl(var(--peach))",
+          light: "hsl(var(--peach-light))",
         },
         sage: {
           DEFAULT: "hsl(var(--sage))",
           light: "hsl(var(--sage-light))",
           dark: "hsl(var(--sage-dark))",
         },
+        mint: "hsl(var(--mint))",
+        leaf: "hsl(var(--leaf))",
+        cream: "hsl(var(--cream))",
+        mist: "hsl(var(--mist))",
         success: "hsl(var(--success))",
         warning: "hsl(var(--warning))",
         info: "hsl(var(--info))",

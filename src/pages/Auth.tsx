@@ -2,8 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
-import { Heart, Mail, Lock, User, ArrowRight, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, User, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
+import logoMounja from "@/assets/logo-mounja.png";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -22,7 +23,7 @@ const Auth = () => {
       if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        toast.success("Bem-vinda de volta! 💚");
+        toast.success("Que bom ter você de volta! 🌿");
       } else {
         const { error } = await supabase.auth.signUp({
           email,
@@ -33,7 +34,7 @@ const Auth = () => {
         toast.success("Conta criada! Verifique seu e-mail para confirmar.");
       }
     } catch (error: any) {
-      toast.error(error.message || "Ocorreu um erro. Tente novamente.");
+      toast.error(error.message || "Algo deu errado. Tente novamente.");
     } finally {
       setLoading(false);
     }
@@ -61,14 +62,14 @@ const Auth = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
-      <div className="relative overflow-hidden pt-12 pb-8 px-8 text-center">
-        <div className="absolute inset-0 gradient-hero opacity-10" />
+      <div className="relative overflow-hidden pt-14 pb-8 px-8 text-center">
+        <div className="absolute inset-0 bg-gradient-to-b from-accent/40 to-background" />
         <div className="relative">
-          <div className="w-16 h-16 rounded-2xl gradient-hero flex items-center justify-center mx-auto mb-4 shadow-glow">
-            <Heart className="w-8 h-8 text-primary-foreground" />
-          </div>
-          <h1 className="text-2xl font-bold tracking-tight">MounjaroGuia</h1>
-          <p className="text-sm text-muted-foreground mt-2">
+          <img src={logoMounja} alt="Mounjá" className="h-12 mx-auto mb-4 object-contain" />
+          <p className="text-sm text-muted-foreground mt-1 italic">
+            Aqui para caminhar com você.
+          </p>
+          <p className="text-sm text-muted-foreground mt-4">
             {isLogin ? "Acesse sua conta" : "Crie sua conta gratuita"}
           </p>
         </div>
