@@ -338,14 +338,14 @@ const History = () => {
   const totalLost = initialWeight && currentWeight ? initialWeight - currentWeight : null;
 
   const now = new Date();
-  const thisWeekLogs = allLogs.filter((l) => (now.getTime() - new Date(l.date).getTime()) / 86400000 <= 7);
+  const thisWeekLogs = allLogs.filter((l) => (now.getTime() - new Date(l.date + "T12:00:00").getTime()) / 86400000 <= 7);
   const lastWeekLogs = allLogs.filter((l) => {
-    const diff = (now.getTime() - new Date(l.date).getTime()) / 86400000;
+    const diff = (now.getTime() - new Date(l.date + "T12:00:00").getTime()) / 86400000;
     return diff > 7 && diff <= 14;
   });
 
   const weightData = weights.map((l: any) => ({
-    date: new Date(l.date).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
+    date: new Date(l.date + "T12:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
     peso: l.weight,
   }));
 

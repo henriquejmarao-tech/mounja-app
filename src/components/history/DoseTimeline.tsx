@@ -25,7 +25,7 @@ const DoseTimeline = ({ injections }: DoseTimelineProps) => {
             <div className="pb-4">
               <p className="text-sm font-semibold">{inj.dose}</p>
               <p className="text-[11px] text-muted-foreground">
-                {new Date(inj.date).toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })}
+                {new Date(inj.date + "T12:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })}
                 {inj.site && <span className="ml-2 text-[10px] bg-muted px-1.5 py-0.5 rounded-full">{inj.site}</span>}
               </p>
             </div>
