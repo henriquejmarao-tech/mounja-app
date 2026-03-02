@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -9,7 +10,64 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { userContext } = await req.json();
+    // Authenticate user
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Não autorizado" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const supabaseClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: claimsError } = await supabaseClient.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) {
+      return new Response(JSON.stringify({ error: "Não autorizado" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const userId = claimsData.claims.sub;
+
+    // Fetch user context from database
+    const { data: profile } = await supabaseClient
+      .from("profiles")
+      .select("current_weight, goal, current_dose, age, sex, activity_level, dietary_restrictions, weekly_workouts")
+      .eq("id", userId)
+      .single();
+
+    const { data: recentLogs } = await supabaseClient
+      .from("daily_logs")
+      .select("symptom_nausea, symptom_fatigue, symptom_constipation, weight")
+      .eq("user_id", userId)
+      .order("date", { ascending: false })
+      .limit(7);
+
+    const { data: lastInjection } = await supabaseClient
+      .from("injections")
+      .select("date")
+      .eq("user_id", userId)
+      .order("date", { ascending: false })
+      .limit(1);
+
+    // Calculate context from DB data
+    const avgSymptom = (field: string) => {
+      if (!recentLogs?.length) return 0;
+      const vals = recentLogs.map((l: any) => l[field] || 0);
+      return Math.round(vals.reduce((a: number, b: number) => a + b, 0) / vals.length);
+    };
+
+    let daysSinceInjection: number | string = "desconhecido";
+    if (lastInjection?.length) {
+      const diff = Math.floor((Date.now() - new Date(lastInjection[0].date + "T12:00:00").getTime()) / 86400000);
+      daysSinceInjection = diff;
+    }
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
@@ -36,16 +94,16 @@ Responda APENAS com um JSON válido (sem markdown, sem backticks) neste formato:
 }`;
 
     const userMessage = `Contexto do usuário:
-- Peso atual: ${userContext.weight || "não informado"} kg
-- Objetivo: ${userContext.goal || "perder peso"}
-- Dose atual: ${userContext.dose || "não informada"}
-- Dias desde última aplicação: ${userContext.daysSinceInjection ?? "desconhecido"}
-- Sintomas recentes (média 0-10): náusea ${userContext.nausea ?? 0}, fadiga ${userContext.fatigue ?? 0}, constipação ${userContext.constipation ?? 0}
-- Treinos esta semana: ${userContext.weeklyWorkouts ?? 0}
-- Nível de atividade: ${userContext.activityLevel || "sedentário"}
-- Restrições alimentares: ${userContext.dietaryRestrictions || "nenhuma informada"}
-- Sexo: ${userContext.sex || "não informado"}
-- Idade: ${userContext.age || "não informada"}
+- Peso atual: ${profile?.current_weight || "não informado"} kg
+- Objetivo: ${profile?.goal || "perder peso"}
+- Dose atual: ${profile?.current_dose || "não informada"}
+- Dias desde última aplicação: ${daysSinceInjection}
+- Sintomas recentes (média 0-10): náusea ${avgSymptom("symptom_nausea")}, fadiga ${avgSymptom("symptom_fatigue")}, constipação ${avgSymptom("symptom_constipation")}
+- Treinos esta semana: ${profile?.weekly_workouts ?? 0}
+- Nível de atividade: ${profile?.activity_level || "sedentário"}
+- Restrições alimentares: ${profile?.dietary_restrictions ? JSON.stringify(profile.dietary_restrictions) : "nenhuma informada"}
+- Sexo: ${profile?.sex || "não informado"}
+- Idade: ${profile?.age || "não informada"}
 
 Gere a sugestão do dia adaptada a esse contexto.`;
 
@@ -85,7 +143,6 @@ Gere a sugestão do dia adaptada a esse contexto.`;
     const data = await response.json();
     const content = data.choices?.[0]?.message?.content;
 
-    // Parse JSON from response, handling possible markdown wrapping
     let parsed;
     try {
       const cleaned = content.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();

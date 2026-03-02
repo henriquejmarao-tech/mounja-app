@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -9,7 +10,72 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { userContext, context } = await req.json();
+    // Authenticate user
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Não autorizado" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const supabaseClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: claimsError } = await supabaseClient.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) {
+      return new Response(JSON.stringify({ error: "Não autorizado" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const userId = claimsData.claims.sub;
+
+    const { context } = await req.json();
+
+    // Validate context input
+    if (context !== "nutrition" && context !== "movement") {
+      return new Response(JSON.stringify({ error: "Contexto inválido" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Fetch user context from database
+    const { data: profile } = await supabaseClient
+      .from("profiles")
+      .select("current_weight, current_dose, weekly_workouts")
+      .eq("id", userId)
+      .single();
+
+    const { data: recentLogs } = await supabaseClient
+      .from("daily_logs")
+      .select("symptom_nausea, symptom_fatigue, symptom_headache, symptom_constipation, symptom_diarrhea")
+      .eq("user_id", userId)
+      .order("date", { ascending: false })
+      .limit(7);
+
+    const { data: lastInjection } = await supabaseClient
+      .from("injections")
+      .select("date")
+      .eq("user_id", userId)
+      .order("date", { ascending: false })
+      .limit(1);
+
+    const avgSymptom = (field: string) => {
+      if (!recentLogs?.length) return 0;
+      const vals = recentLogs.map((l: any) => l[field] || 0);
+      return Math.round(vals.reduce((a: number, b: number) => a + b, 0) / vals.length);
+    };
+
+    let daysSinceInjection: number | string = "desconhecido";
+    if (lastInjection?.length) {
+      const diff = Math.floor((Date.now() - new Date(lastInjection[0].date + "T12:00:00").getTime()) / 86400000);
+      daysSinceInjection = diff;
+    }
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
@@ -33,11 +99,11 @@ Responda APENAS com JSON válido (sem markdown, sem backticks):
 
     const userMessage = `Contexto:
 - Categoria: ${contextLabel}
-- Dias desde última aplicação: ${userContext.daysSinceInjection ?? "desconhecido"}
-- Sintomas (média 7 dias, escala 0-10): náusea ${userContext.nausea ?? 0}, fadiga ${userContext.fatigue ?? 0}, dor de cabeça ${userContext.headache ?? 0}, constipação ${userContext.constipation ?? 0}, diarreia ${userContext.diarrhea ?? 0}
-- Treinos esta semana: ${userContext.weeklyWorkoutCount ?? 0}
-- Peso atual: ${userContext.weight ?? "não informado"} kg
-- Dose atual: ${userContext.currentDose ?? "não informada"}
+- Dias desde última aplicação: ${daysSinceInjection}
+- Sintomas (média 7 dias, escala 0-10): náusea ${avgSymptom("symptom_nausea")}, fadiga ${avgSymptom("symptom_fatigue")}, dor de cabeça ${avgSymptom("symptom_headache")}, constipação ${avgSymptom("symptom_constipation")}, diarreia ${avgSymptom("symptom_diarrhea")}
+- Treinos esta semana: ${profile?.weekly_workouts ?? 0}
+- Peso atual: ${profile?.current_weight ?? "não informado"} kg
+- Dose atual: ${profile?.current_dose ?? "não informada"}
 
 Gere 3 dicas priorizadas e personalizadas.`;
 
