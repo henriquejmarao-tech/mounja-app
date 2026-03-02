@@ -29,8 +29,8 @@ const HistoryHeader = ({ showExport, onExport }: HistoryHeaderProps) => {
             </button>
           )}
         </div>
-        <h1 className="text-xl font-bold text-primary-foreground">Sua Jornada</h1>
-        <p className="text-sm text-primary-foreground/70 mt-1">Acompanhe sua evolução ao longo do tempo</p>
+        <h1 className="text-xl font-bold text-primary-foreground">Seu Caminho</h1>
+        <p className="text-sm text-primary-foreground/70 mt-1">Veja como você tem evoluído, passo a passo</p>
       </div>
     </header>
   );

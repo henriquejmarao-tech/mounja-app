@@ -98,8 +98,8 @@ const Workouts = () => {
             <ArrowLeft className="w-5 h-5" />
             <span className="text-sm font-medium">Voltar</span>
           </button>
-          <h1 className="text-xl font-bold text-primary-foreground">Treino</h1>
-          <p className="text-sm text-primary-foreground/70 mt-1">Registre e acompanhe sua atividade física</p>
+          <h1 className="text-xl font-bold text-primary-foreground">Movimento</h1>
+          <p className="text-sm text-primary-foreground/70 mt-1">No seu ritmo, do seu jeito</p>
         </div>
       </header>
 

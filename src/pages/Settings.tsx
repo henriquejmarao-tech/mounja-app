@@ -86,7 +86,7 @@ const Settings = () => {
               <h1 className="text-xl font-bold text-primary-foreground">{profile?.name || "Usuário"}</h1>
               <p className="text-sm text-primary-foreground/80">{user?.email}</p>
               {profile?.current_dose && (
-                <p className="text-xs text-primary-foreground/60 mt-0.5">Mounjaro {profile.current_dose}</p>
+                <p className="text-xs text-primary-foreground/60 mt-0.5">Dose {profile.current_dose}</p>
               )}
             </div>
           </div>
