@@ -335,7 +335,7 @@ const Nutrition = () => {
                   )}
 
                   {/* Actions */}
-                  <div className="flex gap-2 pt-2 pb-2">
+                  <div className="flex gap-2 pt-2 pb-6">
                     <button
                       onClick={generateSuggestion}
                       disabled={generating}
