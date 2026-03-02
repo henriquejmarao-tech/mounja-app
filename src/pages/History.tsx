@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -39,44 +39,45 @@ const History = () => {
   const [dietSuggestions, setDietSuggestions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchData = useCallback(async () => {
     if (!user) return;
-    const fetchData = async () => {
-      setLoading(true);
-      const now = new Date();
-      const days = periodDays[period];
-      const since = days ? new Date(now.getTime() - days * 86400000) : null;
+    setLoading(true);
+    const now = new Date();
+    const days = periodDays[period];
+    const since = days ? new Date(now.getTime() - days * 86400000) : null;
 
-      let logsQuery = supabase.from("daily_logs").select("*").eq("user_id", user.id).order("date", { ascending: true });
-      let injQuery = supabase.from("injections").select("*").eq("user_id", user.id).order("date", { ascending: false });
-      let workoutsQuery = supabase.from("workouts").select("*").eq("user_id", user.id).order("date", { ascending: false });
-      const allLogsQuery = supabase.from("daily_logs").select("*").eq("user_id", user.id).order("date", { ascending: false }).limit(30);
-      let dietQuery = supabase.from("diet_suggestions").select("*").eq("user_id", user.id).order("date", { ascending: false });
+    let logsQuery = supabase.from("daily_logs").select("*").eq("user_id", user.id).order("date", { ascending: true });
+    let injQuery = supabase.from("injections").select("*").eq("user_id", user.id).order("date", { ascending: false });
+    let workoutsQuery = supabase.from("workouts").select("*").eq("user_id", user.id).order("date", { ascending: false });
+    const allLogsQuery = supabase.from("daily_logs").select("*").eq("user_id", user.id).order("date", { ascending: false }).limit(30);
+    let dietQuery = supabase.from("diet_suggestions").select("*").eq("user_id", user.id).order("date", { ascending: false });
 
-      if (since) {
-        const sinceStr = since.toISOString().split("T")[0];
-        logsQuery = logsQuery.gte("date", sinceStr);
-        injQuery = injQuery.gte("date", sinceStr);
-        workoutsQuery = workoutsQuery.gte("date", sinceStr);
-        dietQuery = dietQuery.gte("date", sinceStr);
-      }
+    if (since) {
+      const sinceStr = since.toISOString().split("T")[0];
+      logsQuery = logsQuery.gte("date", sinceStr);
+      injQuery = injQuery.gte("date", sinceStr);
+      workoutsQuery = workoutsQuery.gte("date", sinceStr);
+      dietQuery = dietQuery.gte("date", sinceStr);
+    }
 
-      const [logsRes, injRes, workoutsRes, allRes, dietRes] = await Promise.all([logsQuery, injQuery, workoutsQuery, allLogsQuery, dietQuery]);
-      const l = (logsRes.data as any[]) || [];
-      const inj = (injRes.data as any[]) || [];
-      const wk = (workoutsRes.data as any[]) || [];
-      const all = (allRes.data as any[]) || [];
-      const diets = (dietRes.data as any[]) || [];
-      setLogs(l);
-      setInjections(inj);
-      setWorkouts(wk);
-      setAllLogs(all);
-      setDietSuggestions(diets);
-      generateInsights(all, inj);
-      setLoading(false);
-    };
-    fetchData();
+    const [logsRes, injRes, workoutsRes, allRes, dietRes] = await Promise.all([logsQuery, injQuery, workoutsQuery, allLogsQuery, dietQuery]);
+    const l = (logsRes.data as any[]) || [];
+    const inj = (injRes.data as any[]) || [];
+    const wk = (workoutsRes.data as any[]) || [];
+    const all = (allRes.data as any[]) || [];
+    const diets = (dietRes.data as any[]) || [];
+    setLogs(l);
+    setInjections(inj);
+    setWorkouts(wk);
+    setAllLogs(all);
+    setDietSuggestions(diets);
+    generateInsights(all, inj);
+    setLoading(false);
   }, [user, period]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const generateInsights = (allL: any[], allInj: any[]) => {
     const generated: Insight[] = [];
@@ -393,7 +394,7 @@ const History = () => {
             <BodyCompositionChart logs={logs} />
             <SymptomsChart logs={logs} />
             <WorkoutsSummary workouts={workouts} />
-            <DoseTimeline injections={injections} />
+            <DoseTimeline injections={injections} onChanged={fetchData} />
             <DietSuggestionsList dietSuggestions={dietSuggestions} />
             <InsightsList insights={insights} />
 
