@@ -43,6 +43,8 @@ interface ApplicationDataContextType {
   getLastConfirmedApplication: () => ApplicationInjection | null;
   getApplicationTimeline: () => ApplicationInjection[];
   setConfirmedApplication: (injection: Omit<ApplicationInjection, "id">) => Promise<void>;
+  updateApplication: (id: string, data: Partial<Omit<ApplicationInjection, "id">>) => Promise<void>;
+  deleteApplication: (id: string) => Promise<void>;
 
   // Symptoms (last 7 days)
   recentSymptoms: RecentSymptoms;
@@ -75,6 +77,8 @@ const ApplicationDataContext = createContext<ApplicationDataContextType>({
   getLastConfirmedApplication: () => null,
   getApplicationTimeline: () => [],
   setConfirmedApplication: async () => {},
+  updateApplication: async () => {},
+  deleteApplication: async () => {},
   recentSymptoms: defaultSymptoms,
   weeklyWorkouts: [],
   weeklyWorkoutCount: 0,
@@ -216,11 +220,35 @@ export const ApplicationDataProvider = ({ children }: { children: ReactNode }) =
 
     if (error) throw error;
 
-    // Sync profile's current_dose
     await supabase.from("profiles").update({ current_dose: injection.dose } as any).eq("id", user.id);
     await refreshProfile();
     await fetchAll();
   }, [user, refreshProfile, fetchAll]);
+
+  const updateApplication = useCallback(async (id: string, data: Partial<Omit<ApplicationInjection, "id">>) => {
+    if (!user) return;
+    if (import.meta.env.DEV) console.log(`[Application Edit] before`, { id, data });
+
+    const { error } = await supabase.from("injections").update(data).eq("id", id).eq("user_id", user.id);
+    if (error) throw error;
+
+    if (import.meta.env.DEV) console.log(`[Application Edit] after`, { id, data });
+    await refreshProfile();
+    await fetchAll();
+    if (import.meta.env.DEV) console.log(`[SSOT recalculated] currentDose = ${dose.currentDose}`);
+  }, [user, refreshProfile, fetchAll, dose.currentDose]);
+
+  const deleteApplication = useCallback(async (id: string) => {
+    if (!user) return;
+    if (import.meta.env.DEV) console.log(`[Application Delete] id = ${id}`);
+
+    const { error } = await supabase.from("injections").delete().eq("id", id).eq("user_id", user.id);
+    if (error) throw error;
+
+    await refreshProfile();
+    await fetchAll();
+    if (import.meta.env.DEV) console.log(`[SSOT recalculated] currentDose = ${dose.currentDose}`);
+  }, [user, refreshProfile, fetchAll, dose.currentDose]);
 
   return (
     <ApplicationDataContext.Provider
@@ -230,6 +258,8 @@ export const ApplicationDataProvider = ({ children }: { children: ReactNode }) =
         getLastConfirmedApplication,
         getApplicationTimeline,
         setConfirmedApplication,
+        updateApplication,
+        deleteApplication,
         recentSymptoms,
         weeklyWorkouts,
         weeklyWorkoutCount: weeklyWorkouts.length,
