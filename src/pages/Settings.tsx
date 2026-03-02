@@ -26,7 +26,7 @@ const Settings = () => {
   const [sending, setSending] = useState(false);
 
   const menuItems = [
-    { icon: User, label: "Minha Triagem", route: "/triagem", description: "Editar dados da triagem inicial" },
+    { icon: User, label: "Minha Triagem", route: "/minha-triagem", description: "Editar peso, objetivo e dados pessoais" },
     { icon: Bell, label: "Notificações", description: "Lembretes e alertas" },
     { icon: Shield, label: "Privacidade", description: "Dados e segurança" },
     { icon: HelpCircle, label: "Ajuda e Suporte", description: "Dúvidas frequentes" },

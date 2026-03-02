@@ -43,6 +43,7 @@ const Triage = () => {
   const [applicationDay, setApplicationDay] = useState("");
   const [hasMedicalGuidance, setHasMedicalGuidance] = useState<boolean | null>(null);
   const [medicalSpecialty, setMedicalSpecialty] = useState("");
+  const [lastApplicationDate, setLastApplicationDate] = useState("");
 
   // Step 2: Dose history
   const [hasIncreasedDose, setHasIncreasedDose] = useState<boolean | null>(null);
@@ -108,6 +109,19 @@ const Triage = () => {
         .eq("id", user.id);
 
       if (error) throw error;
+
+      // Create ONE confirmed injection from triage data (only on first onboarding)
+      if (currentDose && lastApplicationDate) {
+        const { error: injError } = await supabase.from("injections").insert({
+          user_id: user.id,
+          date: lastApplicationDate,
+          dose: currentDose,
+          site: null,
+          notes: "Registrado via triagem inicial",
+        });
+        if (injError) console.error("[Triage] Error creating injection:", injError.message);
+      }
+
       await refreshProfile();
       toast.success("Triagem completa! 🎉");
       navigate("/");
@@ -230,7 +244,13 @@ const Triage = () => {
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Data de início</label>
+              <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Data da última aplicação</label>
+              <input type="date" value={lastApplicationDate} max={new Date().toISOString().split("T")[0]} onChange={(e) => setLastApplicationDate(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-border bg-card text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
+              <p className="text-[10px] text-muted-foreground mt-1">Usada para criar seu primeiro registro de aplicação.</p>
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Data de início do Mounjaro</label>
               <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-border bg-card text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
             </div>
 
