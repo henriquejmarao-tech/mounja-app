@@ -35,11 +35,22 @@ const TutorialOverlay = () => {
       }
       const el = document.querySelector(step.targetSelector);
       if (el) {
-        const rect = el.getBoundingClientRect();
-        setTargetRect(rect);
-        setNavigating(false);
+        // Scroll element into view if needed
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        // Get rect after a brief delay for scroll
+        setTimeout(() => {
+          const rect = el.getBoundingClientRect();
+          // Clamp rect height to viewport for very tall elements
+          const maxHeight = window.innerHeight * 0.4;
+          const clampedRect = rect.height > maxHeight
+            ? new DOMRect(rect.left, rect.top, rect.width, maxHeight)
+            : rect;
+          setTargetRect(clampedRect);
+          setNavigating(false);
+        }, 300);
       } else {
         setTargetRect(null);
+        setNavigating(false);
       }
     };
 
@@ -53,23 +64,37 @@ const TutorialOverlay = () => {
   const isLast = currentStep === steps.length - 1;
   const padding = 8;
 
-  // Calculate tooltip position
+  // Calculate tooltip position — always keep within viewport
   const getTooltipStyle = (): React.CSSProperties => {
     if (!targetRect) return { top: "50%", left: "50%", transform: "translate(-50%, -50%)" };
 
     const pos = step.position || "bottom";
+    const maxLeft = Math.max(16, Math.min(targetRect.left, window.innerWidth - 300));
+    const maxW = "calc(100vw - 32px)";
+
     switch (pos) {
-      case "bottom":
-        return { top: targetRect.bottom + padding + 8, left: Math.max(16, Math.min(targetRect.left, window.innerWidth - 300)), maxWidth: "calc(100vw - 32px)" };
-      case "top":
-        return { bottom: window.innerHeight - targetRect.top + padding + 8, left: Math.max(16, Math.min(targetRect.left, window.innerWidth - 300)), maxWidth: "calc(100vw - 32px)" };
+      case "bottom": {
+        const top = targetRect.bottom + padding + 8;
+        // If tooltip would go off-screen, position it in lower third of viewport
+        if (top > window.innerHeight - 160) {
+          return { bottom: 24, left: 16, right: 16, maxWidth: maxW };
+        }
+        return { top, left: maxLeft, maxWidth: maxW };
+      }
+      case "top": {
+        const bottom = window.innerHeight - targetRect.top + padding + 8;
+        if (bottom > window.innerHeight - 160) {
+          return { top: 24, left: 16, right: 16, maxWidth: maxW };
+        }
+        return { bottom, left: maxLeft, maxWidth: maxW };
+      }
       default:
-        return { top: targetRect.bottom + padding + 8, left: 16, maxWidth: "calc(100vw - 32px)" };
+        return { top: targetRect.bottom + padding + 8, left: 16, maxWidth: maxW };
     }
   };
 
   return (
-    <div className="fixed inset-0 z-[100]" onClick={closeTutorial}>
+    <div className="fixed inset-0 z-[100]">
       {/* Dark overlay with cutout */}
       <svg className="absolute inset-0 w-full h-full" style={{ pointerEvents: "none" }}>
         <defs>
@@ -92,7 +117,6 @@ const TutorialOverlay = () => {
           fill="rgba(0,0,0,0.6)" 
           mask="url(#tutorial-mask)"
           style={{ pointerEvents: "auto" }}
-          onClick={closeTutorial}
         />
       </svg>
 
