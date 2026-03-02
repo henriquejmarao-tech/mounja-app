@@ -9,6 +9,8 @@ import { TutorialProvider } from "@/hooks/useTutorial";
 import BottomNav from "./components/BottomNav";
 import TutorialOverlay from "./components/tutorial/TutorialOverlay";
 import TutorialStartDialog from "./components/tutorial/TutorialStartDialog";
+import InstallPrompt from "./components/pwa/InstallPrompt";
+import PwaUpdater from "./components/pwa/PwaUpdater";
 
 // Pages
 import Auth from "./pages/Auth";
@@ -97,12 +99,14 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <PwaUpdater />
       <BrowserRouter>
         <AuthProvider>
           <ApplicationDataProvider>
             <TutorialProvider>
               <div className="max-w-lg mx-auto min-h-screen relative">
                 <AppRoutes />
+                <InstallPrompt />
               </div>
             </TutorialProvider>
           </ApplicationDataProvider>
