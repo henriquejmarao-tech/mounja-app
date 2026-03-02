@@ -1,10 +1,27 @@
-import { ArrowLeft, User, Bell, Shield, HelpCircle, ChevronRight, LogOut, Crown, Sparkles, FileText } from "lucide-react";
+import { useState } from "react";
+import { ArrowLeft, User, Bell, Shield, HelpCircle, ChevronRight, LogOut, Crown, Sparkles, MessageSquare, Star, Send, Bug, Lightbulb, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+
+type FeedbackType = "rating" | "suggestion" | "bug";
+
+const feedbackTypes = [
+  { value: "rating" as FeedbackType, label: "Avaliar", emoji: "⭐", Icon: Star },
+  { value: "suggestion" as FeedbackType, label: "Sugerir", emoji: "💡", Icon: Lightbulb },
+  { value: "bug" as FeedbackType, label: "Reportar erro", emoji: "🐛", Icon: Bug },
+];
 
 const Settings = () => {
   const navigate = useNavigate();
   const { profile, signOut, user } = useAuth();
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [feedbackType, setFeedbackType] = useState<FeedbackType>("rating");
+  const [rating, setRating] = useState(0);
+  const [message, setMessage] = useState("");
+  const [sending, setSending] = useState(false);
 
   const menuItems = [
     { icon: User, label: "Minha Triagem", route: "/triagem", description: "Editar dados da triagem inicial" },
@@ -16,6 +33,38 @@ const Settings = () => {
   const handleLogout = async () => {
     await signOut();
     navigate("/auth");
+  };
+
+  const handleSendFeedback = async () => {
+    if (!user) return;
+    if (!message.trim()) {
+      toast.error("Escreva sua mensagem.");
+      return;
+    }
+    if (message.trim().length > 1000) {
+      toast.error("Mensagem muito longa (máximo 1000 caracteres).");
+      return;
+    }
+    if (feedbackType === "rating" && rating === 0) {
+      toast.error("Selecione uma avaliação.");
+      return;
+    }
+    setSending(true);
+    const { error } = await supabase.from("feedback").insert({
+      user_id: user.id,
+      type: feedbackType,
+      rating: feedbackType === "rating" ? rating : null,
+      message: message.trim(),
+    } as any);
+    if (error) {
+      toast.error("Erro ao enviar. Tente novamente.");
+    } else {
+      toast.success("Obrigado pelo seu feedback! 💚");
+      setShowFeedback(false);
+      setMessage("");
+      setRating(0);
+    }
+    setSending(false);
   };
 
   return (
@@ -43,24 +92,6 @@ const Settings = () => {
       </header>
 
       <div className="px-5 -mt-3 space-y-4">
-        {/* Premium upsell */}
-        <button className="w-full relative overflow-hidden bg-foreground rounded-2xl p-4 text-left text-background flex items-center gap-3 active:scale-[0.98] transition-all duration-300 shadow-elevated">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-warning/10 rounded-full blur-3xl" />
-          <div className="relative flex items-center gap-3 w-full">
-            <div className="w-11 h-11 rounded-xl bg-warning/15 flex items-center justify-center">
-              <Crown className="w-5 h-5 text-warning" />
-            </div>
-            <div className="flex-1">
-              <div className="flex items-center gap-1.5">
-                <p className="font-bold text-sm">Desbloqueie o Premium</p>
-                <Sparkles className="w-3.5 h-3.5 text-warning" />
-              </div>
-              <p className="text-xs opacity-60 mt-0.5">IA personalizada, planos exclusivos e mais</p>
-            </div>
-            <ChevronRight className="w-4 h-4 opacity-40" />
-          </div>
-        </button>
-
         {/* Stats */}
         <div className="grid grid-cols-3 gap-2.5">
           {[
@@ -95,6 +126,21 @@ const Settings = () => {
           ))}
         </div>
 
+        {/* Feedback button */}
+        <button
+          onClick={() => setShowFeedback(true)}
+          className="w-full flex items-center gap-3 bg-card rounded-2xl p-4 shadow-card border border-primary/10 hover:border-primary/20 transition-all active:scale-[0.98]"
+        >
+          <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
+            <MessageSquare className="w-4 h-4 text-primary" />
+          </div>
+          <div className="flex-1 text-left">
+            <span className="text-sm font-semibold block">Dar opinião</span>
+            <span className="text-[10px] text-muted-foreground">Avalie, sugira ou reporte um problema</span>
+          </div>
+          <ChevronRight className="w-4 h-4 text-muted-foreground/40" />
+        </button>
+
         {/* Logout */}
         <button
           onClick={handleLogout}
@@ -104,6 +150,92 @@ const Settings = () => {
           Sair da conta
         </button>
       </div>
+
+      {/* Feedback modal */}
+      {showFeedback && (
+        <div className="fixed inset-0 z-[60] flex items-end justify-center bg-foreground/40 backdrop-blur-sm" onClick={() => setShowFeedback(false)}>
+          <div
+            className="bg-card w-full max-w-lg rounded-t-3xl p-5 pb-8 animate-fade-in-up shadow-elevated"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="font-bold text-lg">Dar opinião</h2>
+              <button onClick={() => setShowFeedback(false)} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                <X className="w-4 h-4 text-muted-foreground" />
+              </button>
+            </div>
+
+            {/* Type selector */}
+            <div className="flex gap-2 mb-5">
+              {feedbackTypes.map((ft) => (
+                <button
+                  key={ft.value}
+                  onClick={() => setFeedbackType(ft.value)}
+                  className={cn(
+                    "flex-1 flex flex-col items-center gap-1.5 py-3 rounded-xl border transition-all text-xs font-semibold",
+                    feedbackType === ft.value
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-muted/50 border-border text-muted-foreground"
+                  )}
+                >
+                  <span className="text-lg">{ft.emoji}</span>
+                  {ft.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Rating stars */}
+            {feedbackType === "rating" && (
+              <div className="mb-4">
+                <p className="text-xs font-semibold text-muted-foreground mb-2">Como está sua experiência?</p>
+                <div className="flex gap-2 justify-center">
+                  {[1, 2, 3, 4, 5].map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => setRating(s)}
+                      className="p-1 transition-transform active:scale-90"
+                    >
+                      <Star className={cn("w-8 h-8 transition-colors", s <= rating ? "fill-warning text-warning" : "text-muted-foreground/30")} />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Message */}
+            <div className="mb-5">
+              <p className="text-xs font-semibold text-muted-foreground mb-1.5">
+                {feedbackType === "rating" ? "Quer contar mais?" : feedbackType === "suggestion" ? "O que podemos melhorar?" : "O que aconteceu?"}
+              </p>
+              <textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder={feedbackType === "bug" ? "Descreva o erro que encontrou..." : "Escreva sua mensagem..."}
+                rows={3}
+                maxLength={1000}
+                className="w-full px-4 py-3 rounded-xl border border-border bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
+              />
+              <p className="text-[10px] text-muted-foreground text-right mt-1">{message.length}/1000</p>
+            </div>
+
+            {/* Send */}
+            <button
+              onClick={handleSendFeedback}
+              disabled={sending || !message.trim()}
+              className="w-full gradient-hero text-primary-foreground font-bold py-4 rounded-2xl flex items-center justify-center gap-2 shadow-elevated disabled:opacity-50"
+            >
+              {sending ? (
+                <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+              ) : (
+                <>
+                  <Send className="w-4 h-4" />
+                  Enviar
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
