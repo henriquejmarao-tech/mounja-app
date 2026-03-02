@@ -11,7 +11,7 @@ const doses = ["2.5 mg", "5 mg", "7.5 mg", "10 mg", "12.5 mg", "15 mg"];
 
 const InjectionForm = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, refreshProfile } = useAuth();
   const [saving, setSaving] = useState(false);
 
   const [injDate, setInjDate] = useState(new Date().toISOString().split("T")[0]);
@@ -34,6 +34,7 @@ const InjectionForm = () => {
     } else {
       // Update profile's current_dose to match latest injection
       await supabase.from("profiles").update({ current_dose: injDose } as any).eq("id", user.id);
+      await refreshProfile();
       toast.success("Aplicação registrada! 💉");
       navigate("/");
     }
