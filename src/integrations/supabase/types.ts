@@ -213,6 +213,7 @@ export type Database = {
           daily_water_ml: number | null
           dietary_restrictions: Json | null
           dose_increase_details: string | null
+          first_login_at: string | null
           goal: string | null
           has_increased_dose: boolean | null
           has_medical_guidance: boolean | null
@@ -229,6 +230,9 @@ export type Database = {
           side_effects_worsening: string | null
           tracking_preference: string | null
           triage_completed: boolean | null
+          tutorial_hints_seen: Json | null
+          tutorial_step: number | null
+          tutorial_version_completed: string | null
           updated_at: string | null
           weekly_workout_goal: number | null
           weekly_workouts: number | null
@@ -248,6 +252,7 @@ export type Database = {
           daily_water_ml?: number | null
           dietary_restrictions?: Json | null
           dose_increase_details?: string | null
+          first_login_at?: string | null
           goal?: string | null
           has_increased_dose?: boolean | null
           has_medical_guidance?: boolean | null
@@ -264,6 +269,9 @@ export type Database = {
           side_effects_worsening?: string | null
           tracking_preference?: string | null
           triage_completed?: boolean | null
+          tutorial_hints_seen?: Json | null
+          tutorial_step?: number | null
+          tutorial_version_completed?: string | null
           updated_at?: string | null
           weekly_workout_goal?: number | null
           weekly_workouts?: number | null
@@ -283,6 +291,7 @@ export type Database = {
           daily_water_ml?: number | null
           dietary_restrictions?: Json | null
           dose_increase_details?: string | null
+          first_login_at?: string | null
           goal?: string | null
           has_increased_dose?: boolean | null
           has_medical_guidance?: boolean | null
@@ -299,6 +308,9 @@ export type Database = {
           side_effects_worsening?: string | null
           tracking_preference?: string | null
           triage_completed?: boolean | null
+          tutorial_hints_seen?: Json | null
+          tutorial_step?: number | null
+          tutorial_version_completed?: string | null
           updated_at?: string | null
           weekly_workout_goal?: number | null
           weekly_workouts?: number | null

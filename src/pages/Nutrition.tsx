@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import ContextualHint from "@/components/tutorial/ContextualHint";
 
 interface TipCard {
   id: string;
@@ -195,8 +196,10 @@ const Nutrition = () => {
           </div>
         ) : (
           <>
+            <ContextualHint id="save-diet" message="Salve sua sugestão para acompanhar no histórico." className="mb-1" />
             {/* AI Diet suggestion button */}
             <button
+              data-tutorial="diet-btn"
               onClick={generateSuggestion}
               disabled={generating}
               className="w-full bg-card rounded-2xl p-4 shadow-card border border-primary/20 flex items-center gap-3 hover:border-primary/40 transition-all animate-fade-in-up active:scale-[0.98]"

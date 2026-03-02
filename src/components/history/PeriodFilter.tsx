@@ -9,7 +9,7 @@ interface PeriodFilterProps {
 }
 
 const PeriodFilter = ({ period, onChange }: PeriodFilterProps) => (
-  <div className="px-5 -mt-3 mb-4 relative z-10">
+  <div data-tutorial="period-filter" className="px-5 -mt-3 mb-4 relative z-10">
     <div className="bg-card rounded-2xl shadow-card border border-border/50 p-1.5 flex gap-1">
       {periodFilters.map((p) => (
         <button

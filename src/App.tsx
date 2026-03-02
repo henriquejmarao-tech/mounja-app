@@ -4,7 +4,10 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
+import { TutorialProvider } from "@/hooks/useTutorial";
 import BottomNav from "./components/BottomNav";
+import TutorialOverlay from "./components/tutorial/TutorialOverlay";
+import TutorialStartDialog from "./components/tutorial/TutorialStartDialog";
 
 // Pages
 import Auth from "./pages/Auth";
@@ -80,6 +83,8 @@ const AppRoutes = () => {
         <Route path="*" element={<NotFound />} />
       </Routes>
       <BottomNav />
+      <TutorialOverlay />
+      <TutorialStartDialog />
     </>
   );
 };
@@ -91,9 +96,11 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
-          <div className="max-w-lg mx-auto min-h-screen relative">
-            <AppRoutes />
-          </div>
+          <TutorialProvider>
+            <div className="max-w-lg mx-auto min-h-screen relative">
+              <AppRoutes />
+            </div>
+          </TutorialProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>

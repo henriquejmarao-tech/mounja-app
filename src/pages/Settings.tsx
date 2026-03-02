@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { ArrowLeft, User, Bell, Shield, HelpCircle, ChevronRight, LogOut, Crown, Sparkles, MessageSquare, Star, Send, Bug, Lightbulb, X } from "lucide-react";
+import { ArrowLeft, User, Bell, Shield, HelpCircle, ChevronRight, LogOut, Crown, Sparkles, MessageSquare, Star, Send, Bug, Lightbulb, X, BookOpen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useTutorial } from "@/hooks/useTutorial";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -17,6 +18,7 @@ const feedbackTypes = [
 const Settings = () => {
   const navigate = useNavigate();
   const { profile, signOut, user } = useAuth();
+  const { setShowStartDialog } = useTutorial();
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedbackType, setFeedbackType] = useState<FeedbackType>("rating");
   const [rating, setRating] = useState(0);
@@ -125,6 +127,21 @@ const Settings = () => {
             </button>
           ))}
         </div>
+
+        {/* Review tutorial button */}
+        <button
+          onClick={() => setShowStartDialog(true)}
+          className="w-full flex items-center gap-3 bg-card rounded-2xl p-4 shadow-card border border-border/50 hover:border-primary/10 transition-all active:scale-[0.98]"
+        >
+          <div className="w-9 h-9 rounded-xl bg-muted/60 flex items-center justify-center">
+            <BookOpen className="w-4 h-4 text-muted-foreground" />
+          </div>
+          <div className="flex-1 text-left">
+            <span className="text-sm font-medium block">Rever tutorial</span>
+            <span className="text-[10px] text-muted-foreground">Veja novamente como usar o app</span>
+          </div>
+          <ChevronRight className="w-4 h-4 text-muted-foreground/40" />
+        </button>
 
         {/* Feedback button */}
         <button
