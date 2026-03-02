@@ -14,6 +14,7 @@ import DoseTimeline from "@/components/history/DoseTimeline";
 import WorkoutsSummary from "@/components/history/WorkoutsSummary";
 import WeeklyNarrative from "@/components/history/WeeklyNarrative";
 import InsightsList, { type Insight } from "@/components/history/InsightsList";
+import SymptomsChart from "@/components/history/SymptomsChart";
 
 const History = () => {
   const navigate = useNavigate();
@@ -325,6 +326,7 @@ const History = () => {
             />
             <WeightChart weightData={weightData} />
             <BodyCompositionChart logs={logs} />
+            <SymptomsChart logs={logs} />
             <WorkoutsSummary workouts={workouts} />
             <DoseTimeline injections={injections} />
             <InsightsList insights={insights} />
