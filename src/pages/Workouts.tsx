@@ -113,7 +113,7 @@ const Workouts = () => {
           <>
             {/* Register workout button */}
             <button
-              onClick={() => navigate("/register?tab=workout")}
+              onClick={() => navigate("/registrar?tab=workout")}
               className="w-full gradient-hero text-primary-foreground font-bold py-4 rounded-2xl flex items-center justify-center gap-2 shadow-elevated animate-fade-in-up"
             >
               <Dumbbell className="w-5 h-5" />
