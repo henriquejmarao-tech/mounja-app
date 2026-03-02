@@ -29,8 +29,14 @@ const InjectionForm = () => {
       user_id: user.id, date: injDate, dose: injDose,
       site: injSite || null, notes: injNotes || null,
     } as any);
-    if (error) toast.error(error.message);
-    else { toast.success("Aplicação registrada! 💉"); navigate("/"); }
+    if (error) {
+      toast.error(error.message);
+    } else {
+      // Update profile's current_dose to match latest injection
+      await supabase.from("profiles").update({ current_dose: injDose } as any).eq("id", user.id);
+      toast.success("Aplicação registrada! 💉");
+      navigate("/");
+    }
     setSaving(false);
   };
 
