@@ -23,7 +23,7 @@ const FULL_STEPS: TutorialStep[] = [
   { id: "register-why", page: "/registrar", title: "Registre todos os dias", description: "Quanto mais você registra, mais preciso o app fica nas recomendações.", targetSelector: "[data-tutorial='register-form']", position: "top" },
   // History
   { id: "history-filter", page: "/historico", title: "Filtre por período", description: "Use 7, 30 ou 90 dias para ver diferentes recortes da sua jornada.", targetSelector: "[data-tutorial='period-filter']", position: "bottom" },
-  { id: "history-charts", page: "/historico", title: "Gráficos e evolução", description: "Acompanhe peso, sintomas e treinos de forma visual.", targetSelector: "[data-tutorial='charts-area']", position: "bottom" },
+  { id: "history-charts", page: "/historico", title: "Gráficos e evolução", description: "Acompanhe peso, sintomas e treinos de forma visual.", targetSelector: "[data-tutorial='charts-area']", position: "top" },
   { id: "history-pdf", page: "/historico", title: "Exporte seu relatório", description: "Gere um PDF completo para compartilhar com seu médico.", targetSelector: "[data-tutorial='export-btn']", position: "bottom" },
   // Nutrition
   { id: "nutrition-ai", page: "/nutricao", title: "Dieta personalizada por IA", description: "Gere uma sugestão de cardápio adaptada aos seus sintomas e objetivos.", targetSelector: "[data-tutorial='diet-btn']", position: "bottom" },
