@@ -69,27 +69,26 @@ const TutorialOverlay = () => {
     if (!targetRect) return { top: "50%", left: "50%", transform: "translate(-50%, -50%)" };
 
     const pos = step.position || "bottom";
-    const maxLeft = Math.max(16, Math.min(targetRect.left, window.innerWidth - 300));
-    const maxW = "calc(100vw - 32px)";
+    // On mobile, always use full-width horizontal positioning
+    const horizontalStyle = { left: 16, right: 16 };
 
     switch (pos) {
       case "bottom": {
         const top = targetRect.bottom + padding + 8;
-        // If tooltip would go off-screen, position it in lower third of viewport
-        if (top > window.innerHeight - 160) {
-          return { bottom: 24, left: 16, right: 16, maxWidth: maxW };
+        if (top > window.innerHeight - 180) {
+          return { bottom: 80, ...horizontalStyle };
         }
-        return { top, left: maxLeft, maxWidth: maxW };
+        return { top, ...horizontalStyle };
       }
       case "top": {
         const bottom = window.innerHeight - targetRect.top + padding + 8;
-        if (bottom > window.innerHeight - 160) {
-          return { top: 24, left: 16, right: 16, maxWidth: maxW };
+        if (bottom > window.innerHeight - 180) {
+          return { top: 24, ...horizontalStyle };
         }
-        return { bottom, left: maxLeft, maxWidth: maxW };
+        return { bottom, ...horizontalStyle };
       }
       default:
-        return { top: targetRect.bottom + padding + 8, left: 16, maxWidth: maxW };
+        return { top: targetRect.bottom + padding + 8, ...horizontalStyle };
     }
   };
 
