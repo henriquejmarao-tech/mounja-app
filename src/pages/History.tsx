@@ -24,6 +24,7 @@ const History = () => {
   const [injections, setInjections] = useState<any[]>([]);
   const [workouts, setWorkouts] = useState<any[]>([]);
   const [insights, setInsights] = useState<Insight[]>([]);
+  const [dietSuggestions, setDietSuggestions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -40,6 +41,11 @@ const History = () => {
       let injQuery = supabase.from("injections").select("*").eq("user_id", user.id).order("date", { ascending: false });
       let workoutsQuery = supabase.from("workouts").select("*").eq("user_id", user.id).order("date", { ascending: false });
       const allLogsQuery = supabase.from("daily_logs").select("*").eq("user_id", user.id).order("date", { ascending: false }).limit(30);
+      let dietQuery = supabase.from("diet_suggestions").select("*").eq("user_id", user.id).order("date", { ascending: false });
+      if (since) {
+        const sinceStr2 = since.toISOString().split("T")[0];
+        dietQuery = dietQuery.gte("date", sinceStr2);
+      }
 
       if (since) {
         const sinceStr = since.toISOString().split("T")[0];
@@ -48,15 +54,17 @@ const History = () => {
         workoutsQuery = workoutsQuery.gte("date", sinceStr);
       }
 
-      const [logsRes, injRes, workoutsRes, allRes] = await Promise.all([logsQuery, injQuery, workoutsQuery, allLogsQuery]);
+      const [logsRes, injRes, workoutsRes, allRes, dietRes] = await Promise.all([logsQuery, injQuery, workoutsQuery, allLogsQuery, dietQuery]);
       const l = (logsRes.data as any[]) || [];
       const inj = (injRes.data as any[]) || [];
       const wk = (workoutsRes.data as any[]) || [];
       const all = (allRes.data as any[]) || [];
+      const diets = (dietRes.data as any[]) || [];
       setLogs(l);
       setInjections(inj);
       setWorkouts(wk);
       setAllLogs(all);
+      setDietSuggestions(diets);
       generateInsights(all, inj);
       setLoading(false);
     };
@@ -108,6 +116,43 @@ const History = () => {
     }
 
     setInsights(generated);
+  };
+
+  const generateWeeklyNarrativePDF = (): string[] => {
+    const narratives: string[] = [];
+    const now2 = new Date();
+    const twLogs = allLogs.filter((l) => (now2.getTime() - new Date(l.date).getTime()) / 86400000 <= 7);
+    const lwLogs = allLogs.filter((l) => {
+      const diff = (now2.getTime() - new Date(l.date).getTime()) / 86400000;
+      return diff > 7 && diff <= 14;
+    });
+    if (twLogs.length < 2) return narratives;
+
+    const twWeights = twLogs.filter((l) => l.weight).map((l) => l.weight);
+    const lwWeights = lwLogs.filter((l) => l.weight).map((l) => l.weight);
+    if (twWeights.length > 0 && lwWeights.length > 0) {
+      const twAvg = twWeights.reduce((a: number, b: number) => a + b, 0) / twWeights.length;
+      const lwAvg = lwWeights.reduce((a: number, b: number) => a + b, 0) / lwWeights.length;
+      const diff = twAvg - lwAvg;
+      if (diff < -0.3) narratives.push(`Peso caiu em média ${Math.abs(diff).toFixed(1)} kg essa semana.`);
+      else if (diff > 0.5) narratives.push(`Peso subiu levemente (${diff.toFixed(1)} kg vs semana passada).`);
+      else narratives.push("Peso se manteve estável essa semana.");
+    }
+
+    const twWorkouts = workouts.filter((w) => (now2.getTime() - new Date(w.date).getTime()) / 86400000 <= 7);
+    if (twWorkouts.length > 0) {
+      const totalMin = twWorkouts.reduce((s: number, w: any) => s + (w.duration_minutes || 0), 0);
+      narratives.push(`${twWorkouts.length} treino(s) essa semana (${totalMin} min).`);
+    }
+
+    const waterLogs = twLogs.filter((l) => l.water_ml);
+    if (waterLogs.length > 0) {
+      const avgW = waterLogs.reduce((s: number, l: any) => s + l.water_ml, 0) / waterLogs.length;
+      if (avgW < 1500) narratives.push(`Média de água: ${Math.round(avgW)}ml/dia — abaixo do recomendado.`);
+      else if (avgW >= 2000) narratives.push("Boa hidratação essa semana.");
+    }
+
+    return narratives;
   };
 
   // PDF export
@@ -176,6 +221,35 @@ const History = () => {
           addLine(`• ${ins.title}`, 10, true, [60, 60, 60]);
           addLine(ins.description, 9, false, [100, 100, 100]);
           addSpacer(2);
+        });
+        addSpacer(6);
+      }
+
+      // Weekly narrative in PDF
+      const narratives = generateWeeklyNarrativePDF();
+      if (narratives.length > 0) {
+        addLine("Narrativa da Semana", 14, true);
+        narratives.forEach((text) => {
+          addLine(text, 9, false, [80, 80, 80]);
+          addSpacer(1);
+        });
+        addSpacer(6);
+      }
+
+      // Diet suggestions in PDF
+      if (dietSuggestions.length > 0) {
+        addLine("Sugestões de Dieta Salvas", 14, true);
+        dietSuggestions.slice(0, 7).forEach((d: any) => {
+          const dateStr = new Date(d.date).toLocaleDateString("pt-BR");
+          addLine(`📅 ${dateStr}`, 10, true, [60, 60, 60]);
+          if (d.breakfast) addLine(`  ☕ Café: ${d.breakfast}`, 8, false, [80, 80, 80]);
+          if (d.lunch) addLine(`  🍽️ Almoço: ${d.lunch}`, 8, false, [80, 80, 80]);
+          if (d.dinner) addLine(`  🌙 Jantar: ${d.dinner}`, 8, false, [80, 80, 80]);
+          if (d.snack) addLine(`  🥤 Lanche: ${d.snack}`, 8, false, [80, 80, 80]);
+          if (d.calories_target || d.protein_target) {
+            addLine(`  Meta: ${d.calories_target || "—"} kcal | ${d.protein_target || "—"}g proteína`, 8, false, [100, 100, 100]);
+          }
+          addSpacer(3);
         });
         addSpacer(6);
       }
