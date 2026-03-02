@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import ContextualHint from "@/components/tutorial/ContextualHint";
 
 interface TipCard {
   id: string;
@@ -111,6 +112,7 @@ const Workouts = () => {
           </div>
         ) : (
           <>
+            <ContextualHint id="register-workout" message="Registrar treino ajuda o app a ajustar intensidade." className="mb-1" />
             {/* Register workout button */}
             <button
               onClick={() => navigate("/registrar?tab=workout")}
@@ -121,7 +123,7 @@ const Workouts = () => {
             </button>
 
             {/* Weekly goal + progress */}
-            <div className="bg-card rounded-2xl p-5 shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: "60ms" }}>
+            <div data-tutorial="workout-goal" className="bg-card rounded-2xl p-5 shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: "60ms" }}>
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <Footprints className="w-4 h-4 text-primary" />
@@ -200,7 +202,7 @@ const Workouts = () => {
             </div>
 
             {/* Tips */}
-            <div className="space-y-3">
+            <div data-tutorial="workout-tips" className="space-y-3">
               {relevantTips.map((tip, i) => (
                 <div key={tip.id} className="bg-card rounded-2xl p-4 shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: `${(i + 4) * 60}ms` }}>
                   <div className="flex items-start gap-3">

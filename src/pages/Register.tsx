@@ -33,7 +33,7 @@ const Register = () => {
 
       {/* 3-tab selector */}
       <div className="px-5 mb-5">
-        <div className="bg-card rounded-2xl shadow-card border border-border/50 p-1.5 flex gap-1">
+        <div data-tutorial="register-tabs" className="bg-card rounded-2xl shadow-card border border-border/50 p-1.5 flex gap-1">
           {tabs.map((t) => (
             <button
               key={t.value}
@@ -50,7 +50,7 @@ const Register = () => {
         </div>
       </div>
 
-      <div className="px-5">
+      <div data-tutorial="register-form" className="px-5">
         {logType === "daily" && <DailyLogForm />}
         {logType === "workout" && <WorkoutForm />}
         {logType === "injection" && <InjectionForm />}

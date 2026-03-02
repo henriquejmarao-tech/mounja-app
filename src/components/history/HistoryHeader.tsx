@@ -20,6 +20,7 @@ const HistoryHeader = ({ showExport, onExport }: HistoryHeaderProps) => {
           </button>
           {showExport && (
             <button
+              data-tutorial="export-btn"
               onClick={onExport}
               className="flex items-center gap-1.5 text-primary-foreground/80 bg-primary-foreground/10 backdrop-blur-sm px-3 py-1.5 rounded-xl border border-primary-foreground/10 text-xs font-semibold"
             >

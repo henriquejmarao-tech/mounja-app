@@ -189,7 +189,7 @@ const Dashboard = () => {
 
       <div className="px-5 -mt-3 space-y-4 relative z-10">
         {/* Block 1: Dose + Next injection */}
-        <div className="bg-card rounded-2xl p-5 shadow-card border border-border/50 animate-fade-in-up">
+        <div data-tutorial="dose-card" className="bg-card rounded-2xl p-5 shadow-card border border-border/50 animate-fade-in-up">
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-[11px] text-muted-foreground font-medium mb-1">Dose atual</p>
@@ -225,7 +225,7 @@ const Dashboard = () => {
         </div>
 
         {/* Block 2: Sugestão de hoje */}
-        <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: "60ms" }}>
+        <div data-tutorial="suggestion-card" className="bg-card rounded-2xl p-4 shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: "60ms" }}>
           <div className="flex items-center gap-2 mb-3">
             <Sparkles className="w-4 h-4 text-primary" />
             <h3 className="font-semibold text-sm">Sugestão de hoje</h3>
@@ -321,6 +321,7 @@ const Dashboard = () => {
 
         {/* Block 5: Register button */}
         <button
+          data-tutorial="register-btn"
           onClick={() => navigate("/registrar")}
           className="w-full gradient-hero text-primary-foreground font-bold py-5 rounded-2xl flex items-center justify-center gap-3 shadow-elevated hover:shadow-glow active:scale-[0.98] transition-all duration-300 animate-fade-in-up text-base"
           style={{ animationDelay: "240ms" }}
