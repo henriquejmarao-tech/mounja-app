@@ -15,7 +15,7 @@ import WorkoutsSummary from "@/components/history/WorkoutsSummary";
 import WeeklyNarrative from "@/components/history/WeeklyNarrative";
 import InsightsList, { type Insight } from "@/components/history/InsightsList";
 import SymptomsChart from "@/components/history/SymptomsChart";
-import DietSuggestionsList from "@/components/history/DietSuggestionsList";
+
 import ContextualHint from "@/components/tutorial/ContextualHint";
 
 const periodDays: Record<Period, number | null> = { "7d": 7, "30d": 30, "90d": 90, Total: null };
@@ -395,7 +395,7 @@ const History = () => {
             <SymptomsChart logs={logs} />
             <WorkoutsSummary workouts={workouts} />
             <DoseTimeline injections={injections} onChanged={fetchData} />
-            <DietSuggestionsList dietSuggestions={dietSuggestions} />
+            
             <InsightsList insights={insights} />
 
             {allLogs.length < 7 && (
