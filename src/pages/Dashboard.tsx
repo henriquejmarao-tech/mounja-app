@@ -7,7 +7,7 @@ import { useTutorial } from "@/hooks/useTutorial";
 import { Settings, Plus, Sparkles, Flame, Utensils, ChevronRight, X, Coffee, Sun, Moon, Cookie } from "lucide-react";
 import { cn } from "@/lib/utils";
 import WorkoutSuggestion from "@/components/dashboard/WorkoutSuggestion";
-import DoseTimeline from "@/components/history/DoseTimeline";
+
 import logoMounja from "@/assets/logo-mounja.png";
 
 const badges = [
@@ -31,7 +31,7 @@ const streakMessages = [
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, profile } = useAuth();
-  const { dose, getLastConfirmedApplication, getApplicationTimeline, recentSymptoms: ssotSymptoms, weeklyWorkoutCount, latestWeight: ssotWeight, loading: ssotLoading, refresh } = useApplicationData();
+  const { dose, getLastConfirmedApplication, recentSymptoms: ssotSymptoms, weeklyWorkoutCount, latestWeight: ssotWeight, loading: ssotLoading } = useApplicationData();
   const { triggerPostTriageTutorial } = useTutorial();
 
   // Trigger tutorial immediately after first triage
@@ -328,10 +328,7 @@ const Dashboard = () => {
           )}
         </div>
 
-        {/* Block 4: Dose Timeline */}
-        <DoseTimeline injections={getApplicationTimeline()} onChanged={refresh} />
-
-        {/* Block 5: Insight */}
+        {/* Block 4: Insight */}
         {insight && (
           <div className="bg-card rounded-2xl px-4 py-3.5 shadow-card border border-border/50 animate-fade-in-up flex items-center gap-3" style={{ animationDelay: "240ms" }}>
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
