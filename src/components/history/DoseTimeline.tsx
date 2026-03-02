@@ -59,7 +59,7 @@ const DoseTimeline = ({ injections }: DoseTimelineProps) => {
                       {inj.site && <span className="ml-2 text-[10px] bg-muted px-1.5 py-0.5 rounded-full">{inj.site}</span>}
                     </p>
                   </div>
-                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex gap-1 shrink-0">
                     <button onClick={() => setEditingInj(inj)} className="p-1.5 rounded-lg hover:bg-muted" aria-label="Editar">
                       <Pencil className="w-3.5 h-3.5 text-muted-foreground" />
                     </button>
