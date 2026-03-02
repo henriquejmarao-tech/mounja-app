@@ -18,10 +18,10 @@ const activityLevels = [
   { value: "moderate", label: "Moderado" },
   { value: "high", label: "Alto" },
 ];
-const weekDays = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
 const sideEffectsList = ["Náusea", "Fadiga", "Dor de cabeça", "Diarreia", "Constipação", "Dor no local", "Azia", "Tontura"];
 const healthConditionsList = ["Diabetes tipo 2", "Pré-diabetes", "Hipotireoidismo", "Hipertensão", "Colesterol alto", "SOP"];
 const dietaryRestrictionsList = ["Vegetariana", "Vegana", "Sem glúten", "Sem lactose", "Low carb", "Sem restrições"];
+const intervalOptions = [7, 10, 14];
 
 const TOTAL_STEPS = 4;
 
@@ -31,19 +31,19 @@ const Triage = () => {
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
 
-  // Step 1: Identification
+  // Step 1: Identification + treatment basics
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [sex, setSex] = useState("");
   const [heightCm, setHeightCm] = useState("");
   const [currentWeight, setCurrentWeight] = useState("");
   const [goal, setGoal] = useState("");
-  const [startDate, setStartDate] = useState("");
   const [currentDose, setCurrentDose] = useState("");
-  const [applicationDay, setApplicationDay] = useState("");
+  const [lastApplicationDate, setLastApplicationDate] = useState("");
+  const [applicationInterval, setApplicationInterval] = useState<number>(7);
+  const [customInterval, setCustomInterval] = useState("");
   const [hasMedicalGuidance, setHasMedicalGuidance] = useState<boolean | null>(null);
   const [medicalSpecialty, setMedicalSpecialty] = useState("");
-  const [lastApplicationDate, setLastApplicationDate] = useState("");
 
   // Step 2: Dose history
   const [hasIncreasedDose, setHasIncreasedDose] = useState<boolean | null>(null);
@@ -70,6 +70,8 @@ const Triage = () => {
   const toggleInArray = (arr: string[], item: string) =>
     arr.includes(item) ? arr.filter((i) => i !== item) : [...arr, item];
 
+  const effectiveInterval = applicationInterval === 0 ? (parseInt(customInterval) || 7) : applicationInterval;
+
   const handleSave = async () => {
     if (!user) return;
     setSaving(true);
@@ -83,9 +85,8 @@ const Triage = () => {
           height_cm: heightCm ? parseFloat(heightCm) : null,
           current_weight: currentWeight ? parseFloat(currentWeight) : null,
           goal,
-          mounjaro_start_date: startDate || null,
           current_dose: currentDose,
-          application_day: applicationDay,
+          application_interval_days: effectiveInterval,
           has_medical_guidance: hasMedicalGuidance,
           medical_specialty: medicalSpecialty || null,
           has_increased_dose: hasIncreasedDose,
@@ -110,7 +111,7 @@ const Triage = () => {
 
       if (error) throw error;
 
-      // Create ONE confirmed injection from triage data (only on first onboarding)
+      // Create confirmed injection from triage
       if (currentDose && lastApplicationDate) {
         const { error: injError } = await supabase.from("injections").insert({
           user_id: user.id,
@@ -119,11 +120,25 @@ const Triage = () => {
           site: null,
           notes: "Registrado via triagem inicial",
         });
-        if (injError) console.error("[Triage] Error creating injection:", injError.message);
+        if (injError) console.error("[Triagem] Error creating injection:", injError.message);
+        else if (import.meta.env.DEV) console.log(`[Triagem] created confirmed application dose = ${currentDose} date = ${lastApplicationDate}`);
+      }
+
+      // Create daily_log with weight from triage
+      if (currentWeight) {
+        const today = new Date().toISOString().split("T")[0];
+        const { error: logError } = await supabase.from("daily_logs").insert({
+          user_id: user.id,
+          date: today,
+          weight: parseFloat(currentWeight),
+        });
+        if (logError) console.error("[Triagem] Error creating daily_log:", logError.message);
+        else if (import.meta.env.DEV) console.log(`[Triagem] created daily_log weight = ${currentWeight}`);
       }
 
       await refreshProfile();
       toast.success("Triagem completa! 🎉");
+      // Navigate to dashboard — tutorial will trigger automatically there
       navigate("/");
     } catch (error: any) {
       toast.error(error.message || "Erro ao salvar triagem.");
@@ -134,7 +149,7 @@ const Triage = () => {
 
   const canAdvance = () => {
     switch (step) {
-      case 0: return name && currentDose && goal;
+      case 0: return name && currentDose && goal && currentWeight && lastApplicationDate;
       case 1: return true;
       case 2: return activityLevel;
       case 3: return true;
@@ -149,10 +164,7 @@ const Triage = () => {
         <span className="text-sm font-bold text-primary">{value}/10</span>
       </div>
       <input
-        type="range"
-        min="0"
-        max="10"
-        value={value}
+        type="range" min="0" max="10" value={value}
         onChange={(e) => onChange(parseInt(e.target.value))}
         className="w-full h-2 bg-muted rounded-full appearance-none cursor-pointer accent-primary"
       />
@@ -162,17 +174,9 @@ const Triage = () => {
   const renderChipSelect = (options: string[], selected: string[], toggle: (item: string) => void) => (
     <div className="flex flex-wrap gap-2">
       {options.map((opt) => (
-        <button
-          key={opt}
-          type="button"
-          onClick={() => toggle(opt)}
-          className={cn(
-            "px-3 py-2 rounded-xl text-xs font-semibold border transition-all duration-200",
-            selected.includes(opt)
-              ? "bg-primary text-primary-foreground border-primary"
-              : "bg-card border-border text-foreground hover:border-primary/30"
-          )}
-        >
+        <button key={opt} type="button" onClick={() => toggle(opt)}
+          className={cn("px-3 py-2 rounded-xl text-xs font-semibold border transition-all duration-200",
+            selected.includes(opt) ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border text-foreground hover:border-primary/30")}>
           {opt}
         </button>
       ))}
@@ -184,8 +188,8 @@ const Triage = () => {
       case 0:
         return (
           <div className="space-y-4 animate-fade-in-up">
-            <h2 className="text-lg font-bold">Identificação e Contexto</h2>
-            <p className="text-xs text-muted-foreground">Vamos conhecer você melhor para personalizar sua experiência.</p>
+            <h2 className="text-lg font-bold">Identificação e Tratamento</h2>
+            <p className="text-xs text-muted-foreground">Vamos conhecer você e seu tratamento atual.</p>
 
             <div>
               <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Nome *</label>
@@ -214,7 +218,7 @@ const Triage = () => {
                 <input type="number" value={heightCm} onChange={(e) => setHeightCm(e.target.value)} placeholder="Ex: 165" className="w-full px-4 py-3 rounded-xl border border-border bg-card text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
               </div>
               <div>
-                <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Peso atual (kg)</label>
+                <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Peso atual (kg) *</label>
                 <input type="number" step="0.1" value={currentWeight} onChange={(e) => setCurrentWeight(e.target.value)} placeholder="Ex: 85.5" className="w-full px-4 py-3 rounded-xl border border-border bg-card text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
               </div>
             </div>
@@ -244,26 +248,28 @@ const Triage = () => {
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Data da última aplicação</label>
+              <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Data da última aplicação *</label>
               <input type="date" value={lastApplicationDate} max={new Date().toISOString().split("T")[0]} onChange={(e) => setLastApplicationDate(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-border bg-card text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
               <p className="text-[10px] text-muted-foreground mt-1">Usada para criar seu primeiro registro de aplicação.</p>
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Data de início do Mounjaro</label>
-              <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-border bg-card text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
-            </div>
-
-            <div>
-              <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Dia da aplicação</label>
+              <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Intervalo entre aplicações (dias)</label>
               <div className="grid grid-cols-4 gap-2">
-                {weekDays.map((d) => (
-                  <button key={d} type="button" onClick={() => setApplicationDay(d)}
-                    className={cn("py-2.5 rounded-xl text-[11px] font-semibold border transition-all", applicationDay === d ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border hover:border-primary/30")}>
-                    {d.slice(0, 3)}
+                {intervalOptions.map((d) => (
+                  <button key={d} type="button" onClick={() => { setApplicationInterval(d); setCustomInterval(""); }}
+                    className={cn("py-3 rounded-xl text-xs font-semibold border transition-all", applicationInterval === d ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border hover:border-primary/30")}>
+                    {d} dias
                   </button>
                 ))}
+                <button type="button" onClick={() => setApplicationInterval(0)}
+                  className={cn("py-3 rounded-xl text-xs font-semibold border transition-all", applicationInterval === 0 ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border hover:border-primary/30")}>
+                  Outro
+                </button>
               </div>
+              {applicationInterval === 0 && (
+                <input type="number" min="1" value={customInterval} onChange={(e) => setCustomInterval(e.target.value)} placeholder="Ex: 21" className="w-full px-4 py-3 rounded-xl border border-border bg-card text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none mt-2" />
+              )}
             </div>
 
             <div>
@@ -410,7 +416,6 @@ const Triage = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
       <header className="px-5 pt-6 pb-4">
         <div className="flex items-center justify-between mb-4">
           {step > 0 ? (
@@ -424,39 +429,28 @@ const Triage = () => {
             {step + 1} de {TOTAL_STEPS}
           </span>
         </div>
-        {/* Progress bar */}
         <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
           <div className="h-full gradient-hero rounded-full transition-all duration-500 ease-out" style={{ width: `${((step + 1) / TOTAL_STEPS) * 100}%` }} />
         </div>
       </header>
 
-      {/* Content */}
       <div className="flex-1 px-5 pb-4 overflow-y-auto">
         {renderStep()}
       </div>
 
-      {/* Footer */}
       <div className="px-5 pb-8 pt-2">
         {step < TOTAL_STEPS - 1 ? (
-          <button
-            onClick={() => setStep(step + 1)}
-            disabled={!canAdvance()}
-            className="w-full gradient-hero text-primary-foreground font-bold py-4 rounded-2xl flex items-center justify-center gap-2 shadow-elevated hover:shadow-glow active:scale-[0.98] transition-all duration-300 disabled:opacity-50"
-          >
+          <button onClick={() => setStep(step + 1)} disabled={!canAdvance()}
+            className="w-full gradient-hero text-primary-foreground font-bold py-4 rounded-2xl flex items-center justify-center gap-2 shadow-elevated hover:shadow-glow active:scale-[0.98] transition-all duration-300 disabled:opacity-50">
             Continuar <ArrowRight className="w-5 h-5" />
           </button>
         ) : (
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="w-full gradient-hero text-primary-foreground font-bold py-4 rounded-2xl flex items-center justify-center gap-2 shadow-elevated hover:shadow-glow active:scale-[0.98] transition-all duration-300 disabled:opacity-50"
-          >
+          <button onClick={handleSave} disabled={saving}
+            className="w-full gradient-hero text-primary-foreground font-bold py-4 rounded-2xl flex items-center justify-center gap-2 shadow-elevated hover:shadow-glow active:scale-[0.98] transition-all duration-300 disabled:opacity-50">
             {saving ? (
               <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
             ) : (
-              <>
-                Finalizar Triagem <Check className="w-5 h-5" />
-              </>
+              <>Finalizar Triagem <Check className="w-5 h-5" /></>
             )}
           </button>
         )}
