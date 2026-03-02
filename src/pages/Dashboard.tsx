@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { Settings, Plus, Sparkles, Flame, Award, Dumbbell, Utensils } from "lucide-react";
+import { Settings, Plus, Sparkles, Flame, Utensils } from "lucide-react";
 import { cn } from "@/lib/utils";
+import WorkoutSuggestion from "@/components/dashboard/WorkoutSuggestion";
 
 const badges = [
   { id: "first", label: "Primeiro registro", emoji: "🌱", threshold: 1 },
@@ -35,6 +36,8 @@ const Dashboard = () => {
   const [recentSymptoms, setRecentSymptoms] = useState<any>(null);
   const [insight, setInsight] = useState<string | null>(null);
   const [savedDiet, setSavedDiet] = useState<any>(null);
+  const [todayWorkout, setTodayWorkout] = useState<{ type: string; duration: number } | null>(null);
+  const [restDayDismissed, setRestDayDismissed] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -43,22 +46,25 @@ const Dashboard = () => {
       const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString().split("T")[0];
       const today = new Date().toISOString().split("T")[0];
 
-      const [injRes, logsRes, workoutsRes, dietRes] = await Promise.all([
+      const [injRes, logsRes, workoutsRes, dietRes, todayWorkoutRes] = await Promise.all([
         supabase.from("injections").select("*").eq("user_id", user.id).order("date", { ascending: false }).limit(1),
         supabase.from("daily_logs").select("date, weight, symptom_nausea, symptom_fatigue, symptom_headache, mood, energy").eq("user_id", user.id).order("date", { ascending: false }).limit(60),
         supabase.from("workouts" as any).select("*").eq("user_id", user.id).gte("date", weekAgo),
         supabase.from("diet_suggestions" as any).select("breakfast, lunch, dinner, context_note").eq("user_id", user.id).eq("date", today).limit(1),
+        supabase.from("workouts" as any).select("workout_type, duration_minutes").eq("user_id", user.id).eq("date", today).limit(1),
       ]);
 
       const inj = (injRes.data as any[]) || [];
       const logs = (logsRes.data as any[]) || [];
       const workouts = (workoutsRes.data as any[]) || [];
       const diet = (dietRes.data as any[]) || [];
+      const todayW = (todayWorkoutRes.data as any[]) || [];
 
       setLastInjection(inj[0] || null);
       setTotalLogs(logs.length);
       setWeeklyWorkouts(workouts.length);
       if (diet[0]) setSavedDiet(diet[0]);
+      if (todayW[0]) setTodayWorkout({ type: todayW[0].workout_type, duration: todayW[0].duration_minutes });
 
       const wLog = logs.find((l) => l.weight);
       setLatestWeight(wLog?.weight ?? null);
@@ -85,11 +91,10 @@ const Dashboard = () => {
       }
       setStreak(s);
 
-      // Generate insight (only if 7+ days of data)
+      // Generate insight
       if (logs.length >= 7) {
         const injDate = inj[0]?.date;
         if (injDate) {
-          const daysSinceInj = Math.floor((Date.now() - new Date(injDate + "T12:00:00").getTime()) / 86400000);
           const postInjLogs = logs.filter((l: any) => {
             const ld = new Date(l.date + "T12:00:00");
             const id = new Date(injDate + "T12:00:00");
@@ -138,30 +143,19 @@ const Dashboard = () => {
     return msg?.message || streakMessages[0].message;
   };
 
-  // Compute today's suggestion based on context
-  const getTodaySuggestion = () => {
+  // Diet suggestion text
+  const getDietSuggestion = () => {
     const isPostInjection = daysUntilNext !== null && (daysUntilNext >= 6 || daysUntilNext === 0);
     const hasHighNausea = recentSymptoms?.nausea > 3;
-    const hasHighFatigue = recentSymptoms?.fatigue > 3;
-
-    let diet = "Priorize proteínas e vegetais hoje.";
-    let workout = `Treino sugerido: ${weeklyWorkouts < weeklyWorkoutGoal ? "sim ✅" : "descanso merecido 🧘"}`;
-
-    if (isPostInjection) {
-      diet = "Dia pós-aplicação: prefira refeições leves e em porções menores.";
-      workout = "Prefira uma caminhada leve ou alongamento hoje.";
-    } else if (hasHighNausea) {
-      diet = "Com náusea recente, tente alimentos frios e secos.";
-    } else if (hasHighFatigue) {
-      workout = "Cansaço recente detectado. Um dia leve faz bem.";
-    }
-
-    return { diet, workout };
+    if (isPostInjection) return "Dia pós-aplicação: prefira refeições leves e em porções menores.";
+    if (hasHighNausea) return "Com náusea recente, tente alimentos frios e secos.";
+    return "Priorize proteínas e vegetais hoje.";
   };
 
-  const suggestion = getTodaySuggestion();
   const nextBadge = badges.find((b) => streak < b.threshold);
   const earnedBadges = badges.filter((b) => streak >= b.threshold);
+
+  const handleRestDay = () => setRestDayDismissed(true);
 
   if (loading) {
     return (
@@ -235,32 +229,39 @@ const Dashboard = () => {
             <Sparkles className="w-4 h-4 text-primary" />
             <h3 className="font-semibold text-sm">Sugestão de hoje</h3>
           </div>
+
+          {/* Diet row */}
           {savedDiet ? (
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               {savedDiet.context_note && (
                 <p className="text-[10px] text-primary font-medium mb-1">{savedDiet.context_note}</p>
               )}
               <div className="flex items-start gap-2.5 bg-muted/50 rounded-xl px-3 py-2.5">
                 <Utensils className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
-                <p className="text-xs text-foreground leading-relaxed line-clamp-2">☕ {savedDiet.breakfast}{savedDiet.lunch ? ` · 🍽️ ${savedDiet.lunch}` : ""}</p>
-              </div>
-              <div className="flex items-start gap-2.5 bg-muted/50 rounded-xl px-3 py-2.5">
-                <Dumbbell className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
-                <p className="text-xs text-foreground leading-relaxed">{suggestion.workout}</p>
+                <p className="text-xs text-foreground leading-relaxed line-clamp-2">
+                  {savedDiet.breakfast}{savedDiet.lunch ? ` · ${savedDiet.lunch}` : ""}
+                </p>
               </div>
             </div>
           ) : (
-            <div className="space-y-2">
-              <div className="flex items-start gap-2.5 bg-muted/50 rounded-xl px-3 py-2.5">
-                <Utensils className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
-                <p className="text-xs text-foreground leading-relaxed">{suggestion.diet}</p>
-              </div>
-              <div className="flex items-start gap-2.5 bg-muted/50 rounded-xl px-3 py-2.5">
-                <Dumbbell className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
-                <p className="text-xs text-foreground leading-relaxed">{suggestion.workout}</p>
-              </div>
+            <div className="flex items-start gap-2.5 bg-muted/50 rounded-xl px-3 py-2.5 mb-2.5">
+              <Utensils className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
+              <p className="text-xs text-foreground leading-relaxed">{getDietSuggestion()}</p>
             </div>
           )}
+
+          {/* Workout suggestion - structured */}
+          <div className="mt-2.5">
+            <WorkoutSuggestion
+              weeklyWorkouts={weeklyWorkouts}
+              weeklyWorkoutGoal={weeklyWorkoutGoal}
+              recentSymptoms={recentSymptoms}
+              daysUntilNext={daysUntilNext}
+              todayWorkout={todayWorkout}
+              onRestDay={handleRestDay}
+              restDayDismissed={restDayDismissed}
+            />
+          </div>
         </div>
 
         {/* Block 3: Streak + badges */}
@@ -303,7 +304,7 @@ const Dashboard = () => {
           )}
         </div>
 
-        {/* Block 4: Insight (only if data) */}
+        {/* Block 4: Insight */}
         {insight && (
           <div className="bg-card rounded-2xl px-4 py-3.5 shadow-card border border-border/50 animate-fade-in-up flex items-center gap-3" style={{ animationDelay: "180ms" }}>
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">

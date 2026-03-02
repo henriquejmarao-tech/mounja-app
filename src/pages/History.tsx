@@ -15,6 +15,16 @@ import WorkoutsSummary from "@/components/history/WorkoutsSummary";
 import WeeklyNarrative from "@/components/history/WeeklyNarrative";
 import InsightsList, { type Insight } from "@/components/history/InsightsList";
 import SymptomsChart from "@/components/history/SymptomsChart";
+import DietSuggestionsList from "@/components/history/DietSuggestionsList";
+
+const periodDays: Record<Period, number | null> = { "7d": 7, "30d": 30, "90d": 90, Total: null };
+
+const sanitize = (t: string | null): string => {
+  if (!t) return "";
+  return t.replace(/Ã©/g, "é").replace(/Ã£/g, "ã").replace(/Ã§/g, "ç")
+    .replace(/Ã³/g, "ó").replace(/Ãº/g, "ú").replace(/Ã¡/g, "á")
+    .replace(/Ã­/g, "í").replace(/Ãª/g, "ê").replace(/Ã´/g, "ô").trim();
+};
 
 const History = () => {
   const navigate = useNavigate();
@@ -33,26 +43,21 @@ const History = () => {
     const fetchData = async () => {
       setLoading(true);
       const now = new Date();
-      let since: Date | null = null;
-      if (period === "7d") since = new Date(now.getTime() - 7 * 86400000);
-      else if (period === "30d") since = new Date(now.getTime() - 30 * 86400000);
-      else if (period === "90d") since = new Date(now.getTime() - 90 * 86400000);
+      const days = periodDays[period];
+      const since = days ? new Date(now.getTime() - days * 86400000) : null;
 
       let logsQuery = supabase.from("daily_logs").select("*").eq("user_id", user.id).order("date", { ascending: true });
       let injQuery = supabase.from("injections").select("*").eq("user_id", user.id).order("date", { ascending: false });
       let workoutsQuery = supabase.from("workouts").select("*").eq("user_id", user.id).order("date", { ascending: false });
       const allLogsQuery = supabase.from("daily_logs").select("*").eq("user_id", user.id).order("date", { ascending: false }).limit(30);
       let dietQuery = supabase.from("diet_suggestions").select("*").eq("user_id", user.id).order("date", { ascending: false });
-      if (since) {
-        const sinceStr2 = since.toISOString().split("T")[0];
-        dietQuery = dietQuery.gte("date", sinceStr2);
-      }
 
       if (since) {
         const sinceStr = since.toISOString().split("T")[0];
         logsQuery = logsQuery.gte("date", sinceStr);
         injQuery = injQuery.gte("date", sinceStr);
         workoutsQuery = workoutsQuery.gte("date", sinceStr);
+        dietQuery = dietQuery.gte("date", sinceStr);
       }
 
       const [logsRes, injRes, workoutsRes, allRes, dietRes] = await Promise.all([logsQuery, injQuery, workoutsQuery, allLogsQuery, dietQuery]);
@@ -80,9 +85,9 @@ const History = () => {
       const recent = weights.slice(0, 3);
       const trend = recent[0] - recent[recent.length - 1];
       if (trend < 0) {
-        generated.push({ title: "Peso em queda", description: `Você perdeu ${Math.abs(trend).toFixed(1)} kg nos últimos registros. Continue assim!`, type: "positive" });
+        generated.push({ title: "Peso em queda", description: `Voce perdeu ${Math.abs(trend).toFixed(1)} kg nos ultimos registros. Continue assim!`, type: "positive" });
       } else if (trend > 1) {
-        generated.push({ title: "Peso subindo", description: `Ganho de ${trend.toFixed(1)} kg recentemente. Revise alimentação e hidratação.`, type: "warning" });
+        generated.push({ title: "Peso subindo", description: `Ganho de ${trend.toFixed(1)} kg recentemente. Revise alimentacao e hidratacao.`, type: "warning" });
       }
     }
 
@@ -94,7 +99,7 @@ const History = () => {
       });
       const avgNausea = logsAfterInj.length ? logsAfterInj.reduce((s: number, l: any) => s + (l.symptom_nausea || 0), 0) / logsAfterInj.length : 0;
       if (avgNausea >= 4) {
-        generated.push({ title: "Náusea pós-aplicação", description: "Você costuma sentir mais náusea nas 48h após a aplicação. Tente refeições leves nesse período.", type: "info" });
+        generated.push({ title: "Nausea pos-aplicacao", description: "Voce costuma sentir mais nausea nas 48h apos a aplicacao. Tente refeicoes leves nesse periodo.", type: "info" });
       }
     }
 
@@ -104,7 +109,7 @@ const History = () => {
       const avgE1 = logsWithWorkout.reduce((s: number, l: any) => s + (l.energy || 0), 0) / logsWithWorkout.length;
       const avgE2 = logsWithoutWorkout.reduce((s: number, l: any) => s + (l.energy || 0), 0) / logsWithoutWorkout.length;
       if (avgE1 > avgE2 + 1) {
-        generated.push({ title: "Treino aumenta sua energia", description: `Nos dias que você treina, sua energia é ${avgE1.toFixed(1)} vs ${avgE2.toFixed(1)} sem treino.`, type: "positive" });
+        generated.push({ title: "Treino aumenta sua energia", description: `Nos dias que voce treina, sua energia e ${avgE1.toFixed(1)} vs ${avgE2.toFixed(1)} sem treino.`, type: "positive" });
       }
     }
 
@@ -112,51 +117,14 @@ const History = () => {
     if (waterLogs.length >= 3) {
       const avgW = waterLogs.reduce((s: number, l: any) => s + l.water_ml, 0) / waterLogs.length;
       if (avgW < 1500) {
-        generated.push({ title: "Hidratação baixa", description: `Sua média de água é ${Math.round(avgW)}ml/dia. Tente chegar a 2L — ajuda a reduzir efeitos colaterais.`, type: "warning" });
+        generated.push({ title: "Hidratacao baixa", description: `Sua media de agua e ${Math.round(avgW)}ml/dia. Tente chegar a 2L.`, type: "warning" });
       }
     }
 
     setInsights(generated);
   };
 
-  const generateWeeklyNarrativePDF = (): string[] => {
-    const narratives: string[] = [];
-    const now2 = new Date();
-    const twLogs = allLogs.filter((l) => (now2.getTime() - new Date(l.date).getTime()) / 86400000 <= 7);
-    const lwLogs = allLogs.filter((l) => {
-      const diff = (now2.getTime() - new Date(l.date).getTime()) / 86400000;
-      return diff > 7 && diff <= 14;
-    });
-    if (twLogs.length < 2) return narratives;
-
-    const twWeights = twLogs.filter((l) => l.weight).map((l) => l.weight);
-    const lwWeights = lwLogs.filter((l) => l.weight).map((l) => l.weight);
-    if (twWeights.length > 0 && lwWeights.length > 0) {
-      const twAvg = twWeights.reduce((a: number, b: number) => a + b, 0) / twWeights.length;
-      const lwAvg = lwWeights.reduce((a: number, b: number) => a + b, 0) / lwWeights.length;
-      const diff = twAvg - lwAvg;
-      if (diff < -0.3) narratives.push(`Peso caiu em média ${Math.abs(diff).toFixed(1)} kg essa semana.`);
-      else if (diff > 0.5) narratives.push(`Peso subiu levemente (${diff.toFixed(1)} kg vs semana passada).`);
-      else narratives.push("Peso se manteve estável essa semana.");
-    }
-
-    const twWorkouts = workouts.filter((w) => (now2.getTime() - new Date(w.date).getTime()) / 86400000 <= 7);
-    if (twWorkouts.length > 0) {
-      const totalMin = twWorkouts.reduce((s: number, w: any) => s + (w.duration_minutes || 0), 0);
-      narratives.push(`${twWorkouts.length} treino(s) essa semana (${totalMin} min).`);
-    }
-
-    const waterLogs = twLogs.filter((l) => l.water_ml);
-    if (waterLogs.length > 0) {
-      const avgW = waterLogs.reduce((s: number, l: any) => s + l.water_ml, 0) / waterLogs.length;
-      if (avgW < 1500) narratives.push(`Média de água: ${Math.round(avgW)}ml/dia — abaixo do recomendado.`);
-      else if (avgW >= 2000) narratives.push("Boa hidratação essa semana.");
-    }
-
-    return narratives;
-  };
-
-  // PDF export
+  // ---- PDF Export (clinical format) ----
   const handleExportPDF = async () => {
     try {
       const { default: jsPDF } = await import("jspdf");
@@ -164,104 +132,199 @@ const History = () => {
       const pageW = doc.internal.pageSize.getWidth();
       let y = 20;
 
+      const checkPage = (needed: number) => { if (y + needed > 275) { doc.addPage(); y = 20; } };
+
       const addLine = (text: string, size: number, bold = false, color: [number, number, number] = [30, 40, 45]) => {
+        const clean = sanitize(text);
         doc.setFontSize(size);
         doc.setFont("helvetica", bold ? "bold" : "normal");
         doc.setTextColor(...color);
-        const lines = doc.splitTextToSize(text, pageW - 40);
-        if (y + lines.length * (size * 0.5) > 270) { doc.addPage(); y = 20; }
+        const lines = doc.splitTextToSize(clean, pageW - 40);
+        checkPage(lines.length * (size * 0.5));
         doc.text(lines, 20, y);
         y += lines.length * (size * 0.45) + 3;
       };
       const addSpacer = (h = 5) => { y += h; };
+      const addDivider = () => { doc.setDrawColor(220, 220, 220); doc.line(20, y, pageW - 20, y); addSpacer(6); };
 
-      addLine("Relatório da Jornada", 18, true, [45, 120, 95]);
-      addLine(profile?.name || "Usuário", 11, false, [120, 120, 120]);
-      addLine(`Gerado em ${new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })}`, 9, false, [150, 150, 150]);
-      addSpacer(8);
-      doc.setDrawColor(220, 220, 220);
-      doc.line(20, y, pageW - 20, y);
-      addSpacer(8);
+      // Period calculation
+      const days = periodDays[period];
+      const endDate = new Date();
+      const startDate = days ? new Date(endDate.getTime() - days * 86400000) : (logs.length > 0 ? new Date(logs[0].date + "T12:00:00") : endDate);
+      const fmtDate = (d: Date) => d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
+      const periodLabel = days ? `Ultimos ${days} dias` : "Periodo total";
 
-      addLine("Resumo", 14, true);
+      // ---- HEADER ----
+      addLine("Relatorio da Jornada", 18, true, [45, 120, 95]);
+      addLine(profile?.name || "Usuario", 11, false, [80, 80, 80]);
+      addLine(`Data de geracao: ${fmtDate(endDate)}`, 9, false, [130, 130, 130]);
+      addLine(`${periodLabel}: ${fmtDate(startDate)} ate ${fmtDate(endDate)}`, 9, false, [130, 130, 130]);
+      addSpacer(4);
+      addDivider();
+
+      // ---- 1. RESUMO DA JORNADA ----
+      addLine("1. Resumo da Jornada", 13, true, [45, 120, 95]);
+      addSpacer(2);
       if (initialWeight) addLine(`Peso inicial: ${initialWeight} kg`, 10);
       if (currentWeight) addLine(`Peso atual: ${currentWeight} kg`, 10);
-      if (totalLost !== null && totalLost > 0) addLine(`Total perdido: ${totalLost.toFixed(1)} kg`, 10, true, [45, 120, 95]);
+      if (totalLost !== null && totalLost !== 0) {
+        const pct = initialWeight ? ((totalLost / initialWeight) * 100).toFixed(1) : null;
+        const sign = totalLost > 0 ? "-" : "+";
+        addLine(`Variacao: ${sign}${Math.abs(totalLost).toFixed(1)} kg${pct ? ` (${sign}${Math.abs(Number(pct))}%)` : ""}`, 10, true, totalLost > 0 ? [45, 120, 95] : [180, 80, 60]);
+      }
       if (profile?.current_dose) addLine(`Dose atual: ${profile.current_dose}`, 10);
-      addSpacer(6);
+      if (!initialWeight && !currentWeight) addLine("Dados insuficientes no periodo selecionado.", 9, false, [150, 150, 150]);
+      addSpacer(4);
+      addDivider();
 
+      // ---- 2. EVOLUCAO DO PESO ----
       const wLogs = logs.filter((l) => l.weight);
-      if (wLogs.length > 0) {
-        addLine("Evolução do Peso", 14, true);
+      if (wLogs.length > 1) {
+        addLine("2. Evolucao do Peso", 13, true, [45, 120, 95]);
+        addSpacer(2);
         wLogs.forEach((l: any) => {
-          addLine(`${new Date(l.date).toLocaleDateString("pt-BR")}  —  ${l.weight} kg`, 9, false, [80, 80, 80]);
+          addLine(`${fmtDate(new Date(l.date + "T12:00:00"))}  --  ${l.weight} kg`, 9, false, [80, 80, 80]);
         });
-        addSpacer(6);
+        addSpacer(4);
+        addDivider();
       }
 
+      // ---- 3. EVOLUCAO DE SINTOMAS ----
+      const symptomLogs = logs.filter((l) => l.symptom_nausea !== null || l.symptom_fatigue !== null || l.symptom_headache !== null);
+      if (symptomLogs.length > 1) {
+        addLine("3. Evolucao de Sintomas", 13, true, [45, 120, 95]);
+        addSpacer(2);
+        addLine("Data             Nausea   Fadiga   Dor de cabeca", 8, true, [100, 100, 100]);
+        symptomLogs.forEach((l: any) => {
+          const d = fmtDate(new Date(l.date + "T12:00:00"));
+          addLine(`${d}       ${l.symptom_nausea ?? "-"}        ${l.symptom_fatigue ?? "-"}        ${l.symptom_headache ?? "-"}`, 8, false, [80, 80, 80]);
+        });
+        addSpacer(4);
+        addDivider();
+      }
+
+      // ---- 4. TREINOS NO PERIODO ----
       if (workouts.length > 0) {
-        addLine("Treinos no Período", 14, true);
+        addLine("4. Treinos no Periodo", 13, true, [45, 120, 95]);
+        addSpacer(2);
+        const totalMin = workouts.reduce((s: number, w: any) => s + (w.duration_minutes || 0), 0);
+        addLine(`Total: ${workouts.length} treino(s) | ${totalMin} minutos`, 10, true, [60, 60, 60]);
+        addSpacer(2);
         workouts.forEach((w: any) => {
-          addLine(`${new Date(w.date).toLocaleDateString("pt-BR")}  —  ${w.workout_type} (${w.duration_minutes}min, ${w.intensity})`, 9, false, [80, 80, 80]);
+          addLine(`${fmtDate(new Date(w.date + "T12:00:00"))}  --  ${w.workout_type} (${w.duration_minutes}min, ${w.intensity})`, 9, false, [80, 80, 80]);
         });
-        addSpacer(6);
+        addSpacer(4);
+        addDivider();
       }
 
+      // ---- 5. APLICACOES NO PERIODO ----
       if (injections.length > 0) {
-        addLine("Histórico de Aplicações", 14, true);
+        addLine("5. Aplicacoes no Periodo", 13, true, [45, 120, 95]);
+        addSpacer(2);
         injections.forEach((inj: any) => {
-          const dateStr = new Date(inj.date).toLocaleDateString("pt-BR");
-          addLine(`${dateStr}  —  ${inj.dose}${inj.site ? ` (${inj.site})` : ""}`, 9, false, [80, 80, 80]);
+          addLine(`${fmtDate(new Date(inj.date + "T12:00:00"))}  --  ${inj.dose}${inj.site ? ` (${inj.site})` : ""}`, 9, false, [80, 80, 80]);
         });
-        addSpacer(6);
+        if (injections.length >= 2) {
+          const dates = injections.map((i) => new Date(i.date + "T12:00:00").getTime()).sort((a, b) => a - b);
+          const intervals: number[] = [];
+          for (let i = 1; i < dates.length; i++) intervals.push(Math.round((dates[i] - dates[i - 1]) / 86400000));
+          const avg = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+          addLine(`Intervalo medio entre aplicacoes: ${avg.toFixed(0)} dias`, 9, true, [60, 60, 60]);
+        }
+        addSpacer(4);
+        addDivider();
       }
 
-      if (insights.length > 0) {
-        addLine("Insights Detectados", 14, true);
-        insights.forEach((ins) => {
-          addLine(`• ${ins.title}`, 10, true, [60, 60, 60]);
-          addLine(ins.description, 9, false, [100, 100, 100]);
+      // ---- 6. COMPOSICAO CORPORAL ----
+      const bodyLogs = logs.filter((l) => l.waist_cm || l.hip_cm || l.body_fat_pct);
+      if (bodyLogs.length > 0) {
+        addLine("6. Composicao Corporal", 13, true, [45, 120, 95]);
+        addSpacer(2);
+        const first = bodyLogs[0];
+        const last = bodyLogs[bodyLogs.length - 1];
+        if (first.body_fat_pct && last.body_fat_pct) {
+          const diff = last.body_fat_pct - first.body_fat_pct;
+          addLine(`Gordura corporal: ${first.body_fat_pct}% -> ${last.body_fat_pct}% (${diff > 0 ? "+" : ""}${diff.toFixed(1)}%)`, 10, false, [80, 80, 80]);
+        }
+        if (first.waist_cm && last.waist_cm) {
+          const diff = last.waist_cm - first.waist_cm;
+          addLine(`Cintura: ${first.waist_cm} -> ${last.waist_cm} cm (${diff > 0 ? "+" : ""}${diff.toFixed(1)} cm)`, 10, false, [80, 80, 80]);
+        }
+        addSpacer(4);
+        addDivider();
+      }
+
+      // ---- 7. SUGESTOES DE DIETA ----
+      if (dietSuggestions.length > 0) {
+        addLine("7. Sugestoes de Dieta Salvas", 13, true, [45, 120, 95]);
+        addSpacer(2);
+        dietSuggestions.slice(0, 10).forEach((d: any) => {
+          addLine(fmtDate(new Date(d.date + "T12:00:00")), 10, true, [60, 60, 60]);
+          if (d.breakfast) addLine(`  Cafe: ${sanitize(d.breakfast)}`, 8, false, [80, 80, 80]);
+          if (d.lunch) addLine(`  Almoco: ${sanitize(d.lunch)}`, 8, false, [80, 80, 80]);
+          if (d.dinner) addLine(`  Jantar: ${sanitize(d.dinner)}`, 8, false, [80, 80, 80]);
+          if (d.snack) addLine(`  Lanche: ${sanitize(d.snack)}`, 8, false, [80, 80, 80]);
+          if (d.calories_target || d.protein_target) {
+            addLine(`  Meta: ${d.calories_target || "--"} kcal | ${d.protein_target || "--"}g proteina`, 8, true, [100, 100, 100]);
+          }
           addSpacer(2);
         });
-        addSpacer(6);
+        addSpacer(4);
+        addDivider();
       }
 
-      // Weekly narrative in PDF
-      const narratives = generateWeeklyNarrativePDF();
-      if (narratives.length > 0) {
-        addLine("Narrativa da Semana", 14, true);
-        narratives.forEach((text) => {
-          addLine(text, 9, false, [80, 80, 80]);
-          addSpacer(1);
+      // ---- 8. COMPARACAO COM PERIODO ANTERIOR ----
+      if (days && logs.length >= 3) {
+        const prevStart = new Date(startDate.getTime() - days * 86400000);
+        const prevEnd = startDate;
+        // Fetch prev period data inline is complex; use allLogs as proxy
+        const prevLogs = allLogs.filter((l) => {
+          const d = new Date(l.date + "T12:00:00");
+          return d >= prevStart && d < prevEnd;
         });
-        addSpacer(6);
-      }
+        if (prevLogs.length >= 2) {
+          addLine("8. Comparacao com Periodo Anterior", 13, true, [45, 120, 95]);
+          addSpacer(2);
 
-      // Diet suggestions in PDF
-      if (dietSuggestions.length > 0) {
-        addLine("Sugestões de Dieta Salvas", 14, true);
-        dietSuggestions.slice(0, 7).forEach((d: any) => {
-          const dateStr = new Date(d.date).toLocaleDateString("pt-BR");
-          addLine(`📅 ${dateStr}`, 10, true, [60, 60, 60]);
-          if (d.breakfast) addLine(`  ☕ Café: ${d.breakfast}`, 8, false, [80, 80, 80]);
-          if (d.lunch) addLine(`  🍽️ Almoço: ${d.lunch}`, 8, false, [80, 80, 80]);
-          if (d.dinner) addLine(`  🌙 Jantar: ${d.dinner}`, 8, false, [80, 80, 80]);
-          if (d.snack) addLine(`  🥤 Lanche: ${d.snack}`, 8, false, [80, 80, 80]);
-          if (d.calories_target || d.protein_target) {
-            addLine(`  Meta: ${d.calories_target || "—"} kcal | ${d.protein_target || "—"}g proteína`, 8, false, [100, 100, 100]);
+          const currWeights = logs.filter((l) => l.weight).map((l) => l.weight);
+          const prevWeights = prevLogs.filter((l) => l.weight).map((l) => l.weight);
+          if (currWeights.length && prevWeights.length) {
+            const currAvg = currWeights.reduce((a: number, b: number) => a + b, 0) / currWeights.length;
+            const prevAvg = prevWeights.reduce((a: number, b: number) => a + b, 0) / prevWeights.length;
+            addLine(`Peso medio: ${prevAvg.toFixed(1)} kg -> ${currAvg.toFixed(1)} kg`, 9, false, [80, 80, 80]);
           }
-          addSpacer(3);
-        });
-        addSpacer(6);
+
+          // Workout frequency
+          const prevWorkouts = workouts.filter((w) => {
+            const d = new Date(w.date + "T12:00:00");
+            return d >= prevStart && d < prevEnd;
+          });
+          const currWk = workouts.filter((w) => {
+            const d = new Date(w.date + "T12:00:00");
+            return d >= startDate && d <= endDate;
+          });
+          addLine(`Treinos: ${prevWorkouts.length} -> ${currWk.length}`, 9, false, [80, 80, 80]);
+
+          // Symptoms avg
+          const avgSx = (arr: any[]) => arr.length ? arr.reduce((s: number, l: any) => s + (l.symptom_nausea || 0) + (l.symptom_fatigue || 0) + (l.symptom_headache || 0), 0) / (arr.length * 3) : null;
+          const prevSx = avgSx(prevLogs);
+          const currSx = avgSx(logs);
+          if (prevSx !== null && currSx !== null) {
+            addLine(`Sintomas (media): ${prevSx.toFixed(1)} -> ${currSx.toFixed(1)}`, 9, false, [80, 80, 80]);
+          }
+
+          addSpacer(4);
+          addDivider();
+        }
       }
 
-      doc.setDrawColor(220, 220, 220);
-      doc.line(20, y, pageW - 20, y);
-      addSpacer(4);
-      addLine("Este relatório é de caráter informativo e educacional. Não substitui acompanhamento médico.", 7, false, [160, 160, 160]);
+      // ---- FOOTER ----
+      checkPage(20);
+      addLine("Este relatorio e de carater informativo e educacional.", 7, false, [160, 160, 160]);
+      addLine("Nao substitui acompanhamento medico profissional.", 7, false, [160, 160, 160]);
 
       doc.save(`relatorio-jornada-${new Date().toISOString().split("T")[0]}.pdf`);
-      toast.success("PDF gerado com sucesso! 📄");
+      toast.success("PDF gerado com sucesso!");
     } catch {
       toast.error("Erro ao gerar o PDF.");
     }
@@ -329,12 +392,13 @@ const History = () => {
             <SymptomsChart logs={logs} />
             <WorkoutsSummary workouts={workouts} />
             <DoseTimeline injections={injections} />
+            <DietSuggestionsList dietSuggestions={dietSuggestions} />
             <InsightsList insights={insights} />
 
             {allLogs.length < 7 && (
               <div className="bg-muted/50 rounded-2xl p-4 text-center animate-fade-in-up" style={{ animationDelay: "360ms" }}>
                 <p className="text-xs text-muted-foreground">
-                  📊 Registre pelo menos <span className="font-semibold text-foreground">7 dias</span> para ver insights personalizados sobre sua jornada.
+                  Registre pelo menos <span className="font-semibold text-foreground">7 dias</span> para ver insights personalizados sobre sua jornada.
                 </p>
               </div>
             )}
