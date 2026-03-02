@@ -185,6 +185,7 @@ export type Database = {
           tracking_preference: string | null
           triage_completed: boolean | null
           updated_at: string | null
+          weekly_workout_goal: number | null
           weekly_workouts: number | null
         }
         Insert: {
@@ -219,6 +220,7 @@ export type Database = {
           tracking_preference?: string | null
           triage_completed?: boolean | null
           updated_at?: string | null
+          weekly_workout_goal?: number | null
           weekly_workouts?: number | null
         }
         Update: {
@@ -253,7 +255,44 @@ export type Database = {
           tracking_preference?: string | null
           triage_completed?: boolean | null
           updated_at?: string | null
+          weekly_workout_goal?: number | null
           weekly_workouts?: number | null
+        }
+        Relationships: []
+      }
+      workouts: {
+        Row: {
+          created_at: string | null
+          date: string
+          duration_minutes: number
+          feeling_after: number | null
+          id: string
+          intensity: string
+          notes: string | null
+          user_id: string
+          workout_type: string
+        }
+        Insert: {
+          created_at?: string | null
+          date: string
+          duration_minutes: number
+          feeling_after?: number | null
+          id?: string
+          intensity?: string
+          notes?: string | null
+          user_id: string
+          workout_type: string
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          duration_minutes?: number
+          feeling_after?: number | null
+          id?: string
+          intensity?: string
+          notes?: string | null
+          user_id?: string
+          workout_type?: string
         }
         Relationships: []
       }
