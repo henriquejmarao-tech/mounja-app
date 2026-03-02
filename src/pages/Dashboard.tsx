@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useApplicationData } from "@/hooks/useApplicationData";
 import { Settings, Plus, Sparkles, Flame, Utensils, ChevronRight, X, Coffee, Sun, Moon, Cookie } from "lucide-react";
 import { cn } from "@/lib/utils";
 import WorkoutSuggestion from "@/components/dashboard/WorkoutSuggestion";
@@ -28,6 +29,7 @@ const streakMessages = [
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, profile } = useAuth();
+  const { dose, getLastConfirmedApplication, recentSymptoms: ssotSymptoms, weeklyWorkoutCount, latestWeight: ssotWeight, loading: ssotLoading } = useApplicationData();
   const [lastInjection, setLastInjection] = useState<any>(null);
   const [latestWeight, setLatestWeight] = useState<number | null>(null);
   const [streak, setStreak] = useState(0);
@@ -135,7 +137,9 @@ const Dashboard = () => {
   }, [profile]);
 
   const firstName = profile?.name?.split(" ")[0] || "Olá";
-  const currentDose = profile?.current_dose || null;
+  // SSOT: dose comes exclusively from ApplicationDataLayer
+  const currentDose = dose.currentDose;
+  if (import.meta.env.DEV) console.log(`[Hub] reading from SSOT: currentDose = ${currentDose}`);
   const daysUntilNext = lastInjection
     ? Math.max(0, 7 - Math.floor((Date.now() - new Date(lastInjection.date + "T12:00:00").getTime()) / 86400000))
     : null;
