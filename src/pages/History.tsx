@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { ArrowLeft, TrendingDown, TrendingUp, Sparkles, AlertTriangle, Syringe, Scale, Droplets } from "lucide-react";
+import { ArrowLeft, TrendingDown, TrendingUp, Sparkles, AlertTriangle, Syringe, Scale, Droplets, FileDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 import {
   ChartContainer,
   ChartTooltip,
@@ -114,6 +115,92 @@ const History = () => {
     setInsights(generated);
   };
 
+  // PDF export
+  const handleExportPDF = async () => {
+    try {
+      const { default: jsPDF } = await import("jspdf");
+      const doc = new jsPDF({ format: "a4", unit: "mm" });
+      const pageW = doc.internal.pageSize.getWidth();
+      let y = 20;
+
+      const addLine = (text: string, size: number, bold = false, color: [number, number, number] = [30, 40, 45]) => {
+        doc.setFontSize(size);
+        doc.setFont("helvetica", bold ? "bold" : "normal");
+        doc.setTextColor(...color);
+        const lines = doc.splitTextToSize(text, pageW - 40);
+        if (y + lines.length * (size * 0.5) > 270) {
+          doc.addPage();
+          y = 20;
+        }
+        doc.text(lines, 20, y);
+        y += lines.length * (size * 0.45) + 3;
+      };
+
+      const addSpacer = (h = 5) => { y += h; };
+
+      // Header
+      addLine("Relatório da Jornada", 18, true, [45, 120, 95]);
+      addLine(profile?.name || "Usuário", 11, false, [120, 120, 120]);
+      addLine(`Gerado em ${new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })}`, 9, false, [150, 150, 150]);
+      addSpacer(8);
+
+      // Divider
+      doc.setDrawColor(220, 220, 220);
+      doc.line(20, y, pageW - 20, y);
+      addSpacer(8);
+
+      // Summary
+      addLine("Resumo", 14, true);
+      if (initialWeight) addLine(`Peso inicial: ${initialWeight} kg`, 10);
+      if (currentWeight) addLine(`Peso atual: ${currentWeight} kg`, 10);
+      if (totalLost !== null && totalLost > 0) addLine(`Total perdido: ${totalLost.toFixed(1)} kg`, 10, true, [45, 120, 95]);
+      if (profile?.current_dose) addLine(`Dose atual: ${profile.current_dose}`, 10);
+      addSpacer(6);
+
+      // Weight history
+      const wLogs = logs.filter((l) => l.weight);
+      if (wLogs.length > 0) {
+        addLine("Evolução do Peso", 14, true);
+        wLogs.forEach((l: any) => {
+          addLine(`${new Date(l.date).toLocaleDateString("pt-BR")}  —  ${l.weight} kg`, 9, false, [80, 80, 80]);
+        });
+        addSpacer(6);
+      }
+
+      // Injections
+      if (injections.length > 0) {
+        addLine("Histórico de Aplicações", 14, true);
+        injections.forEach((inj: any) => {
+          const dateStr = new Date(inj.date).toLocaleDateString("pt-BR");
+          addLine(`${dateStr}  —  ${inj.dose}${inj.site ? ` (${inj.site})` : ""}`, 9, false, [80, 80, 80]);
+        });
+        addSpacer(6);
+      }
+
+      // Insights
+      if (insights.length > 0) {
+        addLine("Insights Detectados", 14, true);
+        insights.forEach((ins) => {
+          addLine(`• ${ins.title}`, 10, true, [60, 60, 60]);
+          addLine(ins.description, 9, false, [100, 100, 100]);
+          addSpacer(2);
+        });
+        addSpacer(6);
+      }
+
+      // Footer
+      doc.setDrawColor(220, 220, 220);
+      doc.line(20, y, pageW - 20, y);
+      addSpacer(4);
+      addLine("Este relatório é de caráter informativo e educacional. Não substitui acompanhamento médico.", 7, false, [160, 160, 160]);
+
+      doc.save(`relatorio-jornada-${new Date().toISOString().split("T")[0]}.pdf`);
+      toast.success("PDF gerado com sucesso! 📄");
+    } catch {
+      toast.error("Erro ao gerar o PDF.");
+    }
+  };
+
   // Narrative data
   const initialWeight = profile?.current_weight;
   const weights = logs.filter((l) => l.weight);
@@ -165,10 +252,21 @@ const History = () => {
       <header className="relative overflow-hidden">
         <div className="absolute inset-0 gradient-hero opacity-95" />
         <div className="relative px-5 pt-6 pb-6">
-          <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-primary-foreground/80 mb-4">
-            <ArrowLeft className="w-5 h-5" />
-            <span className="text-sm font-medium">Voltar</span>
-          </button>
+          <div className="flex items-center justify-between mb-4">
+            <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-primary-foreground/80">
+              <ArrowLeft className="w-5 h-5" />
+              <span className="text-sm font-medium">Voltar</span>
+            </button>
+            {!loading && (logs.length > 0 || injections.length > 0) && (
+              <button
+                onClick={handleExportPDF}
+                className="flex items-center gap-1.5 text-primary-foreground/80 bg-primary-foreground/10 backdrop-blur-sm px-3 py-1.5 rounded-xl border border-primary-foreground/10 text-xs font-semibold"
+              >
+                <FileDown className="w-3.5 h-3.5" />
+                Exportar PDF
+              </button>
+            )}
+          </div>
           <h1 className="text-xl font-bold text-primary-foreground">Sua Jornada</h1>
           <p className="text-sm text-primary-foreground/70 mt-1">Acompanhe sua evolução ao longo do tempo</p>
         </div>
