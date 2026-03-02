@@ -175,7 +175,7 @@ const Dashboard = () => {
         <div className="relative px-5 pt-8 pb-6">
           <div className="flex items-center justify-between mb-5">
             <div>
-              <img src={logoMounja} alt="Mounjá" className="h-10 mb-1.5 object-contain brightness-0 invert" />
+              <img src={logoMounja} alt="Mounjá" className="h-14 mb-1.5 object-contain brightness-0 invert" />
               <p className="text-sm text-primary-foreground/80 font-medium">{firstName}, bom te ver 🌿</p>
             </div>
             <button
