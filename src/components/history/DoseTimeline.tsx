@@ -8,9 +8,10 @@ import { toast } from "sonner";
 
 interface DoseTimelineProps {
   injections: any[];
+  onChanged?: () => void;
 }
 
-const DoseTimeline = ({ injections }: DoseTimelineProps) => {
+const DoseTimeline = ({ injections, onChanged }: DoseTimelineProps) => {
   const { updateApplication, deleteApplication, refresh } = useApplicationData();
   const [editingInj, setEditingInj] = useState<any | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -25,6 +26,7 @@ const DoseTimeline = ({ injections }: DoseTimelineProps) => {
       await deleteApplication(deletingId);
       toast.success("Aplicação excluída.");
       setDeletingId(null);
+      onChanged?.();
     } catch (e: any) {
       toast.error(e.message || "Erro ao excluir.");
     }
@@ -33,6 +35,7 @@ const DoseTimeline = ({ injections }: DoseTimelineProps) => {
 
   const handleEdit = async (id: string, data: { date: string; dose: string; site: string | null; notes: string | null }) => {
     await updateApplication(id, data);
+    onChanged?.();
   };
 
   return (
