@@ -135,8 +135,8 @@ const TutorialOverlay = () => {
       {/* Tooltip */}
       {!navigating && (
         <div
-          className="absolute bg-card rounded-2xl shadow-elevated border border-border/50 p-4 z-[101] animate-fade-in-up"
-          style={getTooltipStyle()}
+          className="fixed bg-card rounded-2xl shadow-elevated border border-border/50 p-4 z-[101] animate-fade-in-up"
+          style={{ maxWidth: "calc(100vw - 32px)", ...getTooltipStyle() }}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Progress */}
