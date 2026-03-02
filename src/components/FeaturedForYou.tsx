@@ -156,27 +156,32 @@ const FeaturedForYou = ({ context }: FeaturedForYouProps) => {
           </div>
           <h2 className="font-bold text-sm">Em destaque para você</h2>
         </div>
-        <button
-          onClick={toggleMode}
-          className="flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-full border transition-all duration-200"
-          style={{
-            borderColor: mode === "B" ? "hsl(var(--primary))" : "hsl(var(--border))",
-            background: mode === "B" ? "hsl(var(--primary) / 0.1)" : "transparent",
-            color: mode === "B" ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))",
-          }}
-        >
-          {mode === "B" ? (
-            <>
-              <Wand2 className="w-3 h-3" />
-              IA
-            </>
-          ) : (
-            <>
-              <Cpu className="w-3 h-3" />
-              Padrão
-            </>
-          )}
-        </button>
+        <div className="flex items-center gap-1 bg-muted/60 rounded-full p-0.5">
+          <button
+            onClick={() => { setMode("A"); setAiTips(null); }}
+            className="flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-full transition-all duration-200"
+            style={{
+              background: mode === "A" ? "hsl(var(--background))" : "transparent",
+              color: mode === "A" ? "hsl(var(--foreground))" : "hsl(var(--muted-foreground))",
+              boxShadow: mode === "A" ? "0 1px 3px hsl(var(--foreground) / 0.1)" : "none",
+            }}
+          >
+            <Cpu className="w-3 h-3" />
+            Padrão
+          </button>
+          <button
+            onClick={() => setMode("B")}
+            className="flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-full transition-all duration-200"
+            style={{
+              background: mode === "B" ? "hsl(var(--primary))" : "transparent",
+              color: mode === "B" ? "hsl(var(--primary-foreground))" : "hsl(var(--muted-foreground))",
+              boxShadow: mode === "B" ? "0 1px 3px hsl(var(--primary) / 0.3)" : "none",
+            }}
+          >
+            <Wand2 className="w-3 h-3" />
+            IA
+          </button>
+        </div>
       </div>
 
       <div className="space-y-2">
