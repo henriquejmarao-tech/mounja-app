@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { useApplicationData } from "@/hooks/useApplicationData";
 import { useAuth } from "@/hooks/useAuth";
 import { Check } from "lucide-react";
 import { toast } from "sonner";
@@ -11,7 +11,8 @@ const doses = ["2.5 mg", "5 mg", "7.5 mg", "10 mg", "12.5 mg", "15 mg"];
 
 const InjectionForm = () => {
   const navigate = useNavigate();
-  const { user, refreshProfile } = useAuth();
+  const { user } = useAuth();
+  const { setConfirmedApplication } = useApplicationData();
   const [saving, setSaving] = useState(false);
 
   const [injDate, setInjDate] = useState(new Date().toISOString().split("T")[0]);
@@ -25,18 +26,17 @@ const InjectionForm = () => {
       return;
     }
     setSaving(true);
-    const { error } = await supabase.from("injections").insert({
-      user_id: user.id, date: injDate, dose: injDose,
-      site: injSite || null, notes: injNotes || null,
-    } as any);
-    if (error) {
-      toast.error(error.message);
-    } else {
-      // Update profile's current_dose to match latest injection
-      await supabase.from("profiles").update({ current_dose: injDose } as any).eq("id", user.id);
-      await refreshProfile();
+    try {
+      await setConfirmedApplication({
+        date: injDate,
+        dose: injDose,
+        site: injSite || null,
+        notes: injNotes || null,
+      });
       toast.success("Aplicação registrada! 💉");
       navigate("/");
+    } catch (e: any) {
+      toast.error(e.message || "Erro ao salvar.");
     }
     setSaving(false);
   };

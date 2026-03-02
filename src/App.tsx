@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
+import { ApplicationDataProvider } from "@/hooks/useApplicationData";
 import { TutorialProvider } from "@/hooks/useTutorial";
 import BottomNav from "./components/BottomNav";
 import TutorialOverlay from "./components/tutorial/TutorialOverlay";
@@ -96,11 +97,13 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
-          <TutorialProvider>
-            <div className="max-w-lg mx-auto min-h-screen relative">
-              <AppRoutes />
-            </div>
-          </TutorialProvider>
+          <ApplicationDataProvider>
+            <TutorialProvider>
+              <div className="max-w-lg mx-auto min-h-screen relative">
+                <AppRoutes />
+              </div>
+            </TutorialProvider>
+          </ApplicationDataProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>

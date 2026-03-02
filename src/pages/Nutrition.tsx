@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import ContextualHint from "@/components/tutorial/ContextualHint";
+import FeaturedForYou from "@/components/FeaturedForYou";
 
 interface TipCard {
   id: string;
@@ -196,6 +197,7 @@ const Nutrition = () => {
           </div>
         ) : (
           <>
+            <FeaturedForYou context="nutrition" />
             <ContextualHint id="save-diet" message="Salve sua sugestão para acompanhar no histórico." className="mb-1" />
             {/* AI Diet suggestion button */}
             <button
