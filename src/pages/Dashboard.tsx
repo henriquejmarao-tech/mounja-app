@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { Settings, Plus, Sparkles, Flame, Utensils } from "lucide-react";
+import { Settings, Plus, Sparkles, Flame, Utensils, ChevronRight, X, Coffee, Sun, Moon, Cookie } from "lucide-react";
 import { cn } from "@/lib/utils";
 import WorkoutSuggestion from "@/components/dashboard/WorkoutSuggestion";
 
@@ -39,6 +39,7 @@ const Dashboard = () => {
   const [todayWorkout, setTodayWorkout] = useState<{ type: string; duration: number } | null>(null);
   const [restDayDismissed, setRestDayDismissed] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showDietModal, setShowDietModal] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -232,17 +233,21 @@ const Dashboard = () => {
 
           {/* Diet row */}
           {savedDiet ? (
-            <div className="space-y-2.5">
+            <button
+              onClick={() => setShowDietModal(true)}
+              className="w-full text-left space-y-2.5"
+            >
               {savedDiet.context_note && (
                 <p className="text-[10px] text-primary font-medium mb-1">{savedDiet.context_note}</p>
               )}
-              <div className="flex items-start gap-2.5 bg-muted/50 rounded-xl px-3 py-2.5">
+              <div className="flex items-start gap-2.5 bg-muted/50 rounded-xl px-3 py-2.5 hover:bg-muted/70 transition-colors">
                 <Utensils className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
-                <p className="text-xs text-foreground leading-relaxed line-clamp-2">
+                <p className="text-xs text-foreground leading-relaxed line-clamp-2 flex-1">
                   {savedDiet.breakfast}{savedDiet.lunch ? ` · ${savedDiet.lunch}` : ""}
                 </p>
+                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-0.5" />
               </div>
-            </div>
+            </button>
           ) : (
             <div className="flex items-start gap-2.5 bg-muted/50 rounded-xl px-3 py-2.5 mb-2.5">
               <Utensils className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
@@ -324,6 +329,72 @@ const Dashboard = () => {
           Registrar hoje
         </button>
       </div>
+
+      {/* Diet Detail Modal */}
+      {showDietModal && savedDiet && (
+        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+          <div className="bg-card w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl shadow-elevated border border-border/50 max-h-[85vh] overflow-y-auto animate-fade-in-up">
+            <div className="sticky top-0 bg-card rounded-t-3xl sm:rounded-t-2xl px-5 pt-5 pb-3 border-b border-border/50 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Utensils className="w-4 h-4 text-primary" />
+                <h2 className="font-bold text-base">Dieta de hoje</h2>
+              </div>
+              <button onClick={() => setShowDietModal(false)} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="px-5 py-4 space-y-3">
+              {savedDiet.context_note && (
+                <div className="bg-primary/5 rounded-xl px-3.5 py-2.5 border border-primary/10">
+                  <p className="text-xs text-primary font-medium">{savedDiet.context_note}</p>
+                </div>
+              )}
+              {[
+                { key: "breakfast", label: "Café da manhã", Icon: Coffee },
+                { key: "lunch", label: "Almoço", Icon: Sun },
+                { key: "dinner", label: "Jantar", Icon: Moon },
+                { key: "snack", label: "Lanche", Icon: Cookie },
+              ].map(({ key, label, Icon }) => {
+                const value = savedDiet[key];
+                if (!value) return null;
+                return (
+                  <div key={key} className="bg-muted/50 rounded-xl px-4 py-3">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <Icon className="w-3.5 h-3.5 text-primary" />
+                      <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">{label}</p>
+                    </div>
+                    <p className="text-sm leading-relaxed">{value}</p>
+                  </div>
+                );
+              })}
+              {(savedDiet.calories_target || savedDiet.protein_target) && (
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-muted/50 rounded-xl px-4 py-3 text-center">
+                    <p className="text-[10px] text-muted-foreground font-medium mb-1">Calorias aprox.</p>
+                    <p className="text-lg font-bold text-primary">{savedDiet.calories_target || "—"}</p>
+                  </div>
+                  <div className="bg-muted/50 rounded-xl px-4 py-3 text-center">
+                    <p className="text-[10px] text-muted-foreground font-medium mb-1">Proteína aprox.</p>
+                    <p className="text-lg font-bold text-primary">{savedDiet.protein_target ? `${savedDiet.protein_target}g` : "—"}</p>
+                  </div>
+                </div>
+              )}
+              {savedDiet.tip && (
+                <div className="bg-card rounded-xl px-4 py-3 border border-border/50">
+                  <p className="text-xs font-semibold mb-1">💡 Dica do dia</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{savedDiet.tip}</p>
+                </div>
+              )}
+              <button
+                onClick={() => { setShowDietModal(false); navigate("/nutricao"); }}
+                className="w-full py-3 rounded-xl gradient-hero text-primary-foreground text-sm font-semibold mt-2"
+              >
+                Ir para Nutrição
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
