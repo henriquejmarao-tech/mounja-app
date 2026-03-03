@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { useTutorial } from "@/hooks/useTutorial";
-import { Settings, Plus, Sparkles, Flame, Utensils, ChevronRight, X, Coffee, Sun, Moon, Cookie, ClipboardCheck, ArrowRight, Salad, Dumbbell, Timer, Zap, Target, User } from "lucide-react";
+import { Settings, Plus, Sparkles, Flame, Utensils, ChevronRight, X, Coffee, Sun, Moon, Cookie, ClipboardCheck, ArrowRight, Salad, Dumbbell, Timer, Zap, Target, User, Pill } from "lucide-react";
 import { cn } from "@/lib/utils";
 import WorkoutSuggestion, { getWorkoutSuggestion } from "@/components/dashboard/WorkoutSuggestion";
 
@@ -231,6 +231,22 @@ const Dashboard = () => {
           </button>
         )}
 
+        {/* Dose history CTA - one-time only */}
+        {!(profile as any)?.dose_history_completed && (
+          <button
+            onClick={() => navigate("/historico-dose")}
+            className="w-full bg-card rounded-2xl p-4 shadow-card border border-primary/20 animate-fade-in-up flex items-center gap-3.5 text-left active:scale-[0.98] transition-all duration-200"
+          >
+            <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+              <Pill className="w-5.5 h-5.5 text-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold text-foreground">Conte sobre seu tratamento</p>
+              <p className="text-xs text-muted-foreground mt-0.5">Efeitos, dose e experiência — preencha quando quiser 💊</p>
+            </div>
+            <ArrowRight className="w-4.5 h-4.5 text-muted-foreground/50 shrink-0" />
+          </button>
+        )}
 
         <div data-tutorial="dose-card" className="bg-card rounded-2xl p-5 shadow-card border border-border/50 animate-fade-in-up">
           <div className="grid grid-cols-2 gap-4">
