@@ -206,7 +206,7 @@ const Workouts = () => {
                     className="w-7 h-7 rounded-full bg-muted flex items-center justify-center disabled:opacity-30">
                     <Minus className="w-3.5 h-3.5" />
                   </button>
-                  <span className="text-sm font-bold text-primary min-w-[3ch] text-center">{weeklyGoal}x</span>
+                  <span className="text-sm font-bold text-urgent min-w-[3ch] text-center">{weeklyGoal}x</span>
                   <button onClick={() => handleGoalChange(1)} disabled={savingGoal || weeklyGoal >= 7}
                     className="w-7 h-7 rounded-full bg-muted flex items-center justify-center disabled:opacity-30">
                     <Plus className="w-3.5 h-3.5" />
@@ -384,7 +384,7 @@ const Workouts = () => {
                   className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl gradient-workout text-white text-sm font-semibold shadow-sm active:scale-[0.97]"
                 >
                   {saving ? (
-                    <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   ) : (
                     <><Save className="w-4 h-4" /> Salvar</>
                   )}
