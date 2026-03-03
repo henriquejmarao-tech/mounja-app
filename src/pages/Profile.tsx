@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Flame, Trophy, Target, Calendar, Weight, Syringe, TrendingDown, Sparkles } from "lucide-react";
+import { ArrowLeft, Flame, Trophy, Target, Calendar, Syringe, TrendingDown, AtSign, Check, Pencil } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { differenceInDays, differenceInWeeks } from "date-fns";
+import { toast } from "sonner";
 
 const badges = [
   { id: "first", label: "Primeiro registro", emoji: "🌱", threshold: 1, description: "Registrou o primeiro dia" },
@@ -17,7 +18,7 @@ const badges = [
 
 const Profile = () => {
   const navigate = useNavigate();
-  const { user, profile } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
   const { dose } = useApplicationData();
 
   const [streak, setStreak] = useState(0);
@@ -26,6 +27,16 @@ const Profile = () => {
   const [totalInjections, setTotalInjections] = useState(0);
   const [weightLost, setWeightLost] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const [editingUsername, setEditingUsername] = useState(false);
+  const [usernameInput, setUsernameInput] = useState("");
+  const [savingUsername, setSavingUsername] = useState(false);
+
+  useEffect(() => {
+    if (profile) {
+      setUsernameInput((profile as any).username || "");
+    }
+  }, [profile]);
 
   useEffect(() => {
     if (!user) return;
@@ -68,7 +79,34 @@ const Profile = () => {
     fetch();
   }, [user]);
 
-  const firstName = profile?.name?.split(" ")[0] || "Usuário";
+  const handleSaveUsername = async () => {
+    if (!user) return;
+    const cleaned = usernameInput.trim().toLowerCase().replace(/[^a-z0-9._]/g, "");
+    if (!cleaned || cleaned.length < 3) {
+      toast.error("Username deve ter pelo menos 3 caracteres.");
+      return;
+    }
+    if (cleaned.length > 30) {
+      toast.error("Username deve ter no máximo 30 caracteres.");
+      return;
+    }
+    setSavingUsername(true);
+    const { error } = await supabase.from("profiles").update({ username: cleaned } as any).eq("id", user.id);
+    if (error) {
+      if (error.code === "23505") {
+        toast.error("Esse username já está em uso. Tente outro.");
+      } else {
+        toast.error("Erro ao salvar username.");
+      }
+    } else {
+      toast.success("Username atualizado! ✨");
+      setUsernameInput(cleaned);
+      setEditingUsername(false);
+      await refreshProfile();
+    }
+    setSavingUsername(false);
+  };
+
   const startDate = profile?.mounjaro_start_date;
   const weeksOnMounjaro = startDate ? differenceInWeeks(new Date(), new Date(startDate)) : null;
   const daysOnMounjaro = startDate ? differenceInDays(new Date(), new Date(startDate)) : null;
@@ -76,6 +114,8 @@ const Profile = () => {
   const earnedBadges = badges.filter((b) => streak >= b.threshold);
   const nextBadge = badges.find((b) => streak < b.threshold);
   const progressToNext = nextBadge ? Math.min((streak / nextBadge.threshold) * 100, 100) : 100;
+
+  const currentUsername = (profile as any)?.username;
 
   if (loading) {
     return (
@@ -95,24 +135,63 @@ const Profile = () => {
             <ArrowLeft className="w-5 h-5" />
             <span className="text-sm font-medium">Voltar</span>
           </button>
-          <div className="flex items-center gap-4">
-            <div className="w-18 h-18 rounded-2xl bg-primary-foreground/20 backdrop-blur-sm flex items-center justify-center text-primary-foreground text-2xl font-bold border border-primary-foreground/10"
-              style={{ width: 72, height: 72 }}>
+          <div className="flex flex-col items-center text-center">
+            <div className="w-20 h-20 rounded-full bg-primary-foreground/20 backdrop-blur-sm flex items-center justify-center text-primary-foreground text-3xl font-bold border-2 border-primary-foreground/15 mb-3">
               {profile?.name?.[0]?.toUpperCase() || "U"}
             </div>
-            <div className="flex-1">
-              <h1 className="text-xl font-bold text-primary-foreground">{profile?.name || "Usuário"}</h1>
-              {profile?.goal && (
-                <p className="text-sm text-primary-foreground/70 mt-0.5">
-                  {profile.goal === "lose_weight" ? "🎯 Emagrecimento" : profile.goal === "health" ? "🫀 Saúde" : profile.goal === "maintain" ? "⚖️ Manutenção" : profile.goal}
-                </p>
-              )}
-              {weeksOnMounjaro !== null && (
-                <p className="text-xs text-primary-foreground/60 mt-1">
-                  {weeksOnMounjaro > 0 ? `${weeksOnMounjaro} semana${weeksOnMounjaro !== 1 ? "s" : ""} de jornada` : `${daysOnMounjaro} dia${daysOnMounjaro !== 1 ? "s" : ""} de jornada`}
-                </p>
-              )}
-            </div>
+            <h1 className="text-xl font-bold text-primary-foreground">{profile?.name || "Usuário"}</h1>
+            
+            {/* Username display/edit */}
+            {editingUsername ? (
+              <div className="flex items-center gap-2 mt-2">
+                <div className="flex items-center bg-primary-foreground/15 backdrop-blur-sm rounded-xl px-3 py-2 border border-primary-foreground/10">
+                  <span className="text-primary-foreground/60 text-sm font-medium">@</span>
+                  <input
+                    type="text"
+                    value={usernameInput}
+                    onChange={(e) => setUsernameInput(e.target.value.toLowerCase().replace(/[^a-z0-9._]/g, ""))}
+                    placeholder="seuusuario"
+                    maxLength={30}
+                    autoFocus
+                    className="bg-transparent text-primary-foreground text-sm font-medium outline-none w-32 placeholder:text-primary-foreground/30"
+                  />
+                </div>
+                <button
+                  onClick={handleSaveUsername}
+                  disabled={savingUsername}
+                  className="w-9 h-9 rounded-xl bg-primary-foreground/20 backdrop-blur-sm flex items-center justify-center border border-primary-foreground/10 disabled:opacity-50"
+                >
+                  {savingUsername ? (
+                    <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+                  ) : (
+                    <Check className="w-4 h-4 text-primary-foreground" />
+                  )}
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setEditingUsername(true)}
+                className="flex items-center gap-1.5 mt-1.5 group"
+              >
+                {currentUsername ? (
+                  <span className="text-sm text-primary-foreground/70 font-medium">@{currentUsername}</span>
+                ) : (
+                  <span className="text-sm text-primary-foreground/50 font-medium italic">Definir @username</span>
+                )}
+                <Pencil className="w-3 h-3 text-primary-foreground/40 group-hover:text-primary-foreground/70 transition-colors" />
+              </button>
+            )}
+
+            {profile?.goal && (
+              <p className="text-xs text-primary-foreground/60 mt-2">
+                {profile.goal === "lose_weight" ? "🎯 Emagrecimento" : profile.goal === "health" ? "🫀 Saúde" : profile.goal === "maintain" ? "⚖️ Manutenção" : profile.goal}
+              </p>
+            )}
+            {weeksOnMounjaro !== null && (
+              <p className="text-[11px] text-primary-foreground/50 mt-1">
+                {weeksOnMounjaro > 0 ? `${weeksOnMounjaro} semana${weeksOnMounjaro !== 1 ? "s" : ""} de jornada` : `${daysOnMounjaro} dia${daysOnMounjaro !== 1 ? "s" : ""} de jornada`}
+              </p>
+            )}
           </div>
         </div>
       </header>
@@ -137,7 +216,6 @@ const Profile = () => {
               </p>
             </div>
           </div>
-          {/* Progress to next badge */}
           {nextBadge && (
             <div>
               <div className="flex items-center justify-between mb-1.5">
@@ -225,28 +303,6 @@ const Profile = () => {
               </div>
             </div>
           )}
-        </div>
-
-        {/* Personal Info */}
-        <div className="bg-card rounded-2xl p-5 shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: "180ms" }}>
-          <div className="flex items-center gap-2 mb-4">
-            <Sparkles className="w-4 h-4 text-primary" />
-            <h3 className="font-semibold text-sm">Sobre você</h3>
-          </div>
-          <div className="space-y-3">
-            {[
-              { label: "Dose atual", value: dose.currentDose || profile?.current_dose },
-              { label: "Peso atual", value: profile?.current_weight ? `${profile.current_weight} kg` : null },
-              { label: "Altura", value: (profile as any)?.height_cm ? `${(profile as any).height_cm} cm` : null },
-              { label: "Idade", value: (profile as any)?.age ? `${(profile as any).age} anos` : null },
-              { label: "Nível de atividade", value: profile?.activity_level === "sedentary" ? "Sedentário" : profile?.activity_level === "light" ? "Leve" : profile?.activity_level === "moderate" ? "Moderado" : profile?.activity_level === "active" ? "Ativo" : null },
-            ].filter(item => item.value).map((item, i) => (
-              <div key={i} className="flex items-center justify-between py-1.5 border-b border-border/30 last:border-0">
-                <span className="text-xs text-muted-foreground">{item.label}</span>
-                <span className="text-sm font-semibold">{item.value}</span>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
     </div>

@@ -235,6 +235,7 @@ export type Database = {
           tutorial_step: number | null
           tutorial_version_completed: string | null
           updated_at: string | null
+          username: string | null
           weekly_workout_goal: number | null
           weekly_workouts: number | null
         }
@@ -275,6 +276,7 @@ export type Database = {
           tutorial_step?: number | null
           tutorial_version_completed?: string | null
           updated_at?: string | null
+          username?: string | null
           weekly_workout_goal?: number | null
           weekly_workouts?: number | null
         }
@@ -315,6 +317,7 @@ export type Database = {
           tutorial_step?: number | null
           tutorial_version_completed?: string | null
           updated_at?: string | null
+          username?: string | null
           weekly_workout_goal?: number | null
           weekly_workouts?: number | null
         }
