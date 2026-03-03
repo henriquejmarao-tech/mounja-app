@@ -4,11 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { useTutorial } from "@/hooks/useTutorial";
-import { Settings, Plus, Sparkles, Flame, Utensils, ChevronRight, X, Coffee, Sun, Moon, Cookie, ClipboardCheck, ArrowRight, Salad, Dumbbell, Timer, Zap, Target } from "lucide-react";
+import { Settings, Plus, Sparkles, Flame, Utensils, ChevronRight, X, Coffee, Sun, Moon, Cookie, ClipboardCheck, ArrowRight, Salad, Dumbbell, Timer, Zap, Target, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import WorkoutSuggestion, { getWorkoutSuggestion } from "@/components/dashboard/WorkoutSuggestion";
-
-import logoMounja from "@/assets/logo-mounja.png";
 
 const badges = [
   { id: "first", label: "Primeiro registro", emoji: "🌱", threshold: 1 },
@@ -195,16 +193,21 @@ const Dashboard = () => {
       <header className="relative overflow-hidden">
         <div className="absolute inset-0 gradient-hero opacity-90" />
         <div className="relative px-5 pb-6" style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 2rem)" }}>
-          <div className="flex items-center justify-between mb-5">
-            <div>
-              <img src={logoMounja} alt="Mounjá" className="h-14 mb-1.5 object-contain brightness-0 invert" />
+          <div className="flex items-center justify-between">
+            <button
+              onClick={() => navigate("/configuracoes")}
+              className="w-10 h-10 rounded-full bg-primary-foreground/15 backdrop-blur-sm flex items-center justify-center border border-primary-foreground/10"
+            >
+              <User className="w-5 h-5 text-primary-foreground" />
+            </button>
+            <div className="text-right">
               <p className="text-sm text-primary-foreground/80 font-medium">{firstName}, bom te ver 🌿</p>
             </div>
             <button
               onClick={() => navigate("/configuracoes")}
-              className="w-9 h-9 rounded-full bg-primary-foreground/15 backdrop-blur-sm flex items-center justify-center border border-primary-foreground/10"
+              className="w-10 h-10 rounded-full bg-primary-foreground/15 backdrop-blur-sm flex items-center justify-center border border-primary-foreground/10"
             >
-              <Settings className="w-4.5 h-4.5 text-primary-foreground" />
+              <Settings className="w-5 h-5 text-primary-foreground" />
             </button>
           </div>
         </div>
