@@ -220,12 +220,14 @@ export type Database = {
           has_increased_dose: boolean | null
           has_medical_guidance: boolean | null
           health_conditions: Json | null
+          health_info_completed: boolean | null
           height_cm: number | null
           id: string
           medical_specialty: string | null
           medications: string | null
           mounjaro_start_date: string | null
           name: string | null
+          routine_completed: boolean | null
           satiety_effect: number | null
           sex: string | null
           side_effects_improvement: string | null
@@ -262,12 +264,14 @@ export type Database = {
           has_increased_dose?: boolean | null
           has_medical_guidance?: boolean | null
           health_conditions?: Json | null
+          health_info_completed?: boolean | null
           height_cm?: number | null
           id: string
           medical_specialty?: string | null
           medications?: string | null
           mounjaro_start_date?: string | null
           name?: string | null
+          routine_completed?: boolean | null
           satiety_effect?: number | null
           sex?: string | null
           side_effects_improvement?: string | null
@@ -304,12 +308,14 @@ export type Database = {
           has_increased_dose?: boolean | null
           has_medical_guidance?: boolean | null
           health_conditions?: Json | null
+          health_info_completed?: boolean | null
           height_cm?: number | null
           id?: string
           medical_specialty?: string | null
           medications?: string | null
           mounjaro_start_date?: string | null
           name?: string | null
+          routine_completed?: boolean | null
           satiety_effect?: number | null
           sex?: string | null
           side_effects_improvement?: string | null

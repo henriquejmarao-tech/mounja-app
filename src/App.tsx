@@ -27,6 +27,8 @@ import Application from "./pages/Application";
 import MyTriage from "./pages/MyTriage";
 import Profile from "./pages/Profile";
 import DoseHistory from "./pages/DoseHistory";
+import HealthInfo from "./pages/HealthInfo";
+import RoutinePreferences from "./pages/RoutinePreferences";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -88,6 +90,8 @@ const AppRoutes = () => {
         <Route path="/minha-triagem" element={<ProtectedRoute><TriageGuard><MyTriage /></TriageGuard></ProtectedRoute>} />
         <Route path="/perfil" element={<ProtectedRoute><TriageGuard><Profile /></TriageGuard></ProtectedRoute>} />
         <Route path="/historico-dose" element={<ProtectedRoute><TriageGuard><DoseHistory /></TriageGuard></ProtectedRoute>} />
+        <Route path="/saude" element={<ProtectedRoute><TriageGuard><HealthInfo /></TriageGuard></ProtectedRoute>} />
+        <Route path="/rotina" element={<ProtectedRoute><TriageGuard><RoutinePreferences /></TriageGuard></ProtectedRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>
