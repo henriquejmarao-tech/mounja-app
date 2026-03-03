@@ -224,26 +224,6 @@ const Workouts = () => {
               </p>
             </div>
 
-            {/* Recent workouts */}
-            {recentWorkouts.length > 0 && (
-              <div className="bg-card rounded-2xl p-5 shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: "120ms" }}>
-                <h3 className="font-semibold text-sm mb-3">Treinos recentes</h3>
-                <div className="space-y-2.5">
-                  {recentWorkouts.map((w: any) => (
-                    <div key={w.id} className="flex items-center justify-between bg-muted/50 rounded-xl px-3 py-2.5">
-                      <div>
-                        <p className="text-xs font-semibold">{w.workout_type}</p>
-                        <p className="text-[10px] text-muted-foreground">{new Date(w.date + "T12:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })} · {w.duration_minutes}min · {intensityLabel[w.intensity] || w.intensity}</p>
-                      </div>
-                      {w.feeling_after && (
-                        <span className="text-lg">{["", "😞", "😐", "🙂", "😊"][w.feeling_after]}</span>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
             {/* User level with edit */}
             <div className="bg-card rounded-2xl p-5 shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: "180ms" }}>
               <div className="flex items-center justify-between mb-3">
@@ -260,7 +240,7 @@ const Workouts = () => {
                 <p className="text-sm font-bold">{frequencySuggestion[activityLevel] || frequencySuggestion.sedentary}</p>
               </div>
               <button
-                onClick={() => navigate("/preferencias-rotina")}
+                onClick={() => navigate("/rotina")}
                 className="w-full flex items-center justify-between bg-muted/50 rounded-xl px-3 py-2.5 hover:bg-muted transition-colors"
               >
                 <p className="text-xs font-semibold">Editar perfil de atividade</p>
