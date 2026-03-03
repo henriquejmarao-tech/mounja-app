@@ -235,7 +235,7 @@ const Dashboard = () => {
         {(!(profile as any)?.dose_history_completed || !(profile as any)?.health_info_completed || !(profile as any)?.routine_completed) && (
           <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50 animate-fade-in-up">
             <div className="flex items-center gap-2 mb-0.5">
-              <Target className="w-4 h-4 text-destructive" />
+              <Target className="w-4 h-4 text-urgent" />
               <h3 className="font-bold text-sm">Tratamento 100% assertivo</h3>
             </div>
             <p className="text-xs text-muted-foreground mb-3">Preencha uma única vez para recomendações personalizadas ✨</p>
@@ -246,12 +246,12 @@ const Dashboard = () => {
                   onClick={() => navigate("/historico-dose")}
                   className="w-full text-left group"
                 >
-                  <div className="flex items-center gap-3 bg-destructive/8 rounded-xl px-4 py-3.5 border border-destructive/15 group-active:scale-[0.98] transition-all duration-200">
-                    <div className="w-8 h-8 rounded-lg bg-destructive/12 flex items-center justify-center shrink-0">
-                      <Pill className="w-4 h-4 text-destructive" />
+                  <div className="flex items-center gap-3 bg-urgent-light rounded-xl px-4 py-3.5 border border-urgent/15 group-active:scale-[0.98] transition-all duration-200">
+                    <div className="w-8 h-8 rounded-lg bg-urgent/10 flex items-center justify-center shrink-0">
+                      <Pill className="w-4 h-4 text-urgent" />
                     </div>
                     <p className="text-xs font-semibold text-foreground flex-1">Histórico de tratamento</p>
-                    <ChevronRight className="w-4 h-4 text-destructive/50 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                    <ChevronRight className="w-4 h-4 text-urgent/50 shrink-0 group-hover:translate-x-0.5 transition-transform" />
                   </div>
                 </button>
               )}
@@ -261,12 +261,12 @@ const Dashboard = () => {
                   onClick={() => navigate("/saude")}
                   className="w-full text-left group"
                 >
-                  <div className="flex items-center gap-3 bg-destructive/8 rounded-xl px-4 py-3.5 border border-destructive/15 group-active:scale-[0.98] transition-all duration-200">
-                    <div className="w-8 h-8 rounded-lg bg-destructive/12 flex items-center justify-center shrink-0">
-                      <HeartPulse className="w-4 h-4 text-destructive" />
+                  <div className="flex items-center gap-3 bg-urgent-light rounded-xl px-4 py-3.5 border border-urgent/15 group-active:scale-[0.98] transition-all duration-200">
+                    <div className="w-8 h-8 rounded-lg bg-urgent/10 flex items-center justify-center shrink-0">
+                      <HeartPulse className="w-4 h-4 text-urgent" />
                     </div>
                     <p className="text-xs font-semibold text-foreground flex-1">Saúde e restrições</p>
-                    <ChevronRight className="w-4 h-4 text-destructive/50 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                    <ChevronRight className="w-4 h-4 text-urgent/50 shrink-0 group-hover:translate-x-0.5 transition-transform" />
                   </div>
                 </button>
               )}
@@ -276,12 +276,12 @@ const Dashboard = () => {
                   onClick={() => navigate("/rotina")}
                   className="w-full text-left group"
                 >
-                  <div className="flex items-center gap-3 bg-destructive/8 rounded-xl px-4 py-3.5 border border-destructive/15 group-active:scale-[0.98] transition-all duration-200">
-                    <div className="w-8 h-8 rounded-lg bg-destructive/12 flex items-center justify-center shrink-0">
-                      <CalendarClock className="w-4 h-4 text-destructive" />
+                  <div className="flex items-center gap-3 bg-urgent-light rounded-xl px-4 py-3.5 border border-urgent/15 group-active:scale-[0.98] transition-all duration-200">
+                    <div className="w-8 h-8 rounded-lg bg-urgent/10 flex items-center justify-center shrink-0">
+                      <CalendarClock className="w-4 h-4 text-urgent" />
                     </div>
                     <p className="text-xs font-semibold text-foreground flex-1">Rotina e preferências</p>
-                    <ChevronRight className="w-4 h-4 text-destructive/50 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                    <ChevronRight className="w-4 h-4 text-urgent/50 shrink-0 group-hover:translate-x-0.5 transition-transform" />
                   </div>
                 </button>
               )}
