@@ -214,22 +214,6 @@ const Dashboard = () => {
       </header>
 
       <div className="px-5 -mt-3 space-y-4 relative z-10">
-        {/* Check-in CTA card - only if not checked in today */}
-        {!todayCheckedIn && (
-          <button
-            onClick={() => navigate("/registrar")}
-            className="w-full gradient-peach rounded-2xl p-4 shadow-card border border-secondary/30 animate-fade-in-up flex items-center gap-3.5 text-left active:scale-[0.98] transition-all duration-200"
-          >
-            <div className="w-11 h-11 rounded-xl bg-white/50 dark:bg-white/15 flex items-center justify-center shrink-0">
-              <ClipboardCheck className="w-5.5 h-5.5 text-secondary-foreground" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-secondary-foreground">Como você está hoje?</p>
-              <p className="text-xs text-secondary-foreground/70 mt-0.5">Registre sintomas, peso e humor — leva 1 min ✨</p>
-            </div>
-            <ArrowRight className="w-4.5 h-4.5 text-secondary-foreground/50 shrink-0" />
-          </button>
-        )}
 
         {/* Block 1: Dose + Next injection */}
         <div data-tutorial="dose-card" className="bg-card rounded-2xl p-5 shadow-card border border-border/50 animate-fade-in-up">
