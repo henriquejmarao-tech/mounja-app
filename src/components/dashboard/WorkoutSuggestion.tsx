@@ -72,12 +72,12 @@ const WorkoutSuggestion = ({
   // If already trained today
   if (todayWorkout) {
     return (
-      <div className="flex items-start gap-3 bg-peach-light/40 rounded-xl px-4 py-3.5 border border-secondary/15">
-        <div className="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center shrink-0">
-          <Check className="w-4 h-4 text-secondary" />
+      <div className="flex items-start gap-3 bg-accent rounded-xl px-4 py-3.5 border border-primary/15">
+        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+          <Check className="w-4 h-4 text-primary" />
         </div>
         <div>
-          <p className="text-[10px] font-semibold text-secondary uppercase tracking-wide mb-0.5">Treino concluído</p>
+          <p className="text-[10px] font-semibold text-primary uppercase tracking-wide mb-0.5">Treino concluído</p>
           <p className="text-xs text-foreground">
             {todayWorkout.type} — {todayWorkout.duration} minutos
           </p>
@@ -89,9 +89,9 @@ const WorkoutSuggestion = ({
   // If rest day dismissed
   if (restDayDismissed) {
     return (
-      <div className="flex items-start gap-3 bg-peach-light/40 rounded-xl px-4 py-3.5 border border-secondary/15">
-        <div className="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center shrink-0">
-          <Moon className="w-4 h-4 text-secondary" />
+      <div className="flex items-start gap-3 bg-accent rounded-xl px-4 py-3.5 border border-primary/15">
+        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+          <Moon className="w-4 h-4 text-primary" />
         </div>
         <p className="text-xs text-foreground mt-1.5">Dia de descanso registrado. Descanse bem.</p>
       </div>
@@ -102,18 +102,18 @@ const WorkoutSuggestion = ({
 
   return (
     <button onClick={onOpen} className="w-full text-left group">
-      <div className="flex items-start gap-3 bg-peach-light/40 rounded-xl px-4 py-3.5 border border-secondary/15 group-active:scale-[0.98] transition-all duration-200">
-        <div className="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center shrink-0">
-          <Dumbbell className="w-4 h-4 text-secondary" />
+      <div className="flex items-start gap-3 bg-accent rounded-xl px-4 py-3.5 border border-primary/15 group-active:scale-[0.98] transition-all duration-200">
+        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+          <Dumbbell className="w-4 h-4 text-primary" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-[10px] font-semibold text-secondary uppercase tracking-wide mb-0.5">Treino recomendado</p>
+          <p className="text-[10px] font-semibold text-primary uppercase tracking-wide mb-0.5">Treino recomendado</p>
           <p className="text-xs text-foreground leading-relaxed">
             <span className={cn("font-semibold", config.colorClass)}>{config.label}</span>
             {" · "}{duration} minutos
           </p>
         </div>
-        <ChevronRight className="w-4 h-4 text-secondary/50 shrink-0 mt-2 group-hover:translate-x-0.5 transition-transform" />
+        <ChevronRight className="w-4 h-4 text-primary/50 shrink-0 mt-2 group-hover:translate-x-0.5 transition-transform" />
       </div>
     </button>
   );
