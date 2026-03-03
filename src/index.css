@@ -136,3 +136,8 @@
     background-clip: text;
   }
 }
+
+/* Accessibility: bump very small text sizes for readability */
+.text-\[9px\] { font-size: 0.75rem !important; line-height: 1rem; }
+.text-\[10px\] { font-size: 0.8125rem !important; line-height: 1.125rem; }
+.text-\[11px\] { font-size: 0.8125rem !important; line-height: 1.125rem; }
