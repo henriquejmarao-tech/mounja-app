@@ -1,11 +1,27 @@
 import { useMemo, useState, useEffect, useCallback } from "react";
-import { Sparkles, Wand2, Cpu } from "lucide-react";
+import {
+  Sparkles, Wand2, Cpu,
+  // Nutrition icons
+  Soup, Droplets, UtensilsCrossed, Syringe, Beef, GlassWater, Clock,
+  // Movement icons
+  Footprints, Battery, HeartPulse, Dumbbell, RefreshCw, Calendar, TrendingUp,
+} from "lucide-react";
 import { useApplicationData, type RecentSymptoms } from "@/hooks/useApplicationData";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+import type { LucideIcon } from "lucide-react";
 
 interface FeaturedTip {
+  id: string;
+  icon: LucideIcon;
+  title: string;
+  reason: string;
+}
+
+// For AI tips that come as JSON (no icon component)
+interface FeaturedTipRaw {
   id: string;
   emoji: string;
   title: string;
@@ -16,29 +32,53 @@ interface FeaturedForYouProps {
   context: "nutrition" | "movement";
 }
 
+// Icon color palette per tip for visual variety
+const tipColors: Record<string, { bg: string; icon: string; border: string }> = {
+  // Nutrition
+  "n-nausea":       { bg: "bg-amber-50 dark:bg-amber-950/30",   icon: "text-amber-600 dark:text-amber-400",   border: "border-amber-200/60 dark:border-amber-800/40" },
+  "n-constipation": { bg: "bg-orange-50 dark:bg-orange-950/30", icon: "text-orange-600 dark:text-orange-400", border: "border-orange-200/60 dark:border-orange-800/40" },
+  "n-fatigue":      { bg: "bg-violet-50 dark:bg-violet-950/30", icon: "text-violet-600 dark:text-violet-400", border: "border-violet-200/60 dark:border-violet-800/40" },
+  "n-headache":     { bg: "bg-sky-50 dark:bg-sky-950/30",       icon: "text-sky-600 dark:text-sky-400",       border: "border-sky-200/60 dark:border-sky-800/40" },
+  "n-post-inj":     { bg: "bg-rose-50 dark:bg-rose-950/30",     icon: "text-rose-600 dark:text-rose-400",     border: "border-rose-200/60 dark:border-rose-800/40" },
+  "n-protein":      { bg: "bg-emerald-50 dark:bg-emerald-950/30", icon: "text-emerald-600 dark:text-emerald-400", border: "border-emerald-200/60 dark:border-emerald-800/40" },
+  "n-hydration":    { bg: "bg-cyan-50 dark:bg-cyan-950/30",     icon: "text-cyan-600 dark:text-cyan-400",     border: "border-cyan-200/60 dark:border-cyan-800/40" },
+  "n-portions":     { bg: "bg-teal-50 dark:bg-teal-950/30",     icon: "text-teal-600 dark:text-teal-400",     border: "border-teal-200/60 dark:border-teal-800/40" },
+  // Movement
+  "m-post-inj":     { bg: "bg-rose-50 dark:bg-rose-950/30",     icon: "text-rose-600 dark:text-rose-400",     border: "border-rose-200/60 dark:border-rose-800/40" },
+  "m-fatigue":      { bg: "bg-violet-50 dark:bg-violet-950/30", icon: "text-violet-600 dark:text-violet-400", border: "border-violet-200/60 dark:border-violet-800/40" },
+  "m-nausea":       { bg: "bg-amber-50 dark:bg-amber-950/30",   icon: "text-amber-600 dark:text-amber-400",   border: "border-amber-200/60 dark:border-amber-800/40" },
+  "m-start":        { bg: "bg-sky-50 dark:bg-sky-950/30",       icon: "text-sky-600 dark:text-sky-400",       border: "border-sky-200/60 dark:border-sky-800/40" },
+  "m-variety":      { bg: "bg-orange-50 dark:bg-orange-950/30", icon: "text-orange-600 dark:text-orange-400", border: "border-orange-200/60 dark:border-orange-800/40" },
+  "m-preserve":     { bg: "bg-emerald-50 dark:bg-emerald-950/30", icon: "text-emerald-600 dark:text-emerald-400", border: "border-emerald-200/60 dark:border-emerald-800/40" },
+  "m-routine":      { bg: "bg-teal-50 dark:bg-teal-950/30",     icon: "text-teal-600 dark:text-teal-400",     border: "border-teal-200/60 dark:border-teal-800/40" },
+  "m-progress":     { bg: "bg-cyan-50 dark:bg-cyan-950/30",     icon: "text-cyan-600 dark:text-cyan-400",     border: "border-cyan-200/60 dark:border-cyan-800/40" },
+};
+
+const defaultColor = { bg: "bg-accent", icon: "text-primary", border: "border-primary/20" };
+
 // ─── Mode A: Deterministic ranking ──────────────────────────────────
 function rankNutritionTips(symptoms: RecentSymptoms, daysSinceInjection: number | null): FeaturedTip[] {
   const tips: (FeaturedTip & { score: number })[] = [];
 
   if (symptoms.nausea >= 3) {
-    tips.push({ id: "n-nausea", emoji: "🤢", title: "Refeições leves contra náusea", reason: "Sua náusea está alta — prefira alimentos frios, secos e em porções pequenas.", score: symptoms.nausea * 10 });
+    tips.push({ id: "n-nausea", icon: Soup, title: "Refeições leves contra náusea", reason: "Sua náusea está alta — prefira alimentos frios, secos e em porções pequenas.", score: symptoms.nausea * 10 });
   }
   if (symptoms.constipation >= 3) {
-    tips.push({ id: "n-constipation", emoji: "😣", title: "Fibras e hidratação", reason: "Constipação frequente — aumente fibras e beba mais água ao longo do dia.", score: symptoms.constipation * 9 });
+    tips.push({ id: "n-constipation", icon: Droplets, title: "Fibras e hidratação", reason: "Constipação frequente — aumente fibras e beba mais água ao longo do dia.", score: symptoms.constipation * 9 });
   }
   if (symptoms.fatigue >= 3) {
-    tips.push({ id: "n-fatigue", emoji: "😴", title: "Energia através da alimentação", reason: "Fadiga elevada — aposte em refeições leves e de fácil digestão.", score: symptoms.fatigue * 8 });
+    tips.push({ id: "n-fatigue", icon: Battery, title: "Energia através da alimentação", reason: "Fadiga elevada — aposte em refeições leves e de fácil digestão.", score: symptoms.fatigue * 8 });
   }
   if (symptoms.headache >= 3) {
-    tips.push({ id: "n-headache", emoji: "🤕", title: "Hidratação contra dor de cabeça", reason: "Dor de cabeça recorrente — mantenha hidratação regular e não pule refeições.", score: symptoms.headache * 7 });
+    tips.push({ id: "n-headache", icon: GlassWater, title: "Hidratação contra dor de cabeça", reason: "Dor de cabeça recorrente — mantenha hidratação regular e não pule refeições.", score: symptoms.headache * 7 });
   }
   if (daysSinceInjection !== null && daysSinceInjection <= 2) {
-    tips.push({ id: "n-post-inj", emoji: "💉", title: "Pós-aplicação: coma leve", reason: "Está próximo da última aplicação — refeições menores ajudam a reduzir desconforto.", score: 25 });
+    tips.push({ id: "n-post-inj", icon: Syringe, title: "Pós-aplicação: coma leve", reason: "Está próximo da última aplicação — refeições menores ajudam a reduzir desconforto.", score: 25 });
   }
 
-  tips.push({ id: "n-protein", emoji: "💪", title: "Priorize proteínas", reason: "Proteína ajuda a preservar músculo durante a perda de peso.", score: 5 });
-  tips.push({ id: "n-hydration", emoji: "💧", title: "Beba mais água", reason: "Hidratação adequada reduz efeitos colaterais e melhora disposição.", score: 4 });
-  tips.push({ id: "n-portions", emoji: "🍽️", title: "Porções menores, mais vezes", reason: "Refeições pequenas e frequentes mantêm energia estável ao longo do dia.", score: 3 });
+  tips.push({ id: "n-protein", icon: Beef, title: "Priorize proteínas", reason: "Proteína ajuda a preservar músculo durante a perda de peso.", score: 5 });
+  tips.push({ id: "n-hydration", icon: GlassWater, title: "Beba mais água", reason: "Hidratação adequada reduz efeitos colaterais e melhora disposição.", score: 4 });
+  tips.push({ id: "n-portions", icon: UtensilsCrossed, title: "Porções menores, mais vezes", reason: "Refeições pequenas e frequentes mantêm energia estável ao longo do dia.", score: 3 });
 
   return tips.sort((a, b) => b.score - a.score).slice(0, 5);
 }
@@ -47,32 +87,40 @@ function rankMovementTips(symptoms: RecentSymptoms, daysSinceInjection: number |
   const tips: (FeaturedTip & { score: number })[] = [];
 
   if (daysSinceInjection !== null && daysSinceInjection <= 2) {
-    tips.push({ id: "m-post-inj", emoji: "💉", title: "Pegue leve hoje", reason: "Pós-aplicação recente — prefira caminhada leve ou alongamento.", score: 30 });
+    tips.push({ id: "m-post-inj", icon: Syringe, title: "Pegue leve hoje", reason: "Pós-aplicação recente — prefira caminhada leve ou alongamento.", score: 30 });
   }
   if (symptoms.fatigue >= 3) {
-    tips.push({ id: "m-fatigue", emoji: "🔋", title: "Respeite o cansaço", reason: "Fadiga alta — um alongamento suave é suficiente hoje.", score: symptoms.fatigue * 9 });
+    tips.push({ id: "m-fatigue", icon: Battery, title: "Respeite o cansaço", reason: "Fadiga alta — um alongamento suave é suficiente hoje.", score: symptoms.fatigue * 9 });
   }
   if (symptoms.nausea >= 3) {
-    tips.push({ id: "m-nausea", emoji: "🤢", title: "Atividade mais leve", reason: "Náusea elevada — evite exercícios intensos e prefira ar livre.", score: symptoms.nausea * 8 });
+    tips.push({ id: "m-nausea", icon: HeartPulse, title: "Atividade mais leve", reason: "Náusea elevada — evite exercícios intensos e prefira ar livre.", score: symptoms.nausea * 8 });
   }
   if (weeklyWorkoutCount === 0) {
-    tips.push({ id: "m-start", emoji: "🚶", title: "Comece com 10 minutos", reason: "Nenhum treino esta semana — uma caminhada curta já faz diferença.", score: 20 });
+    tips.push({ id: "m-start", icon: Footprints, title: "Comece com 10 minutos", reason: "Nenhum treino esta semana — uma caminhada curta já faz diferença.", score: 20 });
   }
   if (weeklyWorkoutCount >= 3) {
-    tips.push({ id: "m-variety", emoji: "🔄", title: "Varie os exercícios", reason: "Boa frequência! Misture tipos diferentes para trabalhar o corpo todo.", score: 15 });
+    tips.push({ id: "m-variety", icon: RefreshCw, title: "Varie os exercícios", reason: "Boa frequência! Misture tipos diferentes para trabalhar o corpo todo.", score: 15 });
   }
 
-  tips.push({ id: "m-preserve", emoji: "💪", title: "Preserve seus músculos", reason: "Exercícios de força ajudam a manter massa muscular durante a perda de peso.", score: 5 });
-  tips.push({ id: "m-routine", emoji: "📅", title: "Crie uma rotina", reason: "Dias fixos para treinar ajudam a criar o hábito com mais facilidade.", score: 4 });
-  tips.push({ id: "m-progress", emoji: "📈", title: "Progressão gradual", reason: "Aumente duração ou intensidade aos poucos para resultados sustentáveis.", score: 3 });
+  tips.push({ id: "m-preserve", icon: Dumbbell, title: "Preserve seus músculos", reason: "Exercícios de força ajudam a manter massa muscular durante a perda de peso.", score: 5 });
+  tips.push({ id: "m-routine", icon: Calendar, title: "Crie uma rotina", reason: "Dias fixos para treinar ajudam a criar o hábito com mais facilidade.", score: 4 });
+  tips.push({ id: "m-progress", icon: TrendingUp, title: "Progressão gradual", reason: "Aumente duração ou intensidade aos poucos para resultados sustentáveis.", score: 3 });
 
   return tips.sort((a, b) => b.score - a.score).slice(0, 5);
 }
 
+// Map AI emoji responses to a fallback icon
+const emojiToIcon: Record<string, LucideIcon> = {
+  "🤢": Soup, "😣": Droplets, "😴": Battery, "🤕": GlassWater,
+  "💉": Syringe, "💪": Beef, "💧": GlassWater, "🍽️": UtensilsCrossed,
+  "🚶": Footprints, "🔋": Battery, "🎯": HeartPulse, "🔄": RefreshCw,
+  "📅": Calendar, "📈": TrendingUp,
+};
+
 const FeaturedForYou = ({ context }: FeaturedForYouProps) => {
   const { dose, recentSymptoms, weeklyWorkoutCount, latestWeight } = useApplicationData();
   const [mode, setMode] = useState<"A" | "B">("A");
-  const [aiTips, setAiTips] = useState<FeaturedTip[] | null>(null);
+  const [aiTipsRaw, setAiTipsRaw] = useState<FeaturedTipRaw[] | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
 
   const daysSinceInjection = useMemo(() => {
@@ -109,7 +157,7 @@ const FeaturedForYou = ({ context }: FeaturedForYouProps) => {
 
       if (error) throw error;
       if (data?.tips && Array.isArray(data.tips)) {
-        setAiTips(data.tips.slice(0, 3));
+        setAiTipsRaw(data.tips.slice(0, 3));
       } else if (data?.error) {
         throw new Error(data.error);
       }
@@ -117,35 +165,34 @@ const FeaturedForYou = ({ context }: FeaturedForYouProps) => {
       console.error("AI tips error:", e);
       toast.error("Não foi possível gerar dicas com IA. Usando modo padrão.");
       setMode("A");
-      setAiTips(null);
+      setAiTipsRaw(null);
     } finally {
       setAiLoading(false);
     }
   }, [context, daysSinceInjection, recentSymptoms, weeklyWorkoutCount, latestWeight, dose.currentDose]);
 
   useEffect(() => {
-    if (mode === "B" && !aiTips) {
+    if (mode === "B" && !aiTipsRaw) {
       fetchAiTips();
     }
-  }, [mode, aiTips, fetchAiTips]);
+  }, [mode, aiTipsRaw, fetchAiTips]);
 
-  // Reset AI tips when context changes
   useEffect(() => {
-    setAiTips(null);
+    setAiTipsRaw(null);
   }, [context]);
+
+  // Convert AI raw tips to FeaturedTip with icons
+  const aiTips: FeaturedTip[] | null = aiTipsRaw
+    ? aiTipsRaw.map((t, i) => ({
+        ...t,
+        id: t.id || `ai-${i}`,
+        icon: emojiToIcon[t.emoji] || Sparkles,
+      }))
+    : null;
 
   const activeTips = mode === "B" && aiTips ? aiTips : deterministicTips.slice(0, 3);
 
   if (mode === "A" && activeTips.length === 0) return null;
-
-  const toggleMode = () => {
-    if (mode === "A") {
-      setMode("B");
-    } else {
-      setMode("A");
-      setAiTips(null);
-    }
-  };
 
   return (
     <div className="animate-fade-in-up">
@@ -158,7 +205,7 @@ const FeaturedForYou = ({ context }: FeaturedForYouProps) => {
         </div>
         <div className="flex items-center gap-1 bg-muted/60 rounded-full p-0.5">
           <button
-            onClick={() => { setMode("A"); setAiTips(null); }}
+            onClick={() => { setMode("A"); setAiTipsRaw(null); }}
             className="flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-full transition-all duration-200"
             style={{
               background: mode === "A" ? "hsl(var(--background))" : "transparent",
@@ -184,30 +231,44 @@ const FeaturedForYou = ({ context }: FeaturedForYouProps) => {
         </div>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-2.5">
         {aiLoading && mode === "B" ? (
           Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="bg-card rounded-xl px-4 py-3 border border-primary/10 shadow-sm flex items-start gap-3">
-              <Skeleton className="w-6 h-6 rounded shrink-0" />
+            <div key={i} className="rounded-xl px-4 py-3.5 border shadow-sm flex items-start gap-3 bg-accent border-primary/10">
+              <Skeleton className="w-9 h-9 rounded-lg shrink-0" />
               <div className="flex-1 space-y-1.5">
-                <Skeleton className="h-3 w-28" />
-                <Skeleton className="h-2.5 w-full" />
+                <Skeleton className="h-3.5 w-28" />
+                <Skeleton className="h-3 w-full" />
               </div>
             </div>
           ))
         ) : (
-          activeTips.map((tip) => (
-            <div
-              key={tip.id}
-              className="bg-card rounded-xl px-4 py-3 border border-primary/10 shadow-sm flex items-start gap-3"
-            >
-              <span className="text-xl shrink-0 mt-0.5">{tip.emoji}</span>
-              <div className="min-w-0">
-                <p className="text-xs font-bold">{tip.title}</p>
-                <p className="text-[11px] text-muted-foreground leading-relaxed mt-0.5">{tip.reason}</p>
+          activeTips.map((tip) => {
+            const colors = tipColors[tip.id] || defaultColor;
+            const Icon = tip.icon;
+            return (
+              <div
+                key={tip.id}
+                className={cn(
+                  "rounded-xl px-4 py-3.5 border shadow-sm flex items-start gap-3 transition-all duration-200",
+                  colors.bg,
+                  colors.border,
+                )}
+              >
+                <div className={cn(
+                  "w-9 h-9 rounded-lg flex items-center justify-center shrink-0 mt-0.5",
+                  colors.icon,
+                  "bg-white/60 dark:bg-white/10",
+                )}>
+                  <Icon className="w-[18px] h-[18px]" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-bold">{tip.title}</p>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed mt-0.5">{tip.reason}</p>
+                </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
 
