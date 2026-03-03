@@ -23,7 +23,7 @@ const healthConditionsList = ["Diabetes tipo 2", "Pré-diabetes", "Hipotireoidis
 const dietaryRestrictionsList = ["Vegetariana", "Vegana", "Sem glúten", "Sem lactose", "Low carb", "Sem restrições"];
 const intervalOptions = [7, 10, 14];
 
-const TOTAL_STEPS = 4;
+const TOTAL_STEPS = 3;
 
 const Triage = () => {
   const navigate = useNavigate();
@@ -150,9 +150,8 @@ const Triage = () => {
   const canAdvance = () => {
     switch (step) {
       case 0: return name && currentDose && goal && currentWeight && lastApplicationDate;
-      case 1: return true;
-      case 2: return activityLevel;
-      case 3: return true;
+      case 1: return activityLevel;
+      case 2: return true;
       default: return true;
     }
   };
@@ -296,52 +295,6 @@ const Triage = () => {
       case 1:
         return (
           <div className="space-y-4 animate-fade-in-up">
-            <h2 className="text-lg font-bold">Histórico de Dose e Resposta</h2>
-            <p className="text-xs text-muted-foreground">Como está sendo sua experiência até agora?</p>
-
-            <div>
-              <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Já aumentou a dose?</label>
-              <div className="grid grid-cols-2 gap-2">
-                {[true, false].map((v) => (
-                  <button key={String(v)} type="button" onClick={() => setHasIncreasedDose(v)}
-                    className={cn("py-3 rounded-xl text-xs font-semibold border transition-all", hasIncreasedDose === v ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border hover:border-primary/30")}>
-                    {v ? "Sim" : "Não"}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {hasIncreasedDose && (
-              <div>
-                <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Detalhes (quando e por quê)</label>
-                <textarea value={doseIncreaseDetails} onChange={(e) => setDoseIncreaseDetails(e.target.value)} placeholder="Ex: Aumentei de 2.5 para 5mg na semana 5..." rows={3} className="w-full px-4 py-3 rounded-xl border border-border bg-card text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none resize-none" />
-              </div>
-            )}
-
-            {renderSlider(appetiteEffect, setAppetiteEffect, "Redução de apetite")}
-            {renderSlider(satietyEffect, setSatietyEffect, "Saciedade aumentada")}
-            {renderSlider(compulsionEffect, setCompulsionEffect, "Redução de compulsão")}
-
-            <div>
-              <label className="text-xs font-semibold text-muted-foreground block mb-2">Efeitos colaterais mais comuns</label>
-              {renderChipSelect(sideEffectsList, selectedSideEffects, (item) => setSelectedSideEffects(toggleInArray(selectedSideEffects, item)))}
-            </div>
-
-            <div>
-              <label className="text-xs font-semibold text-muted-foreground block mb-1.5">O que melhora os colaterais?</label>
-              <textarea value={sideEffectsImprovement} onChange={(e) => setSideEffectsImprovement(e.target.value)} placeholder="Ex: Comer devagar, alimentos frios..." rows={2} className="w-full px-4 py-3 rounded-xl border border-border bg-card text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none resize-none" />
-            </div>
-
-            <div>
-              <label className="text-xs font-semibold text-muted-foreground block mb-1.5">O que piora?</label>
-              <textarea value={sideEffectsWorsening} onChange={(e) => setSideEffectsWorsening(e.target.value)} placeholder="Ex: Comida gordurosa, porções grandes..." rows={2} className="w-full px-4 py-3 rounded-xl border border-border bg-card text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none resize-none" />
-            </div>
-          </div>
-        );
-
-      case 2:
-        return (
-          <div className="space-y-4 animate-fade-in-up">
             <h2 className="text-lg font-bold">Saúde e Restrições</h2>
             <p className="text-xs text-muted-foreground">Informações que ajudam a personalizar suas recomendações.</p>
 
@@ -374,7 +327,7 @@ const Triage = () => {
           </div>
         );
 
-      case 3:
+      case 2:
         return (
           <div className="space-y-4 animate-fade-in-up">
             <h2 className="text-lg font-bold">Rotina e Preferências</h2>

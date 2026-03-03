@@ -213,6 +213,7 @@ export type Database = {
           current_weight: number | null
           daily_water_ml: number | null
           dietary_restrictions: Json | null
+          dose_history_completed: boolean | null
           dose_increase_details: string | null
           first_login_at: string | null
           goal: string | null
@@ -254,6 +255,7 @@ export type Database = {
           current_weight?: number | null
           daily_water_ml?: number | null
           dietary_restrictions?: Json | null
+          dose_history_completed?: boolean | null
           dose_increase_details?: string | null
           first_login_at?: string | null
           goal?: string | null
@@ -295,6 +297,7 @@ export type Database = {
           current_weight?: number | null
           daily_water_ml?: number | null
           dietary_restrictions?: Json | null
+          dose_history_completed?: boolean | null
           dose_increase_details?: string | null
           first_login_at?: string | null
           goal?: string | null
