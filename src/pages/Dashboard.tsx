@@ -233,12 +233,12 @@ const Dashboard = () => {
 
         {/* Onboarding completion card */}
         {(!(profile as any)?.dose_history_completed || !(profile as any)?.health_info_completed || !(profile as any)?.routine_completed) && (
-          <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50 animate-fade-in-up">
-            <div className="flex items-center gap-2 mb-1">
-              <Target className="w-4 h-4 text-primary" />
-              <h3 className="font-semibold text-sm">Tratamento 100% assertivo</h3>
+          <div className="gradient-peach rounded-2xl p-4 shadow-card border border-secondary/30 animate-fade-in-up">
+            <div className="flex items-center gap-2 mb-0.5">
+              <Target className="w-4 h-4 text-secondary-foreground" />
+              <h3 className="font-bold text-sm text-secondary-foreground">Tratamento 100% assertivo</h3>
             </div>
-            <p className="text-xs text-muted-foreground mb-3">Preencha para recomendações personalizadas</p>
+            <p className="text-xs text-secondary-foreground/70 mb-3">Preencha uma única vez para recomendações personalizadas ✨</p>
 
             <div className="space-y-2">
               {!(profile as any)?.dose_history_completed && (
@@ -246,12 +246,12 @@ const Dashboard = () => {
                   onClick={() => navigate("/historico-dose")}
                   className="w-full text-left group"
                 >
-                  <div className="flex items-center gap-3 bg-accent rounded-xl px-4 py-3.5 border border-primary/15 group-active:scale-[0.98] transition-all duration-200">
-                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                      <Pill className="w-4 h-4 text-primary" />
+                  <div className="flex items-center gap-3 bg-white/50 dark:bg-white/15 rounded-xl px-4 py-3.5 border border-secondary/20 group-active:scale-[0.98] transition-all duration-200">
+                    <div className="w-8 h-8 rounded-lg bg-secondary/15 flex items-center justify-center shrink-0">
+                      <Pill className="w-4 h-4 text-secondary-foreground" />
                     </div>
-                    <p className="text-xs font-semibold text-primary flex-1">Histórico de tratamento</p>
-                    <ChevronRight className="w-4 h-4 text-primary/50 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                    <p className="text-xs font-semibold text-secondary-foreground flex-1">Histórico de tratamento</p>
+                    <ChevronRight className="w-4 h-4 text-secondary-foreground/50 shrink-0 group-hover:translate-x-0.5 transition-transform" />
                   </div>
                 </button>
               )}
@@ -261,12 +261,12 @@ const Dashboard = () => {
                   onClick={() => navigate("/saude")}
                   className="w-full text-left group"
                 >
-                  <div className="flex items-center gap-3 bg-accent rounded-xl px-4 py-3.5 border border-primary/15 group-active:scale-[0.98] transition-all duration-200">
-                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                      <HeartPulse className="w-4 h-4 text-primary" />
+                  <div className="flex items-center gap-3 bg-white/50 dark:bg-white/15 rounded-xl px-4 py-3.5 border border-secondary/20 group-active:scale-[0.98] transition-all duration-200">
+                    <div className="w-8 h-8 rounded-lg bg-secondary/15 flex items-center justify-center shrink-0">
+                      <HeartPulse className="w-4 h-4 text-secondary-foreground" />
                     </div>
-                    <p className="text-xs font-semibold text-primary flex-1">Saúde e restrições</p>
-                    <ChevronRight className="w-4 h-4 text-primary/50 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                    <p className="text-xs font-semibold text-secondary-foreground flex-1">Saúde e restrições</p>
+                    <ChevronRight className="w-4 h-4 text-secondary-foreground/50 shrink-0 group-hover:translate-x-0.5 transition-transform" />
                   </div>
                 </button>
               )}
@@ -276,12 +276,12 @@ const Dashboard = () => {
                   onClick={() => navigate("/rotina")}
                   className="w-full text-left group"
                 >
-                  <div className="flex items-center gap-3 bg-accent rounded-xl px-4 py-3.5 border border-primary/15 group-active:scale-[0.98] transition-all duration-200">
-                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                      <CalendarClock className="w-4 h-4 text-primary" />
+                  <div className="flex items-center gap-3 bg-white/50 dark:bg-white/15 rounded-xl px-4 py-3.5 border border-secondary/20 group-active:scale-[0.98] transition-all duration-200">
+                    <div className="w-8 h-8 rounded-lg bg-secondary/15 flex items-center justify-center shrink-0">
+                      <CalendarClock className="w-4 h-4 text-secondary-foreground" />
                     </div>
-                    <p className="text-xs font-semibold text-primary flex-1">Rotina e preferências</p>
-                    <ChevronRight className="w-4 h-4 text-primary/50 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                    <p className="text-xs font-semibold text-secondary-foreground flex-1">Rotina e preferências</p>
+                    <ChevronRight className="w-4 h-4 text-secondary-foreground/50 shrink-0 group-hover:translate-x-0.5 transition-transform" />
                   </div>
                 </button>
               )}
