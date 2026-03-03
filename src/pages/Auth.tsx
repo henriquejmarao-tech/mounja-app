@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
-import { Mail, Lock, User, ArrowRight, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, User, ArrowRight, Eye, EyeOff, Leaf } from "lucide-react";
 import { toast } from "sonner";
 import logoMounja from "@/assets/logo-mounja.png";
 
@@ -61,21 +61,42 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
-      <div className="relative overflow-hidden pt-14 pb-8 px-8 text-center">
-        <div className="absolute inset-0 bg-gradient-to-b from-accent/40 to-background" />
-        <div className="relative">
-          <img src={logoMounja} alt="Mounjá" className="h-28 mx-auto mb-4 object-contain" />
-          <p className="text-sm text-muted-foreground mt-1 italic">
+      {/* Hero brand area */}
+      <div className="relative overflow-hidden flex flex-col items-center justify-center pt-16 pb-10 px-8">
+        {/* Layered organic background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/15 via-accent/25 to-background" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-primary/8 blur-3xl" />
+        <div className="absolute bottom-0 right-0 w-64 h-64 rounded-full bg-secondary/10 blur-2xl" />
+        
+        {/* Decorative leaves */}
+        <div className="absolute top-8 left-6 opacity-15">
+          <Leaf className="w-8 h-8 text-primary rotate-[-30deg]" />
+        </div>
+        <div className="absolute top-16 right-8 opacity-10">
+          <Leaf className="w-6 h-6 text-primary rotate-[45deg]" />
+        </div>
+        <div className="absolute bottom-6 left-10 opacity-10">
+          <Leaf className="w-5 h-5 text-primary rotate-[15deg]" />
+        </div>
+
+        <div className="relative flex flex-col items-center">
+          <img 
+            src={logoMounja} 
+            alt="Mounjá" 
+            className="h-40 w-auto mb-3 object-contain drop-shadow-lg" 
+          />
+          <p className="text-base text-muted-foreground italic font-medium tracking-wide">
             Aqui para caminhar com você.
-          </p>
-          <p className="text-sm text-muted-foreground mt-4">
-            {isLogin ? "Acesse sua conta" : "Crie sua conta gratuita"}
           </p>
         </div>
       </div>
 
+      {/* Form area */}
       <div className="flex-1 px-6 pb-8">
+        <p className="text-center text-sm text-muted-foreground mb-5 font-medium">
+          {isLogin ? "Acesse sua conta" : "Crie sua conta gratuita"}
+        </p>
+
         {/* Google Login */}
         <button
           onClick={handleGoogleLogin}
