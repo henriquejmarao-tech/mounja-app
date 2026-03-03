@@ -33,19 +33,19 @@ interface FeaturedForYouProps {
 }
 
 // Icon color palette per tip for visual variety
-// Unified theme colors per section
+// Unified theme colors per section — darker tones with translucency for readability
 const sectionTheme: Record<string, { bg: string; icon: string; border: string; iconBg: string }> = {
   nutrition: {
-    bg: "bg-teal-50/70 dark:bg-teal-950/20",
-    icon: "text-teal-600 dark:text-teal-400",
-    border: "border-teal-200/50 dark:border-teal-800/40",
-    iconBg: "bg-teal-100/80 dark:bg-teal-900/30",
+    bg: "bg-teal-600/10 dark:bg-teal-400/10",
+    icon: "text-teal-700 dark:text-teal-300",
+    border: "border-teal-600/20 dark:border-teal-400/20",
+    iconBg: "bg-teal-600/15 dark:bg-teal-400/15",
   },
   movement: {
-    bg: "bg-orange-50/70 dark:bg-orange-950/20",
-    icon: "text-orange-600 dark:text-orange-400",
-    border: "border-orange-200/50 dark:border-orange-800/40",
-    iconBg: "bg-orange-100/80 dark:bg-orange-900/30",
+    bg: "bg-orange-600/10 dark:bg-orange-400/10",
+    icon: "text-orange-700 dark:text-orange-300",
+    border: "border-orange-600/20 dark:border-orange-400/20",
+    iconBg: "bg-orange-600/15 dark:bg-orange-400/15",
   },
 };
 
