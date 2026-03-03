@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowLeft, Sparkles, Heart, Utensils, RefreshCw, Save, X, Coffee, Sun, Moon, Cookie } from "lucide-react";
+import { ArrowLeft, Sparkles, Leaf, Utensils, RefreshCw, Save, X, Coffee, Sun, Moon, Apple, Droplets } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -171,20 +171,23 @@ const Nutrition = () => {
     { key: "breakfast", label: "Café da manhã", Icon: Coffee },
     { key: "lunch", label: "Almoço", Icon: Sun },
     { key: "dinner", label: "Jantar", Icon: Moon },
-    { key: "snack", label: "Lanche", Icon: Cookie },
+    { key: "snack", label: "Lanche", Icon: Apple },
   ];
 
   return (
     <div className="min-h-screen bg-background pb-28">
       <header className="relative overflow-hidden">
-        <div className="absolute inset-0 gradient-hero opacity-95" />
+        <div className="absolute inset-0 gradient-nutrition opacity-95" />
         <div className="relative px-5 pb-6" style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 1.5rem)" }}>
-          <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-primary-foreground/80 mb-4">
+          <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-white/80 mb-4">
             <ArrowLeft className="w-5 h-5" />
             <span className="text-sm font-medium">Voltar</span>
           </button>
-          <h1 className="text-xl font-bold text-primary-foreground">Alimentação</h1>
-          <p className="text-sm text-primary-foreground/70 mt-1">Cuidando do que nutre você</p>
+          <div className="flex items-center gap-2">
+            <Leaf className="w-5 h-5 text-white" />
+            <h1 className="text-xl font-bold text-white">Alimentação</h1>
+          </div>
+          <p className="text-sm text-white/70 mt-1">Cuidando do que nutre você</p>
         </div>
       </header>
 
@@ -199,14 +202,14 @@ const Nutrition = () => {
           <>
             <ContextualHint id="save-diet" message="Salve sua sugestão para acompanhar no histórico." className="mb-1" />
             {/* AI Diet suggestion button */}
-            <button
+             <button
               data-tutorial="diet-btn"
               onClick={generateSuggestion}
               disabled={generating}
-              className="w-full bg-card rounded-2xl p-4 shadow-card border border-primary/20 flex items-center gap-3 hover:border-primary/40 transition-all animate-fade-in-up active:scale-[0.98]"
+              className="w-full bg-card rounded-2xl p-4 shadow-card border border-info/20 flex items-center gap-3 hover:border-info/40 transition-all animate-fade-in-up active:scale-[0.98]"
             >
-              <div className="w-10 h-10 rounded-xl gradient-hero flex items-center justify-center shrink-0">
-                <Sparkles className="w-5 h-5 text-primary-foreground" />
+              <div className="w-10 h-10 rounded-xl gradient-nutrition flex items-center justify-center shrink-0">
+                <Sparkles className="w-5 h-5 text-white" />
               </div>
               <div className="text-left flex-1">
                 <p className="font-semibold text-sm">Sugestão de dieta de hoje</p>
@@ -214,7 +217,7 @@ const Nutrition = () => {
                   {savedToday ? "Sugestão salva — toque para gerar outra" : "Adaptada ao seu momento"}
                 </p>
               </div>
-              <Utensils className="w-4 h-4 text-primary" />
+              <Droplets className="w-4 h-4 text-info" />
             </button>
 
             <FeaturedForYou context="nutrition" />
@@ -231,7 +234,7 @@ const Nutrition = () => {
           {/* Modal header */}
           <div className="shrink-0 px-5 pt-4 pb-3 border-b border-border/50 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-primary" />
+              <Leaf className="w-4 h-4 text-info" />
               <h2 className="font-bold text-base">Sugestão de hoje</h2>
             </div>
             <button onClick={() => setShowModal(false)} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
@@ -243,15 +246,15 @@ const Nutrition = () => {
           <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
             {generating ? (
               <div className="flex flex-col items-center justify-center h-full gap-3">
-                <div className="w-10 h-10 border-3 border-primary/30 border-t-primary rounded-full animate-spin" />
+                <div className="w-10 h-10 border-3 border-info/30 border-t-info rounded-full animate-spin" />
                 <p className="text-sm text-muted-foreground">Gerando sugestão personalizada...</p>
                 <p className="text-xs text-muted-foreground/60">Isso pode levar alguns segundos</p>
               </div>
             ) : suggestion ? (
               <>
                 {suggestion.context_note && (
-                  <div className="bg-primary/5 rounded-xl px-3.5 py-2.5 border border-primary/10">
-                    <p className="text-xs text-primary font-medium">{suggestion.context_note}</p>
+                  <div className="bg-info/5 rounded-xl px-3.5 py-2.5 border border-info/10">
+                    <p className="text-xs text-info font-medium">{suggestion.context_note}</p>
                   </div>
                 )}
 
@@ -262,7 +265,7 @@ const Nutrition = () => {
                     return (
                       <div key={key} className="bg-muted/50 rounded-xl px-4 py-3">
                         <div className="flex items-center gap-2 mb-1.5">
-                          <Icon className="w-3.5 h-3.5 text-primary" />
+                          <Icon className="w-3.5 h-3.5 text-info" />
                           <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">{label}</p>
                         </div>
                         <ul className="space-y-1.5">
@@ -272,7 +275,7 @@ const Nutrition = () => {
                             .filter(Boolean)
                             .map((item: string, i: number) => (
                               <li key={i} className="flex items-start gap-2">
-                                <span className="w-1.5 h-1.5 rounded-full bg-primary/40 shrink-0 mt-[7px]" />
+                                <span className="w-1.5 h-1.5 rounded-full bg-info/40 shrink-0 mt-[7px]" />
                                 <span className="text-[13px] leading-snug">{item}</span>
                               </li>
                             ))}
@@ -285,11 +288,11 @@ const Nutrition = () => {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="bg-muted/50 rounded-xl px-4 py-3 text-center">
                     <p className="text-[10px] text-muted-foreground font-medium mb-1">Calorias aprox.</p>
-                    <p className="text-lg font-bold text-primary">{suggestion.calories_target || "—"}</p>
+                    <p className="text-lg font-bold text-info">{suggestion.calories_target || "—"}</p>
                   </div>
                   <div className="bg-muted/50 rounded-xl px-4 py-3 text-center">
                     <p className="text-[10px] text-muted-foreground font-medium mb-1">Proteína aprox.</p>
-                    <p className="text-lg font-bold text-primary">{suggestion.protein_target ? `${suggestion.protein_target}g` : "—"}</p>
+                    <p className="text-lg font-bold text-info">{suggestion.protein_target ? `${suggestion.protein_target}g` : "—"}</p>
                   </div>
                 </div>
 
@@ -318,7 +321,7 @@ const Nutrition = () => {
                 <button
                   onClick={saveSuggestion}
                   disabled={saving}
-                  className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl gradient-hero text-primary-foreground text-sm font-semibold shadow-sm active:scale-[0.97]"
+                  className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl gradient-nutrition text-white text-sm font-semibold shadow-sm active:scale-[0.97]"
                 >
                   {saving ? (
                     <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
