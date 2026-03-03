@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { useTutorial } from "@/hooks/useTutorial";
-import { Settings, Plus, Sparkles, Flame, Utensils, ChevronRight, X, Coffee, Sun, Moon, Cookie, ClipboardCheck, ArrowRight } from "lucide-react";
+import { Settings, Plus, Sparkles, Flame, Utensils, ChevronRight, X, Coffee, Sun, Moon, Cookie, ClipboardCheck, ArrowRight, Salad } from "lucide-react";
 import { cn } from "@/lib/utils";
 import WorkoutSuggestion from "@/components/dashboard/WorkoutSuggestion";
 
@@ -277,7 +277,7 @@ const Dashboard = () => {
             >
               <div className="flex items-start gap-3 bg-accent rounded-xl px-4 py-3.5 border border-primary/15 group-active:scale-[0.98] transition-all duration-200">
                 <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                  <Utensils className="w-4 h-4 text-primary" />
+                  <Salad className="w-4 h-4 text-primary" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-[10px] font-semibold text-primary uppercase tracking-wide mb-0.5">Sua dieta de hoje</p>
@@ -291,7 +291,7 @@ const Dashboard = () => {
           ) : (
             <div className="flex items-start gap-3 bg-accent rounded-xl px-4 py-3.5 border border-primary/15">
               <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                <Utensils className="w-4 h-4 text-primary" />
+                <Salad className="w-4 h-4 text-primary" />
               </div>
               <p className="text-xs text-foreground leading-relaxed mt-1.5">{getDietSuggestion()}</p>
             </div>
