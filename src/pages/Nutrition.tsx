@@ -202,22 +202,20 @@ const Nutrition = () => {
           <>
             <ContextualHint id="save-diet" message="Salve sua sugestão para acompanhar no histórico." className="mb-1" />
             {/* AI Diet suggestion button */}
-             <button
+            <button
               data-tutorial="diet-btn"
               onClick={generateSuggestion}
               disabled={generating}
-              className="w-full bg-card rounded-2xl p-4 shadow-card border border-info/20 flex items-center gap-3 hover:border-info/40 transition-all animate-fade-in-up active:scale-[0.98]"
+              className="w-full py-3.5 rounded-xl gradient-nutrition text-white text-sm font-bold shadow-sm active:scale-[0.97] transition-transform flex items-center justify-center gap-2 animate-fade-in-up disabled:opacity-60"
             >
-              <div className="w-10 h-10 rounded-xl gradient-nutrition flex items-center justify-center shrink-0">
-                <Sparkles className="w-5 h-5 text-white" />
-              </div>
-              <div className="text-left flex-1">
-                <p className="font-semibold text-sm">Sugestão de dieta de hoje</p>
-                <p className="text-[11px] text-muted-foreground mt-0.5">
-                  {savedToday ? "Sugestão salva — toque para gerar outra" : "Adaptada ao seu momento"}
-                </p>
-              </div>
-              <Droplets className="w-4 h-4 text-info" />
+              {generating ? (
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <>
+                  <Sparkles className="w-4 h-4" />
+                  {savedToday ? "Gerar nova dieta" : "Gerar dieta personalizada"}
+                </>
+              )}
             </button>
 
             <FeaturedForYou context="nutrition" />
