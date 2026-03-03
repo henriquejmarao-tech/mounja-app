@@ -3,7 +3,7 @@ import { useTutorial } from "@/hooks/useTutorial";
 import { X, Lightbulb } from "lucide-react";
 
 interface ContextualHintProps {
-  id: "export-pdf" | "save-diet" | "register-workout";
+  id: "export-pdf" | "save-diet" | "register-workout" | "workout-ai";
   message: string;
   className?: string;
 }

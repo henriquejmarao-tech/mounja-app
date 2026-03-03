@@ -1,31 +1,22 @@
 import { useEffect, useState } from "react";
-import { ArrowLeft, Heart, Dumbbell, Footprints, Sparkles, Plus, Minus } from "lucide-react";
+import { ArrowLeft, Heart, Dumbbell, Footprints, Sparkles, Plus, Minus, X, RefreshCw, Save, Flame, Target, Clock, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import ContextualHint from "@/components/tutorial/ContextualHint";
 import FeaturedForYou from "@/components/FeaturedForYou";
 
-interface TipCard {
-  id: string;
-  emoji: string;
-  title: string;
-  description: string;
-  levels: string[];
+interface WorkoutSuggestion {
+  warmup: string;
+  main_workout: string;
+  cooldown: string;
+  duration_minutes: number;
+  intensity: string;
+  focus_area: string;
+  tip: string;
+  context_note: string;
 }
-
-const allTips: TipCard[] = [
-  { id: "start-slow", emoji: "🚶", title: "Comece devagar", description: "Uma caminhada de 10-15 minutos por dia já faz diferença. O mais importante agora é criar o hábito — a intensidade vem depois.", levels: ["sedentary"] },
-  { id: "routine", emoji: "📅", title: "Crie uma rotina simples", description: "Escolha 2-3 dias fixos na semana para se exercitar. Pode ser algo leve como caminhar no bairro, dançar em casa ou fazer alongamento.", levels: ["sedentary", "light"] },
-  { id: "preserve-muscle", emoji: "💪", title: "Preserve seus músculos", description: "Durante a perda de peso, é natural perder um pouco de músculo. Exercícios de força (mesmo leves, como agachamento e flexão de parede) ajudam a minimizar isso.", levels: ["sedentary", "light", "moderate", "active"] },
-  { id: "frequency", emoji: "🎯", title: "Frequência ideal", description: "Tente fazer pelo menos 150 minutos de atividade moderada por semana (cerca de 30 min, 5x). Mas qualquer quantidade já é melhor que nenhuma.", levels: ["light", "moderate"] },
-  { id: "low-energy", emoji: "🔋", title: "Dias de baixa energia", description: "É normal sentir menos disposição em alguns dias, especialmente após a aplicação. Nesses dias, opte por alongamento ou uma caminhada leve. Respeite seu corpo.", levels: ["sedentary", "light", "moderate", "active"] },
-  { id: "progress", emoji: "📈", title: "Aumente aos poucos", description: "Você já tem uma boa base! Tente adicionar um dia a mais de treino ou aumentar levemente a intensidade. Progressão gradual é a chave.", levels: ["moderate", "active"] },
-  { id: "variety", emoji: "🔄", title: "Varie os exercícios", description: "Misture caminhada, musculação e alongamento durante a semana. Isso trabalha o corpo de formas diferentes e evita monotonia.", levels: ["moderate", "active"] },
-  { id: "post-injection", emoji: "💉", title: "Treino e dia de aplicação", description: "Nos 1-2 dias após a aplicação, você pode sentir mais cansaço ou desconforto. Está tudo bem diminuir o ritmo. Prefira atividades leves nesses dias.", levels: ["sedentary", "light", "moderate", "active"] },
-];
 
 const levelLabels: Record<string, string> = {
   sedentary: "Iniciante", light: "Pouco ativo", moderate: "Moderado", active: "Ativo",
@@ -36,6 +27,8 @@ const frequencySuggestion: Record<string, string> = {
   moderate: "4-5x por semana, 30-45 min", active: "5-6x por semana, 45-60 min",
 };
 
+const intensityLabel: Record<string, string> = { light: "Leve", moderate: "Moderado", intense: "Intenso" };
+
 const Workouts = () => {
   const navigate = useNavigate();
   const { user, profile } = useAuth();
@@ -43,6 +36,13 @@ const Workouts = () => {
   const [recentWorkouts, setRecentWorkouts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [savingGoal, setSavingGoal] = useState(false);
+
+  // AI suggestion state
+  const [showModal, setShowModal] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [suggestion, setSuggestion] = useState<WorkoutSuggestion | null>(null);
+  const [savedToday, setSavedToday] = useState(false);
 
   const activityLevel = profile?.activity_level || "sedentary";
   const defaultGoal = activityLevel === "sedentary" ? 2 : activityLevel === "light" ? 3 : 4;
@@ -58,18 +58,23 @@ const Workouts = () => {
     if (!user) { setLoading(false); return; }
     const fetchData = async () => {
       const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString().split("T")[0];
-      
-      // Fetch from workouts table
-      const { data: workouts } = await supabase
-        .from("workouts" as any)
-        .select("*")
-        .eq("user_id", user.id)
-        .gte("date", weekAgo)
-        .order("date", { ascending: false });
+      const today = new Date().toISOString().split("T")[0];
 
-      const wk = (workouts as any[]) || [];
+      const [workoutsRes, savedRes] = await Promise.all([
+        supabase.from("workouts" as any).select("*").eq("user_id", user.id).gte("date", weekAgo).order("date", { ascending: false }),
+        supabase.from("workout_suggestions" as any).select("*").eq("user_id", user.id).eq("date", today).limit(1),
+      ]);
+
+      const wk = (workoutsRes.data as any[]) || [];
       setWeeklyCount(wk.length);
       setRecentWorkouts(wk.slice(0, 5));
+
+      const saved = (savedRes.data as any[]) || [];
+      if (saved.length > 0) {
+        setSuggestion(saved[0]);
+        setSavedToday(true);
+      }
+
       setLoading(false);
     };
     fetchData();
@@ -85,10 +90,60 @@ const Workouts = () => {
     setSavingGoal(false);
   };
 
-  const relevantTips = allTips.filter((t) => t.levels.includes(activityLevel));
+  const generateSuggestion = async () => {
+    setGenerating(true);
+    setSuggestion(null);
+    setShowModal(true);
+
+    try {
+      const { data, error } = await supabase.functions.invoke("workout-suggestion", {});
+      if (error) throw new Error(error.message);
+      if (data?.error) throw new Error(data.error);
+      if (data?.suggestion) {
+        setSuggestion(data.suggestion);
+      }
+    } catch (e: any) {
+      toast.error(e.message || "Erro ao gerar sugestão.");
+      setShowModal(false);
+    }
+    setGenerating(false);
+  };
+
+  const saveSuggestion = async () => {
+    if (!user || !suggestion) return;
+    setSaving(true);
+    const today = new Date().toISOString().split("T")[0];
+
+    await supabase.from("workout_suggestions" as any).delete().eq("user_id", user.id).eq("date", today);
+
+    const { error } = await supabase.from("workout_suggestions" as any).insert({
+      user_id: user.id,
+      date: today,
+      warmup: suggestion.warmup,
+      main_workout: suggestion.main_workout,
+      cooldown: suggestion.cooldown,
+      duration_minutes: suggestion.duration_minutes,
+      intensity: suggestion.intensity,
+      focus_area: suggestion.focus_area,
+      tip: suggestion.tip,
+      context_note: suggestion.context_note,
+    } as any);
+
+    if (error) toast.error("Erro ao salvar.");
+    else {
+      toast.success("Treino salvo para hoje! 💪");
+      setSavedToday(true);
+    }
+    setSaving(false);
+  };
+
   const progress = Math.min(100, (weeklyCount / weeklyGoal) * 100);
 
-  const intensityLabel: Record<string, string> = { light: "Leve", moderate: "Moderado", intense: "Intenso" };
+  const workoutSections = [
+    { key: "warmup", label: "Aquecimento", Icon: Flame },
+    { key: "main_workout", label: "Treino principal", Icon: Dumbbell },
+    { key: "cooldown", label: "Volta à calma", Icon: Heart },
+  ];
 
   return (
     <div className="min-h-screen bg-background pb-28">
@@ -113,16 +168,28 @@ const Workouts = () => {
           </div>
         ) : (
           <>
-            <FeaturedForYou context="movement" />
-            <ContextualHint id="register-workout" message="Registrar treino ajuda o app a ajustar intensidade." className="mb-1" />
-            {/* Register workout button */}
+            <ContextualHint id="workout-ai" message="Gere treinos personalizados com IA adaptados ao seu momento." className="mb-1" />
+
+            {/* AI Workout suggestion button */}
             <button
-              onClick={() => navigate("/registrar?tab=workout")}
-              className="w-full gradient-hero text-primary-foreground font-bold py-4 rounded-2xl flex items-center justify-center gap-2 shadow-elevated animate-fade-in-up"
+              data-tutorial="workout-ai-btn"
+              onClick={generateSuggestion}
+              disabled={generating}
+              className="w-full bg-card rounded-2xl p-4 shadow-card border border-primary/20 flex items-center gap-3 hover:border-primary/40 transition-all animate-fade-in-up active:scale-[0.98]"
             >
-              <Dumbbell className="w-5 h-5" />
-              Registrar treino
+              <div className="w-10 h-10 rounded-xl gradient-hero flex items-center justify-center shrink-0">
+                <Sparkles className="w-5 h-5 text-primary-foreground" />
+              </div>
+              <div className="text-left flex-1">
+                <p className="font-semibold text-sm">Treino do dia com IA</p>
+                <p className="text-[11px] text-muted-foreground mt-0.5">
+                  {savedToday ? "Treino salvo — toque para gerar outro" : "Adaptado ao seu momento e nível"}
+                </p>
+              </div>
+              <Dumbbell className="w-4 h-4 text-primary" />
             </button>
+
+            <FeaturedForYou context="movement" />
 
             {/* Weekly goal + progress */}
             <div data-tutorial="workout-goal" className="bg-card rounded-2xl p-5 shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: "60ms" }}>
@@ -178,7 +245,7 @@ const Workouts = () => {
               </div>
             )}
 
-            {/* User level */}
+            {/* User level with edit */}
             <div className="bg-card rounded-2xl p-5 shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: "180ms" }}>
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
@@ -189,10 +256,17 @@ const Workouts = () => {
                   {levelLabels[activityLevel] || "Iniciante"}
                 </span>
               </div>
-              <div className="bg-muted/50 rounded-xl p-3">
+              <div className="bg-muted/50 rounded-xl p-3 mb-3">
                 <p className="text-[11px] text-muted-foreground font-medium mb-0.5">Frequência sugerida</p>
                 <p className="text-sm font-bold">{frequencySuggestion[activityLevel] || frequencySuggestion.sedentary}</p>
               </div>
+              <button
+                onClick={() => navigate("/preferencias-rotina")}
+                className="w-full flex items-center justify-between bg-muted/50 rounded-xl px-3 py-2.5 hover:bg-muted transition-colors"
+              >
+                <p className="text-xs font-semibold">Editar perfil de atividade</p>
+                <ChevronRight className="w-4 h-4 text-muted-foreground" />
+              </button>
             </div>
 
             {/* Disclaimer */}
@@ -202,24 +276,121 @@ const Workouts = () => {
                 Dicas educativas gerais. Consulte um profissional antes de iniciar atividades intensas.
               </p>
             </div>
-
-            {/* Tips */}
-            <div data-tutorial="workout-tips" className="space-y-3">
-              {relevantTips.map((tip, i) => (
-                <div key={tip.id} className="bg-card rounded-2xl p-4 shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: `${(i + 4) * 60}ms` }}>
-                  <div className="flex items-start gap-3">
-                    <span className="text-2xl shrink-0">{tip.emoji}</span>
-                    <div>
-                      <h3 className="font-semibold text-sm">{tip.title}</h3>
-                      <p className="text-xs text-muted-foreground leading-relaxed mt-1.5">{tip.description}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
           </>
         )}
       </div>
+
+      {/* AI Workout Suggestion Modal */}
+      {showModal && (
+        <div className="fixed inset-0 z-[60] bg-card flex flex-col" style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}>
+          <div className="shrink-0 px-5 pt-4 pb-3 border-b border-border/50 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-primary" />
+              <h2 className="font-bold text-base">Treino do dia</h2>
+            </div>
+            <button onClick={() => setShowModal(false)} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
+            {generating ? (
+              <div className="flex flex-col items-center justify-center h-full gap-3">
+                <div className="w-10 h-10 border-3 border-primary/30 border-t-primary rounded-full animate-spin" />
+                <p className="text-sm text-muted-foreground">Gerando treino personalizado...</p>
+                <p className="text-xs text-muted-foreground/60">Isso pode levar alguns segundos</p>
+              </div>
+            ) : suggestion ? (
+              <>
+                {suggestion.context_note && (
+                  <div className="bg-primary/5 rounded-xl px-3.5 py-2.5 border border-primary/10">
+                    <p className="text-xs text-primary font-medium">{suggestion.context_note}</p>
+                  </div>
+                )}
+
+                {/* Focus area + duration + intensity */}
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="bg-muted/50 rounded-xl px-3 py-2.5 text-center">
+                    <Target className="w-3.5 h-3.5 text-primary mx-auto mb-1" />
+                    <p className="text-[10px] text-muted-foreground font-medium">Foco</p>
+                    <p className="text-xs font-bold">{suggestion.focus_area || "—"}</p>
+                  </div>
+                  <div className="bg-muted/50 rounded-xl px-3 py-2.5 text-center">
+                    <Clock className="w-3.5 h-3.5 text-primary mx-auto mb-1" />
+                    <p className="text-[10px] text-muted-foreground font-medium">Duração</p>
+                    <p className="text-xs font-bold">{suggestion.duration_minutes ? `${suggestion.duration_minutes}min` : "—"}</p>
+                  </div>
+                  <div className="bg-muted/50 rounded-xl px-3 py-2.5 text-center">
+                    <Flame className="w-3.5 h-3.5 text-primary mx-auto mb-1" />
+                    <p className="text-[10px] text-muted-foreground font-medium">Intensidade</p>
+                    <p className="text-xs font-bold">{intensityLabel[suggestion.intensity] || suggestion.intensity || "—"}</p>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  {workoutSections.map(({ key, label, Icon }) => {
+                    const value = (suggestion as any)[key];
+                    if (!value) return null;
+                    return (
+                      <div key={key} className="bg-muted/50 rounded-xl px-4 py-3">
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <Icon className="w-3.5 h-3.5 text-primary" />
+                          <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">{label}</p>
+                        </div>
+                        <ul className="space-y-1.5">
+                          {value
+                            .split(/\n|;|·/)
+                            .map((s: string) => s.replace(/^-\s*/, "").trim())
+                            .filter(Boolean)
+                            .map((item: string, i: number) => (
+                              <li key={i} className="flex items-start gap-2">
+                                <span className="w-1.5 h-1.5 rounded-full bg-primary/40 shrink-0 mt-[7px]" />
+                                <span className="text-[13px] leading-snug">{item}</span>
+                              </li>
+                            ))}
+                        </ul>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {suggestion.tip && (
+                  <div className="bg-muted/30 rounded-xl px-4 py-3 border border-border/50">
+                    <p className="text-xs font-semibold mb-1">💡 Dica do treino</p>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{suggestion.tip}</p>
+                  </div>
+                )}
+              </>
+            ) : null}
+          </div>
+
+          {suggestion && !generating && (
+            <div className="shrink-0 px-5 pt-3 border-t border-border/50 bg-card" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 0.75rem)" }}>
+              <div className="flex gap-2">
+                <button
+                  onClick={generateSuggestion}
+                  disabled={generating}
+                  className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl border border-border bg-background text-sm font-semibold transition-all active:scale-[0.97]"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  Outro
+                </button>
+                <button
+                  onClick={saveSuggestion}
+                  disabled={saving}
+                  className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl gradient-hero text-primary-foreground text-sm font-semibold shadow-sm active:scale-[0.97]"
+                >
+                  {saving ? (
+                    <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+                  ) : (
+                    <><Save className="w-4 h-4" /> Salvar</>
+                  )}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
