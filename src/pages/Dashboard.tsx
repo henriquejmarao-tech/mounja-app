@@ -350,68 +350,73 @@ const Dashboard = () => {
         </button>
       </div>
 
-      {/* Diet Detail Modal */}
+      {/* Diet Detail Modal - fullscreen on mobile */}
       {showDietModal && savedDiet && (
-        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
-          <div className="bg-card w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl shadow-elevated border border-border/50 max-h-[85vh] overflow-y-auto animate-fade-in-up">
-            <div className="sticky top-0 bg-card rounded-t-3xl sm:rounded-t-2xl px-5 pt-5 pb-3 border-b border-border/50 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Utensils className="w-4 h-4 text-primary" />
-                <h2 className="font-bold text-base">Dieta de hoje</h2>
+        <div className="fixed inset-0 z-[60] bg-card flex flex-col" style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}>
+          {/* Header */}
+          <div className="shrink-0 px-5 pt-4 pb-3 border-b border-border/50 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Utensils className="w-4 h-4 text-primary" />
+              <h2 className="font-bold text-base">Dieta de hoje</h2>
+            </div>
+            <button onClick={() => setShowDietModal(false)} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Scrollable content */}
+          <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
+            {savedDiet.context_note && (
+              <div className="bg-primary/5 rounded-xl px-3.5 py-2.5 border border-primary/10">
+                <p className="text-xs text-primary font-medium">{savedDiet.context_note}</p>
               </div>
-              <button onClick={() => setShowDietModal(false)} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-            <div className="px-5 py-4 space-y-3">
-              {savedDiet.context_note && (
-                <div className="bg-primary/5 rounded-xl px-3.5 py-2.5 border border-primary/10">
-                  <p className="text-xs text-primary font-medium">{savedDiet.context_note}</p>
-                </div>
-              )}
-              {[
-                { key: "breakfast", label: "Café da manhã", Icon: Coffee },
-                { key: "lunch", label: "Almoço", Icon: Sun },
-                { key: "dinner", label: "Jantar", Icon: Moon },
-                { key: "snack", label: "Lanche", Icon: Cookie },
-              ].map(({ key, label, Icon }) => {
-                const value = savedDiet[key];
-                if (!value) return null;
-                return (
-                  <div key={key} className="bg-muted/50 rounded-xl px-4 py-3">
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <Icon className="w-3.5 h-3.5 text-primary" />
-                      <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">{label}</p>
-                    </div>
-                    <p className="text-sm leading-relaxed">{value}</p>
+            )}
+            {[
+              { key: "breakfast", label: "Café da manhã", Icon: Coffee },
+              { key: "lunch", label: "Almoço", Icon: Sun },
+              { key: "dinner", label: "Jantar", Icon: Moon },
+              { key: "snack", label: "Lanche", Icon: Cookie },
+            ].map(({ key, label, Icon }) => {
+              const value = savedDiet[key];
+              if (!value) return null;
+              return (
+                <div key={key} className="bg-muted/50 rounded-xl px-4 py-3">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <Icon className="w-3.5 h-3.5 text-primary" />
+                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">{label}</p>
                   </div>
-                );
-              })}
-              {(savedDiet.calories_target || savedDiet.protein_target) && (
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-muted/50 rounded-xl px-4 py-3 text-center">
-                    <p className="text-[10px] text-muted-foreground font-medium mb-1">Calorias aprox.</p>
-                    <p className="text-lg font-bold text-primary">{savedDiet.calories_target || "—"}</p>
-                  </div>
-                  <div className="bg-muted/50 rounded-xl px-4 py-3 text-center">
-                    <p className="text-[10px] text-muted-foreground font-medium mb-1">Proteína aprox.</p>
-                    <p className="text-lg font-bold text-primary">{savedDiet.protein_target ? `${savedDiet.protein_target}g` : "—"}</p>
-                  </div>
+                  <p className="text-sm leading-relaxed">{value}</p>
                 </div>
-              )}
-              {savedDiet.tip && (
-                <div className="bg-card rounded-xl px-4 py-3 border border-border/50">
-                  <p className="text-xs font-semibold mb-1">💡 Dica do dia</p>
-                  <p className="text-xs text-muted-foreground leading-relaxed">{savedDiet.tip}</p>
+              );
+            })}
+            {(savedDiet.calories_target || savedDiet.protein_target) && (
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-muted/50 rounded-xl px-4 py-3 text-center">
+                  <p className="text-[10px] text-muted-foreground font-medium mb-1">Calorias aprox.</p>
+                  <p className="text-lg font-bold text-primary">{savedDiet.calories_target || "—"}</p>
                 </div>
-              )}
-              <button
-                onClick={() => { setShowDietModal(false); navigate("/nutricao"); }}
-                className="w-full py-3 rounded-xl gradient-hero text-primary-foreground text-sm font-semibold mt-2"
-              >
-                Ir para Nutrição
-              </button>
-            </div>
+                <div className="bg-muted/50 rounded-xl px-4 py-3 text-center">
+                  <p className="text-[10px] text-muted-foreground font-medium mb-1">Proteína aprox.</p>
+                  <p className="text-lg font-bold text-primary">{savedDiet.protein_target ? `${savedDiet.protein_target}g` : "—"}</p>
+                </div>
+              </div>
+            )}
+            {savedDiet.tip && (
+              <div className="bg-muted/30 rounded-xl px-4 py-3 border border-border/50">
+                <p className="text-xs font-semibold mb-1">💡 Dica do dia</p>
+                <p className="text-xs text-muted-foreground leading-relaxed">{savedDiet.tip}</p>
+              </div>
+            )}
+          </div>
+
+          {/* Fixed footer */}
+          <div className="shrink-0 px-5 pt-3 border-t border-border/50 bg-card" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 0.75rem)" }}>
+            <button
+              onClick={() => { setShowDietModal(false); navigate("/nutricao"); }}
+              className="w-full py-3.5 rounded-xl gradient-hero text-primary-foreground text-sm font-semibold active:scale-[0.97] transition-all"
+            >
+              Ir para Nutrição
+            </button>
           </div>
         </div>
       )}
