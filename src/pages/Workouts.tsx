@@ -247,14 +247,6 @@ const Workouts = () => {
                 <ChevronRight className="w-4 h-4 text-muted-foreground" />
               </button>
             </div>
-
-            {/* Disclaimer */}
-            <div className="bg-muted/50 rounded-2xl p-3.5 flex items-start gap-2.5">
-              <Heart className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
-              <p className="text-[11px] text-muted-foreground leading-relaxed">
-                Dicas educativas gerais. Consulte um profissional antes de iniciar atividades intensas.
-              </p>
-            </div>
           </>
         )}
       </div>
