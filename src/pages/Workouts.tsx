@@ -171,8 +171,6 @@ const Workouts = () => {
           </div>
         ) : (
           <>
-            <ContextualHint id="workout-ai" message="Gere treinos personalizados com IA adaptados ao seu momento." className="mb-1" />
-
             {/* AI Workout suggestion button */}
             <button
               data-tutorial="workout-ai-btn"
