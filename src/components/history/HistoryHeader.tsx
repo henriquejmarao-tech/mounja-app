@@ -12,7 +12,7 @@ const HistoryHeader = ({ showExport, onExport }: HistoryHeaderProps) => {
   return (
     <header className="relative overflow-hidden">
       <div className="absolute inset-0 gradient-hero opacity-95" />
-      <div className="relative px-5 pt-6 pb-6">
+      <div className="relative px-5 pb-6" style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 1.5rem)" }}>
         <div className="flex items-center justify-between mb-4">
           <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-primary-foreground/80">
             <ArrowLeft className="w-5 h-5" />

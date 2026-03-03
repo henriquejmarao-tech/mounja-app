@@ -416,7 +416,7 @@ const Triage = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <header className="px-5 pt-6 pb-4">
+      <header className="px-5 pb-4" style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 1.5rem)" }}>
         <div className="flex items-center justify-between mb-4">
           {step > 0 ? (
             <button onClick={() => setStep(step - 1)} className="flex items-center gap-1 text-sm text-muted-foreground">

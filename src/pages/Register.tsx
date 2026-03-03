@@ -22,7 +22,7 @@ const Register = () => {
 
   return (
     <div className="min-h-screen bg-background pb-28">
-      <header className="px-5 pt-6 pb-4">
+      <header className="px-5 pb-4" style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 1.5rem)" }}>
         <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-muted-foreground mb-4">
           <ArrowLeft className="w-5 h-5" />
           <span className="text-sm font-medium">Voltar</span>

@@ -190,7 +190,7 @@ const Dashboard = () => {
       {/* Header */}
       <header className="relative overflow-hidden">
         <div className="absolute inset-0 gradient-hero opacity-90" />
-        <div className="relative px-5 pt-8 pb-6">
+        <div className="relative px-5 pb-6" style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 2rem)" }}>
           <div className="flex items-center justify-between mb-5">
             <div>
               <img src={logoMounja} alt="Mounjá" className="h-14 mb-1.5 object-contain brightness-0 invert" />
