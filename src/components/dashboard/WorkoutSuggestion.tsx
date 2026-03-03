@@ -40,7 +40,7 @@ const WorkoutSuggestion = ({
   // If already trained today
   if (todayWorkout) {
     return (
-      <div className="flex items-start gap-2.5 bg-primary/8 rounded-xl px-3 py-2.5 border border-primary/10">
+      <div className="flex items-start gap-2.5 bg-primary/12 rounded-xl px-3 py-2.5 border border-primary/15">
         <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" />
         <div>
           <p className="text-xs font-semibold text-primary">Treino concluído hoje</p>
@@ -55,7 +55,7 @@ const WorkoutSuggestion = ({
   // If rest day dismissed
   if (restDayDismissed) {
     return (
-      <div className="flex items-start gap-2.5 bg-muted/50 rounded-xl px-3 py-2.5">
+      <div className="flex items-start gap-2.5 bg-primary/12 rounded-xl px-3 py-2.5 border border-primary/15">
         <Moon className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
         <p className="text-xs text-muted-foreground">Dia de descanso registrado. Descanse bem.</p>
       </div>
@@ -94,7 +94,7 @@ const WorkoutSuggestion = ({
 
   return (
     <div className="space-y-2.5">
-      <div className="bg-muted/50 rounded-xl px-3 py-3">
+      <div className="bg-primary/12 rounded-xl px-3 py-3 border border-primary/15">
         <div className="flex items-center gap-2 mb-2">
           <Dumbbell className="w-3.5 h-3.5 text-primary shrink-0" />
           <p className="text-xs font-semibold text-foreground">Treino recomendado hoje</p>
