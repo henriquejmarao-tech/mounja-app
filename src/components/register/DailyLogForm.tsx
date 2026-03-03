@@ -123,10 +123,22 @@ const DailyLogForm = () => {
         {renderSlider(injPain, setInjPain, "Dor no local", "💉")}
       </div>
 
-      {/* Water - liters, previous day */}
+      {/* Food quality - main area */}
       <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50">
-        <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Água consumida ontem (litros)</label>
-        <input type="number" step="0.1" value={waterL} onChange={(e) => setWaterL(e.target.value)} placeholder="Ex: 2.0" className="w-full px-4 py-3 rounded-xl border border-border bg-background text-lg font-semibold outline-none focus:ring-2 focus:ring-primary/20 text-center" />
+        <h3 className="font-semibold text-sm mb-3">Alimentação</h3>
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            { value: "good", label: "Boa", emoji: "😊" },
+            { value: "ok", label: "Mais ou menos", emoji: "😐" },
+            { value: "bad", label: "Ruim", emoji: "😞" },
+          ].map((fq) => (
+            <button key={fq.value} type="button" onClick={() => setFoodQuality(fq.value)}
+              className={cn("py-3 rounded-xl text-xs font-semibold border transition-all flex flex-col items-center gap-1", foodQuality === fq.value ? "bg-primary text-primary-foreground border-primary" : "bg-background border-border hover:border-primary/30")}>
+              <span className="text-lg">{fq.emoji}</span>
+              {fq.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* More details toggle */}
@@ -155,22 +167,10 @@ const DailyLogForm = () => {
             </div>
           </div>
 
-          {/* Food quality */}
+          {/* Water - liters, previous day */}
           <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50">
-            <h3 className="font-semibold text-sm mb-3">Alimentação</h3>
-            <div className="grid grid-cols-3 gap-2">
-              {[
-                { value: "good", label: "Boa", emoji: "😊" },
-                { value: "ok", label: "Mais ou menos", emoji: "😐" },
-                { value: "bad", label: "Ruim", emoji: "😞" },
-              ].map((fq) => (
-                <button key={fq.value} type="button" onClick={() => setFoodQuality(fq.value)}
-                  className={cn("py-3 rounded-xl text-xs font-semibold border transition-all flex flex-col items-center gap-1", foodQuality === fq.value ? "bg-primary text-primary-foreground border-primary" : "bg-background border-border hover:border-primary/30")}>
-                  <span className="text-lg">{fq.emoji}</span>
-                  {fq.label}
-                </button>
-              ))}
-            </div>
+            <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Água consumida <span className="font-black text-foreground">ontem</span> (litros)</label>
+            <input type="number" step="0.1" value={waterL} onChange={(e) => setWaterL(e.target.value)} placeholder="Ex: 2.0" className="w-full px-4 py-3 rounded-xl border border-border bg-background text-lg font-semibold outline-none focus:ring-2 focus:ring-primary/20 text-center" />
           </div>
 
           {/* Notes */}
