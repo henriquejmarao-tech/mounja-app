@@ -33,30 +33,20 @@ interface FeaturedForYouProps {
 }
 
 // Icon color palette per tip for visual variety
-const tipColors: Record<string, { bg: string; icon: string; border: string }> = {
-  // Nutrition
-  "n-nausea":       { bg: "bg-amber-50 dark:bg-amber-950/30",   icon: "text-amber-600 dark:text-amber-400",   border: "border-amber-200/60 dark:border-amber-800/40" },
-  "n-constipation": { bg: "bg-orange-50 dark:bg-orange-950/30", icon: "text-orange-600 dark:text-orange-400", border: "border-orange-200/60 dark:border-orange-800/40" },
-  "n-fatigue":      { bg: "bg-violet-50 dark:bg-violet-950/30", icon: "text-violet-600 dark:text-violet-400", border: "border-violet-200/60 dark:border-violet-800/40" },
-  "n-headache":     { bg: "bg-sky-50 dark:bg-sky-950/30",       icon: "text-sky-600 dark:text-sky-400",       border: "border-sky-200/60 dark:border-sky-800/40" },
-  "n-post-inj":     { bg: "bg-rose-50 dark:bg-rose-950/30",     icon: "text-rose-600 dark:text-rose-400",     border: "border-rose-200/60 dark:border-rose-800/40" },
-  "n-protein":      { bg: "bg-emerald-50 dark:bg-emerald-950/30", icon: "text-emerald-600 dark:text-emerald-400", border: "border-emerald-200/60 dark:border-emerald-800/40" },
-  "n-hydration":    { bg: "bg-cyan-50 dark:bg-cyan-950/30",     icon: "text-cyan-600 dark:text-cyan-400",     border: "border-cyan-200/60 dark:border-cyan-800/40" },
-  "n-portions":     { bg: "bg-teal-50 dark:bg-teal-950/30",     icon: "text-teal-600 dark:text-teal-400",     border: "border-teal-200/60 dark:border-teal-800/40" },
-  // Movement
-  "m-post-inj":     { bg: "bg-rose-50 dark:bg-rose-950/30",     icon: "text-rose-600 dark:text-rose-400",     border: "border-rose-200/60 dark:border-rose-800/40" },
-  "m-fatigue":      { bg: "bg-violet-50 dark:bg-violet-950/30", icon: "text-violet-600 dark:text-violet-400", border: "border-violet-200/60 dark:border-violet-800/40" },
-  "m-nausea":       { bg: "bg-amber-50 dark:bg-amber-950/30",   icon: "text-amber-600 dark:text-amber-400",   border: "border-amber-200/60 dark:border-amber-800/40" },
-  "m-start":        { bg: "bg-sky-50 dark:bg-sky-950/30",       icon: "text-sky-600 dark:text-sky-400",       border: "border-sky-200/60 dark:border-sky-800/40" },
-  "m-variety":      { bg: "bg-orange-50 dark:bg-orange-950/30", icon: "text-orange-600 dark:text-orange-400", border: "border-orange-200/60 dark:border-orange-800/40" },
-  "m-preserve":     { bg: "bg-emerald-50 dark:bg-emerald-950/30", icon: "text-emerald-600 dark:text-emerald-400", border: "border-emerald-200/60 dark:border-emerald-800/40" },
-  "m-routine":      { bg: "bg-teal-50 dark:bg-teal-950/30",     icon: "text-teal-600 dark:text-teal-400",     border: "border-teal-200/60 dark:border-teal-800/40" },
-  "m-progress":     { bg: "bg-cyan-50 dark:bg-cyan-950/30",     icon: "text-cyan-600 dark:text-cyan-400",     border: "border-cyan-200/60 dark:border-cyan-800/40" },
-};
-
-const defaultColors: Record<string, { bg: string; icon: string; border: string }> = {
-  nutrition: { bg: "bg-accent", icon: "text-info", border: "border-info/20" },
-  movement: { bg: "bg-accent", icon: "text-urgent", border: "border-urgent/20" },
+// Unified theme colors per section
+const sectionTheme: Record<string, { bg: string; icon: string; border: string; iconBg: string }> = {
+  nutrition: {
+    bg: "bg-teal-50/70 dark:bg-teal-950/20",
+    icon: "text-teal-600 dark:text-teal-400",
+    border: "border-teal-200/50 dark:border-teal-800/40",
+    iconBg: "bg-teal-100/80 dark:bg-teal-900/30",
+  },
+  movement: {
+    bg: "bg-orange-50/70 dark:bg-orange-950/20",
+    icon: "text-orange-600 dark:text-orange-400",
+    border: "border-orange-200/50 dark:border-orange-800/40",
+    iconBg: "bg-orange-100/80 dark:bg-orange-900/30",
+  },
 };
 
 // ─── Mode A: Deterministic ranking ──────────────────────────────────
@@ -241,32 +231,35 @@ const FeaturedForYou = ({ context }: FeaturedForYouProps) => {
 
       <div className="space-y-2.5">
         {aiLoading && mode === "B" ? (
-          Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="rounded-xl px-4 py-3.5 border shadow-sm flex items-start gap-3 bg-accent border-primary/10">
-              <Skeleton className="w-9 h-9 rounded-lg shrink-0" />
-              <div className="flex-1 space-y-1.5">
-                <Skeleton className="h-3.5 w-28" />
-                <Skeleton className="h-3 w-full" />
+          Array.from({ length: 3 }).map((_, i) => {
+            const theme = sectionTheme[context] || sectionTheme.nutrition;
+            return (
+              <div key={i} className={cn("rounded-xl px-4 py-3.5 border shadow-sm flex items-start gap-3", theme.bg, theme.border)}>
+                <Skeleton className="w-9 h-9 rounded-lg shrink-0" />
+                <div className="flex-1 space-y-1.5">
+                  <Skeleton className="h-3.5 w-28" />
+                  <Skeleton className="h-3 w-full" />
+                </div>
               </div>
-            </div>
-          ))
+            );
+          })
         ) : (
           activeTips.map((tip) => {
-            const colors = tipColors[tip.id] || defaultColors[context] || defaultColors.nutrition;
+            const theme = sectionTheme[context] || sectionTheme.nutrition;
             const Icon = tip.icon;
             return (
               <div
                 key={tip.id}
                 className={cn(
                   "rounded-xl px-4 py-3.5 border shadow-sm flex items-start gap-3 transition-all duration-200",
-                  colors.bg,
-                  colors.border,
+                  theme.bg,
+                  theme.border,
                 )}
               >
                 <div className={cn(
                   "w-9 h-9 rounded-lg flex items-center justify-center shrink-0 mt-0.5",
-                  colors.icon,
-                  "bg-white/60 dark:bg-white/10",
+                  theme.icon,
+                  theme.iconBg,
                 )}>
                   <Icon className="w-[18px] h-[18px]" />
                 </div>
