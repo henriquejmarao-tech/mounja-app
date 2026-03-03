@@ -231,55 +231,62 @@ const Dashboard = () => {
           </button>
         )}
 
-        {/* Dose history CTA - one-time only */}
-        {!(profile as any)?.dose_history_completed && (
-          <button
-            onClick={() => navigate("/historico-dose")}
-            className="w-full bg-card rounded-2xl p-4 shadow-card border border-primary/20 animate-fade-in-up flex items-center gap-3.5 text-left active:scale-[0.98] transition-all duration-200"
-          >
-            <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-              <Pill className="w-5.5 h-5.5 text-primary" />
+        {/* Onboarding completion card */}
+        {(!(profile as any)?.dose_history_completed || !(profile as any)?.health_info_completed || !(profile as any)?.routine_completed) && (
+          <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50 animate-fade-in-up">
+            <div className="flex items-center gap-2 mb-1">
+              <Target className="w-4 h-4 text-primary" />
+              <h3 className="font-semibold text-sm">Tratamento 100% assertivo</h3>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-foreground">Conte sobre seu tratamento</p>
-              <p className="text-xs text-muted-foreground mt-0.5">Efeitos, dose e experiência — preencha quando quiser 💊</p>
-            </div>
-            <ArrowRight className="w-4.5 h-4.5 text-muted-foreground/50 shrink-0" />
-          </button>
-        )}
+            <p className="text-xs text-muted-foreground mb-3">Preencha para recomendações personalizadas</p>
 
-        {/* Health info CTA - one-time only */}
-        {!(profile as any)?.health_info_completed && (
-          <button
-            onClick={() => navigate("/saude")}
-            className="w-full bg-card rounded-2xl p-4 shadow-card border border-primary/20 animate-fade-in-up flex items-center gap-3.5 text-left active:scale-[0.98] transition-all duration-200"
-          >
-            <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-              <HeartPulse className="w-5.5 h-5.5 text-primary" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-foreground">Saúde e restrições</p>
-              <p className="text-xs text-muted-foreground mt-0.5">Condições, medicamentos e dieta — preencha quando quiser 🩺</p>
-            </div>
-            <ArrowRight className="w-4.5 h-4.5 text-muted-foreground/50 shrink-0" />
-          </button>
-        )}
+            <div className="space-y-2">
+              {!(profile as any)?.dose_history_completed && (
+                <button
+                  onClick={() => navigate("/historico-dose")}
+                  className="w-full text-left group"
+                >
+                  <div className="flex items-center gap-3 bg-accent rounded-xl px-4 py-3.5 border border-primary/15 group-active:scale-[0.98] transition-all duration-200">
+                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                      <Pill className="w-4 h-4 text-primary" />
+                    </div>
+                    <p className="text-xs font-semibold text-primary flex-1">Histórico de tratamento</p>
+                    <ChevronRight className="w-4 h-4 text-primary/50 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                  </div>
+                </button>
+              )}
 
-        {/* Routine CTA - one-time only */}
-        {!(profile as any)?.routine_completed && (
-          <button
-            onClick={() => navigate("/rotina")}
-            className="w-full bg-card rounded-2xl p-4 shadow-card border border-primary/20 animate-fade-in-up flex items-center gap-3.5 text-left active:scale-[0.98] transition-all duration-200"
-          >
-            <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-              <CalendarClock className="w-5.5 h-5.5 text-primary" />
+              {!(profile as any)?.health_info_completed && (
+                <button
+                  onClick={() => navigate("/saude")}
+                  className="w-full text-left group"
+                >
+                  <div className="flex items-center gap-3 bg-accent rounded-xl px-4 py-3.5 border border-primary/15 group-active:scale-[0.98] transition-all duration-200">
+                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                      <HeartPulse className="w-4 h-4 text-primary" />
+                    </div>
+                    <p className="text-xs font-semibold text-primary flex-1">Saúde e restrições</p>
+                    <ChevronRight className="w-4 h-4 text-primary/50 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                  </div>
+                </button>
+              )}
+
+              {!(profile as any)?.routine_completed && (
+                <button
+                  onClick={() => navigate("/rotina")}
+                  className="w-full text-left group"
+                >
+                  <div className="flex items-center gap-3 bg-accent rounded-xl px-4 py-3.5 border border-primary/15 group-active:scale-[0.98] transition-all duration-200">
+                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                      <CalendarClock className="w-4 h-4 text-primary" />
+                    </div>
+                    <p className="text-xs font-semibold text-primary flex-1">Rotina e preferências</p>
+                    <ChevronRight className="w-4 h-4 text-primary/50 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                  </div>
+                </button>
+              )}
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-foreground">Rotina e preferências</p>
-              <p className="text-xs text-muted-foreground mt-0.5">Água, sono e treinos — preencha quando quiser 🧘</p>
-            </div>
-            <ArrowRight className="w-4.5 h-4.5 text-muted-foreground/50 shrink-0" />
-          </button>
+          </div>
         )}
 
         <div data-tutorial="dose-card" className="bg-card rounded-2xl p-5 shadow-card border border-border/50 animate-fade-in-up">
