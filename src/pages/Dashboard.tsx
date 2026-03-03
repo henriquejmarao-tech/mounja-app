@@ -273,20 +273,27 @@ const Dashboard = () => {
           {savedDiet ? (
             <button
               onClick={() => setShowDietModal(true)}
-              className="w-full text-left"
+              className="w-full text-left group"
             >
-              <div className="flex items-start gap-2.5 bg-primary/12 rounded-xl px-3 py-2.5 hover:bg-primary/18 transition-colors border border-primary/15">
-                <Utensils className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
-                <p className="text-xs text-foreground leading-relaxed line-clamp-2 flex-1">
-                  {savedDiet.breakfast}{savedDiet.lunch ? ` · ${savedDiet.lunch}` : ""}
-                </p>
-                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-0.5" />
+              <div className="flex items-start gap-3 gradient-hero rounded-xl px-4 py-3.5 shadow-sm border border-primary/20 group-active:scale-[0.98] transition-all duration-200">
+                <div className="w-8 h-8 rounded-lg bg-primary-foreground/20 flex items-center justify-center shrink-0">
+                  <Utensils className="w-4 h-4 text-primary-foreground" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] font-semibold text-primary-foreground/70 uppercase tracking-wide mb-0.5">Sua dieta de hoje</p>
+                  <p className="text-xs text-primary-foreground font-medium leading-relaxed line-clamp-2">
+                    {savedDiet.breakfast}{savedDiet.lunch ? ` · ${savedDiet.lunch}` : ""}
+                  </p>
+                </div>
+                <ChevronRight className="w-4 h-4 text-primary-foreground/60 shrink-0 mt-2 group-hover:translate-x-0.5 transition-transform" />
               </div>
             </button>
           ) : (
-            <div className="flex items-start gap-2.5 bg-primary/12 rounded-xl px-3 py-2.5 border border-primary/15">
-              <Utensils className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
-              <p className="text-xs text-foreground leading-relaxed">{getDietSuggestion()}</p>
+            <div className="flex items-start gap-3 gradient-hero rounded-xl px-4 py-3.5 shadow-sm border border-primary/20">
+              <div className="w-8 h-8 rounded-lg bg-primary-foreground/20 flex items-center justify-center shrink-0">
+                <Utensils className="w-4 h-4 text-primary-foreground" />
+              </div>
+              <p className="text-xs text-primary-foreground font-medium leading-relaxed mt-1.5">{getDietSuggestion()}</p>
             </div>
           )}
         </div>
