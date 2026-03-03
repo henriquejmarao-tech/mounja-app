@@ -85,11 +85,9 @@ const DailyLogForm = () => {
   return (
     <div className="space-y-4 animate-fade-in-up">
       {/* Date - centered */}
-      <div className="flex justify-center">
-        <div className="w-full max-w-xs">
-          <label className="text-xs font-semibold text-muted-foreground block mb-1.5 text-center">Data</label>
-          <input type="date" value={logDate} onChange={(e) => setLogDate(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-border bg-card text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-center" />
-        </div>
+      <div className="mx-auto w-48">
+        <label className="text-xs font-semibold text-muted-foreground block mb-1.5 text-center">Data</label>
+        <input type="date" value={logDate} onChange={(e) => setLogDate(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-border bg-card text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-center" />
       </div>
 
       {/* Weight */}
@@ -152,6 +150,12 @@ const DailyLogForm = () => {
 
       {showOptional && (
         <div className="space-y-4 animate-fade-in-up">
+          {/* Water - liters, previous day */}
+          <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50">
+            <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Água consumida <span className="font-black text-foreground">ontem</span> (litros)</label>
+            <input type="number" step="0.1" value={waterL} onChange={(e) => setWaterL(e.target.value)} placeholder="Ex: 2.0" className="w-full px-4 py-3 rounded-xl border border-border bg-background text-lg font-semibold outline-none focus:ring-2 focus:ring-primary/20 text-center" />
+          </div>
+
           {/* Measurements */}
           <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50">
             <h3 className="font-semibold text-sm mb-3">Medidas</h3>
@@ -165,12 +169,6 @@ const DailyLogForm = () => {
                 <input type="number" step="0.1" value={bodyFatPct} onChange={(e) => setBodyFatPct(e.target.value)} placeholder="28" className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20" />
               </div>
             </div>
-          </div>
-
-          {/* Water - liters, previous day */}
-          <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50">
-            <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Água consumida <span className="font-black text-foreground">ontem</span> (litros)</label>
-            <input type="number" step="0.1" value={waterL} onChange={(e) => setWaterL(e.target.value)} placeholder="Ex: 2.0" className="w-full px-4 py-3 rounded-xl border border-border bg-background text-lg font-semibold outline-none focus:ring-2 focus:ring-primary/20 text-center" />
           </div>
 
           {/* Notes */}
