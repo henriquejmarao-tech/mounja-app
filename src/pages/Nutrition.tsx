@@ -272,105 +272,99 @@ const Nutrition = () => {
         )}
       </div>
 
-      {/* AI Suggestion Modal */}
+      {/* AI Suggestion Modal - fullscreen on mobile */}
       {showModal && (
-        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-end justify-center">
-          <div className="bg-card w-full max-w-lg rounded-t-3xl shadow-elevated border border-border/50 flex flex-col" style={{ maxHeight: "calc(90vh - env(safe-area-inset-top, 0px))" }}>
-            {/* Modal header - sticky */}
-            <div className="shrink-0 bg-card rounded-t-3xl px-5 pt-5 pb-3 border-b border-border/50 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-primary" />
-                <h2 className="font-bold text-base">Sugestão de hoje</h2>
-              </div>
-              <button onClick={() => setShowModal(false)} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-                <X className="w-4 h-4" />
-              </button>
+        <div className="fixed inset-0 z-[60] bg-card flex flex-col" style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}>
+          {/* Modal header */}
+          <div className="shrink-0 px-5 pt-4 pb-3 border-b border-border/50 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-primary" />
+              <h2 className="font-bold text-base">Sugestão de hoje</h2>
             </div>
-
-            {/* Scrollable content */}
-            <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
-              {generating ? (
-                <div className="flex flex-col items-center justify-center py-16 gap-3">
-                  <div className="w-10 h-10 border-3 border-primary/30 border-t-primary rounded-full animate-spin" />
-                  <p className="text-sm text-muted-foreground">Gerando sugestão personalizada...</p>
-                  <p className="text-xs text-muted-foreground/60">Isso pode levar alguns segundos</p>
-                </div>
-              ) : suggestion ? (
-                <>
-                  {/* Context note */}
-                  {suggestion.context_note && (
-                    <div className="bg-primary/5 rounded-xl px-3.5 py-2.5 border border-primary/10">
-                      <p className="text-xs text-primary font-medium">{suggestion.context_note}</p>
-                    </div>
-                  )}
-
-                  {/* Meals */}
-                  <div className="space-y-3">
-                    {mealIcons.map(({ key, label, Icon }) => {
-                      const value = (suggestion as any)[key];
-                      if (!value) return null;
-                      return (
-                        <div key={key} className="bg-muted/50 rounded-xl px-4 py-3">
-                          <div className="flex items-center gap-2 mb-1.5">
-                            <Icon className="w-3.5 h-3.5 text-primary" />
-                            <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">{label}</p>
-                          </div>
-                          <p className="text-sm leading-relaxed">{value}</p>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {/* Targets */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-muted/50 rounded-xl px-4 py-3 text-center">
-                      <p className="text-[10px] text-muted-foreground font-medium mb-1">Calorias aprox.</p>
-                      <p className="text-lg font-bold text-primary">{suggestion.calories_target || "—"}</p>
-                    </div>
-                    <div className="bg-muted/50 rounded-xl px-4 py-3 text-center">
-                      <p className="text-[10px] text-muted-foreground font-medium mb-1">Proteína aprox.</p>
-                      <p className="text-lg font-bold text-primary">{suggestion.protein_target ? `${suggestion.protein_target}g` : "—"}</p>
-                    </div>
-                  </div>
-
-                  {/* Tip */}
-                  {suggestion.tip && (
-                    <div className="bg-card rounded-xl px-4 py-3 border border-border/50">
-                      <p className="text-xs font-semibold mb-1">💡 Dica do dia</p>
-                      <p className="text-xs text-muted-foreground leading-relaxed">{suggestion.tip}</p>
-                    </div>
-                  )}
-                </>
-              ) : null}
-            </div>
-
-            {/* Sticky footer with actions */}
-            {suggestion && !generating && (
-              <div className="shrink-0 px-5 pt-3 border-t border-border/50 bg-card" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 0.75rem)" }}>
-                <div className="flex gap-2">
-                  <button
-                    onClick={generateSuggestion}
-                    disabled={generating}
-                    className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl border border-border bg-background text-sm font-semibold hover:border-primary/30 transition-all"
-                  >
-                    <RefreshCw className="w-4 h-4" />
-                    Outra
-                  </button>
-                  <button
-                    onClick={saveSuggestion}
-                    disabled={saving}
-                    className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl gradient-hero text-primary-foreground text-sm font-semibold shadow-sm"
-                  >
-                    {saving ? (
-                      <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                    ) : (
-                      <><Save className="w-4 h-4" /> Salvar</>
-                    )}
-                  </button>
-                </div>
-              </div>
-            )}
+            <button onClick={() => setShowModal(false)} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+              <X className="w-4 h-4" />
+            </button>
           </div>
+
+          {/* Scrollable content */}
+          <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
+            {generating ? (
+              <div className="flex flex-col items-center justify-center h-full gap-3">
+                <div className="w-10 h-10 border-3 border-primary/30 border-t-primary rounded-full animate-spin" />
+                <p className="text-sm text-muted-foreground">Gerando sugestão personalizada...</p>
+                <p className="text-xs text-muted-foreground/60">Isso pode levar alguns segundos</p>
+              </div>
+            ) : suggestion ? (
+              <>
+                {suggestion.context_note && (
+                  <div className="bg-primary/5 rounded-xl px-3.5 py-2.5 border border-primary/10">
+                    <p className="text-xs text-primary font-medium">{suggestion.context_note}</p>
+                  </div>
+                )}
+
+                <div className="space-y-3">
+                  {mealIcons.map(({ key, label, Icon }) => {
+                    const value = (suggestion as any)[key];
+                    if (!value) return null;
+                    return (
+                      <div key={key} className="bg-muted/50 rounded-xl px-4 py-3">
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <Icon className="w-3.5 h-3.5 text-primary" />
+                          <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">{label}</p>
+                        </div>
+                        <p className="text-sm leading-relaxed">{value}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-muted/50 rounded-xl px-4 py-3 text-center">
+                    <p className="text-[10px] text-muted-foreground font-medium mb-1">Calorias aprox.</p>
+                    <p className="text-lg font-bold text-primary">{suggestion.calories_target || "—"}</p>
+                  </div>
+                  <div className="bg-muted/50 rounded-xl px-4 py-3 text-center">
+                    <p className="text-[10px] text-muted-foreground font-medium mb-1">Proteína aprox.</p>
+                    <p className="text-lg font-bold text-primary">{suggestion.protein_target ? `${suggestion.protein_target}g` : "—"}</p>
+                  </div>
+                </div>
+
+                {suggestion.tip && (
+                  <div className="bg-muted/30 rounded-xl px-4 py-3 border border-border/50">
+                    <p className="text-xs font-semibold mb-1">💡 Dica do dia</p>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{suggestion.tip}</p>
+                  </div>
+                )}
+              </>
+            ) : null}
+          </div>
+
+          {/* Fixed footer with actions */}
+          {suggestion && !generating && (
+            <div className="shrink-0 px-5 pt-3 border-t border-border/50 bg-card" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 0.75rem)" }}>
+              <div className="flex gap-2">
+                <button
+                  onClick={generateSuggestion}
+                  disabled={generating}
+                  className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl border border-border bg-background text-sm font-semibold transition-all active:scale-[0.97]"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  Outra
+                </button>
+                <button
+                  onClick={saveSuggestion}
+                  disabled={saving}
+                  className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl gradient-hero text-primary-foreground text-sm font-semibold shadow-sm active:scale-[0.97]"
+                >
+                  {saving ? (
+                    <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+                  ) : (
+                    <><Save className="w-4 h-4" /> Salvar</>
+                  )}
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
