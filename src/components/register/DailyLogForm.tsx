@@ -23,18 +23,18 @@ const DailyLogForm = () => {
   const [weight, setWeight] = useState("");
   const [feeling, setFeeling] = useState<number | null>(null);
 
-  // Optional
-  const [bodyFatPct, setBodyFatPct] = useState("");
-  const [waistCm, setWaistCm] = useState("");
+  // Symptoms (now in main area)
   const [nausea, setNausea] = useState(0);
   const [fatigue, setFatigue] = useState(0);
   const [headache, setHeadache] = useState(0);
   const [diarrhea, setDiarrhea] = useState(0);
   const [constipation, setConstipation] = useState(0);
   const [injPain, setInjPain] = useState(0);
-  const [waterMl, setWaterMl] = useState("");
-  const [workoutType, setWorkoutType] = useState("");
-  const [workoutDuration, setWorkoutDuration] = useState("");
+
+  // Optional
+  const [bodyFatPct, setBodyFatPct] = useState("");
+  const [waistCm, setWaistCm] = useState("");
+  const [waterL, setWaterL] = useState("");
   const [foodQuality, setFoodQuality] = useState("");
   const [notes, setNotes] = useState("");
 
@@ -73,9 +73,7 @@ const DailyLogForm = () => {
       mood: feeling ? feeling * 2 + 1 : 5,
       energy: feeling ? feeling * 2 + 1 : 5,
       appetite: 5, satiety: 5,
-      water_ml: waterMl ? parseInt(waterMl) : null,
-      workout_type: workoutType || null,
-      workout_duration: workoutDuration ? parseInt(workoutDuration) : null,
+      water_ml: waterL ? Math.round(parseFloat(waterL) * 1000) : null,
       food_quality: foodQuality || null,
       notes: notes || null,
     } as any);
@@ -86,16 +84,21 @@ const DailyLogForm = () => {
 
   return (
     <div className="space-y-4 animate-fade-in-up">
-      <div>
-        <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Data</label>
-        <input type="date" value={logDate} onChange={(e) => setLogDate(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-border bg-card text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+      {/* Date - centered */}
+      <div className="flex justify-center">
+        <div className="w-full max-w-xs">
+          <label className="text-xs font-semibold text-muted-foreground block mb-1.5 text-center">Data</label>
+          <input type="date" value={logDate} onChange={(e) => setLogDate(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-border bg-card text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-center" />
+        </div>
       </div>
 
+      {/* Weight */}
       <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50">
         <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Peso (kg) *</label>
         <input type="number" step="0.1" value={weight} onChange={(e) => setWeight(e.target.value)} placeholder="Ex: 85.5" className="w-full px-4 py-3 rounded-xl border border-border bg-background text-lg font-semibold outline-none focus:ring-2 focus:ring-primary/20 text-center" />
       </div>
 
+      {/* Feeling */}
       <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50">
         <label className="text-xs font-semibold text-muted-foreground block mb-3">Como você está se sentindo hoje? *</label>
         <div className="grid grid-cols-4 gap-2">
@@ -109,6 +112,24 @@ const DailyLogForm = () => {
         </div>
       </div>
 
+      {/* Symptoms - now in main area */}
+      <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50">
+        <h3 className="font-semibold text-sm mb-3">Sintomas</h3>
+        {renderSlider(nausea, setNausea, "Náusea", "🤢")}
+        {renderSlider(fatigue, setFatigue, "Fadiga", "😴")}
+        {renderSlider(headache, setHeadache, "Dor de cabeça", "🤕")}
+        {renderSlider(diarrhea, setDiarrhea, "Diarreia", "💧")}
+        {renderSlider(constipation, setConstipation, "Constipação", "😣")}
+        {renderSlider(injPain, setInjPain, "Dor no local", "💉")}
+      </div>
+
+      {/* Water - liters, previous day */}
+      <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50">
+        <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Água consumida ontem (litros)</label>
+        <input type="number" step="0.1" value={waterL} onChange={(e) => setWaterL(e.target.value)} placeholder="Ex: 2.0" className="w-full px-4 py-3 rounded-xl border border-border bg-background text-lg font-semibold outline-none focus:ring-2 focus:ring-primary/20 text-center" />
+      </div>
+
+      {/* More details toggle */}
       <button onClick={() => setShowOptional(!showOptional)} className="w-full flex items-center justify-between bg-card rounded-2xl p-4 shadow-card border border-border/50 text-sm">
         <div>
           <p className="font-semibold text-left">Mais detalhes</p>
@@ -119,6 +140,7 @@ const DailyLogForm = () => {
 
       {showOptional && (
         <div className="space-y-4 animate-fade-in-up">
+          {/* Measurements */}
           <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50">
             <h3 className="font-semibold text-sm mb-3">Medidas</h3>
             <div className="grid grid-cols-2 gap-3">
@@ -133,34 +155,7 @@ const DailyLogForm = () => {
             </div>
           </div>
 
-          <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50">
-            <h3 className="font-semibold text-sm mb-3">Sintomas</h3>
-            {renderSlider(nausea, setNausea, "Náusea", "🤢")}
-            {renderSlider(fatigue, setFatigue, "Fadiga", "😴")}
-            {renderSlider(headache, setHeadache, "Dor de cabeça", "🤕")}
-            {renderSlider(diarrhea, setDiarrhea, "Diarreia", "💧")}
-            {renderSlider(constipation, setConstipation, "Constipação", "😣")}
-            {renderSlider(injPain, setInjPain, "Dor no local", "💉")}
-          </div>
-
-          <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50">
-            <h3 className="font-semibold text-sm mb-3">Hábitos</h3>
-            <div className="grid grid-cols-2 gap-3 mb-3">
-              <div>
-                <label className="text-[10px] text-muted-foreground block mb-1">Água (ml)</label>
-                <input type="number" value={waterMl} onChange={(e) => setWaterMl(e.target.value)} placeholder="2000" className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20" />
-              </div>
-              <div>
-                <label className="text-[10px] text-muted-foreground block mb-1">Treino (min)</label>
-                <input type="number" value={workoutDuration} onChange={(e) => setWorkoutDuration(e.target.value)} placeholder="30" className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20" />
-              </div>
-            </div>
-            <div>
-              <label className="text-[10px] text-muted-foreground block mb-1">Tipo de treino</label>
-              <input value={workoutType} onChange={(e) => setWorkoutType(e.target.value)} placeholder="Ex: Caminhada, Musculação..." className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20" />
-            </div>
-          </div>
-
+          {/* Food quality */}
           <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50">
             <h3 className="font-semibold text-sm mb-3">Alimentação</h3>
             <div className="grid grid-cols-3 gap-2">
@@ -178,6 +173,7 @@ const DailyLogForm = () => {
             </div>
           </div>
 
+          {/* Notes */}
           <div>
             <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Observações</label>
             <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Algo mais?" rows={2} className="w-full px-4 py-3 rounded-xl border border-border bg-card text-sm outline-none focus:ring-2 focus:ring-primary/20 resize-none" />
