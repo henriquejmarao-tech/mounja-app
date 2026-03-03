@@ -274,10 +274,10 @@ const Nutrition = () => {
 
       {/* AI Suggestion Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
-          <div className="bg-card w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl shadow-elevated border border-border/50 max-h-[90vh] overflow-y-auto animate-fade-in-up">
-            {/* Modal header */}
-            <div className="sticky top-0 bg-card rounded-t-3xl sm:rounded-t-2xl px-5 pt-5 pb-3 border-b border-border/50 flex items-center justify-between">
+        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-end justify-center">
+          <div className="bg-card w-full max-w-lg rounded-t-3xl shadow-elevated border border-border/50 flex flex-col" style={{ maxHeight: "calc(90vh - env(safe-area-inset-top, 0px))" }}>
+            {/* Modal header - sticky */}
+            <div className="shrink-0 bg-card rounded-t-3xl px-5 pt-5 pb-3 border-b border-border/50 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-primary" />
                 <h2 className="font-bold text-base">Sugestão de hoje</h2>
@@ -287,11 +287,13 @@ const Nutrition = () => {
               </button>
             </div>
 
-            <div className="px-5 py-4 space-y-4">
+            {/* Scrollable content */}
+            <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
               {generating ? (
-                <div className="flex flex-col items-center justify-center py-12 gap-3">
+                <div className="flex flex-col items-center justify-center py-16 gap-3">
                   <div className="w-10 h-10 border-3 border-primary/30 border-t-primary rounded-full animate-spin" />
                   <p className="text-sm text-muted-foreground">Gerando sugestão personalizada...</p>
+                  <p className="text-xs text-muted-foreground/60">Isso pode levar alguns segundos</p>
                 </div>
               ) : suggestion ? (
                 <>
@@ -338,32 +340,36 @@ const Nutrition = () => {
                       <p className="text-xs text-muted-foreground leading-relaxed">{suggestion.tip}</p>
                     </div>
                   )}
-
-                  {/* Actions */}
-                  <div className="flex gap-2 pt-2 pb-6">
-                    <button
-                      onClick={generateSuggestion}
-                      disabled={generating}
-                      className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl border border-border bg-background text-sm font-semibold hover:border-primary/30 transition-all"
-                    >
-                      <RefreshCw className="w-4 h-4" />
-                      Outra sugestão
-                    </button>
-                    <button
-                      onClick={saveSuggestion}
-                      disabled={saving}
-                      className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl gradient-hero text-primary-foreground text-sm font-semibold shadow-sm"
-                    >
-                      {saving ? (
-                        <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                      ) : (
-                        <><Save className="w-4 h-4" /> Salvar</>
-                      )}
-                    </button>
-                  </div>
                 </>
               ) : null}
             </div>
+
+            {/* Sticky footer with actions */}
+            {suggestion && !generating && (
+              <div className="shrink-0 px-5 pt-3 border-t border-border/50 bg-card" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 0.75rem)" }}>
+                <div className="flex gap-2">
+                  <button
+                    onClick={generateSuggestion}
+                    disabled={generating}
+                    className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl border border-border bg-background text-sm font-semibold hover:border-primary/30 transition-all"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                    Outra
+                  </button>
+                  <button
+                    onClick={saveSuggestion}
+                    disabled={saving}
+                    className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl gradient-hero text-primary-foreground text-sm font-semibold shadow-sm"
+                  >
+                    {saving ? (
+                      <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+                    ) : (
+                      <><Save className="w-4 h-4" /> Salvar</>
+                    )}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
