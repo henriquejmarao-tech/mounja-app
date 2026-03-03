@@ -195,7 +195,7 @@ const Dashboard = () => {
         <div className="relative px-5 pb-6" style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 2rem)" }}>
           <div className="flex items-center justify-between">
             <button
-              onClick={() => navigate("/configuracoes")}
+              onClick={() => navigate("/perfil")}
               className="w-10 h-10 rounded-full bg-primary-foreground/15 backdrop-blur-sm flex items-center justify-center border border-primary-foreground/10"
             >
               <User className="w-5 h-5 text-primary-foreground" />

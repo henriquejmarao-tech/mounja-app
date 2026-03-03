@@ -25,6 +25,7 @@ import Nutrition from "./pages/Nutrition";
 import Workouts from "./pages/Workouts";
 import Application from "./pages/Application";
 import MyTriage from "./pages/MyTriage";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -84,6 +85,7 @@ const AppRoutes = () => {
         <Route path="/treinos" element={<ProtectedRoute><TriageGuard><Workouts /></TriageGuard></ProtectedRoute>} />
         <Route path="/aplicacao" element={<ProtectedRoute><TriageGuard><Application /></TriageGuard></ProtectedRoute>} />
         <Route path="/minha-triagem" element={<ProtectedRoute><TriageGuard><MyTriage /></TriageGuard></ProtectedRoute>} />
+        <Route path="/perfil" element={<ProtectedRoute><TriageGuard><Profile /></TriageGuard></ProtectedRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>
