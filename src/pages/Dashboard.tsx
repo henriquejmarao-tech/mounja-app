@@ -327,7 +327,7 @@ const Dashboard = () => {
         {/* Block 2a: Alimentação */}
         <div data-tutorial="suggestion-card" className="bg-card rounded-2xl p-4 shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: "60ms" }}>
           <div className="flex items-center gap-2 mb-3">
-            <Utensils className="w-4 h-4 text-primary" />
+            <Utensils className="w-4 h-4 text-teal-600 dark:text-teal-400" />
             <h3 className="font-semibold text-sm">Alimentação</h3>
           </div>
 
@@ -336,18 +336,18 @@ const Dashboard = () => {
               onClick={() => setShowDietModal(true)}
               className="w-full text-left group"
             >
-              <div className="flex items-center gap-3 bg-accent rounded-xl px-4 py-3.5 border border-primary/15 group-active:scale-[0.98] transition-all duration-200">
-                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                  <Salad className="w-4 h-4 text-primary" />
+              <div className="flex items-center gap-3 bg-teal-50/70 dark:bg-teal-950/20 rounded-xl px-4 py-3.5 border border-teal-200/50 dark:border-teal-800/40 group-active:scale-[0.98] transition-all duration-200">
+                <div className="w-8 h-8 rounded-lg bg-teal-100/80 dark:bg-teal-900/30 flex items-center justify-center shrink-0">
+                  <Salad className="w-4 h-4 text-teal-600 dark:text-teal-400" />
                 </div>
-                <p className="text-xs font-semibold text-primary flex-1">Sua dieta de hoje</p>
-                <ChevronRight className="w-4 h-4 text-primary/50 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                <p className="text-xs font-semibold text-teal-600 dark:text-teal-400 flex-1">Sua dieta de hoje</p>
+                <ChevronRight className="w-4 h-4 text-teal-500/50 shrink-0 group-hover:translate-x-0.5 transition-transform" />
               </div>
             </button>
           ) : (
-            <div className="flex items-start gap-3 bg-accent rounded-xl px-4 py-3.5 border border-primary/15">
-              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                <Salad className="w-4 h-4 text-primary" />
+            <div className="flex items-start gap-3 bg-teal-50/70 dark:bg-teal-950/20 rounded-xl px-4 py-3.5 border border-teal-200/50 dark:border-teal-800/40">
+              <div className="w-8 h-8 rounded-lg bg-teal-100/80 dark:bg-teal-900/30 flex items-center justify-center shrink-0">
+                <Salad className="w-4 h-4 text-teal-600 dark:text-teal-400" />
               </div>
               <p className="text-xs text-foreground leading-relaxed mt-1.5">{getDietSuggestion()}</p>
             </div>
@@ -357,7 +357,7 @@ const Dashboard = () => {
         {/* Block 2b: Treino */}
         <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: "90ms" }}>
           <div className="flex items-center gap-2 mb-3">
-            <Flame className="w-4 h-4 text-primary" />
+            <Flame className="w-4 h-4 text-orange-600 dark:text-orange-400" />
             <h3 className="font-semibold text-sm">Treino</h3>
           </div>
 
