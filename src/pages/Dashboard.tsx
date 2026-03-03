@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { useTutorial } from "@/hooks/useTutorial";
-import { Settings, Plus, Sparkles, Flame, Utensils, ChevronRight, X, Coffee, Sun, Moon, Cookie, ClipboardCheck, ArrowRight, Salad, Dumbbell, Timer, Zap, Target, User, Pill } from "lucide-react";
+import { Settings, Plus, Sparkles, Flame, Utensils, ChevronRight, X, Coffee, Sun, Moon, Cookie, ClipboardCheck, ArrowRight, Salad, Dumbbell, Timer, Zap, Target, User, Pill, HeartPulse, CalendarClock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import WorkoutSuggestion, { getWorkoutSuggestion } from "@/components/dashboard/WorkoutSuggestion";
 
@@ -243,6 +243,40 @@ const Dashboard = () => {
             <div className="flex-1 min-w-0">
               <p className="text-sm font-bold text-foreground">Conte sobre seu tratamento</p>
               <p className="text-xs text-muted-foreground mt-0.5">Efeitos, dose e experiência — preencha quando quiser 💊</p>
+            </div>
+            <ArrowRight className="w-4.5 h-4.5 text-muted-foreground/50 shrink-0" />
+          </button>
+        )}
+
+        {/* Health info CTA - one-time only */}
+        {!(profile as any)?.health_info_completed && (
+          <button
+            onClick={() => navigate("/saude")}
+            className="w-full bg-card rounded-2xl p-4 shadow-card border border-primary/20 animate-fade-in-up flex items-center gap-3.5 text-left active:scale-[0.98] transition-all duration-200"
+          >
+            <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+              <HeartPulse className="w-5.5 h-5.5 text-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold text-foreground">Saúde e restrições</p>
+              <p className="text-xs text-muted-foreground mt-0.5">Condições, medicamentos e dieta — preencha quando quiser 🩺</p>
+            </div>
+            <ArrowRight className="w-4.5 h-4.5 text-muted-foreground/50 shrink-0" />
+          </button>
+        )}
+
+        {/* Routine CTA - one-time only */}
+        {!(profile as any)?.routine_completed && (
+          <button
+            onClick={() => navigate("/rotina")}
+            className="w-full bg-card rounded-2xl p-4 shadow-card border border-primary/20 animate-fade-in-up flex items-center gap-3.5 text-left active:scale-[0.98] transition-all duration-200"
+          >
+            <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+              <CalendarClock className="w-5.5 h-5.5 text-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold text-foreground">Rotina e preferências</p>
+              <p className="text-xs text-muted-foreground mt-0.5">Água, sono e treinos — preencha quando quiser 🧘</p>
             </div>
             <ArrowRight className="w-4.5 h-4.5 text-muted-foreground/50 shrink-0" />
           </button>
