@@ -414,7 +414,18 @@ const Dashboard = () => {
                     <Icon className="w-3.5 h-3.5 text-primary" />
                     <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">{label}</p>
                   </div>
-                  <p className="text-sm leading-relaxed">{value}</p>
+                  <ul className="space-y-1">
+                    {value.split(/[,;·]/).map((item: string, i: number) => {
+                      const trimmed = item.trim();
+                      if (!trimmed) return null;
+                      return (
+                        <li key={i} className="flex items-start gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-primary/40 shrink-0 mt-1.5" />
+                          <span className="text-sm leading-relaxed">{trimmed}</span>
+                        </li>
+                      );
+                    })}
+                  </ul>
                 </div>
               );
             })}
