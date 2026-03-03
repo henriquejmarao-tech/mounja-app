@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowLeft, Heart, Dumbbell, Footprints, Sparkles, Plus, Minus, X, RefreshCw, Save, Flame, Target, Clock, ChevronRight } from "lucide-react";
+import { ArrowLeft, Heart, Dumbbell, Footprints, Zap, Plus, Minus, X, RefreshCw, Save, Flame, Target, Clock, ChevronRight, Trophy, Activity } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -148,14 +148,17 @@ const Workouts = () => {
   return (
     <div className="min-h-screen bg-background pb-28">
       <header className="relative overflow-hidden">
-        <div className="absolute inset-0 gradient-hero opacity-95" />
+        <div className="absolute inset-0 gradient-workout opacity-95" />
         <div className="relative px-5 pb-6" style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 1.5rem)" }}>
-          <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-primary-foreground/80 mb-4">
+          <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-white/80 mb-4">
             <ArrowLeft className="w-5 h-5" />
             <span className="text-sm font-medium">Voltar</span>
           </button>
-          <h1 className="text-xl font-bold text-primary-foreground">Movimento</h1>
-          <p className="text-sm text-primary-foreground/70 mt-1">No seu ritmo, do seu jeito</p>
+          <div className="flex items-center gap-2">
+            <Activity className="w-5 h-5 text-white" />
+            <h1 className="text-xl font-bold text-white">Movimento</h1>
+          </div>
+          <p className="text-sm text-white/70 mt-1">No seu ritmo, do seu jeito</p>
         </div>
       </header>
 
@@ -175,10 +178,10 @@ const Workouts = () => {
               data-tutorial="workout-ai-btn"
               onClick={generateSuggestion}
               disabled={generating}
-              className="w-full bg-card rounded-2xl p-4 shadow-card border border-primary/20 flex items-center gap-3 hover:border-primary/40 transition-all animate-fade-in-up active:scale-[0.98]"
+              className="w-full bg-card rounded-2xl p-4 shadow-card border border-urgent/20 flex items-center gap-3 hover:border-urgent/40 transition-all animate-fade-in-up active:scale-[0.98]"
             >
-              <div className="w-10 h-10 rounded-xl gradient-hero flex items-center justify-center shrink-0">
-                <Sparkles className="w-5 h-5 text-primary-foreground" />
+              <div className="w-10 h-10 rounded-xl gradient-workout flex items-center justify-center shrink-0">
+                <Zap className="w-5 h-5 text-white" />
               </div>
               <div className="text-left flex-1">
                 <p className="font-semibold text-sm">Treino do dia com IA</p>
@@ -186,7 +189,7 @@ const Workouts = () => {
                   {savedToday ? "Treino salvo — toque para gerar outro" : "Adaptado ao seu momento e nível"}
                 </p>
               </div>
-              <Dumbbell className="w-4 h-4 text-primary" />
+              <Dumbbell className="w-4 h-4 text-urgent" />
             </button>
 
             <FeaturedForYou context="movement" />
@@ -195,7 +198,7 @@ const Workouts = () => {
             <div data-tutorial="workout-goal" className="bg-card rounded-2xl p-5 shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: "60ms" }}>
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <Footprints className="w-4 h-4 text-primary" />
+                  <Trophy className="w-4 h-4 text-urgent" />
                   <h3 className="font-semibold text-sm">Meta semanal</h3>
                 </div>
                 <div className="flex items-center gap-2">
@@ -212,9 +215,9 @@ const Workouts = () => {
               </div>
               <div className="flex items-center gap-3 mb-2">
                 <div className="flex-1 bg-muted rounded-full h-2.5 overflow-hidden">
-                  <div className="gradient-hero h-full rounded-full transition-all duration-700" style={{ width: `${progress}%` }} />
+                  <div className="gradient-workout h-full rounded-full transition-all duration-700" style={{ width: `${progress}%` }} />
                 </div>
-                <span className="text-xs font-bold text-primary">{weeklyCount}/{weeklyGoal}</span>
+                <span className="text-xs font-bold text-urgent">{weeklyCount}/{weeklyGoal}</span>
               </div>
               <p className="text-[11px] text-muted-foreground">
                 {weeklyCount >= weeklyGoal
@@ -249,10 +252,10 @@ const Workouts = () => {
             <div className="bg-card rounded-2xl p-5 shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: "180ms" }}>
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <Dumbbell className="w-4 h-4 text-primary" />
+                  <Activity className="w-4 h-4 text-urgent" />
                   <h3 className="font-semibold text-sm">Seu perfil</h3>
                 </div>
-                <span className="text-[10px] font-bold bg-primary/10 text-primary px-2.5 py-1 rounded-full">
+                <span className="text-[10px] font-bold bg-urgent/10 text-urgent px-2.5 py-1 rounded-full">
                   {levelLabels[activityLevel] || "Iniciante"}
                 </span>
               </div>
@@ -285,7 +288,7 @@ const Workouts = () => {
         <div className="fixed inset-0 z-[60] bg-card flex flex-col" style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}>
           <div className="shrink-0 px-5 pt-4 pb-3 border-b border-border/50 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-primary" />
+              <Zap className="w-4 h-4 text-urgent" />
               <h2 className="font-bold text-base">Treino do dia</h2>
             </div>
             <button onClick={() => setShowModal(false)} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
@@ -296,32 +299,32 @@ const Workouts = () => {
           <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
             {generating ? (
               <div className="flex flex-col items-center justify-center h-full gap-3">
-                <div className="w-10 h-10 border-3 border-primary/30 border-t-primary rounded-full animate-spin" />
+                <div className="w-10 h-10 border-3 border-urgent/30 border-t-urgent rounded-full animate-spin" />
                 <p className="text-sm text-muted-foreground">Gerando treino personalizado...</p>
                 <p className="text-xs text-muted-foreground/60">Isso pode levar alguns segundos</p>
               </div>
             ) : suggestion ? (
               <>
                 {suggestion.context_note && (
-                  <div className="bg-primary/5 rounded-xl px-3.5 py-2.5 border border-primary/10">
-                    <p className="text-xs text-primary font-medium">{suggestion.context_note}</p>
+                  <div className="bg-urgent/5 rounded-xl px-3.5 py-2.5 border border-urgent/10">
+                    <p className="text-xs text-urgent font-medium">{suggestion.context_note}</p>
                   </div>
                 )}
 
                 {/* Focus area + duration + intensity */}
                 <div className="grid grid-cols-3 gap-2">
                   <div className="bg-muted/50 rounded-xl px-3 py-2.5 text-center">
-                    <Target className="w-3.5 h-3.5 text-primary mx-auto mb-1" />
+                    <Target className="w-3.5 h-3.5 text-urgent mx-auto mb-1" />
                     <p className="text-[10px] text-muted-foreground font-medium">Foco</p>
                     <p className="text-xs font-bold">{suggestion.focus_area || "—"}</p>
                   </div>
                   <div className="bg-muted/50 rounded-xl px-3 py-2.5 text-center">
-                    <Clock className="w-3.5 h-3.5 text-primary mx-auto mb-1" />
+                    <Clock className="w-3.5 h-3.5 text-urgent mx-auto mb-1" />
                     <p className="text-[10px] text-muted-foreground font-medium">Duração</p>
                     <p className="text-xs font-bold">{suggestion.duration_minutes ? `${suggestion.duration_minutes}min` : "—"}</p>
                   </div>
                   <div className="bg-muted/50 rounded-xl px-3 py-2.5 text-center">
-                    <Flame className="w-3.5 h-3.5 text-primary mx-auto mb-1" />
+                    <Flame className="w-3.5 h-3.5 text-urgent mx-auto mb-1" />
                     <p className="text-[10px] text-muted-foreground font-medium">Intensidade</p>
                     <p className="text-xs font-bold">{intensityLabel[suggestion.intensity] || suggestion.intensity || "—"}</p>
                   </div>
@@ -334,7 +337,7 @@ const Workouts = () => {
                     return (
                       <div key={key} className="bg-muted/50 rounded-xl px-4 py-3">
                         <div className="flex items-center gap-2 mb-1.5">
-                          <Icon className="w-3.5 h-3.5 text-primary" />
+                          <Icon className="w-3.5 h-3.5 text-urgent" />
                           <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">{label}</p>
                         </div>
                         <ul className="space-y-1.5">
@@ -344,7 +347,7 @@ const Workouts = () => {
                             .filter(Boolean)
                             .map((item: string, i: number) => (
                               <li key={i} className="flex items-start gap-2">
-                                <span className="w-1.5 h-1.5 rounded-full bg-primary/40 shrink-0 mt-[7px]" />
+                                <span className="w-1.5 h-1.5 rounded-full bg-urgent/40 shrink-0 mt-[7px]" />
                                 <span className="text-[13px] leading-snug">{item}</span>
                               </li>
                             ))}
@@ -378,7 +381,7 @@ const Workouts = () => {
                 <button
                   onClick={saveSuggestion}
                   disabled={saving}
-                  className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl gradient-hero text-primary-foreground text-sm font-semibold shadow-sm active:scale-[0.97]"
+                  className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl gradient-workout text-white text-sm font-semibold shadow-sm active:scale-[0.97]"
                 >
                   {saving ? (
                     <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
