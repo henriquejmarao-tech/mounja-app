@@ -14,7 +14,7 @@ interface WorkoutSuggestionProps {
 export type Intensity = "light" | "moderate" | "intense";
 
 export const intensityConfig: Record<Intensity, { label: string; colorClass: string; dotClass: string }> = {
-  light: { label: "Leve", colorClass: "text-primary", dotClass: "bg-primary" },
+  light: { label: "Leve", colorClass: "text-orange-600 dark:text-orange-400", dotClass: "bg-orange-500" },
   moderate: { label: "Moderado", colorClass: "text-warning", dotClass: "bg-warning" },
   intense: { label: "Intenso", colorClass: "text-destructive", dotClass: "bg-destructive" },
 };
@@ -72,12 +72,12 @@ const WorkoutSuggestion = ({
   // If already trained today
   if (todayWorkout) {
     return (
-      <div className="flex items-start gap-3 bg-accent rounded-xl px-4 py-3.5 border border-primary/15">
-        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-          <Check className="w-4 h-4 text-primary" />
+      <div className="flex items-start gap-3 bg-orange-50/70 dark:bg-orange-950/20 rounded-xl px-4 py-3.5 border border-orange-200/50 dark:border-orange-800/40">
+        <div className="w-8 h-8 rounded-lg bg-orange-100/80 dark:bg-orange-900/30 flex items-center justify-center shrink-0">
+          <Check className="w-4 h-4 text-orange-600 dark:text-orange-400" />
         </div>
         <div>
-          <p className="text-[10px] font-semibold text-primary uppercase tracking-wide mb-0.5">Treino concluído</p>
+          <p className="text-[10px] font-semibold text-orange-600 dark:text-orange-400 uppercase tracking-wide mb-0.5">Treino concluído</p>
           <p className="text-xs text-foreground">
             {todayWorkout.type} — {todayWorkout.duration} minutos
           </p>
@@ -89,9 +89,9 @@ const WorkoutSuggestion = ({
   // If rest day dismissed
   if (restDayDismissed) {
     return (
-      <div className="flex items-start gap-3 bg-accent rounded-xl px-4 py-3.5 border border-primary/15">
-        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-          <Moon className="w-4 h-4 text-primary" />
+      <div className="flex items-start gap-3 bg-orange-50/70 dark:bg-orange-950/20 rounded-xl px-4 py-3.5 border border-orange-200/50 dark:border-orange-800/40">
+        <div className="w-8 h-8 rounded-lg bg-orange-100/80 dark:bg-orange-900/30 flex items-center justify-center shrink-0">
+          <Moon className="w-4 h-4 text-orange-600 dark:text-orange-400" />
         </div>
         <p className="text-xs text-foreground mt-1.5">Dia de descanso registrado. Descanse bem.</p>
       </div>
@@ -102,18 +102,18 @@ const WorkoutSuggestion = ({
 
   return (
     <button onClick={onOpen} className="w-full text-left group">
-      <div className="flex items-start gap-3 bg-accent rounded-xl px-4 py-3.5 border border-primary/15 group-active:scale-[0.98] transition-all duration-200">
-        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-          <Dumbbell className="w-4 h-4 text-primary" />
+      <div className="flex items-start gap-3 bg-orange-50/70 dark:bg-orange-950/20 rounded-xl px-4 py-3.5 border border-orange-200/50 dark:border-orange-800/40 group-active:scale-[0.98] transition-all duration-200">
+        <div className="w-8 h-8 rounded-lg bg-orange-100/80 dark:bg-orange-900/30 flex items-center justify-center shrink-0">
+          <Dumbbell className="w-4 h-4 text-orange-600 dark:text-orange-400" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-[10px] font-semibold text-primary uppercase tracking-wide mb-0.5">Treino recomendado</p>
+          <p className="text-[10px] font-semibold text-orange-600 dark:text-orange-400 uppercase tracking-wide mb-0.5">Treino recomendado</p>
           <p className="text-xs text-foreground leading-relaxed">
             <span className={cn("font-semibold", config.colorClass)}>{config.label}</span>
             {" · "}{duration} minutos
           </p>
         </div>
-        <ChevronRight className="w-4 h-4 text-primary/50 shrink-0 mt-2 group-hover:translate-x-0.5 transition-transform" />
+        <ChevronRight className="w-4 h-4 text-orange-500/50 shrink-0 mt-2 group-hover:translate-x-0.5 transition-transform" />
       </div>
     </button>
   );
