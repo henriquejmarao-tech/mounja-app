@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, useRef, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -71,7 +71,7 @@ const TutorialContext = createContext<TutorialContextType>({
 export const useTutorial = () => useContext(TutorialContext);
 
 export const TutorialProvider = ({ children }: { children: ReactNode }) => {
-  const { user, profile } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
   const [isActive, setIsActive] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [mode, setMode] = useState<"full" | "quick" | null>(null);
@@ -79,15 +79,15 @@ export const TutorialProvider = ({ children }: { children: ReactNode }) => {
   const [showStartDialog, setShowStartDialog] = useState(false);
   const [hintsSeen, setHintsSeen] = useState<string[]>([]);
   const [resumeAvailable, setResumeAvailable] = useState(false);
-  const [initialized, setInitialized] = useState(false);
+  const initializedRef = useRef(false);
 
   // Only show tutorial dialog for users who completed triage but haven't done tutorial
   useEffect(() => {
-    if (!user || !profile || initialized) return;
+    if (!user || !profile || initializedRef.current) return;
     // CRITICAL: Do NOT show tutorial if triage is not completed
     if (!profile.triage_completed) return;
 
-    setInitialized(true);
+    initializedRef.current = true;
 
     const completed = (profile as any).tutorial_version_completed;
     const savedStep = (profile as any).tutorial_step || 0;
@@ -102,7 +102,7 @@ export const TutorialProvider = ({ children }: { children: ReactNode }) => {
     } else if (!completed) {
       setShowStartDialog(true);
     }
-  }, [user, profile, initialized]);
+  }, [user, profile]);
 
   // Called immediately after triage completes and user lands on dashboard
   const triggerPostTriageTutorial = useCallback(() => {
@@ -127,7 +127,8 @@ export const TutorialProvider = ({ children }: { children: ReactNode }) => {
     const update: any = { tutorial_step: step };
     if (completed) update.tutorial_version_completed = CURRENT_TUTORIAL_VERSION;
     await supabase.from("profiles").update(update).eq("id", user.id);
-  }, [user]);
+    if (completed) await refreshProfile();
+  }, [user, refreshProfile]);
 
   const nextStep = useCallback(() => {
     if (currentStep < steps.length - 1) {
