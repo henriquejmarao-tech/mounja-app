@@ -85,9 +85,9 @@ const DailyLogForm = () => {
   return (
     <div className="space-y-4 animate-fade-in-up">
       {/* Date */}
-      <div>
+      <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50">
         <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Data</label>
-        <input type="date" value={logDate} onChange={(e) => setLogDate(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-border bg-card text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+        <input type="date" value={logDate} onChange={(e) => setLogDate(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-border bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
       </div>
 
       {/* Weight */}
