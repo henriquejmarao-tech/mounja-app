@@ -119,7 +119,7 @@ const emojiToIcon: Record<string, LucideIcon> = {
 
 const FeaturedForYou = ({ context }: FeaturedForYouProps) => {
   const { dose, recentSymptoms, weeklyWorkoutCount, latestWeight } = useApplicationData();
-  const [mode, setMode] = useState<"A" | "B">("B");
+  const [mode, setMode] = useState<"A" | "B">("A");
   const [aiTipsRaw, setAiTipsRaw] = useState<FeaturedTipRaw[] | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
 
