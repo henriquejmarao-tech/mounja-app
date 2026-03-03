@@ -200,7 +200,7 @@ const Nutrition = () => {
           </div>
         ) : (
           <>
-            <ContextualHint id="save-diet" message="Salve sua sugestão para acompanhar no histórico." className="mb-1" />
+            
             {/* AI Diet suggestion button */}
             <button
               data-tutorial="diet-btn"
