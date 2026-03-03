@@ -415,16 +415,12 @@ const Dashboard = () => {
                     <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">{label}</p>
                   </div>
                   <ul className="space-y-1">
-                    {value.split(/[,;·]/).map((item: string, i: number) => {
-                      const trimmed = item.trim();
-                      if (!trimmed) return null;
-                      return (
-                        <li key={i} className="flex items-start gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-primary/40 shrink-0 mt-1.5" />
-                          <span className="text-sm leading-relaxed">{trimmed}</span>
-                        </li>
-                      );
-                    })}
+                    {value.split(/\n/).map((line: string) => line.replace(/^-\s*/, "").trim()).filter(Boolean).map((item: string, i: number) => (
+                      <li key={i} className="flex items-start gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary/40 shrink-0 mt-1.5" />
+                        <span className="text-sm leading-relaxed">{item}</span>
+                      </li>
+                    ))}
                   </ul>
                 </div>
               );

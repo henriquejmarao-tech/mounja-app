@@ -80,13 +80,16 @@ REGRAS:
 - Porções realistas para brasileiro comum
 - Considere os sintomas e contexto do usuário
 - Refeições práticas e acessíveis
+- FORMATO DAS REFEIÇÕES: liste cada item em uma linha separada, precedido por "- ". Exemplo:
+  "- 1 iogurte desnatado\n- 1 porção de frutas\n- 2 torradas integrais"
+  NÃO use texto corrido. Sempre use bullet points com "- " no início de cada item.
 
 Responda APENAS com um JSON válido (sem markdown, sem backticks) neste formato:
 {
-  "breakfast": "descrição do café da manhã",
-  "lunch": "descrição do almoço",
-  "dinner": "descrição do jantar",
-  "snack": "descrição do lanche (opcional)",
+  "breakfast": "- item 1\\n- item 2\\n- item 3",
+  "lunch": "- item 1\\n- item 2\\n- item 3",
+  "dinner": "- item 1\\n- item 2\\n- item 3",
+  "snack": "- item 1\\n- item 2",
   "calories_target": número aproximado de calorias,
   "protein_target": gramas de proteína sugerida,
   "tip": "uma dica curta e prática para o dia",
