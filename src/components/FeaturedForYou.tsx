@@ -54,7 +54,10 @@ const tipColors: Record<string, { bg: string; icon: string; border: string }> = 
   "m-progress":     { bg: "bg-cyan-50 dark:bg-cyan-950/30",     icon: "text-cyan-600 dark:text-cyan-400",     border: "border-cyan-200/60 dark:border-cyan-800/40" },
 };
 
-const defaultColor = { bg: "bg-accent", icon: "text-primary", border: "border-primary/20" };
+const defaultColors: Record<string, { bg: string; icon: string; border: string }> = {
+  nutrition: { bg: "bg-accent", icon: "text-info", border: "border-info/20" },
+  movement: { bg: "bg-accent", icon: "text-urgent", border: "border-urgent/20" },
+};
 
 // ─── Mode A: Deterministic ranking ──────────────────────────────────
 function rankNutritionTips(symptoms: RecentSymptoms, daysSinceInjection: number | null): FeaturedTip[] {
@@ -194,12 +197,17 @@ const FeaturedForYou = ({ context }: FeaturedForYouProps) => {
 
   if (mode === "A" && activeTips.length === 0) return null;
 
+  const isNutrition = context === "nutrition";
+  const gradientClass = isNutrition ? "gradient-nutrition" : "gradient-workout";
+  const activeColor = isNutrition ? "hsl(174, 42%, 48%)" : "hsl(var(--urgent))";
+  const activeFg = "hsl(0, 0%, 100%)";
+
   return (
     <div className="animate-fade-in-up">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-lg gradient-hero flex items-center justify-center">
-            <Sparkles className="w-3.5 h-3.5 text-primary-foreground" />
+          <div className={`w-6 h-6 rounded-lg ${gradientClass} flex items-center justify-center`}>
+            <Sparkles className="w-3.5 h-3.5 text-white" />
           </div>
           <h2 className="font-bold text-sm">Em destaque para você</h2>
         </div>
@@ -220,9 +228,9 @@ const FeaturedForYou = ({ context }: FeaturedForYouProps) => {
             onClick={() => setMode("B")}
             className="flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-full transition-all duration-200"
             style={{
-              background: mode === "B" ? "hsl(var(--primary))" : "transparent",
-              color: mode === "B" ? "hsl(var(--primary-foreground))" : "hsl(var(--muted-foreground))",
-              boxShadow: mode === "B" ? "0 1px 3px hsl(var(--primary) / 0.3)" : "none",
+              background: mode === "B" ? activeColor : "transparent",
+              color: mode === "B" ? activeFg : "hsl(var(--muted-foreground))",
+              boxShadow: mode === "B" ? `0 1px 3px ${activeColor}50` : "none",
             }}
           >
             <Wand2 className="w-3 h-3" />
@@ -244,7 +252,7 @@ const FeaturedForYou = ({ context }: FeaturedForYouProps) => {
           ))
         ) : (
           activeTips.map((tip) => {
-            const colors = tipColors[tip.id] || defaultColor;
+            const colors = tipColors[tip.id] || defaultColors[context] || defaultColors.nutrition;
             const Icon = tip.icon;
             return (
               <div
