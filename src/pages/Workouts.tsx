@@ -178,18 +178,16 @@ const Workouts = () => {
               data-tutorial="workout-ai-btn"
               onClick={generateSuggestion}
               disabled={generating}
-              className="w-full bg-card rounded-2xl p-4 shadow-card border border-urgent/20 flex items-center gap-3 hover:border-urgent/40 transition-all animate-fade-in-up active:scale-[0.98]"
+              className="w-full py-3.5 rounded-xl gradient-workout text-white text-sm font-bold shadow-sm active:scale-[0.97] transition-transform flex items-center justify-center gap-2 animate-fade-in-up disabled:opacity-60"
             >
-              <div className="w-10 h-10 rounded-xl gradient-workout flex items-center justify-center shrink-0">
-                <Zap className="w-5 h-5 text-white" />
-              </div>
-              <div className="text-left flex-1">
-                <p className="font-semibold text-sm">Treino do dia com IA</p>
-                <p className="text-[11px] text-muted-foreground mt-0.5">
-                  {savedToday ? "Treino salvo — toque para gerar outro" : "Adaptado ao seu momento e nível"}
-                </p>
-              </div>
-              <Dumbbell className="w-4 h-4 text-urgent" />
+              {generating ? (
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <>
+                  <Zap className="w-4 h-4" />
+                  {savedToday ? "Gerar novo treino" : "Gerar treino personalizado"}
+                </>
+              )}
             </button>
 
             <FeaturedForYou context="movement" />
