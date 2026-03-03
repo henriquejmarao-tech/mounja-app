@@ -414,13 +414,17 @@ const Dashboard = () => {
                     <Icon className="w-3.5 h-3.5 text-primary" />
                     <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">{label}</p>
                   </div>
-                  <ul className="space-y-1">
-                    {value.split(/\n/).map((line: string) => line.replace(/^-\s*/, "").trim()).filter(Boolean).map((item: string, i: number) => (
-                      <li key={i} className="flex items-start gap-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-primary/40 shrink-0 mt-1.5" />
-                        <span className="text-sm leading-relaxed">{item}</span>
-                      </li>
-                    ))}
+                  <ul className="space-y-1.5">
+                    {value
+                      .split(/\n|,|;|·/)
+                      .map((s: string) => s.replace(/^-\s*/, "").trim())
+                      .filter(Boolean)
+                      .map((item: string, i: number) => (
+                        <li key={i} className="flex items-start gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-primary/40 shrink-0 mt-[7px]" />
+                          <span className="text-[13px] leading-snug">{item}</span>
+                        </li>
+                      ))}
                   </ul>
                 </div>
               );
