@@ -332,6 +332,51 @@ export type Database = {
         }
         Relationships: []
       }
+      workout_suggestions: {
+        Row: {
+          context_note: string | null
+          cooldown: string | null
+          created_at: string | null
+          date: string
+          duration_minutes: number | null
+          focus_area: string | null
+          id: string
+          intensity: string | null
+          main_workout: string | null
+          tip: string | null
+          user_id: string
+          warmup: string | null
+        }
+        Insert: {
+          context_note?: string | null
+          cooldown?: string | null
+          created_at?: string | null
+          date?: string
+          duration_minutes?: number | null
+          focus_area?: string | null
+          id?: string
+          intensity?: string | null
+          main_workout?: string | null
+          tip?: string | null
+          user_id: string
+          warmup?: string | null
+        }
+        Update: {
+          context_note?: string | null
+          cooldown?: string | null
+          created_at?: string | null
+          date?: string
+          duration_minutes?: number | null
+          focus_area?: string | null
+          id?: string
+          intensity?: string | null
+          main_workout?: string | null
+          tip?: string | null
+          user_id?: string
+          warmup?: string | null
+        }
+        Relationships: []
+      }
       workouts: {
         Row: {
           created_at: string | null

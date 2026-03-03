@@ -30,7 +30,7 @@ const FULL_STEPS: TutorialStep[] = [
 
 const QUICK_STEPS = FULL_STEPS.filter((s) => ["dose", "register-btn", "history-filter"].includes(s.id));
 
-type HintId = "export-pdf" | "save-diet" | "register-workout";
+type HintId = "export-pdf" | "save-diet" | "register-workout" | "workout-ai";
 
 interface TutorialContextType {
   isActive: boolean;
