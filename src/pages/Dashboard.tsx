@@ -263,14 +263,13 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Block 2: Sugestão de hoje */}
+        {/* Block 2a: Alimentação */}
         <div data-tutorial="suggestion-card" className="bg-card rounded-2xl p-4 shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: "60ms" }}>
           <div className="flex items-center gap-2 mb-3">
-            <Sparkles className="w-4 h-4 text-primary" />
-            <h3 className="font-semibold text-sm">Sugestão de hoje</h3>
+            <Utensils className="w-4 h-4 text-primary" />
+            <h3 className="font-semibold text-sm">Alimentação</h3>
           </div>
 
-          {/* Diet row */}
           {savedDiet ? (
             <button
               onClick={() => setShowDietModal(true)}
@@ -288,24 +287,29 @@ const Dashboard = () => {
               </div>
             </button>
           ) : (
-            <div className="flex items-start gap-2.5 bg-muted/50 rounded-xl px-3 py-2.5 mb-2.5">
+            <div className="flex items-start gap-2.5 bg-muted/50 rounded-xl px-3 py-2.5">
               <Utensils className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
               <p className="text-xs text-foreground leading-relaxed">{getDietSuggestion()}</p>
             </div>
           )}
+        </div>
 
-          {/* Workout suggestion - structured */}
-          <div className="mt-2.5">
-            <WorkoutSuggestion
-              weeklyWorkouts={weeklyWorkouts}
-              weeklyWorkoutGoal={weeklyWorkoutGoal}
-              recentSymptoms={recentSymptoms}
-              daysUntilNext={daysUntilNext}
-              todayWorkout={todayWorkout}
-              onRestDay={handleRestDay}
-              restDayDismissed={restDayDismissed}
-            />
+        {/* Block 2b: Treino */}
+        <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: "90ms" }}>
+          <div className="flex items-center gap-2 mb-3">
+            <Flame className="w-4 h-4 text-primary" />
+            <h3 className="font-semibold text-sm">Treino</h3>
           </div>
+
+          <WorkoutSuggestion
+            weeklyWorkouts={weeklyWorkouts}
+            weeklyWorkoutGoal={weeklyWorkoutGoal}
+            recentSymptoms={recentSymptoms}
+            daysUntilNext={daysUntilNext}
+            todayWorkout={todayWorkout}
+            onRestDay={handleRestDay}
+            restDayDismissed={restDayDismissed}
+          />
         </div>
 
         {/* Block 3: Streak + badges */}
