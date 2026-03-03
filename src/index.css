@@ -30,6 +30,9 @@
     --destructive: 0 60% 52%;
     --destructive-foreground: 0 0% 100%;
 
+    --urgent: 14 75% 55%;
+    --urgent-light: 14 60% 94%;
+
     --border: 140 12% 88%;
     --input: 140 12% 88%;
     --ring: 143 22% 55%;
