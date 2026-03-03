@@ -273,12 +273,9 @@ const Dashboard = () => {
           {savedDiet ? (
             <button
               onClick={() => setShowDietModal(true)}
-              className="w-full text-left space-y-2.5"
+              className="w-full text-left"
             >
-              {savedDiet.context_note && (
-                <p className="text-[10px] text-primary font-medium mb-1">{savedDiet.context_note}</p>
-              )}
-              <div className="flex items-start gap-2.5 bg-muted/50 rounded-xl px-3 py-2.5 hover:bg-muted/70 transition-colors">
+              <div className="flex items-start gap-2.5 bg-primary/12 rounded-xl px-3 py-2.5 hover:bg-primary/18 transition-colors border border-primary/15">
                 <Utensils className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
                 <p className="text-xs text-foreground leading-relaxed line-clamp-2 flex-1">
                   {savedDiet.breakfast}{savedDiet.lunch ? ` · ${savedDiet.lunch}` : ""}
@@ -287,7 +284,7 @@ const Dashboard = () => {
               </div>
             </button>
           ) : (
-            <div className="flex items-start gap-2.5 bg-muted/50 rounded-xl px-3 py-2.5">
+            <div className="flex items-start gap-2.5 bg-primary/12 rounded-xl px-3 py-2.5 border border-primary/15">
               <Utensils className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
               <p className="text-xs text-foreground leading-relaxed">{getDietSuggestion()}</p>
             </div>
