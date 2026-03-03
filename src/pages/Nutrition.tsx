@@ -219,56 +219,8 @@ const Nutrition = () => {
 
             <FeaturedForYou context="nutrition" />
 
-            {/* Personalized alert */}
-            {hasHighSymptoms && (
-              <div className="bg-warning/8 rounded-2xl p-4 border border-warning/15 flex items-start gap-3 animate-fade-in-up">
-                <Sparkles className="w-5 h-5 text-warning shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm font-semibold">Conteúdo personalizado para você</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    Organizamos as dicas com base nos sintomas que você relatou recentemente.
-                  </p>
-                </div>
-              </div>
-            )}
 
-            {/* Disclaimer */}
-            <div className="bg-muted/50 rounded-2xl p-3.5 flex items-start gap-2.5">
-              <Heart className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
-              <p className="text-[11px] text-muted-foreground leading-relaxed">
-                Estas são dicas educativas gerais. Não substituem orientação de nutricionista ou médico.
-              </p>
-            </div>
 
-            {/* Tips */}
-            <div className="space-y-3">
-              {sortedTips.map((tip, i) => {
-                const isHighlighted = tip.tags.some((t) => t !== "always" && recentSymptoms[t] && recentSymptoms[t] >= 3);
-                return (
-                  <div
-                    key={tip.id}
-                    className={cn(
-                      "rounded-2xl p-4 shadow-card border animate-fade-in-up",
-                      isHighlighted ? "bg-primary/5 border-primary/15" : "bg-card border-border/50"
-                    )}
-                    style={{ animationDelay: `${(i + 1) * 60}ms` }}
-                  >
-                    {isHighlighted && (
-                      <span className="text-[9px] font-bold uppercase tracking-wider text-primary mb-2 block">
-                        Relevante para você
-                      </span>
-                    )}
-                    <div className="flex items-start gap-3">
-                      <span className="text-2xl shrink-0">{tip.emoji}</span>
-                      <div>
-                        <h3 className="font-semibold text-sm">{tip.title}</h3>
-                        <p className="text-xs text-muted-foreground leading-relaxed mt-1.5">{tip.description}</p>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
           </>
         )}
       </div>
