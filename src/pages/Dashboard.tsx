@@ -4,9 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { useTutorial } from "@/hooks/useTutorial";
-import { Settings, Plus, Sparkles, Flame, Utensils, ChevronRight, X, Coffee, Sun, Moon, Cookie, ClipboardCheck, ArrowRight, Salad } from "lucide-react";
+import { Settings, Plus, Sparkles, Flame, Utensils, ChevronRight, X, Coffee, Sun, Moon, Cookie, ClipboardCheck, ArrowRight, Salad, Dumbbell, Timer, Zap, Target } from "lucide-react";
 import { cn } from "@/lib/utils";
-import WorkoutSuggestion from "@/components/dashboard/WorkoutSuggestion";
+import WorkoutSuggestion, { getWorkoutSuggestion } from "@/components/dashboard/WorkoutSuggestion";
 
 import logoMounja from "@/assets/logo-mounja.png";
 
@@ -53,6 +53,7 @@ const Dashboard = () => {
   const [restDayDismissed, setRestDayDismissed] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showDietModal, setShowDietModal] = useState(false);
+  const [showWorkoutModal, setShowWorkoutModal] = useState(false);
   const [todayCheckedIn, setTodayCheckedIn] = useState(false);
 
   useEffect(() => {
@@ -311,8 +312,8 @@ const Dashboard = () => {
             recentSymptoms={recentSymptoms}
             daysUntilNext={daysUntilNext}
             todayWorkout={todayWorkout}
-            onRestDay={handleRestDay}
             restDayDismissed={restDayDismissed}
+            onOpen={() => setShowWorkoutModal(true)}
           />
         </div>
 
@@ -448,6 +449,90 @@ const Dashboard = () => {
           </div>
         </div>
       )}
+
+      {/* Workout Detail Modal - fullscreen on mobile */}
+      {showWorkoutModal && (() => {
+        const suggestion = getWorkoutSuggestion(weeklyWorkouts, weeklyWorkoutGoal, recentSymptoms, daysUntilNext);
+        return (
+          <div className="fixed inset-0 z-[60] bg-card flex flex-col" style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}>
+            {/* Header */}
+            <div className="shrink-0 px-5 pt-4 pb-3 border-b border-border/50 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Dumbbell className="w-4 h-4 text-primary" />
+                <h2 className="font-bold text-base">Treino de hoje</h2>
+              </div>
+              <button onClick={() => setShowWorkoutModal(false)} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Scrollable content */}
+            <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
+              {suggestion.reason && (
+                <div className="bg-primary/5 rounded-xl px-3.5 py-2.5 border border-primary/10">
+                  <p className="text-xs text-primary font-medium">{suggestion.reason}</p>
+                </div>
+              )}
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-muted/50 rounded-xl px-4 py-3 text-center">
+                  <div className="flex items-center justify-center gap-1.5 mb-1">
+                    <Zap className="w-3 h-3 text-muted-foreground" />
+                    <p className="text-[10px] text-muted-foreground font-medium">Intensidade</p>
+                  </div>
+                  <p className={cn("text-lg font-bold", suggestion.config.colorClass)}>{suggestion.config.label}</p>
+                </div>
+                <div className="bg-muted/50 rounded-xl px-4 py-3 text-center">
+                  <div className="flex items-center justify-center gap-1.5 mb-1">
+                    <Timer className="w-3 h-3 text-muted-foreground" />
+                    <p className="text-[10px] text-muted-foreground font-medium">Duração</p>
+                  </div>
+                  <p className="text-lg font-bold text-primary">{suggestion.duration} min</p>
+                </div>
+              </div>
+
+              <div className="bg-muted/50 rounded-xl px-4 py-3 text-center">
+                <div className="flex items-center justify-center gap-1.5 mb-1">
+                  <Target className="w-3 h-3 text-muted-foreground" />
+                  <p className="text-[10px] text-muted-foreground font-medium">Meta semanal</p>
+                </div>
+                <p className="text-lg font-bold text-primary">{weeklyWorkouts}<span className="text-sm font-medium text-muted-foreground">/{weeklyWorkoutGoal}</span></p>
+              </div>
+
+              <div className="space-y-2">
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide px-1">Sugestões de exercício</p>
+                {suggestion.examples.map((ex, i) => (
+                  <div key={i} className="bg-muted/50 rounded-xl px-4 py-3 flex items-center gap-3">
+                    <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                      <Dumbbell className="w-3.5 h-3.5 text-primary" />
+                    </div>
+                    <p className="text-sm leading-relaxed">{ex}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Fixed footer */}
+            <div className="shrink-0 px-5 pt-3 border-t border-border/50 bg-card" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 0.75rem)" }}>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => { setShowWorkoutModal(false); navigate("/registrar?tab=workout"); }}
+                  className="flex-1 py-3.5 rounded-xl gradient-hero text-primary-foreground text-sm font-semibold active:scale-[0.97] transition-all flex items-center justify-center gap-2"
+                >
+                  <Dumbbell className="w-4 h-4" />
+                  Registrar treino
+                </button>
+                <button
+                  onClick={() => { setShowWorkoutModal(false); handleRestDay(); }}
+                  className="px-5 py-3.5 rounded-xl bg-muted text-sm text-muted-foreground font-medium active:scale-[0.97] transition-all"
+                >
+                  Descanso
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 };
