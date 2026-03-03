@@ -279,17 +279,12 @@ const Dashboard = () => {
               onClick={() => setShowDietModal(true)}
               className="w-full text-left group"
             >
-              <div className="flex items-start gap-3 bg-accent rounded-xl px-4 py-3.5 border border-primary/15 group-active:scale-[0.98] transition-all duration-200">
+              <div className="flex items-center gap-3 bg-accent rounded-xl px-4 py-3.5 border border-primary/15 group-active:scale-[0.98] transition-all duration-200">
                 <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                   <Salad className="w-4 h-4 text-primary" />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[10px] font-semibold text-primary uppercase tracking-wide mb-0.5">Sua dieta de hoje</p>
-                  <p className="text-xs text-foreground leading-relaxed line-clamp-2">
-                    {savedDiet.breakfast}{savedDiet.lunch ? ` · ${savedDiet.lunch}` : ""}
-                  </p>
-                </div>
-                <ChevronRight className="w-4 h-4 text-primary/50 shrink-0 mt-2 group-hover:translate-x-0.5 transition-transform" />
+                <p className="text-xs font-semibold text-primary flex-1">Sua dieta de hoje</p>
+                <ChevronRight className="w-4 h-4 text-primary/50 shrink-0 group-hover:translate-x-0.5 transition-transform" />
               </div>
             </button>
           ) : (
