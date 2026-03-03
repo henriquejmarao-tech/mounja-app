@@ -182,11 +182,6 @@ const Profile = () => {
               </button>
             )}
 
-            {profile?.goal && (
-              <p className="text-xs text-primary-foreground/60 mt-2">
-                {profile.goal === "lose_weight" ? "🎯 Emagrecimento" : profile.goal === "health" ? "🫀 Saúde" : profile.goal === "maintain" ? "⚖️ Manutenção" : profile.goal}
-              </p>
-            )}
             {weeksOnMounjaro !== null && (
               <p className="text-[11px] text-primary-foreground/50 mt-1">
                 {weeksOnMounjaro > 0 ? `${weeksOnMounjaro} semana${weeksOnMounjaro !== 1 ? "s" : ""} de jornada` : `${daysOnMounjaro} dia${daysOnMounjaro !== 1 ? "s" : ""} de jornada`}

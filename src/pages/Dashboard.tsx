@@ -196,9 +196,9 @@ const Dashboard = () => {
           <div className="flex items-center justify-between">
             <button
               onClick={() => navigate("/perfil")}
-              className="w-10 h-10 rounded-full bg-primary-foreground/15 backdrop-blur-sm flex items-center justify-center border border-primary-foreground/10"
+              className="w-10 h-10 rounded-full bg-primary-foreground/15 backdrop-blur-sm flex items-center justify-center border border-primary-foreground/10 text-primary-foreground font-bold text-sm"
             >
-              <User className="w-5 h-5 text-primary-foreground" />
+              {((profile as any)?.username?.[0] || profile?.name?.[0] || "U").toUpperCase()}
             </button>
             <div className="text-right">
               <p className="text-sm text-primary-foreground/80 font-medium">{firstName}, bom te ver 🌿</p>
