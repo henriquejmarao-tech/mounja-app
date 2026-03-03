@@ -197,7 +197,6 @@ const Nutrition = () => {
           </div>
         ) : (
           <>
-            <FeaturedForYou context="nutrition" />
             <ContextualHint id="save-diet" message="Salve sua sugestão para acompanhar no histórico." className="mb-1" />
             {/* AI Diet suggestion button */}
             <button
@@ -217,6 +216,8 @@ const Nutrition = () => {
               </div>
               <Utensils className="w-4 h-4 text-primary" />
             </button>
+
+            <FeaturedForYou context="nutrition" />
 
             {/* Personalized alert */}
             {hasHighSymptoms && (
