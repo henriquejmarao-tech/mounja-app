@@ -65,7 +65,7 @@ const Auth = () => {
       <div className="relative overflow-hidden pt-14 pb-8 px-8 text-center">
         <div className="absolute inset-0 bg-gradient-to-b from-accent/40 to-background" />
         <div className="relative">
-          <img src={logoMounja} alt="Mounjá" className="h-12 mx-auto mb-4 object-contain" />
+          <img src={logoMounja} alt="Mounjá" className="h-28 mx-auto mb-4 object-contain" />
           <p className="text-sm text-muted-foreground mt-1 italic">
             Aqui para caminhar com você.
           </p>
