@@ -344,36 +344,22 @@ const Dashboard = () => {
 
               {showWorkoutModal && (
                 <div className="mt-3 space-y-3 animate-fade-in-up">
-                  <div className="grid grid-cols-3 gap-2">
-                    <div className="rounded-xl px-2 py-2.5 text-center bg-background/80">
-                      <Zap className="w-3.5 h-3.5 mx-auto mb-1" style={{ color: "hsl(25 80% 52%)" }} />
-                      <p className="text-[9px] text-muted-foreground font-medium">Intensidade</p>
-                      <p className="text-xs font-bold mt-0.5">{suggestion.config.label}</p>
+                  {/* Single activity + stats */}
+                  <div className="flex items-center gap-3 rounded-xl px-3.5 py-3 bg-background/80">
+                    <div className="w-8 h-8 rounded-[10px] flex items-center justify-center shrink-0" style={{ background: "hsl(25 80% 52% / 0.1)" }}>
+                      <Dumbbell className="w-4 h-4" style={{ color: "hsl(25 80% 52%)" }} />
                     </div>
-                    <div className="rounded-xl px-2 py-2.5 text-center bg-background/80">
-                      <Timer className="w-3.5 h-3.5 mx-auto mb-1" style={{ color: "hsl(25 80% 52%)" }} />
-                      <p className="text-[9px] text-muted-foreground font-medium">Duração</p>
-                      <p className="text-xs font-bold mt-0.5">{suggestion.duration} min</p>
-                    </div>
-                    <div className="rounded-xl px-2 py-2.5 text-center bg-background/80">
-                      <Target className="w-3.5 h-3.5 mx-auto mb-1" style={{ color: "hsl(25 80% 52%)" }} />
-                      <p className="text-[9px] text-muted-foreground font-medium">Meta</p>
-                      <p className="text-xs font-bold mt-0.5">{weeklyWorkouts}/{weeklyWorkoutGoal}</p>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground/85">{suggestion.examples[0]}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {suggestion.config.label} · {suggestion.duration} min
+                      </p>
                     </div>
                   </div>
 
                   {suggestion.reason && (
                     <p className="text-xs text-muted-foreground leading-relaxed px-1">💡 {suggestion.reason}</p>
                   )}
-
-                  <div className="space-y-1.5">
-                    {suggestion.examples.map((ex, i) => (
-                      <div key={i} className="flex items-center gap-2.5 px-1">
-                        <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: "hsl(25 80% 52% / 0.5)" }} />
-                        <p className="text-sm text-foreground/75">{ex}</p>
-                      </div>
-                    ))}
-                  </div>
 
                   <button
                     onClick={() => navigate("/treinos")}
