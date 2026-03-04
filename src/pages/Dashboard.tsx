@@ -201,7 +201,8 @@ const Dashboard = () => {
           <div className="flex items-center justify-between">
             <button
               onClick={() => navigate("/perfil")}
-              className="w-10 h-10 rounded-full bg-primary-foreground/20 backdrop-blur-md flex items-center justify-center text-primary-foreground font-bold text-sm"
+              className="w-11 h-11 rounded-full flex items-center justify-center text-primary font-bold text-sm shadow-lg"
+              style={{ background: "rgba(255,255,255,0.92)", boxShadow: "0 4px 14px rgba(0,0,0,0.12)" }}
             >
               {((profile as any)?.username?.[0] || profile?.name?.[0] || "U").toUpperCase()}
             </button>
@@ -210,9 +211,10 @@ const Dashboard = () => {
             </div>
             <button
               onClick={() => navigate("/configuracoes")}
-              className="w-10 h-10 rounded-full bg-primary-foreground/20 backdrop-blur-md flex items-center justify-center"
+              className="w-11 h-11 rounded-full flex items-center justify-center shadow-lg"
+              style={{ background: "rgba(255,255,255,0.92)", boxShadow: "0 4px 14px rgba(0,0,0,0.12)" }}
             >
-              <Settings className="w-5 h-5 text-primary-foreground/90" />
+              <Settings className="w-5 h-5 text-primary" />
             </button>
           </div>
         </div>
