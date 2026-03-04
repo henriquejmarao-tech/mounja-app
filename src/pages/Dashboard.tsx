@@ -151,66 +151,78 @@ const Dashboard = () => {
     let score = 0;
     const factors: { label: string; status: "good" | "warning" }[] = [];
 
-    // 1. Medication adherence (35 pts)
-    const lastApp = dose.lastApplicationAt;
-    const intervalDays = dose.applicationIntervalDays || 7;
-    if (lastApp) {
-      const daysSinceLast = Math.floor((Date.now() - new Date(lastApp).getTime()) / 86400000);
-      if (daysSinceLast <= intervalDays) {
-        score += 35;
-        factors.push({ label: "Medicação em dia", status: "good" });
-      } else {
-        score += Math.max(0, 35 - (daysSinceLast - intervalDays) * 5);
-        factors.push({ label: "Medicação atrasada", status: "warning" });
-      }
+    // 1. Check-in consistency (30 pts) — streak-based, proportional
+    // Base: 10 pts for logging today, up to +20 pts for streak (cap at 7 days)
+    if (todayLog) {
+      const basePts = 10;
+      const streakBonus = Math.round(Math.min(streak, 7) / 7 * 20);
+      score += basePts + streakBonus;
+      factors.push({
+        label: streak >= 3 ? `Sequência de ${streak} dias! 🔥` : "Check-in feito hoje",
+        status: "good",
+      });
     } else {
-      factors.push({ label: "Sem medicação registrada", status: "warning" });
+      // Even without today's check-in, give partial credit for recent streak
+      const partial = Math.round(Math.min(Math.max(streak - 1, 0), 5) / 7 * 10);
+      score += partial;
+      factors.push({ label: "Faça seu check-in hoje", status: "warning" });
     }
 
-    // 2. Hydration (20 pts) — from today's log
+    // 2. Food quality (25 pts) — proportional scale
+    if (todayLog?.food_quality) {
+      const foodMap: Record<string, number> = { great: 25, good: 20, regular: 12, ok: 12, bad: 5, poor: 5 };
+      const pts = foodMap[todayLog.food_quality] ?? 10;
+      score += pts;
+      factors.push({
+        label: pts >= 20 ? "Alimentação excelente" : pts >= 12 ? "Alimentação razoável" : "Alimentação precisa melhorar",
+        status: pts >= 12 ? "good" : "warning",
+      });
+    } else {
+      factors.push({ label: "Registre sua alimentação", status: "warning" });
+    }
+
+    // 3. Hydration (25 pts) — proportional to daily target
     if (todayLog?.water_ml) {
       const target = (profile as any)?.daily_water_ml || 2000;
       const ratio = Math.min(todayLog.water_ml / target, 1);
-      const pts = Math.round(ratio * 20);
+      const pts = Math.round(ratio * 25);
       score += pts;
-      factors.push({ label: ratio >= 0.7 ? "Hidratação adequada" : "Hidratação baixa", status: ratio >= 0.7 ? "good" : "warning" });
+      factors.push({
+        label: ratio >= 0.8 ? "Hidratação ótima 💧" : ratio >= 0.5 ? "Hidratação parcial" : "Beba mais água",
+        status: ratio >= 0.5 ? "good" : "warning",
+      });
     } else {
-      factors.push({ label: "Hidratação baixa", status: "warning" });
+      factors.push({ label: "Registre sua água", status: "warning" });
     }
 
-    // 3. Meals (25 pts)
-    if (todayLog?.food_quality) {
-      const q = todayLog.food_quality;
-      if (q === "good" || q === "great") {
-        score += 25;
-        factors.push({ label: "Refeições equilibradas", status: "good" });
+    // 4. Weight progress (20 pts) — proportional to trend
+    // Compare latest weight vs initial weight from profile
+    const initialWeight = profile?.current_weight;
+    if (latestWeight && initialWeight && initialWeight > 0) {
+      const lostKg = initialWeight - latestWeight;
+      if (lostKg > 0) {
+        // Proportional: up to 20 pts, capped at 10% body weight loss
+        const lossRatio = Math.min(lostKg / (initialWeight * 0.10), 1);
+        const pts = Math.round(lossRatio * 20);
+        score += pts;
+        factors.push({ label: `${lostKg.toFixed(1)} kg perdidos 🎯`, status: "good" });
+      } else if (lostKg === 0) {
+        score += 10; // Maintaining weight is okay
+        factors.push({ label: "Peso estável", status: "good" });
       } else {
-        score += 12;
-        factors.push({ label: "Alimentação irregular", status: "warning" });
+        // Gained weight — small partial credit for tracking
+        score += 5;
+        factors.push({ label: "Peso subiu um pouco", status: "warning" });
       }
-    } else if (savedDiet) {
-      score += 15;
-      factors.push({ label: "Refeições equilibradas", status: "good" });
+    } else if (latestWeight) {
+      score += 10; // At least they're tracking
+      factors.push({ label: "Continue pesando-se", status: "good" });
     } else {
-      factors.push({ label: "Sem registro alimentar", status: "warning" });
-    }
-
-    // 4. Physical activity (20 pts)
-    if (todayWorkout) {
-      score += 20;
-      factors.push({ label: "Atividade física", status: "good" });
-    } else if (weeklyWorkouts >= weeklyWorkoutGoal) {
-      score += 15;
-      factors.push({ label: "Atividade física", status: "good" });
-    } else if (weeklyWorkouts > 0) {
-      score += 8;
-      factors.push({ label: "Atividade física", status: "good" });
-    } else {
-      factors.push({ label: "Sem exercício hoje", status: "warning" });
+      factors.push({ label: "Registre seu peso", status: "warning" });
     }
 
     return { dailyScore: Math.min(score, 100), scoreFactors: factors };
-  }, [dose, todayLog, savedDiet, todayWorkout, weeklyWorkouts, weeklyWorkoutGoal, profile]);
+  }, [todayLog, streak, profile, latestWeight]);
 
   // Check if onboarding is complete
   const isProfileComplete = !!(profile as any)?.dose_history_completed && !!(profile as any)?.health_info_completed && !!(profile as any)?.routine_completed;
