@@ -81,9 +81,10 @@ const Application = () => {
   const [openCard, setOpenCard] = useState<number | null>(null);
   const [showSettings, setShowSettings] = useState(false);
 
-  // Settings form state
+  // Settings form state — next dose
   const [editDose, setEditDose] = useState(dose.currentDose || "2.5 mg");
   const [editInterval, setEditInterval] = useState(dose.applicationIntervalDays || 7);
+  const [editNextDate, setEditNextDate] = useState(dose.nextApplicationAt ? new Date(dose.nextApplicationAt).toISOString().split("T")[0] : "");
   const [saving, setSaving] = useState(false);
 
   const injections = getApplicationTimeline();
@@ -151,14 +152,31 @@ const Application = () => {
     if (!user) return;
     setSaving(true);
     try {
-      const { error } = await supabase.from("profiles").update({
+      // Save dose and interval to profile
+      const updates: any = {
         current_dose: editDose,
         application_interval_days: editInterval,
-      } as any).eq("id", user.id);
+      };
+      const { error } = await supabase.from("profiles").update(updates).eq("id", user.id);
       if (error) throw error;
+
+      // If date was changed manually, update the last injection's date to back-calculate
+      // Or create a virtual anchor by updating the latest injection date
+      if (editNextDate && injections.length > 0) {
+        const nextDate = new Date(editNextDate + "T12:00:00");
+        const newLastDate = new Date(nextDate.getTime() - editInterval * 86400000);
+        const newLastDateStr = newLastDate.toISOString().split("T")[0];
+        const today = new Date().toISOString().split("T")[0];
+        
+        // Only adjust if the back-calculated date is not in the future
+        if (newLastDateStr <= today) {
+          await supabase.from("injections").update({ date: newLastDateStr }).eq("id", injections[0].id).eq("user_id", user.id);
+        }
+      }
+
       await refreshProfile();
       await refresh();
-      toast.success("Configurações atualizadas!");
+      toast.success("Próxima dose atualizada!");
       setShowSettings(false);
     } catch (e: any) {
       toast.error(e.message || "Erro ao salvar.");
@@ -193,6 +211,7 @@ const Application = () => {
                 onClick={() => {
                   setEditDose(dose.currentDose || "2.5 mg");
                   setEditInterval(dose.applicationIntervalDays || 7);
+                  setEditNextDate(dose.nextApplicationAt ? new Date(dose.nextApplicationAt).toISOString().split("T")[0] : "");
                   setShowSettings(true);
                 }}
                 className="w-8 h-8 rounded-xl bg-muted/40 flex items-center justify-center active:scale-95 transition-transform"
@@ -370,16 +389,34 @@ const Application = () => {
         </SheetContent>
       </Sheet>
 
-      {/* Settings Sheet — dose, interval */}
+      {/* Settings Sheet — next dose */}
       <Sheet open={showSettings} onOpenChange={setShowSettings}>
         <SheetContent side="bottom" className="rounded-t-3xl max-h-[85vh] overflow-y-auto pb-10">
           <SheetHeader className="pb-2">
-            <SheetTitle className="text-lg font-bold text-left">Ajustar tratamento</SheetTitle>
+            <SheetTitle className="text-lg font-bold text-left">Próxima dose</SheetTitle>
+            <p className="text-xs text-muted-foreground text-left">Ajuste os dados da sua próxima aplicação</p>
           </SheetHeader>
           <div className="space-y-5 mt-4">
+            {/* Date */}
+            <div>
+              <label className="text-xs font-semibold text-muted-foreground block mb-2">Data da próxima aplicação</label>
+              <input
+                type="date"
+                value={editNextDate}
+                min={new Date().toISOString().split("T")[0]}
+                onChange={(e) => setEditNextDate(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-border bg-card text-sm outline-none focus:ring-2 focus:ring-primary/20"
+              />
+              {editNextDate && (
+                <p className="text-[11px] text-muted-foreground/60 mt-1.5">
+                  {new Date(editNextDate + "T12:00:00").toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" })}
+                </p>
+              )}
+            </div>
+
             {/* Dose */}
             <div>
-              <label className="text-xs font-semibold text-muted-foreground block mb-2">Dose atual</label>
+              <label className="text-xs font-semibold text-muted-foreground block mb-2">Dose</label>
               <div className="grid grid-cols-3 gap-2">
                 {doseOptions.map((d) => (
                   <button
@@ -417,15 +454,16 @@ const Application = () => {
                   </button>
                 ))}
               </div>
+              <p className="text-[11px] text-muted-foreground/50 mt-1.5">Será usado para calcular as próximas datas automaticamente</p>
             </div>
 
             {/* Save */}
             <button
               onClick={handleSaveSettings}
-              disabled={saving}
+              disabled={saving || !editNextDate}
               className="w-full gradient-hero text-primary-foreground font-bold py-3.5 rounded-2xl text-sm disabled:opacity-50 shadow-elevated"
             >
-              {saving ? "Salvando..." : "Salvar alterações"}
+              {saving ? "Salvando..." : "Salvar próxima dose"}
             </button>
           </div>
         </SheetContent>
