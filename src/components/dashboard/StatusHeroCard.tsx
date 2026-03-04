@@ -11,7 +11,7 @@ const StatusHeroCard = ({ streak, currentDose, latestWeight }: StatusHeroCardPro
   const maxStreak = 30;
   const progress = Math.min(streak / maxStreak, 1);
   const radius = 52;
-  const strokeWidth = 10;
+  const strokeWidth = 12;
   const circumference = 2 * Math.PI * radius;
   const targetOffset = circumference * (1 - progress);
 
