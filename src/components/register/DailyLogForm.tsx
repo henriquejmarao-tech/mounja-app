@@ -19,10 +19,9 @@ const DailyLogForm = () => {
   const [saving, setSaving] = useState(false);
   const [showOptional, setShowOptional] = useState(false);
 
-  const yesterday = new Date();
-  yesterday.setDate(yesterday.getDate() - 1);
-  const yesterdayStr = yesterday.toISOString().split("T")[0];
-  const [logDate] = useState(yesterdayStr);
+  const today = new Date();
+  const todayStr = today.toISOString().split("T")[0];
+  const [logDate] = useState(todayStr);
   const [weight, setWeight] = useState("");
   const [feeling, setFeeling] = useState<number | null>(null);
 
