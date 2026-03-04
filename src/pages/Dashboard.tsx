@@ -190,7 +190,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen pb-28" style={{ background: "#F5F7F6" }}>
+    <div className="min-h-screen pb-28" style={{ background: "#F6F8F7" }}>
       {/* Sticky Header */}
       <header
         className="sticky top-0 z-30"
@@ -199,7 +199,7 @@ const Dashboard = () => {
         <div
           className="px-5 pt-4 pb-14"
           style={{
-            background: "linear-gradient(180deg, hsl(var(--primary) / 0.92) 0%, hsl(var(--primary) / 0.6) 30%, hsl(var(--primary) / 0.25) 60%, hsl(var(--primary) / 0.08) 80%, transparent 100%)",
+            background: "linear-gradient(180deg, hsl(var(--primary) / 0.88) 0%, hsl(var(--primary) / 0.55) 30%, hsl(var(--primary) / 0.2) 60%, hsl(var(--primary) / 0.05) 80%, #F6F8F7 100%)",
           }}
         >
           <div className="flex items-center justify-between">
@@ -230,7 +230,7 @@ const Dashboard = () => {
           latestWeight={latestWeight}
         />
 
-        <div className="mt-3 space-y-3">
+        <div className="mt-3.5 space-y-4">
 
         {/* Next Injection Card */}
         <NextInjectionCard daysUntilNext={daysUntilNext} currentDose={currentDose} />
@@ -239,62 +239,62 @@ const Dashboard = () => {
         {!todayCheckedIn && (
           <button
             onClick={() => navigate("/registrar")}
-            className="w-full rounded-[18px] px-4 py-3.5 animate-fade-in-up flex items-center gap-3.5 text-left active:scale-[0.98] transition-all duration-200 group shadow-card"
-            style={{ background: "hsl(var(--secondary) / 0.1)" }}
+            className="w-full rounded-[20px] p-4 animate-fade-in-up flex items-center gap-3.5 text-left active:scale-[0.98] transition-all duration-200 group"
+            style={{ background: "#FFFFFF", boxShadow: "0 8px 24px rgba(17,24,39,0.08)" }}
           >
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{ background: "hsl(var(--secondary) / 0.15)" }}>
-              <ClipboardCheck className="w-4 h-4 text-secondary-foreground" />
+            <div className="w-8 h-8 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: "hsl(var(--secondary) / 0.12)" }}>
+              <ClipboardCheck className="w-[18px] h-[18px] text-secondary-foreground" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-secondary-foreground">Como você está hoje?</p>
-              <p className="text-xs text-secondary-foreground/55 mt-0.5">Registre sintomas, peso e humor — leva 1 min ✨</p>
+              <p className="text-sm font-bold text-foreground/85">Como você está hoje?</p>
+              <p className="text-xs text-muted-foreground/60 mt-1">Registre sintomas, peso e humor — leva 1 min ✨</p>
             </div>
-            <ArrowRight className="w-3.5 h-3.5 text-secondary-foreground/30 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+            <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0 group-hover:translate-x-0.5 transition-transform" />
           </button>
         )}
 
         {/* Onboarding completion card */}
         {(!(profile as any)?.dose_history_completed || !(profile as any)?.health_info_completed || !(profile as any)?.routine_completed) && (
-          <div className="rounded-[18px] p-4 shadow-card animate-fade-in-up" style={{ background: "white" }}>
-            <div className="flex items-center gap-2 mb-0.5">
-              <Target className="w-4 h-4 text-urgent" />
-              <h3 className="text-[11px] font-bold text-muted-foreground/70 uppercase tracking-wider">Completar perfil</h3>
+          <div className="rounded-[20px] p-4 animate-fade-in-up" style={{ background: "#FFFFFF", boxShadow: "0 8px 24px rgba(17,24,39,0.08)" }}>
+            <div className="flex items-center gap-2 mb-1">
+              <Target className="w-[18px] h-[18px] text-urgent" />
+              <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "rgba(17,24,39,0.55)" }}>Completar perfil</h3>
             </div>
-            <p className="text-xs text-muted-foreground/60 mb-3">Preencha uma única vez para recomendações personalizadas ✨</p>
+            <p className="text-xs text-muted-foreground/60 mb-3.5">Preencha uma única vez para recomendações personalizadas ✨</p>
 
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               {!(profile as any)?.dose_history_completed && (
                 <button onClick={() => navigate("/historico-dose")} className="w-full text-left group">
-                  <div className="flex items-center gap-3 rounded-xl px-3.5 py-3 group-active:scale-[0.98] transition-all duration-200" style={{ background: "hsl(var(--muted) / 0.35)" }}>
-                    <div className="w-7 h-7 rounded-lg bg-urgent/10 flex items-center justify-center shrink-0">
-                      <Pill className="w-3.5 h-3.5 text-urgent" />
+                  <div className="flex items-center gap-3 rounded-[16px] px-3.5 py-3.5 group-active:scale-[0.98] transition-all duration-200" style={{ background: "rgba(17,24,39,0.03)", boxShadow: "0 4px 12px rgba(17,24,39,0.06)" }}>
+                    <div className="w-8 h-8 rounded-[12px] bg-urgent/10 flex items-center justify-center shrink-0">
+                      <Pill className="w-[18px] h-[18px] text-urgent" />
                     </div>
-                    <p className="text-xs font-semibold text-foreground/80 flex-1">Histórico de tratamento</p>
-                    <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/30 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                    <p className="text-sm text-foreground/80 flex-1">Histórico de tratamento</p>
+                    <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0 group-hover:translate-x-0.5 transition-transform" />
                   </div>
                 </button>
               )}
 
               {!(profile as any)?.health_info_completed && (
                 <button onClick={() => navigate("/saude")} className="w-full text-left group">
-                  <div className="flex items-center gap-3 rounded-xl px-3.5 py-3 group-active:scale-[0.98] transition-all duration-200" style={{ background: "hsl(var(--muted) / 0.35)" }}>
-                    <div className="w-7 h-7 rounded-lg bg-urgent/10 flex items-center justify-center shrink-0">
-                      <HeartPulse className="w-3.5 h-3.5 text-urgent" />
+                  <div className="flex items-center gap-3 rounded-[16px] px-3.5 py-3.5 group-active:scale-[0.98] transition-all duration-200" style={{ background: "rgba(17,24,39,0.03)", boxShadow: "0 4px 12px rgba(17,24,39,0.06)" }}>
+                    <div className="w-8 h-8 rounded-[12px] bg-urgent/10 flex items-center justify-center shrink-0">
+                      <HeartPulse className="w-[18px] h-[18px] text-urgent" />
                     </div>
-                    <p className="text-xs font-semibold text-foreground/80 flex-1">Saúde e restrições</p>
-                    <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/30 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                    <p className="text-sm text-foreground/80 flex-1">Saúde e restrições</p>
+                    <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0 group-hover:translate-x-0.5 transition-transform" />
                   </div>
                 </button>
               )}
 
               {!(profile as any)?.routine_completed && (
                 <button onClick={() => navigate("/rotina")} className="w-full text-left group">
-                  <div className="flex items-center gap-3 rounded-xl px-3.5 py-3 group-active:scale-[0.98] transition-all duration-200" style={{ background: "hsl(var(--muted) / 0.35)" }}>
-                    <div className="w-7 h-7 rounded-lg bg-urgent/10 flex items-center justify-center shrink-0">
-                      <CalendarClock className="w-3.5 h-3.5 text-urgent" />
+                  <div className="flex items-center gap-3 rounded-[16px] px-3.5 py-3.5 group-active:scale-[0.98] transition-all duration-200" style={{ background: "rgba(17,24,39,0.03)", boxShadow: "0 4px 12px rgba(17,24,39,0.06)" }}>
+                    <div className="w-8 h-8 rounded-[12px] bg-urgent/10 flex items-center justify-center shrink-0">
+                      <CalendarClock className="w-[18px] h-[18px] text-urgent" />
                     </div>
-                    <p className="text-xs font-semibold text-foreground/80 flex-1">Rotina e preferências</p>
-                    <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/30 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                    <p className="text-sm text-foreground/80 flex-1">Rotina e preferências</p>
+                    <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0 group-hover:translate-x-0.5 transition-transform" />
                   </div>
                 </button>
               )}
@@ -303,47 +303,47 @@ const Dashboard = () => {
         )}
 
         {/* Block 2a: Alimentação */}
-        <div data-tutorial="suggestion-card" className="rounded-[18px] p-4 shadow-card animate-fade-in-up" style={{ animationDelay: "60ms", background: "white" }}>
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-6 h-6 rounded-md flex items-center justify-center" style={{ background: "hsl(174 42% 48% / 0.1)" }}>
-              <Utensils className="w-3.5 h-3.5" style={{ color: "hsl(174 42% 48%)" }} />
+        <div data-tutorial="suggestion-card" className="rounded-[20px] p-4 animate-fade-in-up" style={{ animationDelay: "60ms", background: "#FFFFFF", boxShadow: "0 8px 24px rgba(17,24,39,0.08)" }}>
+          <div className="flex items-center gap-2 mb-3.5">
+            <div className="w-7 h-7 rounded-[10px] flex items-center justify-center" style={{ background: "hsl(174 42% 48% / 0.1)" }}>
+              <Utensils className="w-[18px] h-[18px]" style={{ color: "hsl(174 42% 48%)" }} />
             </div>
-            <h3 className="text-[11px] font-bold text-muted-foreground/70 uppercase tracking-wider">Alimentação</h3>
+            <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "rgba(17,24,39,0.55)" }}>Alimentação</h3>
           </div>
 
           {savedDiet ? (
             <button onClick={() => setShowDietModal(true)} className="w-full text-left group">
-              <div className="flex items-center gap-3 rounded-xl px-3.5 py-3 group-active:scale-[0.98] transition-all duration-200" style={{ background: "hsl(var(--muted) / 0.35)" }}>
-                <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ background: "hsl(174 42% 48% / 0.1)" }}>
-                  <Salad className="w-3.5 h-3.5" style={{ color: "hsl(174 42% 48%)" }} />
+              <div className="flex items-center gap-3 rounded-[16px] px-3.5 py-3.5 group-active:scale-[0.98] transition-all duration-200" style={{ background: "rgba(17,24,39,0.03)", boxShadow: "0 4px 12px rgba(17,24,39,0.06)" }}>
+                <div className="w-8 h-8 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: "hsl(174 42% 48% / 0.1)" }}>
+                  <Salad className="w-5 h-5" style={{ color: "hsl(174 42% 48%)" }} />
                 </div>
-                <p className="text-xs font-semibold text-foreground/75 flex-1">Sua dieta de hoje</p>
-                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/25 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                <p className="text-sm text-foreground/75 flex-1">Sua dieta de hoje</p>
+                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0 group-hover:translate-x-0.5 transition-transform" />
               </div>
             </button>
           ) : (
             <button onClick={() => navigate("/nutricao")} className="w-full text-left group">
-              <div className="flex items-center gap-3 rounded-xl px-3.5 py-3 group-active:scale-[0.98] transition-all duration-200" style={{ background: "hsl(var(--muted) / 0.35)" }}>
-                <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ background: "hsl(174 42% 48% / 0.1)" }}>
-                  <Sparkles className="w-3.5 h-3.5" style={{ color: "hsl(174 42% 48%)" }} />
+              <div className="flex items-center gap-3 rounded-[16px] px-3.5 py-3.5 group-active:scale-[0.98] transition-all duration-200" style={{ background: "rgba(17,24,39,0.03)", boxShadow: "0 4px 12px rgba(17,24,39,0.06)" }}>
+                <div className="w-8 h-8 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: "hsl(174 42% 48% / 0.1)" }}>
+                  <Sparkles className="w-5 h-5" style={{ color: "hsl(174 42% 48%)" }} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-foreground/80">Gerar dieta personalizada</p>
-                  <p className="text-xs text-muted-foreground/55 mt-0.5">Baseada no seu perfil e tratamento ✨</p>
+                  <p className="text-sm text-foreground/80">Gerar dieta personalizada</p>
+                  <p className="text-xs text-muted-foreground/55 mt-1">Baseada no seu perfil e tratamento ✨</p>
                 </div>
-                <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/25 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0 group-hover:translate-x-0.5 transition-transform" />
               </div>
             </button>
           )}
         </div>
 
         {/* Block 2b: Treino */}
-        <div className="rounded-[18px] p-4 shadow-card animate-fade-in-up" style={{ animationDelay: "90ms", background: "white" }}>
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-6 h-6 rounded-md flex items-center justify-center" style={{ background: "hsl(25 80% 52% / 0.1)" }}>
-              <Flame className="w-3.5 h-3.5" style={{ color: "hsl(25 80% 52%)" }} />
+        <div className="rounded-[20px] p-4 animate-fade-in-up" style={{ animationDelay: "90ms", background: "#FFFFFF", boxShadow: "0 8px 24px rgba(17,24,39,0.08)" }}>
+          <div className="flex items-center gap-2 mb-3.5">
+            <div className="w-7 h-7 rounded-[10px] flex items-center justify-center" style={{ background: "hsl(25 80% 52% / 0.1)" }}>
+              <Flame className="w-[18px] h-[18px]" style={{ color: "hsl(25 80% 52%)" }} />
             </div>
-            <h3 className="text-[11px] font-bold text-muted-foreground/70 uppercase tracking-wider">Treino recomendado</h3>
+            <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "rgba(17,24,39,0.55)" }}>Treino recomendado</h3>
           </div>
 
           <WorkoutSuggestion
@@ -360,15 +360,15 @@ const Dashboard = () => {
 
         {/* Block 4: Insight */}
         {insight && (
-          <div className="rounded-[18px] px-4 py-3.5 shadow-card animate-fade-in-up flex items-center gap-3" style={{ animationDelay: "240ms", background: "white" }}>
-            <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-              <Sparkles className="w-3.5 h-3.5 text-primary" />
+          <div className="rounded-[20px] p-4 animate-fade-in-up flex items-center gap-3" style={{ animationDelay: "240ms", background: "#FFFFFF", boxShadow: "0 8px 24px rgba(17,24,39,0.08)" }}>
+            <div className="w-8 h-8 rounded-[12px] bg-primary/10 flex items-center justify-center shrink-0">
+              <Sparkles className="w-[18px] h-[18px] text-primary" />
             </div>
-            <p className="text-xs text-foreground/75 leading-relaxed">{insight}</p>
+            <p className="text-sm text-foreground/75 leading-relaxed">{insight}</p>
           </div>
         )}
 
-        </div>{/* end inner space-y-3 */}
+        </div>{/* end inner space-y-4 */}
 
       </div>
 

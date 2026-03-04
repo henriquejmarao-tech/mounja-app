@@ -20,28 +20,29 @@ const NextInjectionCard = ({ daysUntilNext, currentDose }: NextInjectionCardProp
 
   return (
     <div
-      className="rounded-[18px] px-4 py-3 flex items-center gap-3 animate-fade-in-up shadow-card"
+      className="rounded-[20px] p-4 flex items-center gap-3.5 animate-fade-in-up"
       style={{
-        background: isToday ? "hsl(var(--primary) / 0.06)" : "white",
+        background: "#FFFFFF",
+        boxShadow: "0 8px 24px rgba(17,24,39,0.08)",
         animationDelay: "30ms",
       }}
     >
       {/* Icon */}
       <div
-        className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+        className="w-8 h-8 rounded-[12px] flex items-center justify-center shrink-0"
         style={{
           background: isSoon
-            ? "hsl(var(--primary) / 0.12)"
-            : "hsl(var(--muted) / 0.6)",
+            ? "hsl(var(--primary) / 0.1)"
+            : "rgba(17,24,39,0.04)",
         }}
       >
-        <CalendarClock className="w-3.5 h-3.5" style={{ color: isSoon ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))" }} />
+        <CalendarClock className="w-[18px] h-[18px]" style={{ color: isSoon ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))" }} />
       </div>
 
       {/* Text */}
       <div className="flex-1 min-w-0">
-        <p className="text-xs font-semibold text-foreground/80">Próxima aplicação</p>
-        <div className="flex items-center gap-1.5 mt-0.5">
+        <p className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "rgba(17,24,39,0.55)" }}>Próxima aplicação</p>
+        <div className="flex items-center gap-1.5 mt-1">
           {isToday && (
             <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse-soft shrink-0" />
           )}
@@ -61,10 +62,10 @@ const NextInjectionCard = ({ daysUntilNext, currentDose }: NextInjectionCardProp
       {/* Dose badge */}
       {currentDose && (
         <div className="flex items-center gap-1.5 rounded-full px-2.5 py-1" style={{
-          background: "hsl(var(--muted) / 0.35)",
+          background: "rgba(46,125,97,0.10)",
         }}>
-          <Pill className="w-3 h-3 text-muted-foreground/50" />
-          <span className="text-xs font-semibold text-foreground/60">{currentDose}</span>
+          <Pill className="w-3.5 h-3.5" style={{ color: "hsl(var(--primary) / 0.7)" }} />
+          <span className="text-xs font-semibold" style={{ color: "hsl(150 22% 30%)" }}>{currentDose}</span>
         </div>
       )}
     </div>

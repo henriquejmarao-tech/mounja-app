@@ -32,19 +32,18 @@ const StatusHeroCard = ({ streak, currentDose, latestWeight }: StatusHeroCardPro
   return (
     <div
       data-tutorial="dose-card"
-      className="relative rounded-2xl p-5 animate-fade-in-up overflow-hidden"
+      className="relative rounded-[20px] p-5 animate-fade-in-up overflow-hidden"
       style={{
         background: "linear-gradient(145deg, hsl(var(--card)) 0%, hsl(var(--accent)) 100%)",
-        boxShadow: "0 2px 8px -2px hsl(150 12% 18% / 0.06), 0 16px 48px -8px hsl(143 22% 55% / 0.12)",
-        border: "1px solid hsl(var(--border) / 0.5)",
+        boxShadow: "0 8px 24px rgba(17,24,39,0.08)",
       }}
     >
       {/* Central glow behind streak */}
       <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-44 h-44 rounded-full pointer-events-none"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full pointer-events-none"
         style={{
-          background: "radial-gradient(circle, hsl(var(--primary) / 0.15) 0%, transparent 70%)",
-          filter: "blur(20px)",
+          background: "radial-gradient(circle, hsl(var(--primary) / 0.10) 0%, transparent 70%)",
+          filter: "blur(14px)",
         }}
       />
 
