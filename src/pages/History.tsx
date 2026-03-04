@@ -15,6 +15,7 @@ import WorkoutsSummary from "@/components/history/WorkoutsSummary";
 import WeeklyNarrative from "@/components/history/WeeklyNarrative";
 import InsightsList, { type Insight } from "@/components/history/InsightsList";
 import SymptomsChart from "@/components/history/SymptomsChart";
+import DailyScoreChart from "@/components/history/DailyScoreChart";
 
 import ContextualHint from "@/components/tutorial/ContextualHint";
 
@@ -382,6 +383,12 @@ const History = () => {
               currentWeight={currentWeight}
               totalLost={totalLost}
               injectionCount={injections.length}
+            />
+            <DailyScoreChart
+              logs={logs}
+              profile={profile}
+              lastInjectionDate={injections.length > 0 ? injections[0].date : null}
+              intervalDays={(profile as any)?.application_interval_days || 7}
             />
             <WeightChart weightData={weightData} />
             <SymptomsChart logs={logs} />
