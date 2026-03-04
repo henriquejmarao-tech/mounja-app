@@ -1,46 +1,28 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { useTutorial } from "@/hooks/useTutorial";
-import { Settings, Plus, Sparkles, Flame, Utensils, ChevronDown, ChevronRight, X, ClipboardCheck, ArrowRight, Dumbbell, Target, Pill, HeartPulse, CalendarClock } from "lucide-react";
+import { Settings, Sparkles, Flame, Utensils, ChevronDown, ChevronRight, ClipboardCheck, ArrowRight, Dumbbell, Target, Pill, HeartPulse, CalendarClock, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getWorkoutSuggestion } from "@/components/dashboard/WorkoutSuggestion";
 import StatusHeroCard from "@/components/dashboard/StatusHeroCard";
 import NextInjectionCard from "@/components/dashboard/NextInjectionCard";
 import DailyHabitsCard from "@/components/dashboard/DailyHabitsCard";
 
-const badges = [
-  { id: "first", label: "Primeiro registro", emoji: "🌱", threshold: 1 },
-  { id: "3days", label: "3 dias seguidos", emoji: "⚡", threshold: 3 },
-  { id: "7days", label: "1 semana seguida", emoji: "🏅", threshold: 7 },
-  { id: "14days", label: "2 semanas seguidas", emoji: "🌟", threshold: 14 },
-  { id: "30days", label: "1 mês seguido", emoji: "🏆", threshold: 30 },
-];
-
-const streakMessages = [
-  { min: 0, max: 0, message: "Comece a registrar hoje! 🌱" },
-  { min: 1, max: 1, message: "Primeiro passo dado! ✨" },
-  { min: 2, max: 2, message: "Dois dias seguidos! 💫" },
-  { min: 3, max: 6, message: "Hábito se formando! ⚡" },
-  { min: 7, max: 13, message: "Uma semana inteira! 🏅" },
-  { min: 14, max: 29, message: "Consistência incrível! 🌟" },
-  { min: 30, max: Infinity, message: "Inspiração pura! 🏆" },
-];
-
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, profile } = useAuth();
-  const { dose, getLastConfirmedApplication, recentSymptoms: ssotSymptoms, weeklyWorkoutCount, latestWeight: ssotWeight, loading: ssotLoading } = useApplicationData();
+  const { dose, recentSymptoms: ssotSymptoms, weeklyWorkoutCount, latestWeight: ssotWeight, loading: ssotLoading } = useApplicationData();
   const { triggerPostTriageTutorial } = useTutorial();
 
-  // Trigger tutorial immediately after first triage
   useEffect(() => {
     if (profile?.triage_completed) {
       triggerPostTriageTutorial();
     }
   }, [profile?.triage_completed, triggerPostTriageTutorial]);
+
   const [lastInjection, setLastInjection] = useState<any>(null);
   const [latestWeight, setLatestWeight] = useState<number | null>(null);
   const [streak, setStreak] = useState(0);
@@ -53,11 +35,13 @@ const Dashboard = () => {
   const [todayWorkout, setTodayWorkout] = useState<{ type: string; duration: number } | null>(null);
   const [restDayDismissed, setRestDayDismissed] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [showDietModal, setShowDietModal] = useState(false);
   const [showWorkoutModal, setShowWorkoutModal] = useState(false);
   const [todayCheckedIn, setTodayCheckedIn] = useState(false);
   const [showProfileCard, setShowProfileCard] = useState(true);
   const [showFoodCard, setShowFoodCard] = useState(true);
+  const [todayLog, setTodayLog] = useState<any>(null);
+  // Track if profile was just completed for one-time message
+  const [profileJustCompleted, setProfileJustCompleted] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -67,7 +51,7 @@ const Dashboard = () => {
 
       const [injRes, logsRes, workoutsRes, dietRes, todayWorkoutRes] = await Promise.all([
         supabase.from("injections").select("*").eq("user_id", user.id).order("date", { ascending: false }).limit(1),
-        supabase.from("daily_logs").select("date, weight, symptom_nausea, symptom_fatigue, symptom_headache, mood, energy").eq("user_id", user.id).order("date", { ascending: false }).limit(60),
+        supabase.from("daily_logs").select("date, weight, symptom_nausea, symptom_fatigue, symptom_headache, mood, energy, water_ml, food_quality").eq("user_id", user.id).order("date", { ascending: false }).limit(60),
         supabase.from("workouts" as any).select("*").eq("user_id", user.id).gte("date", weekAgo),
         supabase.from("diet_suggestions" as any).select("breakfast, lunch, dinner, snack, calories_target, protein_target, tip, context_note").eq("user_id", user.id).eq("date", today).limit(1),
         supabase.from("workouts" as any).select("workout_type, duration_minutes").eq("user_id", user.id).eq("date", today).limit(1),
@@ -81,7 +65,9 @@ const Dashboard = () => {
 
       setLastInjection(inj[0] || null);
       const todayStr = new Date().toISOString().split("T")[0];
-      setTodayCheckedIn(logs.some((l: any) => l.date === todayStr));
+      const todayLogEntry = logs.find((l: any) => l.date === todayStr);
+      setTodayCheckedIn(!!todayLogEntry);
+      setTodayLog(todayLogEntry || null);
       setTotalLogs(logs.length);
       setWeeklyWorkouts(workouts.length);
       if (diet[0]) setSavedDiet(diet[0]);
@@ -154,28 +140,80 @@ const Dashboard = () => {
   }, [profile]);
 
   const firstName = profile?.name?.split(" ")[0] || "Olá";
-  // SSOT: dose comes exclusively from ApplicationDataLayer
   const currentDose = dose.currentDose;
-  if (import.meta.env.DEV) {
-    console.log(`[Hub] reading from SSOT: currentDose = ${currentDose}`);
-    console.log(`[Hub] currentDose loaded = ${currentDose}`);
-  }
-  // SSOT: daysUntilNext from canonical nextApplicationAt
+
   const daysUntilNext = dose.nextApplicationAt
     ? Math.max(0, Math.ceil((new Date(dose.nextApplicationAt).getTime() - Date.now()) / 86400000))
     : null;
 
-  const getStreakMessage = () => {
-    const msg = streakMessages.find((m) => streak >= m.min && streak <= m.max);
-    return msg?.message || streakMessages[0].message;
-  };
+  // ─── Daily Treatment Score ───────────────────────────────────────
+  const { dailyScore, scoreFactors } = useMemo(() => {
+    let score = 0;
+    const factors: { label: string; status: "good" | "warning" }[] = [];
 
-  // (diet section removed)
+    // 1. Medication adherence (35 pts)
+    const lastApp = dose.lastApplicationAt;
+    const intervalDays = dose.applicationIntervalDays || 7;
+    if (lastApp) {
+      const daysSinceLast = Math.floor((Date.now() - new Date(lastApp).getTime()) / 86400000);
+      if (daysSinceLast <= intervalDays) {
+        score += 35;
+        factors.push({ label: "Medicação em dia", status: "good" });
+      } else {
+        score += Math.max(0, 35 - (daysSinceLast - intervalDays) * 5);
+        factors.push({ label: "Medicação atrasada", status: "warning" });
+      }
+    } else {
+      factors.push({ label: "Sem medicação registrada", status: "warning" });
+    }
 
-  const nextBadge = badges.find((b) => streak < b.threshold);
-  const earnedBadges = badges.filter((b) => streak >= b.threshold);
+    // 2. Hydration (20 pts) — from today's log
+    if (todayLog?.water_ml) {
+      const target = (profile as any)?.daily_water_ml || 2000;
+      const ratio = Math.min(todayLog.water_ml / target, 1);
+      const pts = Math.round(ratio * 20);
+      score += pts;
+      factors.push({ label: ratio >= 0.7 ? "Hidratação adequada" : "Hidratação baixa", status: ratio >= 0.7 ? "good" : "warning" });
+    } else {
+      factors.push({ label: "Hidratação baixa", status: "warning" });
+    }
 
-  const handleRestDay = () => setRestDayDismissed(true);
+    // 3. Meals (25 pts)
+    if (todayLog?.food_quality) {
+      const q = todayLog.food_quality;
+      if (q === "good" || q === "great") {
+        score += 25;
+        factors.push({ label: "Refeições equilibradas", status: "good" });
+      } else {
+        score += 12;
+        factors.push({ label: "Alimentação irregular", status: "warning" });
+      }
+    } else if (savedDiet) {
+      score += 15;
+      factors.push({ label: "Refeições equilibradas", status: "good" });
+    } else {
+      factors.push({ label: "Sem registro alimentar", status: "warning" });
+    }
+
+    // 4. Physical activity (20 pts)
+    if (todayWorkout) {
+      score += 20;
+      factors.push({ label: "Atividade física", status: "good" });
+    } else if (weeklyWorkouts >= weeklyWorkoutGoal) {
+      score += 15;
+      factors.push({ label: "Atividade física", status: "good" });
+    } else if (weeklyWorkouts > 0) {
+      score += 8;
+      factors.push({ label: "Atividade física", status: "good" });
+    } else {
+      factors.push({ label: "Sem exercício hoje", status: "warning" });
+    }
+
+    return { dailyScore: Math.min(score, 100), scoreFactors: factors };
+  }, [dose, todayLog, savedDiet, todayWorkout, weeklyWorkouts, weeklyWorkoutGoal, profile]);
+
+  // Check if onboarding is complete
+  const isProfileComplete = !!(profile as any)?.dose_history_completed && !!(profile as any)?.health_info_completed && !!(profile as any)?.routine_completed;
 
   if (loading) {
     return (
@@ -188,9 +226,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen pb-28" style={{ background: "#F6F8F7" }}>
       {/* Sticky Header */}
-      <header
-        className="sticky top-0 z-30"
-      >
+      <header className="sticky top-0 z-30">
         <div
           className="px-5 pb-16"
           style={{
@@ -199,14 +235,26 @@ const Dashboard = () => {
           }}
         >
           <div className="flex items-center justify-between">
-            <button
-              onClick={() => navigate("/perfil")}
-              className="w-11 h-11 rounded-full flex items-center justify-center text-primary font-bold text-sm shadow-lg"
-              style={{ background: "rgba(255,255,255,0.92)", boxShadow: "0 4px 14px rgba(0,0,0,0.12)" }}
-            >
-              {((profile as any)?.username?.[0] || profile?.name?.[0] || "U").toUpperCase()}
-            </button>
-            <div className="text-center">
+            {/* Avatar + Streak badge */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => navigate("/perfil")}
+                className="w-11 h-11 rounded-full flex items-center justify-center text-primary font-bold text-sm shadow-lg"
+                style={{ background: "rgba(255,255,255,0.92)", boxShadow: "0 4px 14px rgba(0,0,0,0.12)" }}
+              >
+                {((profile as any)?.username?.[0] || profile?.name?.[0] || "U").toUpperCase()}
+              </button>
+              {streak > 0 && (
+                <div
+                  className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold shadow-sm"
+                  style={{ background: "rgba(255,255,255,0.88)", color: "hsl(25 80% 45%)" }}
+                >
+                  <span>🔥</span>
+                  <span>{streak}</span>
+                </div>
+              )}
+            </div>
+            <div className="text-center flex-1">
               <p className="text-sm text-primary-foreground/85 font-medium">{firstName}, bom te ver 🌿</p>
             </div>
             <button
@@ -221,9 +269,10 @@ const Dashboard = () => {
       </header>
 
       <div className="px-5 -mt-10 relative z-20">
-        {/* Status Hero Card — always first */}
+        {/* Status Hero Card — Daily Treatment Score */}
         <StatusHeroCard
-          streak={streak}
+          dailyScore={dailyScore}
+          scoreFactors={scoreFactors}
           currentDose={currentDose}
           latestWeight={latestWeight}
         />
@@ -251,8 +300,8 @@ const Dashboard = () => {
           </button>
         )}
 
-        {/* Onboarding completion card */}
-        {(!(profile as any)?.dose_history_completed || !(profile as any)?.health_info_completed || !(profile as any)?.routine_completed) && (
+        {/* Onboarding completion card — only if NOT complete */}
+        {!isProfileComplete && (
           <div className="rounded-[20px] p-4 animate-fade-in-up" style={{ background: "#F7F8F7", boxShadow: "0 2px 6px rgba(0,0,0,0.04)" }}>
             <button onClick={() => setShowProfileCard(!showProfileCard)} className="w-full flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -277,7 +326,6 @@ const Dashboard = () => {
                       </div>
                     </button>
                   )}
-
                   {!(profile as any)?.health_info_completed && (
                     <button onClick={() => navigate("/saude")} className="w-full text-left group">
                       <div className="flex items-center gap-3 rounded-[16px] px-3.5 py-3.5 group-active:scale-[0.98] transition-all duration-200" style={{ background: "rgba(17,24,39,0.03)", boxShadow: "0 4px 12px rgba(17,24,39,0.06)" }}>
@@ -289,7 +337,6 @@ const Dashboard = () => {
                       </div>
                     </button>
                   )}
-
                   {!(profile as any)?.routine_completed && (
                     <button onClick={() => navigate("/rotina")} className="w-full text-left group">
                       <div className="flex items-center gap-3 rounded-[16px] px-3.5 py-3.5 group-active:scale-[0.98] transition-all duration-200" style={{ background: "rgba(17,24,39,0.03)", boxShadow: "0 4px 12px rgba(17,24,39,0.06)" }}>
@@ -307,10 +354,24 @@ const Dashboard = () => {
           </div>
         )}
 
+        {/* Profile just completed confirmation (show once) */}
+        {isProfileComplete && profileJustCompleted && (
+          <div
+            className="rounded-[20px] p-4 animate-fade-in-up flex items-center gap-3"
+            style={{ background: "hsl(var(--primary) / 0.06)", boxShadow: "0 2px 6px rgba(0,0,0,0.04)" }}
+          >
+            <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
+            <div>
+              <p className="text-sm font-semibold text-foreground/80">Perfil completo ✓</p>
+              <p className="text-xs text-muted-foreground/60 mt-0.5">Agora podemos gerar recomendações personalizadas.</p>
+            </div>
+          </div>
+        )}
+
         {/* Daily Habits Insights Card */}
         <DailyHabitsCard />
 
-        {/* Block 2a: Alimentação */}
+        {/* Block 2a: Alimentação — quick action */}
         <div data-tutorial="suggestion-card" className="rounded-[20px] p-4 animate-fade-in-up" style={{ animationDelay: "60ms", background: "#F7F8F7", boxShadow: "0 2px 6px rgba(0,0,0,0.04)" }}>
           <button onClick={() => setShowFoodCard(!showFoodCard)} className="w-full flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -327,10 +388,11 @@ const Dashboard = () => {
               <button onClick={() => navigate("/nutricao")} className="w-full text-left group">
                 <div className="flex items-center gap-3 rounded-[16px] px-3.5 py-3.5 group-active:scale-[0.98] transition-all duration-200" style={{ background: "rgba(17,24,39,0.03)", boxShadow: "0 4px 12px rgba(17,24,39,0.06)" }}>
                   <div className="w-8 h-8 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: "hsl(174 42% 48% / 0.1)" }}>
-                    <Utensils className="w-5 h-5" style={{ color: "hsl(174 42% 48%)" }} />
+                    <Sparkles className="w-4 h-4" style={{ color: "hsl(174 42% 48%)" }} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-foreground/80">Ver sugestão de refeição</p>
+                    <p className="text-sm font-medium text-foreground/80">Gerar sugestão de refeição</p>
+                    <p className="text-[11px] text-muted-foreground/50 mt-0.5">Baseada nas suas restrições e fase do tratamento</p>
                   </div>
                   <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0 group-hover:translate-x-0.5 transition-transform" />
                 </div>
@@ -359,7 +421,6 @@ const Dashboard = () => {
 
               {showWorkoutModal && (
                 <div className="mt-3 space-y-3 animate-fade-in-up">
-                  {/* Single activity + stats */}
                   <div className="flex items-center gap-3 rounded-xl px-3.5 py-3 bg-background/80">
                     <div className="w-8 h-8 rounded-[10px] flex items-center justify-center shrink-0" style={{ background: "hsl(25 80% 52% / 0.1)" }}>
                       <Dumbbell className="w-4 h-4" style={{ color: "hsl(25 80% 52%)" }} />
@@ -390,7 +451,6 @@ const Dashboard = () => {
           );
         })()}
 
-
         {/* Block 4: Insight */}
         {insight && (
           <div className="rounded-[20px] p-4 animate-fade-in-up flex items-center gap-3" style={{ animationDelay: "240ms", background: "#F7F8F7", boxShadow: "0 2px 6px rgba(0,0,0,0.04)" }}>
@@ -404,8 +464,6 @@ const Dashboard = () => {
         </div>{/* end inner space-y-4 */}
 
       </div>
-
-
     </div>
   );
 };
