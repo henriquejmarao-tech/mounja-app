@@ -11,7 +11,7 @@ const StatusHeroCard = ({ streak, currentDose, latestWeight }: StatusHeroCardPro
   const maxStreak = 30;
   const progress = Math.min(streak / maxStreak, 1);
   const radius = 52;
-  const strokeWidth = 10;
+  const strokeWidth = 12;
   const circumference = 2 * Math.PI * radius;
   const targetOffset = circumference * (1 - progress);
 
@@ -35,7 +35,7 @@ const StatusHeroCard = ({ streak, currentDose, latestWeight }: StatusHeroCardPro
       className="relative rounded-[20px] p-5 animate-fade-in-up overflow-hidden"
       style={{
         background: "linear-gradient(145deg, hsl(var(--card)) 0%, hsl(var(--accent)) 100%)",
-        boxShadow: "0 8px 24px rgba(17,24,39,0.08)",
+        boxShadow: "0 12px 28px rgba(0,0,0,0.12)",
       }}
     >
       {/* Central glow behind streak */}
@@ -106,7 +106,7 @@ const StatusHeroCard = ({ streak, currentDose, latestWeight }: StatusHeroCardPro
               </defs>
             </svg>
             <div className="flex flex-col items-center z-10">
-              <span className="text-[3.25rem] font-extrabold text-foreground tabular-nums leading-none">
+              <span className="text-[3.5rem] font-extrabold text-foreground tabular-nums leading-none">
                 {streak}
               </span>
               <span className="text-[11px] font-bold text-primary mt-1 uppercase tracking-widest">
