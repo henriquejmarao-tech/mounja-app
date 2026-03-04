@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { Scale } from "lucide-react";
+import { Scale, FileDown } from "lucide-react";
 import { toast } from "sonner";
 import HistoryHeader from "@/components/history/HistoryHeader";
 import PeriodFilter, { type Period } from "@/components/history/PeriodFilter";
@@ -355,7 +355,7 @@ const History = () => {
 
   return (
     <div className="min-h-screen bg-background pb-28">
-      <HistoryHeader showExport={!loading && hasData} onExport={handleExportPDF} />
+      <HistoryHeader />
       <PeriodFilter period={period} onChange={setPeriod} />
 
       <div data-tutorial="charts-area" className="px-5 space-y-4">
@@ -404,6 +404,16 @@ const History = () => {
             <BodyCompositionChart logs={logs} />
             <WorkoutsSummary workouts={workouts} />
             <InsightsList insights={insights} />
+
+            {/* Export PDF button */}
+            <button
+              data-tutorial="export-btn"
+              onClick={handleExportPDF}
+              className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-bold py-4 rounded-2xl text-sm shadow-elevated mt-2"
+            >
+              <FileDown className="w-4 h-4" />
+              Exportar Relatório PDF
+            </button>
 
             {allLogs.length < 7 && (
               <div className="bg-muted/30 rounded-xl p-4 text-center border border-border/50 animate-fade-in-up" style={{ animationDelay: "360ms" }}>

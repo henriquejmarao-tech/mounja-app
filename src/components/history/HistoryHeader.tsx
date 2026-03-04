@@ -1,12 +1,7 @@
-import { ArrowLeft, FileDown } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-interface HistoryHeaderProps {
-  showExport: boolean;
-  onExport: () => void;
-}
-
-const HistoryHeader = ({ showExport, onExport }: HistoryHeaderProps) => {
+const HistoryHeader = () => {
   const navigate = useNavigate();
 
   return (
@@ -23,16 +18,6 @@ const HistoryHeader = ({ showExport, onExport }: HistoryHeaderProps) => {
             <ArrowLeft className="w-5 h-5" />
             <span className="text-sm font-medium">Voltar</span>
           </button>
-          {showExport && (
-            <button
-              data-tutorial="export-btn"
-              onClick={onExport}
-              className="flex items-center gap-1.5 text-primary-foreground/80 bg-primary-foreground/10 backdrop-blur-sm px-3 py-1.5 rounded-xl border border-primary-foreground/10 text-xs font-semibold"
-            >
-              <FileDown className="w-3.5 h-3.5" />
-              Exportar PDF
-            </button>
-          )}
         </div>
         <h1 className="text-xl font-bold text-primary-foreground tracking-tight">Seu Progresso</h1>
       </div>
