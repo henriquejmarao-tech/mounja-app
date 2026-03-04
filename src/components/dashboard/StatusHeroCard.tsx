@@ -13,10 +13,10 @@ interface StatusHeroCardProps {
   latestWeight: number | null;
 }
 
-const getScoreStatus = (score: number) => {
-  if (score <= 40) return { label: "Baixo", color: "hsl(0 72% 51%)", bgColor: "hsl(0 72% 51% / 0.10)" };
-  if (score <= 70) return { label: "Moderado", color: "hsl(45 93% 47%)", bgColor: "hsl(45 93% 47% / 0.10)" };
-  return { label: "Em dia", color: "hsl(var(--primary))", bgColor: "hsl(var(--primary) / 0.10)" };
+const getScoreGradient = (score: number) => {
+  if (score <= 40) return { start: "hsl(0 60% 65%)", mid: "hsl(0 72% 51%)", end: "hsl(15 80% 50%)" };
+  if (score <= 70) return { start: "hsl(35 90% 55%)", mid: "hsl(45 93% 47%)", end: "hsl(55 85% 50%)" };
+  return { start: "hsl(var(--sage-light))", mid: "hsl(var(--primary))", end: "hsl(var(--leaf))" };
 };
 
 const StatusHeroCard = ({ dailyScore, scoreFactors, currentDose, latestWeight }: StatusHeroCardProps) => {
@@ -30,7 +30,7 @@ const StatusHeroCard = ({ dailyScore, scoreFactors, currentDose, latestWeight }:
   const [animatedOffset, setAnimatedOffset] = useState(circumference);
   const mounted = useRef(false);
   const [showInfo, setShowInfo] = useState(false);
-  const status = getScoreStatus(dailyScore);
+  const gradient = getScoreGradient(dailyScore);
 
   useEffect(() => {
     if (!mounted.current) {
@@ -121,9 +121,9 @@ const StatusHeroCard = ({ dailyScore, scoreFactors, currentDose, latestWeight }:
               />
               <defs>
                 <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="hsl(var(--sage-light))" />
-                  <stop offset="50%" stopColor="hsl(var(--primary))" />
-                  <stop offset="100%" stopColor="hsl(var(--leaf))" />
+                  <stop offset="0%" stopColor={gradient.start} />
+                  <stop offset="50%" stopColor={gradient.mid} />
+                  <stop offset="100%" stopColor={gradient.end} />
                 </linearGradient>
               </defs>
             </svg>
@@ -135,12 +135,6 @@ const StatusHeroCard = ({ dailyScore, scoreFactors, currentDose, latestWeight }:
             </div>
           </div>
           <p className="text-[11px] text-muted-foreground font-medium -mt-0.5">Score diário</p>
-          <span
-            className="mt-1 px-3 py-0.5 rounded-full text-[10px] font-bold tracking-wide"
-            style={{ color: status.color, background: status.bgColor }}
-          >
-            {status.label}
-          </span>
         </div>
 
         {/* Right: Weight */}
@@ -155,11 +149,6 @@ const StatusHeroCard = ({ dailyScore, scoreFactors, currentDose, latestWeight }:
           <p className="text-[10px] text-muted-foreground/55 font-medium leading-tight">Peso atual</p>
         </div>
       </div>
-
-      {/* Explanatory text */}
-      <p className="text-[10px] text-center text-muted-foreground/50 mt-3 leading-snug px-2">
-        Baseado em hidratação, alimentação, atividade física e adesão ao tratamento.
-      </p>
 
       {/* Score Factors — toggled by info button */}
       {showInfo && scoreFactors.length > 0 && (
