@@ -21,7 +21,8 @@ const DailyLogForm = () => {
 
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
-  const [logDate, setLogDate] = useState(yesterday.toISOString().split("T")[0]);
+  const yesterdayStr = yesterday.toISOString().split("T")[0];
+  const [logDate] = useState(yesterdayStr);
   const [weight, setWeight] = useState("");
   const [feeling, setFeeling] = useState<number | null>(null);
 
@@ -102,10 +103,12 @@ const DailyLogForm = () => {
 
   return (
     <div className="space-y-4 animate-fade-in-up">
-      {/* Date */}
+      {/* Date — fixed to yesterday */}
       <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50">
-        <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Data do registro <span className="text-[10px] text-muted-foreground/60">(padrão: ontem)</span></label>
-        <input type="date" value={logDate} onChange={(e) => setLogDate(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-border bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+        <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Data do registro</label>
+        <div className="w-full px-4 py-3 rounded-xl border border-border bg-muted/30 text-sm text-foreground font-medium text-center capitalize">
+          {new Date(logDate + "T12:00:00").toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" })}
+        </div>
       </div>
 
       {/* Weight */}
