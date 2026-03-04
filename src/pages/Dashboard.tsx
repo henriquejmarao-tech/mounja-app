@@ -193,13 +193,13 @@ const Dashboard = () => {
     <div className="min-h-screen pb-28" style={{ background: "#F6F8F7" }}>
       {/* Sticky Header */}
       <header
-        className="sticky top-0 z-10"
+        className="sticky top-0 z-30"
         style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}
       >
         <div
-          className="px-5 pt-4 pb-7"
+          className="px-5 pt-4 pb-16"
           style={{
-            background: "linear-gradient(180deg, hsl(var(--primary) / 0.78) 0%, hsl(var(--primary) / 0.26) 38%, #F6F8F7 58%)",
+            background: "linear-gradient(180deg, hsl(var(--primary) / 0.75) 0%, hsl(var(--primary) / 0.20) 50%, transparent 100%)",
           }}
         >
           <div className="flex items-center justify-between">
@@ -222,7 +222,7 @@ const Dashboard = () => {
         </div>
       </header>
 
-      <div className="px-5 -mt-12 relative z-20">
+      <div className="px-5 -mt-10 relative z-20">
         {/* Status Hero Card — always first */}
         <StatusHeroCard
           streak={streak}
