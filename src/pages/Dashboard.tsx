@@ -345,12 +345,21 @@ const Dashboard = () => {
               </div>
             </button>
           ) : (
-            <div className="flex items-start gap-3 bg-teal-600/10 dark:bg-teal-400/10 rounded-xl px-4 py-3.5 border border-teal-600/20 dark:border-teal-400/20">
-              <div className="w-8 h-8 rounded-lg bg-teal-600/15 dark:bg-teal-400/15 flex items-center justify-center shrink-0">
-                <Salad className="w-4 h-4 text-teal-700 dark:text-teal-300" />
+            <button
+              onClick={() => navigate("/nutricao")}
+              className="w-full text-left group"
+            >
+              <div className="flex items-center gap-3 bg-teal-600/15 dark:bg-teal-400/15 rounded-xl px-4 py-4 border border-teal-600/30 dark:border-teal-400/30 group-active:scale-[0.98] transition-all duration-200">
+                <div className="w-10 h-10 rounded-xl bg-teal-600/20 dark:bg-teal-400/20 flex items-center justify-center shrink-0">
+                  <Sparkles className="w-5 h-5 text-teal-700 dark:text-teal-300" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-teal-700 dark:text-teal-300">Gerar dieta personalizada</p>
+                  <p className="text-[11px] text-teal-700/70 dark:text-teal-300/70 mt-0.5">Baseada no seu perfil e tratamento ✨</p>
+                </div>
+                <ArrowRight className="w-4.5 h-4.5 text-teal-600/50 shrink-0 group-hover:translate-x-0.5 transition-transform" />
               </div>
-              <p className="text-xs text-foreground leading-relaxed mt-1.5">{getDietSuggestion()}</p>
-            </div>
+            </button>
           )}
         </div>
 
@@ -358,7 +367,7 @@ const Dashboard = () => {
         <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: "90ms" }}>
           <div className="flex items-center gap-2 mb-3">
             <Flame className="w-4 h-4 text-orange-700 dark:text-orange-300" />
-            <h3 className="font-semibold text-sm">Treino</h3>
+            <h3 className="font-semibold text-sm">Treino recomendado</h3>
           </div>
 
           <WorkoutSuggestion
