@@ -34,7 +34,7 @@ const HistoryHeader = ({ showExport, onExport }: HistoryHeaderProps) => {
             </button>
           )}
         </div>
-        <h1 className="text-xl font-bold text-primary-foreground tracking-tight">Sua Jornada</h1>
+        <h1 className="text-xl font-bold text-primary-foreground tracking-tight">Seu Progresso</h1>
       </div>
     </header>
   );
