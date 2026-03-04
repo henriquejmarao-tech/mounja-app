@@ -96,7 +96,8 @@ const WorkoutSuggestion = ({
     );
   }
 
-  const { intensity, duration, config } = getWorkoutSuggestion(weeklyWorkouts, weeklyWorkoutGoal, recentSymptoms, daysUntilNext);
+  const { intensity, duration, config, examples } = getWorkoutSuggestion(weeklyWorkouts, weeklyWorkoutGoal, recentSymptoms, daysUntilNext);
+  const workoutType = examples[0]?.replace(/\s*\(.*\)/, "") || "Treino";
 
   return (
     <button onClick={onOpen} className="w-full text-left group">
@@ -105,7 +106,7 @@ const WorkoutSuggestion = ({
           <Dumbbell className="w-4 h-4 text-orange-700 dark:text-orange-300" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-[10px] font-semibold text-orange-700 dark:text-orange-300 uppercase tracking-wide mb-0.5">Treino recomendado</p>
+          <p className="text-[10px] font-semibold text-orange-700 dark:text-orange-300 uppercase tracking-wide mb-0.5">{workoutType}</p>
           <p className="text-xs text-foreground leading-relaxed">
             <span className={cn("font-semibold", config.colorClass)}>{config.label}</span>
             {" · "}{duration} minutos
