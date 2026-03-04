@@ -56,6 +56,7 @@ const Dashboard = () => {
   const [showDietModal, setShowDietModal] = useState(false);
   const [showWorkoutModal, setShowWorkoutModal] = useState(false);
   const [todayCheckedIn, setTodayCheckedIn] = useState(false);
+  const [showProfileCard, setShowProfileCard] = useState(true);
 
   useEffect(() => {
     if (!user) return;
@@ -250,49 +251,56 @@ const Dashboard = () => {
         {/* Onboarding completion card */}
         {(!(profile as any)?.dose_history_completed || !(profile as any)?.health_info_completed || !(profile as any)?.routine_completed) && (
           <div className="rounded-[20px] p-4 animate-fade-in-up" style={{ background: "#FFFFFF", boxShadow: "0 8px 24px rgba(17,24,39,0.08)" }}>
-            <div className="flex items-center gap-2 mb-1">
-              <Target className="w-[18px] h-[18px] text-urgent" />
-              <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "rgba(17,24,39,0.55)" }}>Completar perfil</h3>
-            </div>
-            <p className="text-xs text-muted-foreground/60 mb-3.5">Preencha uma única vez para recomendações personalizadas ✨</p>
+            <button onClick={() => setShowProfileCard(!showProfileCard)} className="w-full flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Target className="w-[18px] h-[18px] text-urgent" />
+                <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "rgba(17,24,39,0.55)" }}>Completar perfil</h3>
+              </div>
+              <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform duration-300", showProfileCard && "rotate-180")} />
+            </button>
 
-            <div className="space-y-2.5">
-              {!(profile as any)?.dose_history_completed && (
-                <button onClick={() => navigate("/historico-dose")} className="w-full text-left group">
-                  <div className="flex items-center gap-3 rounded-[16px] px-3.5 py-3.5 group-active:scale-[0.98] transition-all duration-200" style={{ background: "rgba(17,24,39,0.03)", boxShadow: "0 4px 12px rgba(17,24,39,0.06)" }}>
-                    <div className="w-8 h-8 rounded-[12px] bg-urgent/10 flex items-center justify-center shrink-0">
-                      <Pill className="w-[18px] h-[18px] text-urgent" />
-                    </div>
-                    <p className="text-sm text-foreground/80 flex-1">Histórico de tratamento</p>
-                    <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0 group-hover:translate-x-0.5 transition-transform" />
-                  </div>
-                </button>
-              )}
+            {showProfileCard && (
+              <div className="mt-3 animate-fade-in-up">
+                <p className="text-xs text-muted-foreground/60 mb-3.5">Preencha uma única vez para recomendações personalizadas ✨</p>
+                <div className="space-y-2.5">
+                  {!(profile as any)?.dose_history_completed && (
+                    <button onClick={() => navigate("/historico-dose")} className="w-full text-left group">
+                      <div className="flex items-center gap-3 rounded-[16px] px-3.5 py-3.5 group-active:scale-[0.98] transition-all duration-200" style={{ background: "rgba(17,24,39,0.03)", boxShadow: "0 4px 12px rgba(17,24,39,0.06)" }}>
+                        <div className="w-8 h-8 rounded-[12px] bg-urgent/10 flex items-center justify-center shrink-0">
+                          <Pill className="w-[18px] h-[18px] text-urgent" />
+                        </div>
+                        <p className="text-sm text-foreground/80 flex-1">Histórico de tratamento</p>
+                        <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                      </div>
+                    </button>
+                  )}
 
-              {!(profile as any)?.health_info_completed && (
-                <button onClick={() => navigate("/saude")} className="w-full text-left group">
-                  <div className="flex items-center gap-3 rounded-[16px] px-3.5 py-3.5 group-active:scale-[0.98] transition-all duration-200" style={{ background: "rgba(17,24,39,0.03)", boxShadow: "0 4px 12px rgba(17,24,39,0.06)" }}>
-                    <div className="w-8 h-8 rounded-[12px] bg-urgent/10 flex items-center justify-center shrink-0">
-                      <HeartPulse className="w-[18px] h-[18px] text-urgent" />
-                    </div>
-                    <p className="text-sm text-foreground/80 flex-1">Saúde e restrições</p>
-                    <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0 group-hover:translate-x-0.5 transition-transform" />
-                  </div>
-                </button>
-              )}
+                  {!(profile as any)?.health_info_completed && (
+                    <button onClick={() => navigate("/saude")} className="w-full text-left group">
+                      <div className="flex items-center gap-3 rounded-[16px] px-3.5 py-3.5 group-active:scale-[0.98] transition-all duration-200" style={{ background: "rgba(17,24,39,0.03)", boxShadow: "0 4px 12px rgba(17,24,39,0.06)" }}>
+                        <div className="w-8 h-8 rounded-[12px] bg-urgent/10 flex items-center justify-center shrink-0">
+                          <HeartPulse className="w-[18px] h-[18px] text-urgent" />
+                        </div>
+                        <p className="text-sm text-foreground/80 flex-1">Saúde e restrições</p>
+                        <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                      </div>
+                    </button>
+                  )}
 
-              {!(profile as any)?.routine_completed && (
-                <button onClick={() => navigate("/rotina")} className="w-full text-left group">
-                  <div className="flex items-center gap-3 rounded-[16px] px-3.5 py-3.5 group-active:scale-[0.98] transition-all duration-200" style={{ background: "rgba(17,24,39,0.03)", boxShadow: "0 4px 12px rgba(17,24,39,0.06)" }}>
-                    <div className="w-8 h-8 rounded-[12px] bg-urgent/10 flex items-center justify-center shrink-0">
-                      <CalendarClock className="w-[18px] h-[18px] text-urgent" />
-                    </div>
-                    <p className="text-sm text-foreground/80 flex-1">Rotina e preferências</p>
-                    <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0 group-hover:translate-x-0.5 transition-transform" />
-                  </div>
-                </button>
-              )}
-            </div>
+                  {!(profile as any)?.routine_completed && (
+                    <button onClick={() => navigate("/rotina")} className="w-full text-left group">
+                      <div className="flex items-center gap-3 rounded-[16px] px-3.5 py-3.5 group-active:scale-[0.98] transition-all duration-200" style={{ background: "rgba(17,24,39,0.03)", boxShadow: "0 4px 12px rgba(17,24,39,0.06)" }}>
+                        <div className="w-8 h-8 rounded-[12px] bg-urgent/10 flex items-center justify-center shrink-0">
+                          <CalendarClock className="w-[18px] h-[18px] text-urgent" />
+                        </div>
+                        <p className="text-sm text-foreground/80 flex-1">Rotina e preferências</p>
+                        <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                      </div>
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
