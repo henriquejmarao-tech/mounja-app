@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { Pill, Weight } from "lucide-react";
 
 interface StatusHeroCardProps {
@@ -8,13 +9,26 @@ interface StatusHeroCardProps {
 }
 
 const StatusHeroCard = ({ streak, currentDose, latestWeight, daysUntilNext }: StatusHeroCardProps) => {
-  // Progress ring: streak out of 30 days max for visual
   const maxStreak = 30;
   const progress = Math.min(streak / maxStreak, 1);
   const radius = 52;
-  const strokeWidth = 6;
+  const strokeWidth = 8;
   const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference * (1 - progress);
+  const targetOffset = circumference * (1 - progress);
+
+  // Animate ring on mount
+  const [animatedOffset, setAnimatedOffset] = useState(circumference);
+  const mounted = useRef(false);
+
+  useEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true;
+      // Small delay so the initial state renders first
+      const timer = setTimeout(() => setAnimatedOffset(targetOffset), 50);
+      return () => clearTimeout(timer);
+    }
+    setAnimatedOffset(targetOffset);
+  }, [targetOffset]);
 
   return (
     <div
@@ -24,27 +38,37 @@ const StatusHeroCard = ({ streak, currentDose, latestWeight, daysUntilNext }: St
         background: "linear-gradient(145deg, hsl(var(--card)) 0%, hsl(var(--accent)) 100%)",
       }}
     >
-      {/* Subtle background glow */}
+      {/* Central glow behind streak */}
       <div
-        className="absolute -top-12 -right-12 w-40 h-40 rounded-full opacity-20 blur-3xl pointer-events-none"
-        style={{ background: "hsl(var(--primary))" }}
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-44 h-44 rounded-full pointer-events-none"
+        style={{
+          background: "radial-gradient(circle, hsl(var(--primary) / 0.15) 0%, transparent 70%)",
+          filter: "blur(20px)",
+        }}
       />
 
-      <div className="relative flex items-center justify-between gap-2">
-        {/* Left: Dose */}
-        <div className="flex-1 flex flex-col items-center text-center gap-1.5">
-          <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
-            <Pill className="w-4 h-4 text-primary" />
+      <div className="relative flex items-center justify-between gap-1">
+        {/* Left: Dose — reduced weight */}
+        <div className="flex-1 flex flex-col items-center text-center gap-1">
+          <div className="w-8 h-8 rounded-lg bg-primary/8 flex items-center justify-center">
+            <Pill className="w-3.5 h-3.5 text-primary/70" />
           </div>
-          <p className="text-lg font-bold text-foreground tabular-nums leading-tight">
+          <p className="text-sm font-semibold text-foreground/70 tabular-nums leading-tight">
             {currentDose || "—"}
           </p>
-          <p className="text-[11px] text-muted-foreground font-medium leading-tight">Dose atual</p>
+          <p className="text-[10px] text-muted-foreground/70 font-medium leading-tight">Dose atual</p>
         </div>
 
-        {/* Center: Streak with ring */}
+        {/* Center: Streak with animated ring */}
         <div className="flex flex-col items-center gap-1">
-          <div className="relative w-[124px] h-[124px] flex items-center justify-center">
+          <div className="relative w-[132px] h-[132px] flex items-center justify-center">
+            {/* Soft halo */}
+            <div
+              className="absolute inset-2 rounded-full pointer-events-none"
+              style={{
+                background: "radial-gradient(circle, hsl(var(--primary) / 0.1) 0%, transparent 70%)",
+              }}
+            />
             <svg
               className="absolute inset-0 w-full h-full -rotate-90"
               viewBox="0 0 120 120"
@@ -56,10 +80,11 @@ const StatusHeroCard = ({ streak, currentDose, latestWeight, daysUntilNext }: St
                 r={radius}
                 fill="none"
                 stroke="hsl(var(--muted))"
-                strokeWidth={strokeWidth}
+                strokeWidth={strokeWidth - 2}
                 strokeLinecap="round"
+                opacity={0.5}
               />
-              {/* Progress ring */}
+              {/* Animated progress ring */}
               <circle
                 cx="60"
                 cy="60"
@@ -69,21 +94,22 @@ const StatusHeroCard = ({ streak, currentDose, latestWeight, daysUntilNext }: St
                 strokeWidth={strokeWidth}
                 strokeLinecap="round"
                 strokeDasharray={circumference}
-                strokeDashoffset={strokeDashoffset}
-                className="transition-all duration-1000 ease-out"
+                strokeDashoffset={animatedOffset}
+                style={{ transition: "stroke-dashoffset 1s cubic-bezier(0.22, 1, 0.36, 1)" }}
               />
               <defs>
                 <linearGradient id="streakGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="hsl(var(--primary))" />
+                  <stop offset="0%" stopColor="hsl(var(--sage-light))" />
+                  <stop offset="50%" stopColor="hsl(var(--primary))" />
                   <stop offset="100%" stopColor="hsl(var(--leaf))" />
                 </linearGradient>
               </defs>
             </svg>
             <div className="flex flex-col items-center z-10">
-              <span className="text-4xl font-extrabold text-foreground tabular-nums leading-none">
+              <span className="text-5xl font-extrabold text-foreground tabular-nums leading-none">
                 {streak}
               </span>
-              <span className="text-[11px] font-semibold text-primary mt-1 uppercase tracking-wider">
+              <span className="text-[11px] font-bold text-primary mt-1 uppercase tracking-widest">
                 {streak === 1 ? "dia" : "dias"}
               </span>
             </div>
@@ -91,16 +117,16 @@ const StatusHeroCard = ({ streak, currentDose, latestWeight, daysUntilNext }: St
           <p className="text-[11px] text-muted-foreground font-medium -mt-0.5">Sequência ativa</p>
         </div>
 
-        {/* Right: Weight */}
-        <div className="flex-1 flex flex-col items-center text-center gap-1.5">
-          <div className="w-9 h-9 rounded-xl bg-muted flex items-center justify-center">
-            <Weight className="w-4 h-4 text-muted-foreground" />
+        {/* Right: Weight — reduced weight */}
+        <div className="flex-1 flex flex-col items-center text-center gap-1">
+          <div className="w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center">
+            <Weight className="w-3.5 h-3.5 text-muted-foreground/60" />
           </div>
-          <p className="text-lg font-bold text-foreground tabular-nums leading-tight">
+          <p className="text-sm font-semibold text-foreground/70 tabular-nums leading-tight">
             {latestWeight ? `${latestWeight}` : "—"}
-            {latestWeight && <span className="text-xs font-medium text-muted-foreground ml-0.5">kg</span>}
+            {latestWeight && <span className="text-[10px] font-medium text-muted-foreground/60 ml-0.5">kg</span>}
           </p>
-          <p className="text-[11px] text-muted-foreground font-medium leading-tight">Peso atual</p>
+          <p className="text-[10px] text-muted-foreground/70 font-medium leading-tight">Peso atual</p>
         </div>
       </div>
 
