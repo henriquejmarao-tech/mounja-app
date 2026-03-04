@@ -103,23 +103,15 @@ const DailyLogForm = () => {
 
   return (
     <div className="space-y-4 animate-fade-in-up">
-      {/* Date — fixed to yesterday */}
-      <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50">
-        <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Referente a</label>
-        <div className="w-full px-4 py-3 rounded-xl border border-border bg-muted/30 text-sm text-foreground font-medium text-center">
-          Ontem
-        </div>
-      </div>
-
       {/* Weight */}
       <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50">
-        <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Peso (kg) *</label>
+        <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Peso hoje (kg) *</label>
         <input type="number" step="0.1" value={weight} onChange={(e) => setWeight(e.target.value)} placeholder="Ex: 85.5" className="w-full px-4 py-3 rounded-xl border border-border bg-background text-lg font-semibold outline-none focus:ring-2 focus:ring-primary/20 text-center" />
       </div>
 
       {/* Feeling */}
       <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50">
-        <label className="text-xs font-semibold text-muted-foreground block mb-3">Como você está se sentindo hoje? *</label>
+        <label className="text-xs font-semibold text-muted-foreground block mb-3">Como está se sentindo agora? *</label>
         <div className="grid grid-cols-4 gap-2">
           {feelingOptions.map((f) => (
             <button key={f.value} type="button" onClick={() => setFeeling(f.value)}
@@ -133,7 +125,7 @@ const DailyLogForm = () => {
 
       {/* Symptoms - now in main area */}
       <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50">
-        <h3 className="font-semibold text-sm mb-3">Sintomas</h3>
+        <h3 className="font-semibold text-sm mb-3">Sintomas nas últimas 24h</h3>
         {renderScale(nausea, setNausea, "Náusea", "🤢")}
         {renderScale(fatigue, setFatigue, "Fadiga", "😴")}
         {renderScale(headache, setHeadache, "Dor de cabeça", "🤕")}
@@ -158,7 +150,7 @@ const DailyLogForm = () => {
 
       {/* Food quality - main area */}
       <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50">
-        <h3 className="font-semibold text-sm mb-3">Alimentação</h3>
+        <h3 className="font-semibold text-sm mb-3">Alimentação nas últimas 24h</h3>
         <div className="grid grid-cols-3 gap-2">
           {[
             { value: "good", label: "Boa", emoji: "😊" },
@@ -176,7 +168,7 @@ const DailyLogForm = () => {
 
       {/* Water - liters with cups estimate */}
       <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50">
-        <label className="text-xs font-semibold text-muted-foreground block mb-1.5">💧 Água consumida (litros)</label>
+        <label className="text-xs font-semibold text-muted-foreground block mb-1.5">💧 Água consumida nas últimas 24h (litros)</label>
         <input type="number" step="0.1" value={waterL} onChange={(e) => setWaterL(e.target.value)} placeholder="Ex: 2.0" className="w-full px-4 py-3 rounded-xl border border-border bg-background text-lg font-semibold outline-none focus:ring-2 focus:ring-primary/20 text-center" />
         {waterL && parseFloat(waterL) > 0 && (
           <p className="text-xs text-muted-foreground mt-2 text-center">
