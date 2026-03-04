@@ -82,7 +82,7 @@ const DailyHabitsCard = () => {
   return (
     <div
       className="rounded-[20px] p-4 animate-fade-in-up"
-      style={{ animationDelay: "120ms", background: "#FFFFFF", boxShadow: "0 8px 24px rgba(17,24,39,0.08)" }}
+      style={{ animationDelay: "120ms", background: "#F7F8F7", boxShadow: "0 2px 6px rgba(0,0,0,0.04)" }}
     >
       <button onClick={() => setExpanded(!expanded)} className="w-full flex items-center justify-between">
         <div className="flex items-center gap-2">
