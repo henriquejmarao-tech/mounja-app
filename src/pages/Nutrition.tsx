@@ -192,7 +192,6 @@ const Nutrition = () => {
             <Leaf className="w-5 h-5 text-white" />
             <h1 className="text-xl font-bold text-white">Alimentação</h1>
           </div>
-          <p className="text-sm text-white/70 mt-1">Cuidando do que nutre você</p>
         </div>
       </header>
 
