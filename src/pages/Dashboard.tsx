@@ -199,7 +199,7 @@ const Dashboard = () => {
         <div
           className="px-5 pt-4 pb-14"
           style={{
-            background: "linear-gradient(180deg, hsl(var(--primary) / 0.88) 0%, hsl(var(--primary) / 0.55) 30%, hsl(var(--primary) / 0.2) 60%, hsl(var(--primary) / 0.05) 80%, #F6F8F7 100%)",
+            background: "linear-gradient(180deg, hsl(var(--primary) / 0.88) 0%, hsl(var(--primary) / 0.55) 25%, hsl(var(--primary) / 0.15) 50%, #F6F8F7 70%)",
           }}
         >
           <div className="flex items-center justify-between">
@@ -222,7 +222,7 @@ const Dashboard = () => {
         </div>
       </header>
 
-      <div className="px-5 -mt-12 relative z-10">
+      <div className="px-5 -mt-12 relative z-20">
         {/* Status Hero Card — always first */}
         <StatusHeroCard
           streak={streak}
