@@ -197,9 +197,9 @@ const Dashboard = () => {
         style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}
       >
         <div
-          className="px-5 pt-4 pb-14"
+          className="px-5 pt-4 pb-10"
           style={{
-            background: "linear-gradient(180deg, hsl(var(--primary) / 0.88) 0%, hsl(var(--primary) / 0.55) 25%, hsl(var(--primary) / 0.15) 50%, #F6F8F7 70%)",
+            background: "linear-gradient(180deg, hsl(var(--primary) / 0.82) 0%, hsl(var(--primary) / 0.35) 40%, #F6F8F7 65%)",
           }}
         >
           <div className="flex items-center justify-between">
