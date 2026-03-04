@@ -1,4 +1,3 @@
-import { ArrowDown, ArrowUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface JourneySummaryProps {
@@ -9,7 +8,6 @@ interface JourneySummaryProps {
 }
 
 const JourneySummary = ({ initialWeight, currentWeight, totalLost, injectionCount }: JourneySummaryProps) => {
-  const pctChange = initialWeight && totalLost ? ((totalLost / initialWeight) * 100).toFixed(1) : null;
   const isLoss = totalLost !== null && totalLost > 0;
   const isGain = totalLost !== null && totalLost < 0;
 
@@ -18,9 +16,7 @@ const JourneySummary = ({ initialWeight, currentWeight, totalLost, injectionCoun
       <h2 className="font-bold text-sm text-foreground mb-4">Seu progresso</h2>
 
       {/* Hero weight change */}
-      <div className="flex items-center justify-center gap-2 mb-4">
-        {isLoss && <ArrowDown className="w-5 h-5 text-primary" />}
-        {isGain && <ArrowUp className="w-5 h-5 text-destructive" />}
+      <div className="flex items-center justify-center mb-4">
         <span className={cn(
           "text-3xl font-extrabold tabular-nums tracking-tight",
           isLoss ? "text-primary" : isGain ? "text-destructive" : "text-muted-foreground"
@@ -28,14 +24,6 @@ const JourneySummary = ({ initialWeight, currentWeight, totalLost, injectionCoun
           {totalLost !== null ? `${totalLost > 0 ? "-" : "+"}${Math.abs(totalLost).toFixed(1)} kg` : "—"}
         </span>
       </div>
-      {pctChange && (
-        <p className={cn(
-          "text-xs text-center font-medium mb-4",
-          isLoss ? "text-primary/70" : "text-destructive/70"
-        )}>
-          {isLoss ? "-" : "+"}{Math.abs(Number(pctChange))}% do peso inicial
-        </p>
-      )}
 
       <div className="h-px bg-border/60 mb-3" />
 
