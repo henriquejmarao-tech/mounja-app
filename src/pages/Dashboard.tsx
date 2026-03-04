@@ -226,7 +226,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen pb-28" style={{ background: "#F6F8F7" }}>
       {/* Sticky Header */}
-      <header className="sticky top-0 z-30">
+      <header className="sticky top-0 z-30 pointer-events-none">
         <div
           className="px-5 pb-16"
           style={{
@@ -234,7 +234,7 @@ const Dashboard = () => {
             background: "linear-gradient(180deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.85) 30%, hsl(var(--primary) / 0.20) 60%, transparent 100%)",
           }}
         >
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between pointer-events-auto">
             {/* Avatar + Streak badge */}
             <div className="flex items-center gap-2">
               <button
