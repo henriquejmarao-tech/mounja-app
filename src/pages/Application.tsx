@@ -1,9 +1,13 @@
-import { ArrowLeft, Calendar, MapPin, AlertCircle, ChevronRight, Check, Clock, Sparkles, Bell, BellOff, ChevronDown, X } from "lucide-react";
+import { ArrowLeft, Calendar, MapPin, AlertCircle, ChevronRight, Check, Clock, Sparkles, Bell, BellOff, ChevronDown, Settings2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useApplicationData } from "@/hooks/useApplicationData";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { toast } from "sonner";
+import DoseTimeline from "@/components/history/DoseTimeline";
 
 const educationalCards = [
   {
@@ -61,15 +65,56 @@ const reminderOptions = [
   { value: 3, label: "3 dias antes" },
 ];
 
+const doseOptions = ["2.5 mg", "5 mg", "7.5 mg", "10 mg", "12.5 mg", "15 mg"];
+const intervalOptions = [5, 6, 7, 8, 9, 10, 14];
+
+const injectionSites = ["Coxa esquerda", "Coxa direita", "Abdômen esquerdo", "Abdômen direito", "Braço esquerdo", "Braço direito"];
+
 const Application = () => {
   const navigate = useNavigate();
-  const { recentSymptoms, weeklyWorkoutCount, dose } = useApplicationData();
+  const { user, profile, refreshProfile } = useAuth();
+  const { dose, recentSymptoms, weeklyWorkoutCount, getApplicationTimeline, refresh } = useApplicationData();
+
   const [reminderEnabled, setReminderEnabled] = useState(false);
   const [selectedReminders, setSelectedReminders] = useState<number[]>([1]);
   const [showReminderOptions, setShowReminderOptions] = useState(false);
   const [openCard, setOpenCard] = useState<number | null>(null);
+  const [showSettings, setShowSettings] = useState(false);
 
-  // Generate daily insight — cached in localStorage, refreshes once per day
+  // Settings form state
+  const [editDose, setEditDose] = useState(dose.currentDose || "2.5 mg");
+  const [editInterval, setEditInterval] = useState(dose.applicationIntervalDays || 7);
+  const [saving, setSaving] = useState(false);
+
+  const injections = getApplicationTimeline();
+
+  // Derive next application info from SSOT
+  const nextDateLabel = useMemo(() => {
+    if (!dose.nextApplicationAt) return null;
+    const d = new Date(dose.nextApplicationAt);
+    return d.toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" });
+  }, [dose.nextApplicationAt]);
+
+  const daysUntilNext = useMemo(() => {
+    if (!dose.nextApplicationAt) return null;
+    return Math.max(0, Math.ceil((new Date(dose.nextApplicationAt).getTime() - Date.now()) / 86400000));
+  }, [dose.nextApplicationAt]);
+
+  const weekNumber = useMemo(() => {
+    if (!profile?.mounjaro_start_date) return null;
+    const start = new Date(profile.mounjaro_start_date + "T12:00:00");
+    return Math.max(1, Math.ceil((Date.now() - start.getTime()) / (7 * 86400000)));
+  }, [profile?.mounjaro_start_date]);
+
+  // Suggested site rotation
+  const suggestedSite = useMemo(() => {
+    if (injections.length === 0) return injectionSites[0];
+    const lastSite = injections[0]?.site;
+    const idx = injectionSites.indexOf(lastSite || "");
+    return injectionSites[(idx + 1) % injectionSites.length];
+  }, [injections]);
+
+  // Daily insight cached
   const patternInsight = useMemo(() => {
     const today = new Date().toISOString().split("T")[0];
     const cacheKey = "app_pattern_insight";
@@ -80,32 +125,18 @@ const Application = () => {
         if (parsed.date === today) return parsed.text as string;
       } catch {}
     }
-
-    // Generate insight from real data
     const insights: string[] = [];
-    if (recentSymptoms.nausea > 3) {
-      insights.push("Nos últimos dias, sua náusea está acima da média. Considere refeições menores e mais frequentes.");
-    }
-    if (recentSymptoms.fatigue > 3) {
-      insights.push("Seu nível de cansaço está elevado esta semana. Priorize descanso e hidratação.");
-    }
-    if (recentSymptoms.constipation > 3) {
-      insights.push("Constipação tem sido frequente. Aumente a ingestão de fibras e água.");
-    }
-    if (recentSymptoms.headache > 3) {
-      insights.push("Dores de cabeça recorrentes detectadas. Verifique sua hidratação e sono.");
-    }
-    if (weeklyWorkoutCount >= 3) {
-      insights.push("Ótimo ritmo de treinos esta semana! A atividade física potencializa os resultados do tratamento. 💪");
-    }
+    if (recentSymptoms.nausea > 3) insights.push("Nos últimos dias, sua náusea está acima da média. Considere refeições menores e mais frequentes.");
+    if (recentSymptoms.fatigue > 3) insights.push("Seu nível de cansaço está elevado esta semana. Priorize descanso e hidratação.");
+    if (recentSymptoms.constipation > 3) insights.push("Constipação tem sido frequente. Aumente a ingestão de fibras e água.");
+    if (recentSymptoms.headache > 3) insights.push("Dores de cabeça recorrentes detectadas. Verifique sua hidratação e sono.");
+    if (weeklyWorkoutCount >= 3) insights.push("Ótimo ritmo de treinos esta semana! A atividade física potencializa os resultados do tratamento. 💪");
     if (recentSymptoms.nausea <= 2 && recentSymptoms.fatigue <= 2 && recentSymptoms.headache <= 2) {
       insights.push("Seus sintomas estão bem controlados. Continue mantendo seus hábitos atuais! ✨");
     }
-
     const text = insights.length > 0
       ? insights[Math.floor(Math.random() * insights.length)]
       : "Continue registrando seus sintomas diariamente para que possamos identificar padrões no seu tratamento.";
-
     localStorage.setItem(cacheKey, JSON.stringify({ date: today, text }));
     return text;
   }, [recentSymptoms, weeklyWorkoutCount]);
@@ -114,6 +145,25 @@ const Application = () => {
     setSelectedReminders(prev =>
       prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value].sort()
     );
+  };
+
+  const handleSaveSettings = async () => {
+    if (!user) return;
+    setSaving(true);
+    try {
+      const { error } = await supabase.from("profiles").update({
+        current_dose: editDose,
+        application_interval_days: editInterval,
+      } as any).eq("id", user.id);
+      if (error) throw error;
+      await refreshProfile();
+      await refresh();
+      toast.success("Configurações atualizadas!");
+      setShowSettings(false);
+    } catch (e: any) {
+      toast.error(e.message || "Erro ao salvar.");
+    }
+    setSaving(false);
   };
 
   return (
@@ -125,29 +175,60 @@ const Application = () => {
           <span className="text-sm font-medium">Voltar</span>
         </button>
 
-        {/* Next application card */}
+        {/* Next application card — real data */}
         <div className="relative overflow-hidden bg-card rounded-2xl p-5 shadow-elevated border border-secondary/15">
           <div className="absolute top-0 left-0 right-0 h-1 gradient-coral" />
           <div className="absolute top-0 right-0 w-24 h-24 bg-secondary/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
           <div className="relative">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-6 h-6 rounded-lg gradient-coral flex items-center justify-center">
-                <Clock className="w-3.5 h-3.5 text-secondary-foreground" />
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-lg gradient-coral flex items-center justify-center">
+                  <Clock className="w-3.5 h-3.5 text-secondary-foreground" />
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-secondary">
+                  Próxima Aplicação
+                </span>
               </div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-secondary">
-                Próxima Aplicação
-              </span>
+              <button
+                onClick={() => {
+                  setEditDose(dose.currentDose || "2.5 mg");
+                  setEditInterval(dose.applicationIntervalDays || 7);
+                  setShowSettings(true);
+                }}
+                className="w-8 h-8 rounded-xl bg-muted/40 flex items-center justify-center active:scale-95 transition-transform"
+              >
+                <Settings2 className="w-4 h-4 text-muted-foreground" />
+              </button>
             </div>
-            <p className="text-2xl font-bold text-foreground">Sexta, 28 de fev</p>
-            <p className="text-sm text-muted-foreground mt-1">Dose: 2.5mg · Semana 3</p>
+
+            {nextDateLabel ? (
+              <>
+                <p className="text-2xl font-bold text-foreground capitalize">{nextDateLabel}</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Dose: {dose.currentDose || "—"}
+                  {weekNumber && ` · Semana ${weekNumber}`}
+                  {daysUntilNext !== null && (
+                    <span className="ml-2 text-xs font-semibold" style={{ color: daysUntilNext <= 1 ? "hsl(var(--primary))" : undefined }}>
+                      {daysUntilNext === 0 ? "· Hoje!" : daysUntilNext === 1 ? "· Amanhã" : `· Em ${daysUntilNext} dias`}
+                    </span>
+                  )}
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-lg font-bold text-muted-foreground/60">Nenhuma aplicação registrada</p>
+                <p className="text-sm text-muted-foreground mt-1">Registre sua primeira aplicação para ver a próxima data.</p>
+              </>
+            )}
+
             <div className="flex items-center gap-2 mt-4 bg-secondary/8 rounded-xl px-3 py-2.5">
               <MapPin className="w-4 h-4 text-secondary" />
-              <span className="text-sm font-medium">Sugestão: Abdômen direito</span>
+              <span className="text-sm font-medium">Sugestão: {suggestedSite}</span>
             </div>
           </div>
         </div>
 
-        {/* Reminder card — toggle + config */}
+        {/* Reminder card */}
         <div className="bg-card rounded-2xl shadow-card border border-border/50 overflow-hidden">
           <button
             onClick={() => {
@@ -187,8 +268,6 @@ const Application = () => {
               <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform duration-300", showReminderOptions && "rotate-180")} />
             )}
           </button>
-
-          {/* Expandable options */}
           {reminderEnabled && showReminderOptions && (
             <div className="px-4 pb-4 pt-1 space-y-3 animate-fade-in-up">
               <p className="text-[11px] font-medium text-muted-foreground/60 uppercase tracking-wider">Lembrar-me</p>
@@ -209,10 +288,7 @@ const Application = () => {
                 ))}
               </div>
               <button
-                onClick={() => {
-                  setReminderEnabled(false);
-                  setShowReminderOptions(false);
-                }}
+                onClick={() => { setReminderEnabled(false); setShowReminderOptions(false); }}
                 className="w-full py-2 text-xs text-muted-foreground/50 font-medium"
               >
                 Desativar lembrete
@@ -229,11 +305,12 @@ const Application = () => {
               <Sparkles className="w-4 h-4 text-primary" />
               <span className="text-[10px] font-bold uppercase tracking-wider text-primary">Padrão Identificado</span>
             </div>
-            <p className="text-sm leading-relaxed">
-              {patternInsight}
-            </p>
+            <p className="text-sm leading-relaxed">{patternInsight}</p>
           </div>
         </div>
+
+        {/* Dose Timeline — moved from Caminho */}
+        <DoseTimeline injections={injections} onChanged={refresh} />
 
         {/* Educational content */}
         <div>
@@ -247,9 +324,7 @@ const Application = () => {
               >
                 <span className="text-2xl">{card.icon}</span>
                 <p className="font-bold text-xs mt-2.5">{card.title}</p>
-                <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed">
-                  {card.description}
-                </p>
+                <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed">{card.description}</p>
               </button>
             ))}
           </div>
@@ -292,6 +367,67 @@ const Application = () => {
               </div>
             </>
           )}
+        </SheetContent>
+      </Sheet>
+
+      {/* Settings Sheet — dose, interval */}
+      <Sheet open={showSettings} onOpenChange={setShowSettings}>
+        <SheetContent side="bottom" className="rounded-t-3xl max-h-[85vh] overflow-y-auto pb-10">
+          <SheetHeader className="pb-2">
+            <SheetTitle className="text-lg font-bold text-left">Ajustar tratamento</SheetTitle>
+          </SheetHeader>
+          <div className="space-y-5 mt-4">
+            {/* Dose */}
+            <div>
+              <label className="text-xs font-semibold text-muted-foreground block mb-2">Dose atual</label>
+              <div className="grid grid-cols-3 gap-2">
+                {doseOptions.map((d) => (
+                  <button
+                    key={d}
+                    onClick={() => setEditDose(d)}
+                    className={cn(
+                      "py-2.5 rounded-xl text-xs font-semibold border transition-all",
+                      editDose === d
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-card border-border hover:border-primary/30"
+                    )}
+                  >
+                    {d}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Interval */}
+            <div>
+              <label className="text-xs font-semibold text-muted-foreground block mb-2">Intervalo entre aplicações</label>
+              <div className="flex flex-wrap gap-2">
+                {intervalOptions.map((days) => (
+                  <button
+                    key={days}
+                    onClick={() => setEditInterval(days)}
+                    className={cn(
+                      "px-4 py-2.5 rounded-xl text-xs font-semibold border transition-all",
+                      editInterval === days
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-card border-border hover:border-primary/30"
+                    )}
+                  >
+                    {days} dias
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Save */}
+            <button
+              onClick={handleSaveSettings}
+              disabled={saving}
+              className="w-full gradient-hero text-primary-foreground font-bold py-3.5 rounded-2xl text-sm disabled:opacity-50 shadow-elevated"
+            >
+              {saving ? "Salvando..." : "Salvar alterações"}
+            </button>
+          </div>
         </SheetContent>
       </Sheet>
     </div>
