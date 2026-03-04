@@ -146,7 +146,7 @@ const Workouts = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background pb-28">
+    <div className="min-h-screen bg-background pb-nav">
       <header className="sticky top-0 z-30">
         <div
           className="px-5 pb-14"

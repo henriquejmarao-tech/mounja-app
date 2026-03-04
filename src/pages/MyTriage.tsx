@@ -131,7 +131,7 @@ const MyTriage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-background pb-28">
+    <div className="min-h-screen bg-background pb-nav">
       <header className="relative overflow-hidden">
         <div className="absolute inset-0 gradient-hero opacity-95" />
         <div className="relative px-5 pb-6" style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 1.5rem)" }}>
