@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowLeft, Sparkles, Leaf, Utensils, RefreshCw, Save, X, Coffee, Sun, Moon, Apple, Droplets } from "lucide-react";
+import { ArrowLeft, Sparkles, Leaf, Utensils, RefreshCw, Save, X, Coffee, Sun, Moon, Apple } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,35 +8,15 @@ import { toast } from "sonner";
 import ContextualHint from "@/components/tutorial/ContextualHint";
 import FeaturedForYou from "@/components/FeaturedForYou";
 
-interface TipCard {
-  id: string;
-  emoji: string;
-  title: string;
-  description: string;
-  priority: number;
-  tags: string[];
-}
-
-interface DietSuggestion {
-  breakfast: string;
-  lunch: string;
-  dinner: string;
-  snack: string;
-  calories_target: number;
-  protein_target: number;
+interface MealSuggestion {
+  meal: string;
+  items: string[];
+  reason: string;
+  calories_approx: number;
+  protein_approx: number;
   tip: string;
   context_note: string;
 }
-
-const allTips: TipCard[] = [
-  { id: "nausea", emoji: "🤢", title: "Lidando com náusea", description: "Prefira refeições frias ou em temperatura ambiente. Coma devagar, em pequenas porções ao longo do dia. Evite alimentos gordurosos ou muito condimentados. Gengibre (chá ou bala) pode ajudar.", priority: 1, tags: ["nausea"] },
-  { id: "constipation", emoji: "😣", title: "Lidando com constipação", description: "Aumente a ingestão de fibras: frutas com casca, verduras e grãos integrais. Beba bastante água e tente se movimentar — até uma caminhada curta ajuda o intestino.", priority: 2, tags: ["constipation"] },
-  { id: "hydration", emoji: "💧", title: "A importância da hidratação", description: "Beber pelo menos 2 litros de água por dia ajuda a reduzir efeitos colaterais e melhora a disposição. Use um copo grande como referência e vá completando ao longo do dia.", priority: 3, tags: ["always"] },
-  { id: "portions", emoji: "🍽️", title: "Porções menores, mais vezes", description: "Em vez de 3 refeições grandes, tente 5-6 refeições pequenas. Isso ajuda na saciedade, reduz desconforto e mantém a energia estável ao longo do dia.", priority: 4, tags: ["always"] },
-  { id: "protein", emoji: "💪", title: "Mantenha a proteína", description: "Durante a perda de peso, a proteína ajuda a preservar massa muscular. Inclua ovos, frango, peixe, iogurte ou leguminosas em cada refeição principal.", priority: 5, tags: ["always"] },
-  { id: "fatigue-food", emoji: "😴", title: "Alimentação para dias cansados", description: "Se estiver sem energia, aposte em alimentos de fácil digestão: sopas, vitaminas de frutas, iogurte com granola. Não pule refeições — isso pode piorar a fadiga.", priority: 6, tags: ["fatigue"] },
-  { id: "headache", emoji: "🤕", title: "Dor de cabeça frequente?", description: "Pode estar ligada à baixa ingestão de água ou comida. Tente manter uma rotina alimentar regular e beba água ao longo do dia. Evite longos períodos em jejum.", priority: 7, tags: ["headache"] },
-];
 
 const Nutrition = () => {
   const navigate = useNavigate();
@@ -45,28 +25,23 @@ const Nutrition = () => {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [generating, setGenerating] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [suggestion, setSuggestion] = useState<DietSuggestion | null>(null);
-  const [savedToday, setSavedToday] = useState(false);
+  const [suggestion, setSuggestion] = useState<MealSuggestion | null>(null);
   const [userContext, setUserContext] = useState<any>({});
 
   useEffect(() => {
     if (!user) { setLoading(false); return; }
     const fetchData = async () => {
       const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString().split("T")[0];
-      const today = new Date().toISOString().split("T")[0];
 
-      const [logsRes, injRes, workoutsRes, savedRes] = await Promise.all([
+      const [logsRes, injRes, workoutsRes] = await Promise.all([
         supabase.from("daily_logs").select("symptom_nausea, symptom_fatigue, symptom_headache, symptom_constipation, symptom_diarrhea, weight").eq("user_id", user.id).order("date", { ascending: false }).limit(7),
         supabase.from("injections").select("date").eq("user_id", user.id).order("date", { ascending: false }).limit(1),
         supabase.from("workouts" as any).select("id").eq("user_id", user.id).gte("date", weekAgo),
-        supabase.from("diet_suggestions" as any).select("*").eq("user_id", user.id).eq("date", today).limit(1),
       ]);
 
       const logs = (logsRes.data as any[]) || [];
       const inj = (injRes.data as any[]) || [];
       const workouts = (workoutsRes.data as any[]) || [];
-      const saved = (savedRes.data as any[]) || [];
 
       if (logs.length > 0) {
         const avg = (key: string) => logs.reduce((s: number, l: any) => s + (l[key] || 0), 0) / logs.length;
@@ -96,11 +71,6 @@ const Nutrition = () => {
         age: profile?.age,
       });
 
-      if (saved.length > 0) {
-        setSuggestion(saved[0]);
-        setSavedToday(true);
-      }
-
       setLoading(false);
     };
     fetchData();
@@ -127,52 +97,6 @@ const Nutrition = () => {
     }
     setGenerating(false);
   };
-
-  const saveSuggestion = async () => {
-    if (!user || !suggestion) return;
-    setSaving(true);
-    const today = new Date().toISOString().split("T")[0];
-
-    // Delete existing today's suggestion first
-    await supabase.from("diet_suggestions" as any).delete().eq("user_id", user.id).eq("date", today);
-
-    const { error } = await supabase.from("diet_suggestions" as any).insert({
-      user_id: user.id,
-      date: today,
-      breakfast: suggestion.breakfast,
-      lunch: suggestion.lunch,
-      dinner: suggestion.dinner,
-      snack: suggestion.snack,
-      calories_target: suggestion.calories_target,
-      protein_target: suggestion.protein_target,
-      tip: suggestion.tip,
-      context_note: suggestion.context_note,
-    } as any);
-
-    if (error) toast.error("Erro ao salvar.");
-    else {
-      toast.success("Sugestão salva para hoje! 🥗");
-      setSavedToday(true);
-    }
-    setSaving(false);
-  };
-
-  const sortedTips = [...allTips].sort((a, b) => {
-    const aRelevant = a.tags.some((t) => t === "always" || (recentSymptoms[t] && recentSymptoms[t] >= 3));
-    const bRelevant = b.tags.some((t) => t === "always" || (recentSymptoms[t] && recentSymptoms[t] >= 3));
-    if (aRelevant && !bRelevant) return -1;
-    if (!aRelevant && bRelevant) return 1;
-    return a.priority - b.priority;
-  });
-
-  const hasHighSymptoms = Object.values(recentSymptoms).some((v) => v >= 4);
-
-  const mealIcons = [
-    { key: "breakfast", label: "Café da manhã", Icon: Coffee },
-    { key: "lunch", label: "Almoço", Icon: Sun },
-    { key: "dinner", label: "Jantar", Icon: Moon },
-    { key: "snack", label: "Lanche", Icon: Apple },
-  ];
 
   return (
     <div className="min-h-screen bg-background pb-28">
@@ -204,52 +128,49 @@ const Nutrition = () => {
           </div>
         ) : (
           <>
-            
-            {/* AI Diet suggestion button */}
+            {/* Meal suggestion CTA */}
             <button
               data-tutorial="diet-btn"
               onClick={generateSuggestion}
               disabled={generating}
-              className="w-full py-3.5 rounded-xl gradient-nutrition text-white text-sm font-bold shadow-sm active:scale-[0.97] transition-transform flex items-center justify-center gap-2 animate-fade-in-up disabled:opacity-60"
+              className="w-full py-4 rounded-xl gradient-nutrition text-white shadow-sm active:scale-[0.97] transition-transform flex flex-col items-center justify-center gap-1 animate-fade-in-up disabled:opacity-60"
             >
               {generating ? (
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
                 <>
-                  <Sparkles className="w-4 h-4" />
-                  {savedToday ? "Gerar nova dieta" : "Gerar dieta personalizada"}
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4" />
+                    <span className="text-sm font-bold">Sugerir refeição</span>
+                  </div>
+                  <span className="text-[11px] text-white/70 font-medium">Baseado no seu tratamento, fome e energia</span>
                 </>
               )}
             </button>
 
             <FeaturedForYou context="nutrition" />
-
-
-
           </>
         )}
       </div>
 
-      {/* AI Suggestion Modal - fullscreen on mobile */}
+      {/* Meal Suggestion Modal */}
       {showModal && (
         <div className="fixed inset-0 z-[60] bg-card flex flex-col" style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}>
-          {/* Modal header */}
           <div className="shrink-0 px-5 pt-4 pb-3 border-b border-border/50 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Leaf className="w-4 h-4 text-info" />
-              <h2 className="font-bold text-base">Sugestão de hoje</h2>
+              <h2 className="font-bold text-base">Refeição sugerida</h2>
             </div>
             <button onClick={() => setShowModal(false)} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
               <X className="w-4 h-4" />
             </button>
           </div>
 
-          {/* Scrollable content */}
           <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
             {generating ? (
               <div className="flex flex-col items-center justify-center h-full gap-3">
                 <div className="w-10 h-10 border-3 border-info/30 border-t-info rounded-full animate-spin" />
-                <p className="text-sm text-muted-foreground">Gerando sugestão personalizada...</p>
+                <p className="text-sm text-muted-foreground">Pensando na melhor refeição...</p>
                 <p className="text-xs text-muted-foreground/60">Isso pode levar alguns segundos</p>
               </div>
             ) : suggestion ? (
@@ -260,47 +181,55 @@ const Nutrition = () => {
                   </div>
                 )}
 
-                <div className="space-y-3">
-                  {mealIcons.map(({ key, label, Icon }) => {
-                    const value = (suggestion as any)[key];
-                    if (!value) return null;
-                    return (
-                      <div key={key} className="bg-muted/50 rounded-xl px-4 py-3">
-                        <div className="flex items-center gap-2 mb-1.5">
-                          <Icon className="w-3.5 h-3.5 text-info" />
-                          <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">{label}</p>
-                        </div>
-                        <ul className="space-y-1.5">
-                          {value
-                            .split(/\n|,|;|·/)
-                            .map((s: string) => s.replace(/^-\s*/, "").trim())
-                            .filter(Boolean)
-                            .map((item: string, i: number) => (
-                              <li key={i} className="flex items-start gap-2">
-                                <span className="w-1.5 h-1.5 rounded-full bg-info/40 shrink-0 mt-[7px]" />
-                                <span className="text-[13px] leading-snug">{item}</span>
-                              </li>
-                            ))}
-                        </ul>
-                      </div>
-                    );
-                  })}
-                </div>
+                {/* Meal name */}
+                {suggestion.meal && (
+                  <div className="bg-muted/50 rounded-xl px-4 py-3">
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Sugestão</p>
+                    <p className="text-base font-bold">{suggestion.meal}</p>
+                  </div>
+                )}
 
+                {/* Items list */}
+                {suggestion.items && suggestion.items.length > 0 && (
+                  <div className="bg-muted/50 rounded-xl px-4 py-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Utensils className="w-3.5 h-3.5 text-info" />
+                      <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Ingredientes</p>
+                    </div>
+                    <ul className="space-y-1.5">
+                      {suggestion.items.map((item: string, i: number) => (
+                        <li key={i} className="flex items-start gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-info/40 shrink-0 mt-[7px]" />
+                          <span className="text-[13px] leading-snug">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Reason */}
+                {suggestion.reason && (
+                  <div className="bg-info/5 rounded-xl px-4 py-3 border border-info/10">
+                    <p className="text-xs font-semibold mb-1">Motivo</p>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{suggestion.reason}</p>
+                  </div>
+                )}
+
+                {/* Macros */}
                 <div className="grid grid-cols-2 gap-3">
                   <div className="bg-muted/50 rounded-xl px-4 py-3 text-center">
                     <p className="text-[10px] text-muted-foreground font-medium mb-1">Calorias aprox.</p>
-                    <p className="text-lg font-bold text-info">{suggestion.calories_target || "—"}</p>
+                    <p className="text-lg font-bold text-info">{suggestion.calories_approx || "—"}</p>
                   </div>
                   <div className="bg-muted/50 rounded-xl px-4 py-3 text-center">
                     <p className="text-[10px] text-muted-foreground font-medium mb-1">Proteína aprox.</p>
-                    <p className="text-lg font-bold text-info">{suggestion.protein_target ? `${suggestion.protein_target}g` : "—"}</p>
+                    <p className="text-lg font-bold text-info">{suggestion.protein_approx ? `${suggestion.protein_approx}g` : "—"}</p>
                   </div>
                 </div>
 
                 {suggestion.tip && (
                   <div className="bg-muted/30 rounded-xl px-4 py-3 border border-border/50">
-                    <p className="text-xs font-semibold mb-1">💡 Dica do dia</p>
+                    <p className="text-xs font-semibold mb-1">💡 Dica</p>
                     <p className="text-xs text-muted-foreground leading-relaxed">{suggestion.tip}</p>
                   </div>
                 )}
@@ -308,30 +237,17 @@ const Nutrition = () => {
             ) : null}
           </div>
 
-          {/* Fixed footer with actions */}
+          {/* Footer actions */}
           {suggestion && !generating && (
             <div className="shrink-0 px-5 pt-3 border-t border-border/50 bg-card" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 0.75rem)" }}>
-              <div className="flex gap-2">
-                <button
-                  onClick={generateSuggestion}
-                  disabled={generating}
-                  className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl border border-border bg-background text-sm font-semibold transition-all active:scale-[0.97]"
-                >
-                  <RefreshCw className="w-4 h-4" />
-                  Outra
-                </button>
-                <button
-                  onClick={saveSuggestion}
-                  disabled={saving}
-                  className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl gradient-nutrition text-white text-sm font-semibold shadow-sm active:scale-[0.97]"
-                >
-                  {saving ? (
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  ) : (
-                    <><Save className="w-4 h-4" /> Salvar</>
-                  )}
-                </button>
-              </div>
+              <button
+                onClick={generateSuggestion}
+                disabled={generating}
+                className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl gradient-nutrition text-white text-sm font-semibold shadow-sm active:scale-[0.97]"
+              >
+                <RefreshCw className="w-4 h-4" />
+                Outra sugestão
+              </button>
             </div>
           )}
         </div>

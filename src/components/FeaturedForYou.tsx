@@ -54,24 +54,21 @@ function rankNutritionTips(symptoms: RecentSymptoms, daysSinceInjection: number 
   const tips: (FeaturedTip & { score: number })[] = [];
 
   if (symptoms.nausea >= 3) {
-    tips.push({ id: "n-nausea", icon: Soup, title: "Refeições leves contra náusea", reason: "Sua náusea está alta — prefira alimentos frios, secos e em porções pequenas.", score: symptoms.nausea * 10 });
+    tips.push({ id: "n-nausea", icon: Soup, title: "Refeição leve para pouco apetite", reason: "Náusea alta — tente algo frio e em porção pequena, como iogurte com frutas.", score: symptoms.nausea * 10 });
   }
   if (symptoms.constipation >= 3) {
-    tips.push({ id: "n-constipation", icon: Droplets, title: "Fibras e hidratação", reason: "Constipação frequente — aumente fibras e beba mais água ao longo do dia.", score: symptoms.constipation * 9 });
+    tips.push({ id: "n-constipation", icon: Droplets, title: "Refeição rica em fibras", reason: "Constipação frequente — inclua aveia, frutas com casca ou salada verde.", score: symptoms.constipation * 9 });
   }
   if (symptoms.fatigue >= 3) {
-    tips.push({ id: "n-fatigue", icon: Battery, title: "Energia através da alimentação", reason: "Fadiga elevada — aposte em refeições leves e de fácil digestão.", score: symptoms.fatigue * 8 });
-  }
-  if (symptoms.headache >= 3) {
-    tips.push({ id: "n-headache", icon: GlassWater, title: "Hidratação contra dor de cabeça", reason: "Dor de cabeça recorrente — mantenha hidratação regular e não pule refeições.", score: symptoms.headache * 7 });
+    tips.push({ id: "n-fatigue", icon: Battery, title: "Refeição fácil para dia cansado", reason: "Fadiga alta — opte por algo prático como ovo mexido com torrada integral.", score: symptoms.fatigue * 8 });
   }
   if (daysSinceInjection !== null && daysSinceInjection <= 2) {
-    tips.push({ id: "n-post-inj", icon: Syringe, title: "Pós-aplicação: coma leve", reason: "Está próximo da última aplicação — refeições menores ajudam a reduzir desconforto.", score: 25 });
+    tips.push({ id: "n-post-inj", icon: Syringe, title: "Refeição leve pós-aplicação", reason: "Aplicação recente — porções menores e alimentos de fácil digestão.", score: 25 });
   }
 
-  tips.push({ id: "n-protein", icon: Beef, title: "Priorize proteínas", reason: "Proteína ajuda a preservar músculo durante a perda de peso.", score: 5 });
-  tips.push({ id: "n-hydration", icon: GlassWater, title: "Beba mais água", reason: "Hidratação adequada reduz efeitos colaterais e melhora disposição.", score: 4 });
-  tips.push({ id: "n-portions", icon: UtensilsCrossed, title: "Porções menores, mais vezes", reason: "Refeições pequenas e frequentes mantêm energia estável ao longo do dia.", score: 3 });
+  tips.push({ id: "n-protein", icon: Beef, title: "Refeição rica em proteína", reason: "Frango, ovo ou peixe ajudam a preservar músculo durante a perda de peso.", score: 5 });
+  tips.push({ id: "n-hydration", icon: GlassWater, title: "Lanche rápido + hidratação", reason: "Um copo de água com lanche leve mantém energia e reduz efeitos colaterais.", score: 4 });
+  tips.push({ id: "n-snack", icon: UtensilsCrossed, title: "Lanche rápido pós caminhada", reason: "Após atividade leve, reponha com iogurte, banana ou mix de castanhas.", score: 3 });
 
   return tips.sort((a, b) => b.score - a.score).slice(0, 5);
 }
