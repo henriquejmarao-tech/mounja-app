@@ -280,6 +280,22 @@ const Dashboard = () => {
         {/* Next Injection Card */}
         <NextInjectionCard daysUntilNext={daysUntilNext} currentDose={currentDose} />
 
+        {/* Suas Aplicações card */}
+        <button
+          onClick={() => navigate("/aplicacao")}
+          className="w-full rounded-[20px] p-4 animate-fade-in-up flex items-center gap-3.5 text-left active:scale-[0.98] transition-all duration-200 group"
+          style={{ background: "#F7F8F7", boxShadow: "0 2px 6px rgba(0,0,0,0.04)", animationDelay: "45ms" }}
+        >
+          <div className="w-7 h-7 rounded-[10px] flex items-center justify-center shrink-0" style={{ background: "hsl(var(--secondary) / 0.08)" }}>
+            <Pill className="w-[18px] h-[18px]" style={{ color: "hsl(var(--secondary) / 0.7)" }} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-bold text-foreground/85">Suas aplicações</p>
+            <p className="text-xs text-muted-foreground/60 mt-0.5">Histórico, rodízio e dicas de aplicação</p>
+          </div>
+          <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+        </button>
+
         {/* Check-in CTA */}
         {!todayCheckedIn && (
           <button
