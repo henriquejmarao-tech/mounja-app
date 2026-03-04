@@ -1,12 +1,7 @@
-import { ArrowLeft, Calendar, MapPin, AlertCircle, ChevronRight, Check, Clock, Sparkles } from "lucide-react";
+import { Calendar, MapPin, AlertCircle, ChevronRight, Check, Clock, Sparkles, Bell, BellOff, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
-
-const applicationHistory = [
-  { date: "21 fev", site: "Coxa direita", dose: "2.5mg", status: "done" },
-  { date: "14 fev", site: "Abdômen esquerdo", dose: "2.5mg", status: "done" },
-  { date: "7 fev", site: "Coxa esquerda", dose: "2.5mg", status: "done" },
-];
 
 const educationalCards = [
   {
@@ -31,8 +26,18 @@ const educationalCards = [
   },
 ];
 
+const reminderOptions = [
+  { value: 0, label: "No dia" },
+  { value: 1, label: "1 dia antes" },
+  { value: 2, label: "2 dias antes" },
+  { value: 3, label: "3 dias antes" },
+];
+
 const Application = () => {
   const navigate = useNavigate();
+  const [reminderEnabled, setReminderEnabled] = useState(false);
+  const [reminderDays, setReminderDays] = useState(1);
+  const [showReminderOptions, setShowReminderOptions] = useState(false);
 
   return (
     <div className="min-h-screen bg-background pb-28">
@@ -59,17 +64,76 @@ const Application = () => {
           </div>
         </div>
 
-        {/* Reminder status */}
-        <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-success/10 flex items-center justify-center">
-            <Check className="w-5 h-5 text-success" />
-          </div>
-          <div className="flex-1">
-            <p className="font-semibold text-sm">Lembrete ativo</p>
-            <p className="text-xs text-muted-foreground">
-              Você será notificada 1 dia antes e no dia
-            </p>
-          </div>
+        {/* Reminder card — toggle + config */}
+        <div className="bg-card rounded-2xl shadow-card border border-border/50 overflow-hidden">
+          <button
+            onClick={() => {
+              if (!reminderEnabled) {
+                setReminderEnabled(true);
+                setShowReminderOptions(true);
+              } else {
+                setShowReminderOptions(!showReminderOptions);
+              }
+            }}
+            className="w-full p-4 flex items-center gap-3"
+          >
+            <div className={cn(
+              "w-10 h-10 rounded-xl flex items-center justify-center transition-colors",
+              reminderEnabled ? "bg-success/10" : "bg-muted/30"
+            )}>
+              {reminderEnabled ? (
+                <Bell className="w-5 h-5 text-success" />
+              ) : (
+                <BellOff className="w-5 h-5 text-muted-foreground/50" />
+              )}
+            </div>
+            <div className="flex-1 text-left">
+              <p className={cn("font-semibold text-sm", !reminderEnabled && "text-muted-foreground/60")}>
+                {reminderEnabled ? "Lembrete ativo" : "Lembrete desativado"}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {reminderEnabled
+                  ? `${reminderOptions.find(o => o.value === reminderDays)?.label || `${reminderDays} dia(s) antes`} e no dia`
+                  : "Toque para ativar lembretes"
+                }
+              </p>
+            </div>
+            {reminderEnabled && (
+              <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform duration-300", showReminderOptions && "rotate-180")} />
+            )}
+          </button>
+
+          {/* Expandable options */}
+          {reminderEnabled && showReminderOptions && (
+            <div className="px-4 pb-4 pt-1 space-y-3 animate-fade-in-up">
+              <p className="text-[11px] font-medium text-muted-foreground/60 uppercase tracking-wider">Lembrar-me</p>
+              <div className="flex gap-2">
+                {reminderOptions.map((opt) => (
+                  <button
+                    key={opt.value}
+                    onClick={() => setReminderDays(opt.value)}
+                    className={cn(
+                      "flex-1 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200",
+                      reminderDays === opt.value
+                        ? "bg-primary/10 text-primary border border-primary/20"
+                        : "bg-muted/20 text-muted-foreground/60 border border-transparent"
+                    )}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+              <button
+                onClick={() => {
+                  setReminderEnabled(false);
+                  setShowReminderOptions(false);
+                }}
+                className="w-full py-2 text-xs text-muted-foreground/50 font-medium"
+              >
+                Desativar lembrete
+              </button>
+            </div>
+          )}
         </div>
 
         {/* AI pattern insight */}
@@ -86,9 +150,6 @@ const Application = () => {
             </p>
           </div>
         </div>
-
-
-
 
         {/* Educational content */}
         <div>
