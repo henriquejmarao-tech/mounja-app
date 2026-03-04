@@ -105,9 +105,9 @@ const DailyLogForm = () => {
     <div className="space-y-4 animate-fade-in-up">
       {/* Date — fixed to yesterday */}
       <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50">
-        <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Data do registro</label>
-        <div className="w-full px-4 py-3 rounded-xl border border-border bg-muted/30 text-sm text-foreground font-medium text-center capitalize">
-          {new Date(logDate + "T12:00:00").toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" })}
+        <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Referente a</label>
+        <div className="w-full px-4 py-3 rounded-xl border border-border bg-muted/30 text-sm text-foreground font-medium text-center">
+          Ontem
         </div>
       </div>
 
