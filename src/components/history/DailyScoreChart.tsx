@@ -59,15 +59,19 @@ const getScoreColor = (score: number) => {
 };
 
 const DailyScoreChart = ({ logs, profile, lastInjectionDate, intervalDays }: DailyScoreChartProps) => {
-  if (logs.length < 2) return null;
+  const today = new Date().toISOString().split("T")[0];
 
-  const scoreData = logs
-    .filter((l) => l.date)
-    .slice(-14)
-    .map((l) => ({
-      date: new Date(l.date + "T12:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
-      score: computeDailyScore(l, profile, lastInjectionDate, intervalDays),
-    }));
+  // Exclude today (incomplete) and deduplicate by date (keep last entry per date)
+  const dedupMap = new Map<string, any>();
+  logs.filter((l) => l.date && l.date < today).forEach((l) => dedupMap.set(l.date, l));
+  const pastLogs = Array.from(dedupMap.values()).sort((a, b) => a.date.localeCompare(b.date));
+
+  if (pastLogs.length < 2) return null;
+
+  const scoreData = pastLogs.slice(-14).map((l) => ({
+    date: new Date(l.date + "T12:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
+    score: computeDailyScore(l, profile, lastInjectionDate, intervalDays),
+  }));
 
   const avgScore = scoreData.length
     ? Math.round(scoreData.reduce((s, d) => s + d.score, 0) / scoreData.length)
