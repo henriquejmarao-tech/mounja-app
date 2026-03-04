@@ -13,7 +13,7 @@ const JourneySummary = ({ initialWeight, currentWeight, totalLost, injectionCoun
 
   return (
     <div className="bg-card rounded-2xl p-5 shadow-card border border-border/50 animate-fade-in-up">
-      <h2 className="font-bold text-sm text-foreground mb-4">Seu progresso</h2>
+      
 
       {/* Hero weight change */}
       <div className="flex items-center justify-center mb-4">
