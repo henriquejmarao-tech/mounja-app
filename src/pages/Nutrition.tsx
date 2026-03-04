@@ -181,7 +181,7 @@ const Nutrition = () => {
           className="px-5 pb-10"
           style={{
             paddingTop: "calc(env(safe-area-inset-top, 0px) + 1.25rem)",
-            background: "linear-gradient(180deg, hsl(174, 42%, 48%) 0%, hsl(180, 35%, 42%) 30%, hsl(168, 38%, 52%) 55%, hsla(168, 38%, 52%, 0.5) 80%, transparent 100%)",
+            background: "linear-gradient(180deg, hsl(174, 42%, 48%) 0%, hsl(174, 42%, 48%) 60%, hsla(174, 42%, 48%, 0.5) 80%, transparent 100%)",
           }}
         >
           <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-white/80 mb-4">
