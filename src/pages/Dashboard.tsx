@@ -201,7 +201,6 @@ const Dashboard = () => {
           style={{
             background: "linear-gradient(180deg, hsl(var(--primary) / 0.88) 0%, hsl(var(--primary) / 0.55) 25%, hsl(var(--primary) / 0.15) 50%, #F6F8F7 70%)",
           }}
-          }}
         >
           <div className="flex items-center justify-between">
             <button
