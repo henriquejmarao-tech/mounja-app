@@ -32,9 +32,9 @@ const StatusHeroCard = ({ streak, currentDose, latestWeight }: StatusHeroCardPro
   return (
     <div
       data-tutorial="dose-card"
-      className="relative rounded-[20px] p-5 animate-fade-in-up overflow-hidden"
+      className="relative rounded-[20px] p-5 animate-fade-in-up overflow-hidden z-20"
       style={{
-        background: "linear-gradient(145deg, hsl(var(--card)) 0%, hsl(var(--accent)) 100%)",
+        background: "hsl(var(--card))",
         boxShadow: "0 12px 28px rgba(0,0,0,0.12)",
       }}
     >
