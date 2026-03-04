@@ -22,36 +22,36 @@ const NextInjectionCard = ({ daysUntilNext, currentDose }: NextInjectionCardProp
     <div
       className="rounded-[20px] p-4 flex items-center gap-3.5 animate-fade-in-up"
       style={{
-        background: "#FFFFFF",
-        boxShadow: "0 8px 24px rgba(17,24,39,0.08)",
+        background: "#F7F8F7",
+        boxShadow: "0 2px 6px rgba(0,0,0,0.04)",
         animationDelay: "30ms",
       }}
     >
       {/* Icon */}
       <div
-        className="w-8 h-8 rounded-[12px] flex items-center justify-center shrink-0"
+        className="w-7 h-7 rounded-[10px] flex items-center justify-center shrink-0"
         style={{
           background: isSoon
-            ? "hsl(var(--primary) / 0.1)"
+            ? "hsl(var(--primary) / 0.08)"
             : "rgba(17,24,39,0.04)",
         }}
       >
-        <CalendarClock className="w-[18px] h-[18px]" style={{ color: isSoon ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))" }} />
+        <CalendarClock className="w-4 h-4" style={{ color: isSoon ? "hsl(var(--primary) / 0.7)" : "hsl(var(--muted-foreground) / 0.6)" }} />
       </div>
 
       {/* Text */}
       <div className="flex-1 min-w-0">
-        <p className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "rgba(17,24,39,0.55)" }}>Próxima aplicação</p>
-        <div className="flex items-center gap-1.5 mt-1">
+        <p className="text-[11px] font-medium" style={{ color: "rgba(17,24,39,0.45)" }}>Próxima aplicação</p>
+        <div className="flex items-center gap-1.5 mt-0.5">
           {isToday && (
             <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse-soft shrink-0" />
           )}
           <span
-            className="text-sm font-bold tabular-nums"
+            className="text-[13px] font-semibold tabular-nums"
             style={{
               color: isSoon
-                ? "hsl(var(--primary))"
-                : "hsl(var(--foreground) / 0.7)",
+                ? "hsl(var(--primary) / 0.85)"
+                : "hsl(var(--foreground) / 0.6)",
             }}
           >
             {timeLabel}
@@ -61,11 +61,11 @@ const NextInjectionCard = ({ daysUntilNext, currentDose }: NextInjectionCardProp
 
       {/* Dose badge */}
       {currentDose && (
-        <div className="flex items-center gap-1.5 rounded-full px-2.5 py-1" style={{
-          background: "rgba(46,125,97,0.10)",
+        <div className="flex items-center gap-1 rounded-full px-2 py-0.5" style={{
+          background: "rgba(46,125,97,0.07)",
         }}>
-          <Pill className="w-3.5 h-3.5" style={{ color: "hsl(var(--primary) / 0.7)" }} />
-          <span className="text-xs font-semibold" style={{ color: "hsl(150 22% 30%)" }}>{currentDose}</span>
+          <Pill className="w-3 h-3" style={{ color: "hsl(var(--primary) / 0.5)" }} />
+          <span className="text-[11px] font-medium" style={{ color: "hsl(150 22% 35% / 0.75)" }}>{currentDose}</span>
         </div>
       )}
     </div>
