@@ -68,8 +68,11 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
+    const { mealType } = await req.json().catch(() => ({}));
+    const mealLabel = mealType || "uma refeição";
+
     const systemPrompt = `Você é um assistente de nutrição para pessoas em tratamento com Mounjaro (tirzepatida).
-Gere UMA sugestão de refeição simples e prática para quando o usuário sente fome.
+Gere UMA sugestão de ${mealLabel} simples e prática.
 
 REGRAS:
 - NÃO prescreva medicamentos nem dê conselhos médicos
@@ -77,13 +80,13 @@ REGRAS:
 - Foque em: alta proteína, porções pequenas, fácil digestão
 - Considere os sintomas e contexto do usuário
 - Refeições práticas e acessíveis para brasileiro comum
-- A refeição deve ser UMA ÚNICA refeição (não um plano do dia inteiro)
+- A refeição deve ser UMA ÚNICA refeição do tipo: ${mealLabel}
 
 Responda APENAS com um JSON válido (sem markdown, sem backticks) neste formato:
 {
   "meal": "Nome curto da refeição (ex: Frango grelhado com legumes)",
   "items": ["frango grelhado", "arroz integral (porção pequena)", "brócolis e cenoura refogados"],
-  "reason": "Frase curta explicando por que essa refeição é boa agora (ex: Alta proteína para preservar músculo e leve para digestão.)",
+  "reason": "Frase curta explicando por que essa refeição é boa agora",
   "calories_approx": número aproximado de calorias,
   "protein_approx": gramas de proteína aproximada,
   "tip": "uma dica curta e prática",
@@ -102,7 +105,7 @@ Responda APENAS com um JSON válido (sem markdown, sem backticks) neste formato:
 - Sexo: ${profile?.sex || "não informado"}
 - Idade: ${profile?.age || "não informada"}
 
-Sugira UMA refeição adequada para esse momento.`;
+Sugira UMA refeição do tipo "${mealLabel}" adequada para esse momento.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
