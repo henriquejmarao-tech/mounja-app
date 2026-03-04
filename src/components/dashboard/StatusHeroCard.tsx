@@ -34,8 +34,8 @@ const StatusHeroCard = ({ streak, currentDose, latestWeight }: StatusHeroCardPro
       data-tutorial="dose-card"
       className="relative rounded-[20px] p-5 animate-fade-in-up overflow-hidden z-20"
       style={{
-        background: "hsl(var(--card))",
-        boxShadow: "0 12px 28px rgba(0,0,0,0.12)",
+        background: "#FFFFFF",
+        boxShadow: "0 12px 30px rgba(0,0,0,0.10)",
       }}
     >
       {/* Central glow behind streak */}
