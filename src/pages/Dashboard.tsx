@@ -151,11 +151,21 @@ const Dashboard = () => {
 
   // ─── Daily Treatment Score ───────────────────────────────────────
   const { dailyScore, scoreFactors } = useMemo(() => {
+    // First day: no logs yet → welcome score of 80
+    if (totalLogs === 0) {
+      return {
+        dailyScore: 80,
+        scoreFactors: [
+          { label: "Bem-vindo ao tratamento! 🎉", status: "good" as const },
+          { label: "Faça seu primeiro check-in", status: "warning" as const },
+        ],
+      };
+    }
+
     let score = 0;
     const factors: { label: string; status: "good" | "warning" }[] = [];
 
     // 1. Check-in consistency (30 pts) — streak-based, proportional
-    // Base: 10 pts for logging today, up to +20 pts for streak (cap at 7 days)
     if (todayLog) {
       const basePts = 10;
       const streakBonus = Math.round(Math.min(streak, 7) / 7 * 20);
@@ -165,7 +175,6 @@ const Dashboard = () => {
         status: "good",
       });
     } else {
-      // Even without today's check-in, give partial credit for recent streak
       const partial = Math.round(Math.min(Math.max(streak - 1, 0), 5) / 7 * 10);
       score += partial;
       factors.push({ label: "Registre o dia de ontem", status: "warning" });
@@ -199,33 +208,30 @@ const Dashboard = () => {
     }
 
     // 4. Weight progress (20 pts) — proportional to trend
-    // Compare latest weight vs initial weight from profile
     const initialWeight = profile?.current_weight;
     if (latestWeight && initialWeight && initialWeight > 0) {
       const lostKg = initialWeight - latestWeight;
       if (lostKg > 0) {
-        // Proportional: up to 20 pts, capped at 10% body weight loss
         const lossRatio = Math.min(lostKg / (initialWeight * 0.10), 1);
         const pts = Math.round(lossRatio * 20);
         score += pts;
         factors.push({ label: `${lostKg.toFixed(1)} kg perdidos 🎯`, status: "good" });
       } else if (lostKg === 0) {
-        score += 10; // Maintaining weight is okay
+        score += 10;
         factors.push({ label: "Peso estável", status: "good" });
       } else {
-        // Gained weight — small partial credit for tracking
         score += 5;
         factors.push({ label: "Peso subiu um pouco", status: "warning" });
       }
     } else if (latestWeight) {
-      score += 10; // At least they're tracking
+      score += 10;
       factors.push({ label: "Continue pesando-se", status: "good" });
     } else {
       factors.push({ label: "Registre seu peso", status: "warning" });
     }
 
     return { dailyScore: Math.min(score, 100), scoreFactors: factors };
-  }, [todayLog, streak, profile, latestWeight]);
+  }, [totalLogs, todayLog, streak, profile, latestWeight]);
 
   // Check if onboarding is complete
   const isProfileComplete = !!(profile as any)?.dose_history_completed && !!(profile as any)?.health_info_completed && !!(profile as any)?.routine_completed;
