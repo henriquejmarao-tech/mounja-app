@@ -4,11 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { useTutorial } from "@/hooks/useTutorial";
-import { Settings, Plus, Sparkles, Flame, Utensils, ChevronDown, ChevronRight, X, Coffee, Sun, Moon, Cookie, ClipboardCheck, ArrowRight, Salad, Dumbbell, Timer, Zap, Target, User, Pill, HeartPulse, CalendarClock } from "lucide-react";
+import { Settings, Plus, Sparkles, Flame, ChevronDown, ChevronRight, X, ClipboardCheck, ArrowRight, Dumbbell, Target, Pill, HeartPulse, CalendarClock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getWorkoutSuggestion } from "@/components/dashboard/WorkoutSuggestion";
 import StatusHeroCard from "@/components/dashboard/StatusHeroCard";
 import NextInjectionCard from "@/components/dashboard/NextInjectionCard";
+import DailyHabitsCard from "@/components/dashboard/DailyHabitsCard";
 
 const badges = [
   { id: "first", label: "Primeiro registro", emoji: "🌱", threshold: 1 },
@@ -48,11 +49,11 @@ const Dashboard = () => {
   const [weeklyWorkoutGoal, setWeeklyWorkoutGoal] = useState(3);
   const [recentSymptoms, setRecentSymptoms] = useState<any>(null);
   const [insight, setInsight] = useState<string | null>(null);
-  const [savedDiet, setSavedDiet] = useState<any>(null); // kept for data fetch compatibility
+  const [savedDiet, setSavedDiet] = useState<any>(null);
   const [todayWorkout, setTodayWorkout] = useState<{ type: string; duration: number } | null>(null);
   const [restDayDismissed, setRestDayDismissed] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [showDietModal, setShowDietModal] = useState(false); // unused now but kept to avoid breaking refs
+  const [showDietModal, setShowDietModal] = useState(false);
   const [showWorkoutModal, setShowWorkoutModal] = useState(false);
   const [todayCheckedIn, setTodayCheckedIn] = useState(false);
 
@@ -167,14 +168,7 @@ const Dashboard = () => {
     return msg?.message || streakMessages[0].message;
   };
 
-  // Diet suggestion text
-  const getDietSuggestion = () => {
-    const isPostInjection = daysUntilNext !== null && (daysUntilNext >= 6 || daysUntilNext === 0);
-    const hasHighNausea = recentSymptoms?.nausea > 3;
-    if (isPostInjection) return "Dia pós-aplicação: prefira refeições leves e em porções menores.";
-    if (hasHighNausea) return "Com náusea recente, tente alimentos frios e secos.";
-    return "Priorize proteínas e vegetais hoje.";
-  };
+  // (diet section removed)
 
   const nextBadge = badges.find((b) => streak < b.threshold);
   const earnedBadges = badges.filter((b) => streak >= b.threshold);
@@ -302,27 +296,8 @@ const Dashboard = () => {
           </div>
         )}
 
-        {/* Block 2a: Alimentação */}
-        <div data-tutorial="suggestion-card" className="rounded-[20px] p-4 animate-fade-in-up" style={{ animationDelay: "60ms", background: "#F7F8F7", boxShadow: "0 2px 6px rgba(0,0,0,0.04)" }}>
-          <div className="flex items-center gap-2 mb-3.5">
-            <div className="w-7 h-7 rounded-[10px] flex items-center justify-center" style={{ background: "hsl(174 42% 48% / 0.07)" }}>
-              <Utensils className="w-[18px] h-[18px]" style={{ color: "hsl(174 42% 48% / 0.7)" }} />
-            </div>
-            <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "rgba(17,24,39,0.55)" }}>Está com fome?</h3>
-          </div>
-
-          <button onClick={() => navigate("/nutricao")} className="w-full text-left group">
-            <div className="flex items-center gap-3 rounded-[16px] px-3.5 py-3.5 group-active:scale-[0.98] transition-all duration-200" style={{ background: "rgba(17,24,39,0.03)", boxShadow: "0 4px 12px rgba(17,24,39,0.06)" }}>
-              <div className="w-8 h-8 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: "hsl(174 42% 48% / 0.1)" }}>
-                <Utensils className="w-5 h-5" style={{ color: "hsl(174 42% 48%)" }} />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm text-foreground/80">Ver sugestão de refeição</p>
-              </div>
-              <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0 group-hover:translate-x-0.5 transition-transform" />
-            </div>
-          </button>
-        </div>
+        {/* Daily Habits Insights Card */}
+        <DailyHabitsCard />
 
         {/* Block 2b: Treino - collapsible card */}
         {(() => {
