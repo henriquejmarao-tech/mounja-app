@@ -1,5 +1,4 @@
-import { Dumbbell, Check, Moon, ChevronRight, Timer, Zap, Target } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Dumbbell, Check, Moon, ChevronRight } from "lucide-react";
 
 interface WorkoutSuggestionProps {
   weeklyWorkouts: number;
@@ -71,13 +70,13 @@ const WorkoutSuggestion = ({
 }: WorkoutSuggestionProps) => {
   if (todayWorkout) {
     return (
-      <div className="flex items-start gap-3 rounded-xl px-3.5 py-3" style={{ background: "hsl(var(--muted) / 0.35)" }}>
-        <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ background: "hsl(25 80% 52% / 0.1)" }}>
-          <Check className="w-3.5 h-3.5" style={{ color: "hsl(25 80% 52%)" }} />
+      <div className="flex items-center gap-3 rounded-[16px] px-3.5 py-3.5" style={{ background: "rgba(17,24,39,0.03)", boxShadow: "0 4px 12px rgba(17,24,39,0.06)" }}>
+        <div className="w-8 h-8 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: "hsl(25 80% 52% / 0.1)" }}>
+          <Check className="w-[18px] h-[18px]" style={{ color: "hsl(25 80% 52%)" }} />
         </div>
         <div>
-          <p className="text-[10px] font-semibold text-foreground/60 uppercase tracking-wide mb-0.5">Treino concluído</p>
-          <p className="text-xs text-foreground/75">
+          <p className="text-[11px] font-bold uppercase tracking-wider mb-0.5" style={{ color: "rgba(17,24,39,0.55)" }}>Treino concluído</p>
+          <p className="text-sm text-foreground/70">
             {todayWorkout.type} — {todayWorkout.duration} minutos
           </p>
         </div>
@@ -87,11 +86,11 @@ const WorkoutSuggestion = ({
 
   if (restDayDismissed) {
     return (
-      <div className="flex items-start gap-3 rounded-xl px-3.5 py-3" style={{ background: "hsl(var(--muted) / 0.35)" }}>
-        <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ background: "hsl(25 80% 52% / 0.1)" }}>
-          <Moon className="w-3.5 h-3.5" style={{ color: "hsl(25 80% 52%)" }} />
+      <div className="flex items-center gap-3 rounded-[16px] px-3.5 py-3.5" style={{ background: "rgba(17,24,39,0.03)", boxShadow: "0 4px 12px rgba(17,24,39,0.06)" }}>
+        <div className="w-8 h-8 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: "hsl(25 80% 52% / 0.1)" }}>
+          <Moon className="w-[18px] h-[18px]" style={{ color: "hsl(25 80% 52%)" }} />
         </div>
-        <p className="text-xs text-foreground/70 mt-1.5">Dia de descanso registrado. Descanse bem.</p>
+        <p className="text-sm text-foreground/70">Dia de descanso registrado. Descanse bem.</p>
       </div>
     );
   }
@@ -101,18 +100,17 @@ const WorkoutSuggestion = ({
 
   return (
     <button onClick={onOpen} className="w-full text-left group">
-      <div className="flex items-start gap-3 rounded-xl px-3.5 py-3 group-active:scale-[0.98] transition-all duration-200" style={{ background: "hsl(var(--muted) / 0.35)" }}>
-        <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ background: "hsl(25 80% 52% / 0.1)" }}>
-          <Dumbbell className="w-3.5 h-3.5" style={{ color: "hsl(25 80% 52%)" }} />
+      <div className="flex items-center gap-3 rounded-[16px] px-3.5 py-3.5 group-active:scale-[0.98] transition-all duration-200" style={{ background: "rgba(17,24,39,0.03)", boxShadow: "0 4px 12px rgba(17,24,39,0.06)" }}>
+        <div className="w-8 h-8 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: "hsl(25 80% 52% / 0.1)" }}>
+          <Dumbbell className="w-5 h-5" style={{ color: "hsl(25 80% 52%)" }} />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-[10px] font-semibold text-foreground/55 uppercase tracking-wide mb-1">{workoutType}</p>
-          <p className="text-xs text-foreground/70 leading-relaxed">
-            <span className="font-semibold">{config.label}</span>
-            {" · "}{duration} minutos
+          <p className="text-sm text-foreground/80">{workoutType}</p>
+          <p className="text-xs text-foreground/55 mt-0.5">
+            {config.label} · {duration} minutos
           </p>
         </div>
-        <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/30 shrink-0 mt-2 group-hover:translate-x-0.5 transition-transform" />
+        <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0 group-hover:translate-x-0.5 transition-transform" />
       </div>
     </button>
   );
