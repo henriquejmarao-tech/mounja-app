@@ -36,22 +36,7 @@ const Application = () => {
 
   return (
     <div className="min-h-screen bg-background pb-28">
-      {/* Header with gradient */}
-      <header className="relative overflow-hidden">
-        <div className="absolute inset-0 gradient-coral opacity-95" />
-        <div className="relative px-5 pb-5" style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 1.5rem)" }}>
-          <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-secondary-foreground/80 mb-4">
-            <ArrowLeft className="w-5 h-5" />
-            <span className="text-sm font-medium">Voltar</span>
-          </button>
-          <h1 className="text-2xl font-bold text-secondary-foreground">Aplicação</h1>
-          <p className="text-sm text-secondary-foreground/80 mt-1">
-            Controle e aprenda sobre suas aplicações
-          </p>
-        </div>
-      </header>
-
-      <div className="px-5 mt-4 space-y-4">
+      <div className="px-5 space-y-4" style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 1rem)" }}>
         {/* Next application card */}
         <div className="relative overflow-hidden bg-card rounded-2xl p-5 shadow-elevated border border-secondary/15">
           <div className="absolute top-0 left-0 right-0 h-1 gradient-coral" />
