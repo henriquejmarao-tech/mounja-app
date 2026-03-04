@@ -20,12 +20,12 @@ const BottomNav = () => {
   if (hiddenRoutes.some((r) => location.pathname.startsWith(r))) return null;
 
   const pillStyle = {
-    background: "rgba(20, 30, 25, 0.72)",
-    backdropFilter: "blur(12px)",
-    WebkitBackdropFilter: "blur(12px)",
+    background: "rgba(28, 52, 45, 0.72)",
+    backdropFilter: "blur(14px)",
+    WebkitBackdropFilter: "blur(14px)",
     borderRadius: "28px",
-    boxShadow: "0 10px 30px rgba(0, 0, 0, 0.15)",
-    border: "1px solid rgba(255, 255, 255, 0.06)",
+    boxShadow: "0 10px 35px rgba(0, 0, 0, 0.18)",
+    border: "1px solid rgba(255, 255, 255, 0.08)",
   };
 
   return (
@@ -59,7 +59,7 @@ const BottomNav = () => {
                     style={
                       isActive
                         ? {
-                            boxShadow: "0 0 10px rgba(90, 170, 120, 0.4)",
+                            boxShadow: "0 0 10px rgba(88, 168, 128, 0.45)",
                             transform: "scale(1.1)",
                           }
                         : undefined
