@@ -38,7 +38,6 @@ const HistoryHeader = ({ showExport, onExport }: HistoryHeaderProps) => {
           <BarChart3 className="w-5 h-5 text-primary-foreground" />
           <div>
             <h1 className="text-xl font-bold text-primary-foreground tracking-tight">Análise da Jornada</h1>
-            <p className="text-[11px] text-primary-foreground/60 font-medium tracking-wide uppercase mt-0.5">Dados e tendências do seu tratamento</p>
           </div>
         </div>
       </div>
