@@ -194,16 +194,16 @@ const Application = () => {
         </button>
 
         {/* Next application card — real data */}
-        <div className="relative overflow-hidden bg-card rounded-2xl p-5 shadow-elevated border border-secondary/15">
-          <div className="absolute top-0 left-0 right-0 h-1 gradient-coral" />
-          <div className="absolute top-0 right-0 w-24 h-24 bg-secondary/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
+        <div className="relative overflow-hidden bg-card rounded-2xl p-5 shadow-elevated border border-primary/15">
+          <div className="absolute top-0 left-0 right-0 h-1 gradient-hero" />
+          <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
           <div className="relative">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-lg gradient-coral flex items-center justify-center">
-                  <Clock className="w-3.5 h-3.5 text-secondary-foreground" />
+                <div className="w-6 h-6 rounded-lg gradient-hero flex items-center justify-center">
+                  <Clock className="w-3.5 h-3.5 text-primary-foreground" />
                 </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-secondary">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-primary">
                   Próxima Aplicação
                 </span>
               </div>
@@ -240,8 +240,8 @@ const Application = () => {
               </>
             )}
 
-            <div className="flex items-center gap-2 mt-4 bg-secondary/8 rounded-xl px-3 py-2.5">
-              <MapPin className="w-4 h-4 text-secondary" />
+            <div className="flex items-center gap-2 mt-4 bg-primary/8 rounded-xl px-3 py-2.5">
+              <MapPin className="w-4 h-4 text-primary" />
               <span className="text-sm font-medium">Sugestão: {suggestedSite}</span>
             </div>
           </div>
