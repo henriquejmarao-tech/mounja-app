@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Pill, Weight, Check, AlertTriangle } from "lucide-react";
+import { Pill, Weight, Check, AlertTriangle, Info, X } from "lucide-react";
 
 interface ScoreFactor {
   label: string;
@@ -24,6 +24,7 @@ const StatusHeroCard = ({ dailyScore, scoreFactors, currentDose, latestWeight }:
   // Animate ring on mount
   const [animatedOffset, setAnimatedOffset] = useState(circumference);
   const mounted = useRef(false);
+  const [showInfo, setShowInfo] = useState(false);
 
   useEffect(() => {
     if (!mounted.current) {
@@ -43,6 +44,30 @@ const StatusHeroCard = ({ dailyScore, scoreFactors, currentDose, latestWeight }:
         boxShadow: "0 12px 30px rgba(0,0,0,0.10)",
       }}
     >
+      {/* Info button — top right */}
+      <button
+        onClick={() => setShowInfo(!showInfo)}
+        className="absolute top-3 right-3 z-30 w-6 h-6 rounded-full flex items-center justify-center transition-colors"
+        style={{ background: "rgba(0,0,0,0.04)" }}
+        aria-label="Sobre o score"
+      >
+        {showInfo ? <X className="w-3 h-3 text-muted-foreground/50" /> : <Info className="w-3 h-3 text-muted-foreground/35" />}
+      </button>
+
+      {/* Info overlay */}
+      {showInfo && (
+        <div className="absolute inset-0 z-20 rounded-[20px] p-5 flex flex-col justify-center animate-fade-in" style={{ background: "rgba(255,255,255,0.97)", backdropFilter: "blur(8px)" }}>
+          <h4 className="text-xs font-bold text-foreground/70 mb-2.5">Como o score funciona</h4>
+          <ul className="space-y-1.5 text-[11px] text-muted-foreground leading-relaxed">
+            <li className="flex items-start gap-2"><span className="text-primary font-bold">35 pts</span> Medicação em dia</li>
+            <li className="flex items-start gap-2"><span className="text-primary font-bold">25 pts</span> Refeições equilibradas</li>
+            <li className="flex items-start gap-2"><span className="text-primary font-bold">20 pts</span> Hidratação adequada</li>
+            <li className="flex items-start gap-2"><span className="text-primary font-bold">20 pts</span> Atividade física</li>
+          </ul>
+          <p className="text-[10px] text-muted-foreground/50 mt-3">Registre suas atividades diárias para aumentar seu score.</p>
+        </div>
+      )}
+
       {/* Central glow */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full pointer-events-none"

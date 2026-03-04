@@ -254,9 +254,7 @@ const Dashboard = () => {
                 </div>
               )}
             </div>
-            <div className="text-center flex-1">
-              <p className="text-sm text-primary-foreground/85 font-medium">{firstName}, bom te ver 🌿</p>
-            </div>
+            <div className="text-center flex-1" />
             <button
               onClick={() => navigate("/configuracoes")}
               className="w-11 h-11 rounded-full flex items-center justify-center shadow-lg"
