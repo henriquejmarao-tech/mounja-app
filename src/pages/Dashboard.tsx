@@ -194,12 +194,12 @@ const Dashboard = () => {
       {/* Sticky Header */}
       <header
         className="sticky top-0 z-30"
-        style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}
       >
         <div
-          className="px-5 pt-4 pb-16"
+          className="px-5 pb-16"
           style={{
-            background: "linear-gradient(180deg, hsl(var(--primary) / 0.75) 0%, hsl(var(--primary) / 0.20) 50%, transparent 100%)",
+            paddingTop: "calc(env(safe-area-inset-top, 0px) + 1rem)",
+            background: "linear-gradient(180deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.85) 30%, hsl(var(--primary) / 0.20) 60%, transparent 100%)",
           }}
         >
           <div className="flex items-center justify-between">
