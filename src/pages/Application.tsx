@@ -1,29 +1,56 @@
-import { ArrowLeft, Calendar, MapPin, AlertCircle, ChevronRight, Check, Clock, Sparkles, Bell, BellOff, ChevronDown } from "lucide-react";
+import { ArrowLeft, Calendar, MapPin, AlertCircle, ChevronRight, Check, Clock, Sparkles, Bell, BellOff, ChevronDown, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useMemo } from "react";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { cn } from "@/lib/utils";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 const educationalCards = [
   {
     title: "Como aplicar corretamente",
     description: "Guia passo a passo com imagens",
     icon: "💉",
+    content: [
+      { heading: "1. Prepare o material", text: "Retire a caneta da geladeira 30 minutos antes. Lave as mãos com água e sabão. Verifique a validade e a aparência do medicamento — deve estar límpido e incolor." },
+      { heading: "2. Escolha o local", text: "Os melhores locais são: abdômen (evitando 5 cm ao redor do umbigo), parte frontal da coxa ou parte de trás do braço. Alterne sempre o local." },
+      { heading: "3. Limpe a pele", text: "Use álcool 70% no local escolhido e espere secar completamente antes de aplicar." },
+      { heading: "4. Aplique a injeção", text: "Remova a tampa da caneta. Posicione firmemente contra a pele em ângulo de 90°. Pressione o botão e mantenha por 10 segundos. Você ouvirá dois cliques." },
+      { heading: "5. Após a aplicação", text: "Não massageie o local. Descarte a agulha em recipiente apropriado. Anote a data, local e dose no app." },
+    ],
   },
   {
     title: "Rodízio de locais",
     description: "Por que alternar o local de aplicação",
     icon: "🔄",
+    content: [
+      { heading: "Por que alternar?", text: "Aplicar sempre no mesmo local pode causar lipodistrofia — alterações no tecido gorduroso sob a pele que dificultam a absorção do medicamento." },
+      { heading: "Esquema sugerido", text: "Semana 1: Abdômen direito → Semana 2: Coxa esquerda → Semana 3: Abdômen esquerdo → Semana 4: Coxa direita. Depois, reinicie o ciclo." },
+      { heading: "Distância mínima", text: "Mantenha pelo menos 2 cm de distância do local da última aplicação na mesma região." },
+      { heading: "Dica", text: "Use o registro do app para acompanhar automaticamente a sugestão do próximo local de aplicação." },
+    ],
   },
   {
     title: "Armazenamento",
     description: "Temperatura e cuidados com a caneta",
     icon: "❄️",
+    content: [
+      { heading: "Antes do primeiro uso", text: "Mantenha na geladeira entre 2°C e 8°C. Não congele. Se congelar acidentalmente, descarte a caneta." },
+      { heading: "Após o primeiro uso", text: "Pode ser armazenada na geladeira ou em temperatura ambiente (até 30°C) por no máximo 21 dias." },
+      { heading: "Proteção", text: "Mantenha a tampa na caneta quando não estiver em uso para proteger da luz. Não guarde com a agulha acoplada." },
+      { heading: "Em viagens", text: "Use uma bolsa térmica com gel refrigerante. Nunca deixe no carro sob sol direto ou no porta-malas." },
+    ],
   },
   {
     title: "Efeitos colaterais comuns",
     description: "O que esperar nas primeiras semanas",
     icon: "📋",
+    content: [
+      { heading: "Náusea (muito comum)", text: "Afeta até 20% dos usuários. Geralmente leve e melhora em 2-3 semanas. Dica: coma porções menores, evite alimentos gordurosos e mantenha-se hidratada." },
+      { heading: "Diarreia ou constipação", text: "Alterações intestinais são comuns no início. Aumente fibras gradualmente e beba pelo menos 2L de água por dia." },
+      { heading: "Dor no local da aplicação", text: "Vermelhidão ou leve inchaço pode ocorrer. Geralmente desaparece em 24-48h. Não massageie a área." },
+      { heading: "Cansaço", text: "Fadiga leve pode ocorrer nos primeiros dias após a aplicação. É temporário e tende a diminuir com o tempo." },
+      { heading: "Quando procurar ajuda", text: "Dor abdominal intensa, vômitos persistentes, sinais de reação alérgica (inchaço no rosto, dificuldade para respirar). Procure atendimento médico imediatamente." },
+    ],
   },
 ];
 
@@ -40,6 +67,7 @@ const Application = () => {
   const [reminderEnabled, setReminderEnabled] = useState(false);
   const [selectedReminders, setSelectedReminders] = useState<number[]>([1]);
   const [showReminderOptions, setShowReminderOptions] = useState(false);
+  const [openCard, setOpenCard] = useState<number | null>(null);
 
   // Generate daily insight — cached in localStorage, refreshes once per day
   const patternInsight = useMemo(() => {
@@ -214,6 +242,7 @@ const Application = () => {
             {educationalCards.map((card, i) => (
               <button
                 key={i}
+                onClick={() => setOpenCard(i)}
                 className="bg-card rounded-2xl p-4 shadow-card border border-border/50 text-left hover:shadow-elevated hover:border-primary/10 transition-all duration-300 active:scale-[0.98] group"
               >
                 <span className="text-2xl">{card.icon}</span>
@@ -235,6 +264,36 @@ const Application = () => {
           </p>
         </div>
       </div>
+
+      {/* Educational Sheet */}
+      <Sheet open={openCard !== null} onOpenChange={(open) => !open && setOpenCard(null)}>
+        <SheetContent side="bottom" className="rounded-t-3xl max-h-[85vh] overflow-y-auto pb-10">
+          {openCard !== null && (
+            <>
+              <SheetHeader className="pb-2">
+                <div className="flex items-center gap-3">
+                  <span className="text-3xl">{educationalCards[openCard].icon}</span>
+                  <SheetTitle className="text-lg font-bold text-left">{educationalCards[openCard].title}</SheetTitle>
+                </div>
+              </SheetHeader>
+              <div className="space-y-5 mt-4">
+                {educationalCards[openCard].content.map((section, j) => (
+                  <div key={j}>
+                    <h4 className="text-sm font-bold text-foreground/85 mb-1.5">{section.heading}</h4>
+                    <p className="text-[13px] text-muted-foreground leading-relaxed">{section.text}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-6 flex items-start gap-3 bg-warning/8 rounded-xl p-3 border border-warning/15">
+                <AlertCircle className="w-3.5 h-3.5 text-warning shrink-0 mt-0.5" />
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  Informações educacionais. Consulte sempre seu médico.
+                </p>
+              </div>
+            </>
+          )}
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };
