@@ -1,4 +1,4 @@
-import { Activity } from "lucide-react";
+import { Heart } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
 interface SymptomsChartProps {
@@ -19,15 +19,9 @@ const SymptomsChart = ({ logs }: SymptomsChartProps) => {
 
   return (
     <div className="bg-card rounded-2xl p-5 shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: "320ms" }}>
-      <div className="flex items-center gap-2 mb-4">
-        <div className="w-8 h-8 rounded-lg bg-destructive/10 flex items-center justify-center">
-          <Activity className="w-4 h-4 text-destructive" />
-        </div>
-        <div>
-          <h2 className="font-bold text-sm">Evolução de Sintomas</h2>
-          <p className="text-[10px] text-muted-foreground">Tendência ao longo do tempo (0-10)</p>
-        </div>
-      </div>
+      <h3 className="font-bold text-sm mb-4 flex items-center gap-2">
+        <Heart className="w-4 h-4 text-primary" /> Como você se sentiu
+      </h3>
       <div className="h-52">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>

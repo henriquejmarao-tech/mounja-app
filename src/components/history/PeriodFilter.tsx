@@ -9,9 +9,9 @@ interface PeriodFilterProps {
 }
 
 const periodLabels: Record<Period, string> = {
-  "7d": "7 dias",
+  "7d": "Semana",
   "30d": "30 dias",
-  "90d": "90 dias",
+  "90d": "3 meses",
   "Total": "Total",
 };
 
@@ -23,7 +23,7 @@ const PeriodFilter = ({ period, onChange }: PeriodFilterProps) => (
           key={p}
           onClick={() => onChange(p)}
           className={cn(
-            "flex-1 py-2 text-[11px] font-semibold rounded-lg transition-all duration-200 uppercase tracking-wider",
+            "flex-1 py-2 text-[11px] font-semibold rounded-lg transition-all duration-200",
             period === p
               ? "bg-primary text-primary-foreground shadow-sm"
               : "text-muted-foreground hover:text-foreground"

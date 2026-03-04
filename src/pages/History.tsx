@@ -383,6 +383,10 @@ const History = () => {
               totalLost={totalLost}
               injectionCount={injections.length}
             />
+            <WeightChart weightData={weightData} />
+            <SymptomsChart logs={logs} />
+            <DoseTimeline injections={injections} onChanged={fetchData} />
+            
             <WeeklyComparison thisWeekLogs={thisWeekLogs} lastWeekLogs={lastWeekLogs} />
             <WeeklyNarrative
               thisWeekLogs={thisWeekLogs}
@@ -390,12 +394,8 @@ const History = () => {
               workouts={workouts}
               injections={injections}
             />
-            <WeightChart weightData={weightData} />
             <BodyCompositionChart logs={logs} />
-            <SymptomsChart logs={logs} />
             <WorkoutsSummary workouts={workouts} />
-            <DoseTimeline injections={injections} onChanged={fetchData} />
-            
             <InsightsList insights={insights} />
 
             {allLogs.length < 7 && (

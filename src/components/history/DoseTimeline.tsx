@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, Syringe } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
@@ -42,28 +42,38 @@ const DoseTimeline = ({ injections, onChanged }: DoseTimelineProps) => {
     <>
       <div className="bg-card rounded-2xl shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: "180ms" }}>
         <div className="p-4 pb-2">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-primary" />
-            <h3 className="font-bold text-xs uppercase tracking-widest text-muted-foreground">Cronologia de doses</h3>
-          </div>
+          <h3 className="font-bold text-sm flex items-center gap-2">
+            <Syringe className="w-4 h-4 text-primary" /> Suas aplicações
+          </h3>
         </div>
-        <div className="px-4 pb-4">
+        <div className="px-4 pb-4 pt-2">
           {injections.slice(0, 6).map((inj: any, i: number) => (
-            <div key={inj.id} className="flex gap-3 relative group">
+            <div key={inj.id} className="flex gap-3.5 relative">
+              {/* Timeline connector */}
               <div className="flex flex-col items-center">
-                <div className={cn("w-2.5 h-2.5 rounded-full border-2 mt-2", i === 0 ? "border-primary bg-primary/30" : "border-muted-foreground/30 bg-muted")} />
-                {i < Math.min(injections.length, 6) - 1 && <div className="w-px flex-1 bg-border my-1" />}
+                <div className={cn(
+                  "w-3 h-3 rounded-full border-2 mt-1.5 shrink-0",
+                  i === 0 ? "border-primary bg-primary/30" : "border-muted-foreground/25 bg-muted"
+                )} />
+                {i < Math.min(injections.length, 6) - 1 && (
+                  <div className="w-px flex-1 bg-border/60 my-1" />
+                )}
               </div>
-              <div className="pb-4 flex-1">
-                <div className="flex items-start justify-between">
+              {/* Content */}
+              <div className="pb-5 flex-1 min-w-0">
+                <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="text-sm font-bold tabular-nums">{inj.dose}</p>
-                    <p className="text-[11px] text-muted-foreground tabular-nums">
+                    <p className="text-[13px] font-semibold text-foreground/80">
+                      Aplicação de {inj.dose}
+                    </p>
+                    <p className="text-[11px] text-muted-foreground tabular-nums mt-0.5">
                       {new Date(inj.date + "T12:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })}
-                      {inj.site && <span className="ml-2 text-[10px] bg-muted px-1.5 py-0.5 rounded-md font-medium">{inj.site}</span>}
+                      {inj.site && (
+                        <span className="ml-2 text-[10px] bg-muted px-1.5 py-0.5 rounded-md font-medium">{inj.site}</span>
+                      )}
                     </p>
                   </div>
-                  <div className="flex gap-1 shrink-0">
+                  <div className="flex gap-0.5 shrink-0">
                     <button onClick={() => setEditingInj(inj)} className="p-1.5 rounded-lg hover:bg-muted" aria-label="Editar">
                       <Pencil className="w-3.5 h-3.5 text-muted-foreground" />
                     </button>
