@@ -1,4 +1,4 @@
-import { Calendar, MapPin, AlertCircle, ChevronRight, Check, Clock, Sparkles, Bell, BellOff, ChevronDown } from "lucide-react";
+import { ArrowLeft, Calendar, MapPin, AlertCircle, ChevronRight, Check, Clock, Sparkles, Bell, BellOff, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -36,12 +36,24 @@ const reminderOptions = [
 const Application = () => {
   const navigate = useNavigate();
   const [reminderEnabled, setReminderEnabled] = useState(false);
-  const [reminderDays, setReminderDays] = useState(1);
+  const [selectedReminders, setSelectedReminders] = useState<number[]>([1]);
   const [showReminderOptions, setShowReminderOptions] = useState(false);
+
+  const toggleReminderDay = (value: number) => {
+    setSelectedReminders(prev =>
+      prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value].sort()
+    );
+  };
 
   return (
     <div className="min-h-screen bg-background pb-28">
       <div className="px-5 space-y-4" style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 1rem)" }}>
+        {/* Back button */}
+        <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-muted-foreground active:opacity-70 transition-opacity">
+          <ArrowLeft className="w-4 h-4" />
+          <span className="text-sm font-medium">Voltar</span>
+        </button>
+
         {/* Next application card */}
         <div className="relative overflow-hidden bg-card rounded-2xl p-5 shadow-elevated border border-secondary/15">
           <div className="absolute top-0 left-0 right-0 h-1 gradient-coral" />
@@ -93,7 +105,9 @@ const Application = () => {
               </p>
               <p className="text-xs text-muted-foreground">
                 {reminderEnabled
-                  ? `${reminderOptions.find(o => o.value === reminderDays)?.label || `${reminderDays} dia(s) antes`} e no dia`
+                  ? selectedReminders.length === 0
+                    ? "Selecione quando lembrar"
+                    : selectedReminders.map(v => reminderOptions.find(o => o.value === v)?.label).join(", ")
                   : "Toque para ativar lembretes"
                 }
               </p>
@@ -111,10 +125,10 @@ const Application = () => {
                 {reminderOptions.map((opt) => (
                   <button
                     key={opt.value}
-                    onClick={() => setReminderDays(opt.value)}
+                    onClick={() => toggleReminderDay(opt.value)}
                     className={cn(
                       "flex-1 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200",
-                      reminderDays === opt.value
+                      selectedReminders.includes(opt.value)
                         ? "bg-primary/10 text-primary border border-primary/20"
                         : "bg-muted/20 text-muted-foreground/60 border border-transparent"
                     )}
