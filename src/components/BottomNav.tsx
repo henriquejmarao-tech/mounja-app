@@ -1,4 +1,4 @@
-import { Home, Plus, Clock, Leaf, MessageCircle } from "lucide-react";
+import { Home, Plus, Clock, Leaf, HelpCircle } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -7,7 +7,7 @@ import AiChat from "@/components/AiChat";
 const navItems = [
   { icon: Home, label: "Início", path: "/" },
   { icon: Clock, label: "Caminho", path: "/historico" },
-  { icon: Plus, label: "Registrar", path: "/registrar", highlight: true },
+  { icon: Plus, label: "Registrar", path: "/registrar" },
   { icon: Leaf, label: "Nutrição", path: "/nutricao" },
 ];
 
@@ -18,6 +18,15 @@ const BottomNav = () => {
 
   const hiddenRoutes = ["/onboarding", "/auth", "/triagem", "/reset-password"];
   if (hiddenRoutes.some((r) => location.pathname.startsWith(r))) return null;
+
+  const pillStyle = {
+    background: "rgba(20, 30, 25, 0.72)",
+    backdropFilter: "blur(12px)",
+    WebkitBackdropFilter: "blur(12px)",
+    borderRadius: "28px",
+    boxShadow: "0 10px 30px rgba(0, 0, 0, 0.15)",
+    border: "1px solid rgba(255, 255, 255, 0.06)",
+  };
 
   return (
     <>
@@ -31,56 +40,14 @@ const BottomNav = () => {
           maxWidth: "420px",
         }}
       >
-        <div className="flex items-end gap-2.5">
+        <div className="flex items-center gap-2.5">
           {/* Main nav pill */}
           <div
             className="flex-1 flex items-center justify-around px-3 py-3"
-            style={{
-              background: "rgba(20, 30, 25, 0.72)",
-              backdropFilter: "blur(12px)",
-              WebkitBackdropFilter: "blur(12px)",
-              borderRadius: "28px",
-              boxShadow: "0 10px 30px rgba(0, 0, 0, 0.15)",
-              border: "1px solid rgba(255, 255, 255, 0.06)",
-              height: "64px",
-            }}
+            style={{ ...pillStyle, height: "64px" }}
           >
             {navItems.map((item) => {
               const isActive = location.pathname === item.path;
-
-              if (item.highlight) {
-                return (
-                  <button
-                    key={item.path}
-                    onClick={() => navigate(item.path)}
-                    className="flex flex-col items-center gap-0.5 transition-all duration-200 active:scale-90 -mt-5"
-                  >
-                    <div
-                      className="w-[50px] h-[50px] rounded-full flex items-center justify-center transition-all duration-300"
-                      style={{
-                        background: isActive
-                          ? "linear-gradient(145deg, hsl(143 28% 52%) 0%, hsl(152 28% 42%) 100%)"
-                          : "linear-gradient(145deg, hsl(143 22% 48%) 0%, hsl(150 22% 38%) 100%)",
-                        boxShadow: isActive
-                          ? "0 4px 20px rgba(90, 170, 120, 0.5), 0 0 10px rgba(90, 170, 120, 0.3)"
-                          : "0 4px 16px rgba(90, 170, 120, 0.3)",
-                        border: "2px solid rgba(255, 255, 255, 0.15)",
-                      }}
-                    >
-                      <item.icon className="w-[22px] h-[22px] text-white" />
-                    </div>
-                    <span
-                      className={cn(
-                        "text-[10px] transition-all mt-0.5",
-                        isActive ? "text-white font-bold" : "text-white/50 font-medium"
-                      )}
-                    >
-                      {item.label}
-                    </span>
-                  </button>
-                );
-              }
-
               return (
                 <button
                   key={item.path}
@@ -118,20 +85,13 @@ const BottomNav = () => {
             })}
           </div>
 
-          {/* Floating chat button — same style, separate on the right */}
+          {/* Chat button — same height as nav pill */}
           <button
             onClick={() => setShowAiChat(true)}
-            className="w-[56px] h-[56px] shrink-0 flex items-center justify-center transition-all duration-200 active:scale-90 mb-1"
-            style={{
-              background: "rgba(20, 30, 25, 0.72)",
-              backdropFilter: "blur(12px)",
-              WebkitBackdropFilter: "blur(12px)",
-              borderRadius: "22px",
-              boxShadow: "0 10px 30px rgba(0, 0, 0, 0.15)",
-              border: "1px solid rgba(255, 255, 255, 0.06)",
-            }}
+            className="shrink-0 flex items-center justify-center transition-all duration-200 active:scale-90"
+            style={{ ...pillStyle, width: "56px", height: "64px" }}
           >
-            <MessageCircle className="w-[22px] h-[22px] text-white/90" />
+            <HelpCircle className="w-[24px] h-[24px] text-white/90" />
           </button>
         </div>
       </nav>
