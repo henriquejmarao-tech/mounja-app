@@ -54,27 +54,6 @@ const StatusHeroCard = ({ dailyScore, scoreFactors, currentDose, latestWeight }:
         {showInfo ? <X className="w-3 h-3 text-muted-foreground/50" /> : <Info className="w-3 h-3 text-muted-foreground/35" />}
       </button>
 
-      {/* Info overlay — shows user's actual score factors */}
-      {showInfo && (
-        <div className="absolute inset-0 z-20 rounded-[20px] p-5 flex flex-col justify-center animate-fade-in" style={{ background: "rgba(255,255,255,0.97)", backdropFilter: "blur(8px)" }}>
-          <h4 className="text-xs font-bold text-foreground/70 mb-3">Seu score hoje</h4>
-          <div className="space-y-2">
-            {scoreFactors.map((factor, i) => (
-              <div key={i} className="flex items-center gap-2">
-                {factor.status === "good" ? (
-                  <Check className="w-3.5 h-3.5 text-primary shrink-0" />
-                ) : (
-                  <AlertTriangle className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                )}
-                <span className={`text-[12px] font-medium ${factor.status === "good" ? "text-foreground/65" : "text-amber-600/85"}`}>
-                  {factor.label}
-                </span>
-              </div>
-            ))}
-          </div>
-          <p className="text-[10px] text-muted-foreground/50 mt-4">Registre suas atividades para aumentar seu score.</p>
-        </div>
-      )}
 
       {/* Central glow */}
       <div
@@ -164,9 +143,9 @@ const StatusHeroCard = ({ dailyScore, scoreFactors, currentDose, latestWeight }:
         </div>
       </div>
 
-      {/* Score Factors */}
-      {scoreFactors.length > 0 && (
-        <div className="relative mt-4 pt-3 border-t border-border/30">
+      {/* Score Factors — toggled by info button */}
+      {showInfo && scoreFactors.length > 0 && (
+        <div className="relative mt-4 pt-3 border-t border-border/30 animate-fade-in">
           <div className="grid grid-cols-2 gap-x-3 gap-y-1.5">
             {scoreFactors.map((factor, i) => (
               <div key={i} className="flex items-center gap-1.5">
