@@ -1,6 +1,7 @@
 import { ArrowLeft, Calendar, MapPin, AlertCircle, ChevronRight, Check, Clock, Sparkles, Bell, BellOff, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { useApplicationData } from "@/hooks/useApplicationData";
 import { cn } from "@/lib/utils";
 
 const educationalCards = [
@@ -35,9 +36,51 @@ const reminderOptions = [
 
 const Application = () => {
   const navigate = useNavigate();
+  const { recentSymptoms, weeklyWorkoutCount, dose } = useApplicationData();
   const [reminderEnabled, setReminderEnabled] = useState(false);
   const [selectedReminders, setSelectedReminders] = useState<number[]>([1]);
   const [showReminderOptions, setShowReminderOptions] = useState(false);
+
+  // Generate daily insight — cached in localStorage, refreshes once per day
+  const patternInsight = useMemo(() => {
+    const today = new Date().toISOString().split("T")[0];
+    const cacheKey = "app_pattern_insight";
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached);
+        if (parsed.date === today) return parsed.text as string;
+      } catch {}
+    }
+
+    // Generate insight from real data
+    const insights: string[] = [];
+    if (recentSymptoms.nausea > 3) {
+      insights.push("Nos últimos dias, sua náusea está acima da média. Considere refeições menores e mais frequentes.");
+    }
+    if (recentSymptoms.fatigue > 3) {
+      insights.push("Seu nível de cansaço está elevado esta semana. Priorize descanso e hidratação.");
+    }
+    if (recentSymptoms.constipation > 3) {
+      insights.push("Constipação tem sido frequente. Aumente a ingestão de fibras e água.");
+    }
+    if (recentSymptoms.headache > 3) {
+      insights.push("Dores de cabeça recorrentes detectadas. Verifique sua hidratação e sono.");
+    }
+    if (weeklyWorkoutCount >= 3) {
+      insights.push("Ótimo ritmo de treinos esta semana! A atividade física potencializa os resultados do tratamento. 💪");
+    }
+    if (recentSymptoms.nausea <= 2 && recentSymptoms.fatigue <= 2 && recentSymptoms.headache <= 2) {
+      insights.push("Seus sintomas estão bem controlados. Continue mantendo seus hábitos atuais! ✨");
+    }
+
+    const text = insights.length > 0
+      ? insights[Math.floor(Math.random() * insights.length)]
+      : "Continue registrando seus sintomas diariamente para que possamos identificar padrões no seu tratamento.";
+
+    localStorage.setItem(cacheKey, JSON.stringify({ date: today, text }));
+    return text;
+  }, [recentSymptoms, weeklyWorkoutCount]);
 
   const toggleReminderDay = (value: number) => {
     setSelectedReminders(prev =>
@@ -159,8 +202,7 @@ const Application = () => {
               <span className="text-[10px] font-bold uppercase tracking-wider text-primary">Padrão Identificado</span>
             </div>
             <p className="text-sm leading-relaxed">
-              Nas últimas 3 aplicações, você relatou náusea leve no dia seguinte. 
-              Isso é comum e tende a diminuir com o tempo.
+              {patternInsight}
             </p>
           </div>
         </div>
