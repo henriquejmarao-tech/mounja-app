@@ -7,7 +7,6 @@ import { cn } from "@/lib/utils";
 interface HabitTip {
   icon: typeof Lightbulb;
   text: string;
-  color: string;
 }
 
 const DailyHabitsCard = () => {
@@ -23,7 +22,6 @@ const DailyHabitsCard = () => {
     allTips.push({
       icon: Droplets,
       text: "Beba pelo menos 2L de água hoje — ajuda na saciedade e reduz efeitos colaterais.",
-      color: "hsl(200 80% 50%)",
     });
 
     // Time-based tips
@@ -31,19 +29,16 @@ const DailyHabitsCard = () => {
       allTips.push({
         icon: Apple,
         text: "Comece o dia com proteína no café da manhã — ovos, iogurte ou queijo cottage.",
-        color: "hsl(25 80% 52%)",
       });
     } else if (hour < 18) {
       allTips.push({
         icon: Footprints,
         text: "Uma caminhada leve de 15 min após o almoço melhora a digestão e o humor.",
-        color: "hsl(var(--primary))",
       });
     } else {
       allTips.push({
         icon: Moon,
         text: "Evite telas 1h antes de dormir — sono de qualidade potencializa o tratamento.",
-        color: "hsl(260 60% 55%)",
       });
     }
 
@@ -53,7 +48,6 @@ const DailyHabitsCard = () => {
       allTips.push({
         icon: Wind,
         text: "Com náusea, prefira refeições pequenas e frias. Gengibre pode ajudar.",
-        color: "hsl(174 42% 48%)",
       });
     }
 
@@ -65,7 +59,6 @@ const DailyHabitsCard = () => {
       allTips.push({
         icon: Wind,
         text: "Dia pós-aplicação: pegue leve, descanse e alimente-se com calma.",
-        color: "hsl(174 42% 48%)",
       });
     }
 
@@ -73,7 +66,6 @@ const DailyHabitsCard = () => {
     allTips.push({
       icon: Lightbulb,
       text: "Mastigue devagar e pare ao primeiro sinal de saciedade — seu corpo agradece.",
-      color: "hsl(45 93% 47%)",
     });
 
     return allTips.slice(0, 3);
@@ -97,16 +89,11 @@ const DailyHabitsCard = () => {
       </button>
 
       {expanded && (
-        <div className="space-y-3 mt-3.5 animate-fade-in-up">
+        <div className="space-y-2.5 mt-3.5 animate-fade-in-up">
           {tips.map((tip, i) => (
-            <div key={i} className="flex items-start gap-3">
-              <div
-                className="w-7 h-7 rounded-[10px] flex items-center justify-center shrink-0 mt-0.5"
-                style={{ background: `${tip.color}12` }}
-              >
-                <tip.icon className="w-[15px] h-[15px]" style={{ color: tip.color }} />
-              </div>
-              <p className="text-[13px] text-foreground/75 leading-relaxed">{tip.text}</p>
+            <div key={i} className="flex items-start gap-2.5">
+              <div className="w-1.5 h-1.5 rounded-full bg-primary/40 shrink-0 mt-[7px]" />
+              <p className="text-[13px] text-foreground/65 leading-relaxed">{tip.text}</p>
             </div>
           ))}
         </div>
