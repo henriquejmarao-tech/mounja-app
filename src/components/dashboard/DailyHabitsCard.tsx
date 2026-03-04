@@ -1,7 +1,8 @@
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
-import { Lightbulb, Droplets, Moon, Apple, Footprints, Wind } from "lucide-react";
-import { useMemo } from "react";
+import { Lightbulb, Droplets, Moon, Apple, Footprints, Wind, ChevronDown } from "lucide-react";
+import { useMemo, useState } from "react";
+import { cn } from "@/lib/utils";
 
 interface HabitTip {
   icon: typeof Lightbulb;
@@ -10,6 +11,7 @@ interface HabitTip {
 }
 
 const DailyHabitsCard = () => {
+  const [expanded, setExpanded] = useState(true);
   const { profile } = useAuth();
   const { dose, recentSymptoms } = useApplicationData();
 
@@ -82,28 +84,33 @@ const DailyHabitsCard = () => {
       className="rounded-[20px] p-4 animate-fade-in-up"
       style={{ animationDelay: "120ms", background: "#FFFFFF", boxShadow: "0 8px 24px rgba(17,24,39,0.08)" }}
     >
-      <div className="flex items-center gap-2 mb-3.5">
-        <div className="w-7 h-7 rounded-[10px] flex items-center justify-center" style={{ background: "hsl(var(--primary) / 0.08)" }}>
-          <Lightbulb className="w-[18px] h-[18px] text-primary" />
-        </div>
-        <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "rgba(17,24,39,0.55)" }}>
-          Dicas do dia
-        </h3>
-      </div>
-
-      <div className="space-y-3">
-        {tips.map((tip, i) => (
-          <div key={i} className="flex items-start gap-3">
-            <div
-              className="w-7 h-7 rounded-[10px] flex items-center justify-center shrink-0 mt-0.5"
-              style={{ background: `${tip.color}12` }}
-            >
-              <tip.icon className="w-[15px] h-[15px]" style={{ color: tip.color }} />
-            </div>
-            <p className="text-[13px] text-foreground/75 leading-relaxed">{tip.text}</p>
+      <button onClick={() => setExpanded(!expanded)} className="w-full flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-[10px] flex items-center justify-center" style={{ background: "hsl(var(--primary) / 0.08)" }}>
+            <Lightbulb className="w-[18px] h-[18px] text-primary" />
           </div>
-        ))}
-      </div>
+          <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "rgba(17,24,39,0.55)" }}>
+            Dicas do dia
+          </h3>
+        </div>
+        <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform duration-300", expanded && "rotate-180")} />
+      </button>
+
+      {expanded && (
+        <div className="space-y-3 mt-3.5 animate-fade-in-up">
+          {tips.map((tip, i) => (
+            <div key={i} className="flex items-start gap-3">
+              <div
+                className="w-7 h-7 rounded-[10px] flex items-center justify-center shrink-0 mt-0.5"
+                style={{ background: `${tip.color}12` }}
+              >
+                <tip.icon className="w-[15px] h-[15px]" style={{ color: tip.color }} />
+              </div>
+              <p className="text-[13px] text-foreground/75 leading-relaxed">{tip.text}</p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
