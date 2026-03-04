@@ -1,6 +1,6 @@
 import { Activity } from "lucide-react";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell } from "recharts";
 
 interface DailyScoreChartProps {
   logs: any[];
@@ -52,6 +52,12 @@ const computeDailyScore = (
   return Math.min(score, 100);
 };
 
+const getScoreColor = (score: number) => {
+  if (score <= 40) return "hsl(0, 60%, 55%)";
+  if (score <= 70) return "hsl(45, 93%, 47%)";
+  return "hsl(153, 46%, 34%)";
+};
+
 const DailyScoreChart = ({ logs, profile, lastInjectionDate, intervalDays }: DailyScoreChartProps) => {
   if (logs.length < 2) return null;
 
@@ -82,23 +88,20 @@ const DailyScoreChart = ({ logs, profile, lastInjectionDate, intervalDays }: Dai
 
       <ChartContainer config={chartConfig} className="h-[160px] w-full">
         <BarChart data={scoreData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
-          <defs>
-            <linearGradient id="scoreBarGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.85} />
-              <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
-            </linearGradient>
-          </defs>
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" opacity={0.5} />
           <XAxis dataKey="date" tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} tickLine={false} axisLine={false} />
           <YAxis tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} tickLine={false} axisLine={false} domain={[0, 100]} />
           <ChartTooltip content={<ChartTooltipContent />} />
           <Bar
             dataKey="score"
-            fill="url(#scoreBarGrad)"
             radius={[4, 4, 0, 0]}
             animationDuration={800}
             animationEasing="ease-out"
-          />
+          >
+            {scoreData.map((entry, index) => (
+              <Cell key={index} fill={getScoreColor(entry.score)} fillOpacity={0.8} />
+            ))}
+          </Bar>
         </BarChart>
       </ChartContainer>
     </div>
