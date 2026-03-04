@@ -194,7 +194,6 @@ const Dashboard = () => {
       {/* Sticky Header */}
       <header
         className="sticky top-0 z-30"
-        style={{ backgroundColor: "hsl(var(--primary))" }}
       >
         <div
           className="px-5 pb-16"
