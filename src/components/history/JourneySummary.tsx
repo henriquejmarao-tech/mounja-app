@@ -17,40 +17,37 @@ const JourneySummary = ({ initialWeight, currentWeight, totalLost, injectionCoun
     <div className="bg-card rounded-2xl p-5 shadow-card border border-border/50 animate-fade-in-up">
       <h2 className="font-bold text-sm text-foreground mb-4">Seu progresso</h2>
 
-      <div className="space-y-2.5">
-        <div className="flex items-center justify-between">
-          <span className="text-[13px] text-muted-foreground">Peso inicial</span>
-          <span className="text-[13px] font-semibold tabular-nums">{initialWeight ? `${initialWeight} kg` : "—"}</span>
-        </div>
-        <div className="flex items-center justify-between">
-          <span className="text-[13px] text-muted-foreground">Peso atual</span>
-          <span className="text-[13px] font-semibold tabular-nums">{currentWeight ? `${currentWeight} kg` : "—"}</span>
-        </div>
+      {/* Hero weight change */}
+      <div className="flex items-center justify-center gap-2 mb-4">
+        {isLoss && <ArrowDown className="w-5 h-5 text-primary" />}
+        {isGain && <ArrowUp className="w-5 h-5 text-destructive" />}
+        <span className={cn(
+          "text-3xl font-extrabold tabular-nums tracking-tight",
+          isLoss ? "text-primary" : isGain ? "text-destructive" : "text-muted-foreground"
+        )}>
+          {totalLost !== null ? `${totalLost > 0 ? "-" : "+"}${Math.abs(totalLost).toFixed(1)} kg` : "—"}
+        </span>
+      </div>
+      {pctChange && (
+        <p className={cn(
+          "text-xs text-center font-medium mb-4",
+          isLoss ? "text-primary/70" : "text-destructive/70"
+        )}>
+          {isLoss ? "-" : "+"}{Math.abs(Number(pctChange))}% do peso inicial
+        </p>
+      )}
 
-        <div className="h-px bg-border/60 my-1" />
+      <div className="h-px bg-border/60 mb-3" />
 
-        <div className="flex items-center justify-between">
-          <span className="text-[13px] text-muted-foreground">Variação</span>
-          <div className="flex items-center gap-1.5">
-            {isLoss && <ArrowDown className="w-3.5 h-3.5 text-primary" />}
-            {isGain && <ArrowUp className="w-3.5 h-3.5 text-destructive" />}
-            <span className={cn(
-              "text-base font-bold tabular-nums",
-              isLoss ? "text-primary" : isGain ? "text-destructive" : "text-muted-foreground"
-            )}>
-              {totalLost !== null ? `${totalLost > 0 ? "-" : "+"}${Math.abs(totalLost).toFixed(1)} kg` : "—"}
-            </span>
-          </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="text-center">
+          <p className="text-[11px] text-muted-foreground/70 font-medium mb-0.5">Peso inicial</p>
+          <p className="text-lg font-bold tabular-nums text-foreground">{initialWeight ? `${initialWeight}` : "—"}<span className="text-xs font-medium text-muted-foreground/50 ml-0.5">kg</span></p>
         </div>
-
-        {pctChange && (
-          <p className={cn(
-            "text-[11px] text-right font-medium",
-            isLoss ? "text-primary/70" : "text-destructive/70"
-          )}>
-            {isLoss ? "-" : "+"}{Math.abs(Number(pctChange))}% do peso inicial
-          </p>
-        )}
+        <div className="text-center">
+          <p className="text-[11px] text-muted-foreground/70 font-medium mb-0.5">Peso atual</p>
+          <p className="text-lg font-bold tabular-nums text-foreground">{currentWeight ? `${currentWeight}` : "—"}<span className="text-xs font-medium text-muted-foreground/50 ml-0.5">kg</span></p>
+        </div>
       </div>
     </div>
   );
