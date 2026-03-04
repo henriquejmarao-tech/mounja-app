@@ -10,9 +10,14 @@ const HistoryHeader = ({ showExport, onExport }: HistoryHeaderProps) => {
   const navigate = useNavigate();
 
   return (
-    <header className="relative overflow-hidden">
-      <div className="absolute inset-0 gradient-hero opacity-95" />
-      <div className="relative px-5 pb-6" style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 1.5rem)" }}>
+    <header className="sticky top-0 z-30">
+      <div
+        className="px-5 pb-6"
+        style={{
+          paddingTop: "calc(env(safe-area-inset-top, 0px) + 1rem)",
+          background: "linear-gradient(180deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.85) 40%, hsl(var(--primary) / 0.20) 70%, transparent 100%)",
+        }}
+      >
         <div className="flex items-center justify-between mb-4">
           <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-primary-foreground/80">
             <ArrowLeft className="w-5 h-5" />
