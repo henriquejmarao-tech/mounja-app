@@ -57,6 +57,7 @@ const Dashboard = () => {
   const [showWorkoutModal, setShowWorkoutModal] = useState(false);
   const [todayCheckedIn, setTodayCheckedIn] = useState(false);
   const [showProfileCard, setShowProfileCard] = useState(true);
+  const [showFoodCard, setShowFoodCard] = useState(true);
 
   useEffect(() => {
     if (!user) return;
@@ -309,24 +310,31 @@ const Dashboard = () => {
 
         {/* Block 2a: Alimentação */}
         <div data-tutorial="suggestion-card" className="rounded-[20px] p-4 animate-fade-in-up" style={{ animationDelay: "60ms", background: "#F7F8F7", boxShadow: "0 2px 6px rgba(0,0,0,0.04)" }}>
-          <div className="flex items-center gap-2 mb-3.5">
-            <div className="w-7 h-7 rounded-[10px] flex items-center justify-center" style={{ background: "hsl(174 42% 48% / 0.07)" }}>
-              <Utensils className="w-[18px] h-[18px]" style={{ color: "hsl(174 42% 48% / 0.7)" }} />
-            </div>
-            <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "rgba(17,24,39,0.55)" }}>Está com fome?</h3>
-          </div>
-
-          <button onClick={() => navigate("/nutricao")} className="w-full text-left group">
-            <div className="flex items-center gap-3 rounded-[16px] px-3.5 py-3.5 group-active:scale-[0.98] transition-all duration-200" style={{ background: "rgba(17,24,39,0.03)", boxShadow: "0 4px 12px rgba(17,24,39,0.06)" }}>
-              <div className="w-8 h-8 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: "hsl(174 42% 48% / 0.1)" }}>
-                <Utensils className="w-5 h-5" style={{ color: "hsl(174 42% 48%)" }} />
+          <button onClick={() => setShowFoodCard(!showFoodCard)} className="w-full flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-[10px] flex items-center justify-center" style={{ background: "hsl(174 42% 48% / 0.07)" }}>
+                <Utensils className="w-[18px] h-[18px]" style={{ color: "hsl(174 42% 48% / 0.7)" }} />
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm text-foreground/80">Ver sugestão de refeição</p>
-              </div>
-              <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+              <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "rgba(17,24,39,0.55)" }}>Está com fome?</h3>
             </div>
+            <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform duration-300", showFoodCard && "rotate-180")} />
           </button>
+
+          {showFoodCard && (
+            <div className="mt-3 animate-fade-in-up">
+              <button onClick={() => navigate("/nutricao")} className="w-full text-left group">
+                <div className="flex items-center gap-3 rounded-[16px] px-3.5 py-3.5 group-active:scale-[0.98] transition-all duration-200" style={{ background: "rgba(17,24,39,0.03)", boxShadow: "0 4px 12px rgba(17,24,39,0.06)" }}>
+                  <div className="w-8 h-8 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: "hsl(174 42% 48% / 0.1)" }}>
+                    <Utensils className="w-5 h-5" style={{ color: "hsl(174 42% 48%)" }} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-foreground/80">Ver sugestão de refeição</p>
+                  </div>
+                  <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                </div>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Block 2b: Treino - collapsible card */}
