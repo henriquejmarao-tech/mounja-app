@@ -176,9 +176,14 @@ const Nutrition = () => {
 
   return (
     <div className="min-h-screen bg-background pb-28">
-      <header className="relative overflow-hidden">
-        <div className="absolute inset-0 gradient-nutrition opacity-95" />
-        <div className="relative px-5 pb-6" style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 1.5rem)" }}>
+      <header className="sticky top-0 z-30">
+        <div
+          className="px-5 pb-6"
+          style={{
+            paddingTop: "calc(env(safe-area-inset-top, 0px) + 1rem)",
+            background: "linear-gradient(180deg, hsl(174, 42%, 48%) 0%, hsl(174, 42%, 48% / 0.85) 40%, hsl(174, 42%, 48% / 0.20) 70%, transparent 100%)",
+          }}
+        >
           <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-white/80 mb-4">
             <ArrowLeft className="w-5 h-5" />
             <span className="text-sm font-medium">Voltar</span>
