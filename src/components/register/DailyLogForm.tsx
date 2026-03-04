@@ -30,6 +30,7 @@ const DailyLogForm = () => {
   const [diarrhea, setDiarrhea] = useState(0);
   const [constipation, setConstipation] = useState(0);
   const [injPain, setInjPain] = useState(0);
+  const [otherSymptoms, setOtherSymptoms] = useState("");
 
   // Optional
   const [bodyFatPct, setBodyFatPct] = useState("");
@@ -38,20 +39,31 @@ const DailyLogForm = () => {
   const [foodQuality, setFoodQuality] = useState("");
   const [notes, setNotes] = useState("");
 
-  const renderSlider = (value: number, onChange: (v: number) => void, label: string, emoji: string) => (
-    <div className="mb-3">
-      <div className="flex items-center justify-between mb-1.5">
-        <div className="flex items-center gap-2">
-          <span className="text-xs">{emoji}</span>
-          <span className="text-xs font-medium">{label}</span>
-        </div>
-        <span className="text-xs font-bold text-primary">{value}/10</span>
+  const renderScale = (value: number, onChange: (v: number) => void, label: string, emoji: string) => (
+    <div className="mb-4">
+      <div className="flex items-center gap-2 mb-2">
+        <span className="text-sm">{emoji}</span>
+        <span className="text-xs font-semibold">{label}</span>
       </div>
-      <input
-        type="range" min="0" max="10" value={value}
-        onChange={(e) => onChange(parseInt(e.target.value))}
-        className="w-full h-2 bg-muted rounded-full appearance-none cursor-pointer accent-primary"
-      />
+      <div className="flex gap-1">
+        {Array.from({ length: 11 }, (_, i) => (
+          <button
+            key={i}
+            type="button"
+            onClick={() => onChange(i)}
+            className={cn(
+              "flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all duration-200 border",
+              value === i
+                ? "bg-primary text-primary-foreground border-primary shadow-sm scale-105"
+                : i <= value
+                  ? "bg-primary/15 text-primary border-primary/30"
+                  : "bg-muted/50 text-muted-foreground border-border hover:border-primary/30"
+            )}
+          >
+            {i}
+          </button>
+        ))}
+      </div>
     </div>
   );
 
@@ -75,7 +87,7 @@ const DailyLogForm = () => {
       appetite: 5, satiety: 5,
       water_ml: waterL ? Math.round(parseFloat(waterL) * 1000) : null,
       food_quality: foodQuality || null,
-      notes: notes || null,
+      notes: [notes, otherSymptoms].filter(Boolean).join(" | ") || null,
     } as any);
     if (error) toast.error(error.message);
     else { toast.success("Registro salvo! ✅"); navigate("/"); }
@@ -113,12 +125,26 @@ const DailyLogForm = () => {
       {/* Symptoms - now in main area */}
       <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50">
         <h3 className="font-semibold text-sm mb-3">Sintomas</h3>
-        {renderSlider(nausea, setNausea, "Náusea", "🤢")}
-        {renderSlider(fatigue, setFatigue, "Fadiga", "😴")}
-        {renderSlider(headache, setHeadache, "Dor de cabeça", "🤕")}
-        {renderSlider(diarrhea, setDiarrhea, "Diarreia", "💧")}
-        {renderSlider(constipation, setConstipation, "Constipação", "😣")}
-        {renderSlider(injPain, setInjPain, "Dor no local", "💉")}
+        {renderScale(nausea, setNausea, "Náusea", "🤢")}
+        {renderScale(fatigue, setFatigue, "Fadiga", "😴")}
+        {renderScale(headache, setHeadache, "Dor de cabeça", "🤕")}
+        {renderScale(diarrhea, setDiarrhea, "Diarreia", "💧")}
+        {renderScale(constipation, setConstipation, "Constipação", "😣")}
+        {renderScale(injPain, setInjPain, "Dor no local", "💉")}
+
+        <div className="mt-4 pt-3 border-t border-border/50">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-sm">✏️</span>
+            <span className="text-xs font-semibold">Outros</span>
+          </div>
+          <textarea
+            value={otherSymptoms}
+            onChange={(e) => setOtherSymptoms(e.target.value)}
+            placeholder="Descreva outros sintomas..."
+            rows={2}
+            className="w-full px-4 py-3 rounded-xl border border-border bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
+          />
+        </div>
       </div>
 
       {/* Food quality - main area */}
