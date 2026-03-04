@@ -313,10 +313,12 @@ const Dashboard = () => {
         )}
 
         {/* Block 2a: Alimentação */}
-        <div data-tutorial="suggestion-card" className="bg-card rounded-2xl p-4 shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: "60ms" }}>
-          <div className="flex items-center gap-2 mb-3">
-            <Utensils className="w-4 h-4 text-teal-700 dark:text-teal-300" />
-            <h3 className="font-semibold text-sm">Alimentação</h3>
+        <div data-tutorial="suggestion-card" className="bg-card rounded-2xl p-4 animate-fade-in-up" style={{ animationDelay: "60ms", boxShadow: "0 1px 4px -1px hsl(150 12% 18% / 0.04), 0 4px 16px -4px hsl(150 12% 18% / 0.06)" }}>
+          <div className="flex items-center gap-2 mb-3.5">
+            <div className="w-6 h-6 rounded-md flex items-center justify-center" style={{ background: "hsl(174 42% 48% / 0.1)" }}>
+              <Utensils className="w-3.5 h-3.5" style={{ color: "hsl(174 42% 48%)" }} />
+            </div>
+            <h3 className="font-semibold text-sm text-foreground">Alimentação</h3>
           </div>
 
           {savedDiet ? (
@@ -324,12 +326,12 @@ const Dashboard = () => {
               onClick={() => setShowDietModal(true)}
               className="w-full text-left group"
             >
-              <div className="flex items-center gap-3 bg-teal-600/10 dark:bg-teal-400/10 rounded-xl px-4 py-3.5 border border-teal-600/20 dark:border-teal-400/20 group-active:scale-[0.98] transition-all duration-200">
-                <div className="w-8 h-8 rounded-lg bg-teal-600/15 dark:bg-teal-400/15 flex items-center justify-center shrink-0">
-                  <Salad className="w-4 h-4 text-teal-700 dark:text-teal-300" />
+              <div className="flex items-center gap-3 rounded-xl px-3.5 py-3 group-active:scale-[0.98] transition-all duration-200" style={{ background: "hsl(var(--muted) / 0.35)" }}>
+                <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ background: "hsl(174 42% 48% / 0.1)" }}>
+                  <Salad className="w-3.5 h-3.5" style={{ color: "hsl(174 42% 48%)" }} />
                 </div>
-                <p className="text-xs font-semibold text-teal-700 dark:text-teal-300 flex-1">Sua dieta de hoje</p>
-                <ChevronRight className="w-4 h-4 text-teal-600/50 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                <p className="text-xs font-semibold text-foreground/75 flex-1">Sua dieta de hoje</p>
+                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/30 shrink-0 group-hover:translate-x-0.5 transition-transform" />
               </div>
             </button>
           ) : (
@@ -337,25 +339,27 @@ const Dashboard = () => {
               onClick={() => navigate("/nutricao")}
               className="w-full text-left group"
             >
-              <div className="flex items-center gap-3 bg-teal-600/15 dark:bg-teal-400/15 rounded-xl px-4 py-4 border border-teal-600/30 dark:border-teal-400/30 group-active:scale-[0.98] transition-all duration-200">
-                <div className="w-10 h-10 rounded-xl bg-teal-600/20 dark:bg-teal-400/20 flex items-center justify-center shrink-0">
-                  <Sparkles className="w-5 h-5 text-teal-700 dark:text-teal-300" />
+              <div className="flex items-center gap-3 rounded-xl px-3.5 py-3 group-active:scale-[0.98] transition-all duration-200" style={{ background: "hsl(var(--muted) / 0.35)" }}>
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: "hsl(174 42% 48% / 0.1)" }}>
+                  <Sparkles className="w-4 h-4" style={{ color: "hsl(174 42% 48%)" }} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-teal-700 dark:text-teal-300">Gerar dieta personalizada</p>
-                  <p className="text-[11px] text-teal-700/70 dark:text-teal-300/70 mt-0.5">Baseada no seu perfil e tratamento ✨</p>
+                  <p className="text-sm font-bold text-foreground/85">Gerar dieta personalizada</p>
+                  <p className="text-xs text-muted-foreground/60 mt-1">Baseada no seu perfil e tratamento ✨</p>
                 </div>
-                <ArrowRight className="w-4.5 h-4.5 text-teal-600/50 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/30 shrink-0 group-hover:translate-x-0.5 transition-transform" />
               </div>
             </button>
           )}
         </div>
 
         {/* Block 2b: Treino */}
-        <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: "90ms" }}>
-          <div className="flex items-center gap-2 mb-3">
-            <Flame className="w-4 h-4 text-orange-700 dark:text-orange-300" />
-            <h3 className="font-semibold text-sm">Treino recomendado</h3>
+        <div className="bg-card rounded-2xl p-4 animate-fade-in-up" style={{ animationDelay: "90ms", boxShadow: "0 1px 4px -1px hsl(150 12% 18% / 0.04), 0 4px 16px -4px hsl(150 12% 18% / 0.06)" }}>
+          <div className="flex items-center gap-2 mb-3.5">
+            <div className="w-6 h-6 rounded-md flex items-center justify-center" style={{ background: "hsl(25 80% 52% / 0.1)" }}>
+              <Flame className="w-3.5 h-3.5" style={{ color: "hsl(25 80% 52%)" }} />
+            </div>
+            <h3 className="font-semibold text-sm text-foreground">Treino recomendado</h3>
           </div>
 
           <WorkoutSuggestion

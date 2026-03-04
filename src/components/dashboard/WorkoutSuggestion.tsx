@@ -14,9 +14,9 @@ interface WorkoutSuggestionProps {
 export type Intensity = "light" | "moderate" | "intense";
 
 export const intensityConfig: Record<Intensity, { label: string; colorClass: string; dotClass: string }> = {
-  light: { label: "Leve", colorClass: "text-orange-700 dark:text-orange-300", dotClass: "bg-orange-600" },
-  moderate: { label: "Moderado", colorClass: "text-warning", dotClass: "bg-warning" },
-  intense: { label: "Intenso", colorClass: "text-destructive", dotClass: "bg-destructive" },
+  light: { label: "Leve", colorClass: "text-foreground/70", dotClass: "bg-orange-600" },
+  moderate: { label: "Moderado", colorClass: "text-foreground/70", dotClass: "bg-warning" },
+  intense: { label: "Intenso", colorClass: "text-foreground/70", dotClass: "bg-destructive" },
 };
 
 export const workoutExamples: Record<Intensity, string[]> = {
@@ -71,13 +71,13 @@ const WorkoutSuggestion = ({
 }: WorkoutSuggestionProps) => {
   if (todayWorkout) {
     return (
-      <div className="flex items-start gap-3 bg-orange-600/10 dark:bg-orange-400/10 rounded-xl px-4 py-3.5 border border-orange-600/20 dark:border-orange-400/20">
-        <div className="w-8 h-8 rounded-lg bg-orange-600/15 dark:bg-orange-400/15 flex items-center justify-center shrink-0">
-          <Check className="w-4 h-4 text-orange-700 dark:text-orange-300" />
+      <div className="flex items-start gap-3 rounded-xl px-3.5 py-3" style={{ background: "hsl(var(--muted) / 0.35)" }}>
+        <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ background: "hsl(25 80% 52% / 0.1)" }}>
+          <Check className="w-3.5 h-3.5" style={{ color: "hsl(25 80% 52%)" }} />
         </div>
         <div>
-          <p className="text-[10px] font-semibold text-orange-700 dark:text-orange-300 uppercase tracking-wide mb-0.5">Treino concluído</p>
-          <p className="text-xs text-foreground">
+          <p className="text-[10px] font-semibold text-foreground/60 uppercase tracking-wide mb-0.5">Treino concluído</p>
+          <p className="text-xs text-foreground/75">
             {todayWorkout.type} — {todayWorkout.duration} minutos
           </p>
         </div>
@@ -87,11 +87,11 @@ const WorkoutSuggestion = ({
 
   if (restDayDismissed) {
     return (
-      <div className="flex items-start gap-3 bg-orange-600/10 dark:bg-orange-400/10 rounded-xl px-4 py-3.5 border border-orange-600/20 dark:border-orange-400/20">
-        <div className="w-8 h-8 rounded-lg bg-orange-600/15 dark:bg-orange-400/15 flex items-center justify-center shrink-0">
-          <Moon className="w-4 h-4 text-orange-700 dark:text-orange-300" />
+      <div className="flex items-start gap-3 rounded-xl px-3.5 py-3" style={{ background: "hsl(var(--muted) / 0.35)" }}>
+        <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ background: "hsl(25 80% 52% / 0.1)" }}>
+          <Moon className="w-3.5 h-3.5" style={{ color: "hsl(25 80% 52%)" }} />
         </div>
-        <p className="text-xs text-foreground mt-1.5">Dia de descanso registrado. Descanse bem.</p>
+        <p className="text-xs text-foreground/70 mt-1.5">Dia de descanso registrado. Descanse bem.</p>
       </div>
     );
   }
@@ -101,18 +101,18 @@ const WorkoutSuggestion = ({
 
   return (
     <button onClick={onOpen} className="w-full text-left group">
-      <div className="flex items-start gap-3 bg-orange-600/10 dark:bg-orange-400/10 rounded-xl px-4 py-3.5 border border-orange-600/20 dark:border-orange-400/20 group-active:scale-[0.98] transition-all duration-200">
-        <div className="w-8 h-8 rounded-lg bg-orange-600/15 dark:bg-orange-400/15 flex items-center justify-center shrink-0">
-          <Dumbbell className="w-4 h-4 text-orange-700 dark:text-orange-300" />
+      <div className="flex items-start gap-3 rounded-xl px-3.5 py-3 group-active:scale-[0.98] transition-all duration-200" style={{ background: "hsl(var(--muted) / 0.35)" }}>
+        <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ background: "hsl(25 80% 52% / 0.1)" }}>
+          <Dumbbell className="w-3.5 h-3.5" style={{ color: "hsl(25 80% 52%)" }} />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-[10px] font-semibold text-orange-700 dark:text-orange-300 uppercase tracking-wide mb-0.5">{workoutType}</p>
-          <p className="text-xs text-foreground leading-relaxed">
-            <span className={cn("font-semibold", config.colorClass)}>{config.label}</span>
+          <p className="text-[10px] font-semibold text-foreground/55 uppercase tracking-wide mb-1">{workoutType}</p>
+          <p className="text-xs text-foreground/70 leading-relaxed">
+            <span className="font-semibold">{config.label}</span>
             {" · "}{duration} minutos
           </p>
         </div>
-        <ChevronRight className="w-4 h-4 text-orange-600/50 shrink-0 mt-2 group-hover:translate-x-0.5 transition-transform" />
+        <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/30 shrink-0 mt-2 group-hover:translate-x-0.5 transition-transform" />
       </div>
     </button>
   );
