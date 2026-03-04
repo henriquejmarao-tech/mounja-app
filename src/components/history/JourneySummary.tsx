@@ -1,4 +1,4 @@
-import { TrendingDown, TrendingUp, Minus } from "lucide-react";
+import { ArrowDown, ArrowUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface JourneySummaryProps {
@@ -15,34 +15,42 @@ const JourneySummary = ({ initialWeight, currentWeight, totalLost, injectionCoun
 
   return (
     <div className="bg-card rounded-2xl p-5 shadow-card border border-border/50 animate-fade-in-up">
-      <div className="flex items-center gap-2 mb-4">
-        <div className="w-2 h-2 rounded-full bg-primary" />
-        <h2 className="font-bold text-xs uppercase tracking-widest text-muted-foreground">Resumo do período</h2>
-      </div>
-      <div className="grid grid-cols-2 gap-3">
-        <div className="bg-muted/40 rounded-xl p-3">
-          <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide mb-1">Peso inicial</p>
-          <p className="text-lg font-bold tabular-nums">{initialWeight ? `${initialWeight} kg` : "—"}</p>
+      <h2 className="font-bold text-sm text-foreground mb-4">Seu progresso</h2>
+
+      <div className="space-y-2.5">
+        <div className="flex items-center justify-between">
+          <span className="text-[13px] text-muted-foreground">Peso inicial</span>
+          <span className="text-[13px] font-semibold tabular-nums">{initialWeight ? `${initialWeight} kg` : "—"}</span>
         </div>
-        <div className="bg-muted/40 rounded-xl p-3">
-          <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide mb-1">Peso atual</p>
-          <p className="text-lg font-bold tabular-nums">{currentWeight ? `${currentWeight} kg` : "—"}</p>
+        <div className="flex items-center justify-between">
+          <span className="text-[13px] text-muted-foreground">Peso atual</span>
+          <span className="text-[13px] font-semibold tabular-nums">{currentWeight ? `${currentWeight} kg` : "—"}</span>
         </div>
-        <div className={cn("rounded-xl p-3", isLoss ? "bg-primary/8" : isGain ? "bg-destructive/8" : "bg-muted/40")}>
-          <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide mb-1">Variação</p>
+
+        <div className="h-px bg-border/60 my-1" />
+
+        <div className="flex items-center justify-between">
+          <span className="text-[13px] text-muted-foreground">Variação</span>
           <div className="flex items-center gap-1.5">
-            {isLoss ? <TrendingDown className="w-3.5 h-3.5 text-primary" /> : isGain ? <TrendingUp className="w-3.5 h-3.5 text-destructive" /> : <Minus className="w-3.5 h-3.5 text-muted-foreground" />}
-            <p className={cn("text-lg font-bold tabular-nums", isLoss ? "text-primary" : isGain ? "text-destructive" : "")}>
+            {isLoss && <ArrowDown className="w-3.5 h-3.5 text-primary" />}
+            {isGain && <ArrowUp className="w-3.5 h-3.5 text-destructive" />}
+            <span className={cn(
+              "text-base font-bold tabular-nums",
+              isLoss ? "text-primary" : isGain ? "text-destructive" : "text-muted-foreground"
+            )}>
               {totalLost !== null ? `${totalLost > 0 ? "-" : "+"}${Math.abs(totalLost).toFixed(1)} kg` : "—"}
-            </p>
+            </span>
           </div>
-          {pctChange && <p className="text-[10px] text-muted-foreground mt-0.5">{isLoss ? "-" : "+"}{Math.abs(Number(pctChange))}% do peso inicial</p>}
         </div>
-        <div className="bg-muted/40 rounded-xl p-3">
-          <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide mb-1">Aplicações</p>
-          <p className="text-lg font-bold tabular-nums">{injectionCount}</p>
-          <p className="text-[10px] text-muted-foreground mt-0.5">no período</p>
-        </div>
+
+        {pctChange && (
+          <p className={cn(
+            "text-[11px] text-right font-medium",
+            isLoss ? "text-primary/70" : "text-destructive/70"
+          )}>
+            {isLoss ? "-" : "+"}{Math.abs(Number(pctChange))}% do peso inicial
+          </p>
+        )}
       </div>
     </div>
   );

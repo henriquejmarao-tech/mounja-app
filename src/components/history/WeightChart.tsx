@@ -1,13 +1,28 @@
 import { Scale } from "lucide-react";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid } from "recharts";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Dot } from "recharts";
 
 interface WeightChartProps {
   weightData: { date: string; peso: number }[];
 }
 
 const chartConfig = {
-  peso: { label: "Peso (kg)", color: "hsl(162, 38%, 40%)" },
+  peso: { label: "Peso (kg)", color: "hsl(var(--primary))" },
+};
+
+const CustomDot = (props: any) => {
+  const { cx, cy, index, payload } = props;
+  const isLast = index === props.dataLength - 1;
+  return (
+    <Dot
+      cx={cx}
+      cy={cy}
+      r={isLast ? 5 : 3}
+      fill="hsl(var(--primary))"
+      stroke="white"
+      strokeWidth={isLast ? 3 : 2}
+    />
+  );
 };
 
 const WeightChart = ({ weightData }: WeightChartProps) => {
@@ -16,21 +31,30 @@ const WeightChart = ({ weightData }: WeightChartProps) => {
   return (
     <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: "120ms" }}>
       <h3 className="font-bold text-sm mb-3 flex items-center gap-2">
-        <Scale className="w-4 h-4 text-primary" /> Evolução do Peso
+        <Scale className="w-4 h-4 text-primary" /> Evolução do peso
       </h3>
-      <ChartContainer config={chartConfig} className="h-[160px] w-full">
+      <ChartContainer config={chartConfig} className="h-[180px] w-full">
         <AreaChart data={weightData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
           <defs>
             <linearGradient id="weightGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="hsl(162, 38%, 40%)" stopOpacity={0.2} />
-              <stop offset="95%" stopColor="hsl(162, 38%, 40%)" stopOpacity={0} />
+              <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.25} />
+              <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(200, 12%, 90%)" />
-          <XAxis dataKey="date" tick={{ fontSize: 10 }} tickLine={false} axisLine={false} />
-          <YAxis tick={{ fontSize: 10 }} tickLine={false} axisLine={false} domain={["dataMin - 1", "dataMax + 1"]} />
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" opacity={0.5} />
+          <XAxis dataKey="date" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} tickLine={false} axisLine={false} />
+          <YAxis tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} tickLine={false} axisLine={false} domain={["dataMin - 1", "dataMax + 1"]} />
           <ChartTooltip content={<ChartTooltipContent />} />
-          <Area type="monotone" dataKey="peso" stroke="hsl(162, 38%, 40%)" strokeWidth={2.5} fill="url(#weightGrad)" dot={{ r: 3, fill: "hsl(162, 38%, 40%)", stroke: "white", strokeWidth: 2 }} />
+          <Area
+            type="monotone"
+            dataKey="peso"
+            stroke="hsl(var(--primary))"
+            strokeWidth={2.5}
+            fill="url(#weightGrad)"
+            dot={(props: any) => <CustomDot {...props} dataLength={weightData.length} />}
+            animationDuration={1200}
+            animationEasing="ease-out"
+          />
         </AreaChart>
       </ChartContainer>
     </div>
