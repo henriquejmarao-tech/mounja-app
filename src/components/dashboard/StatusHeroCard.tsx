@@ -5,10 +5,9 @@ interface StatusHeroCardProps {
   streak: number;
   currentDose: string | null;
   latestWeight: number | null;
-  daysUntilNext: number | null;
 }
 
-const StatusHeroCard = ({ streak, currentDose, latestWeight, daysUntilNext }: StatusHeroCardProps) => {
+const StatusHeroCard = ({ streak, currentDose, latestWeight }: StatusHeroCardProps) => {
   const maxStreak = 30;
   const progress = Math.min(streak / maxStreak, 1);
   const radius = 52;
@@ -132,21 +131,6 @@ const StatusHeroCard = ({ streak, currentDose, latestWeight, daysUntilNext }: St
         </div>
       </div>
 
-      {/* Next application mini badge */}
-      {daysUntilNext !== null && (
-        <div className="mt-4 flex items-center justify-center">
-          <div className="inline-flex items-center gap-1.5 bg-primary/8 rounded-full px-3 py-1.5 border border-primary/15">
-            <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse-soft" />
-            <span className="text-[11px] font-semibold text-primary">
-              {daysUntilNext === 0
-                ? "Aplicação hoje"
-                : daysUntilNext === 1
-                ? "Aplicação amanhã"
-                : `Próxima aplicação em ${daysUntilNext} dias`}
-            </span>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
