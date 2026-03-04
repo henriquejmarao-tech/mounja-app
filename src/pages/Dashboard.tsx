@@ -190,10 +190,17 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-background pb-28">
-      {/* Header */}
-      <header className="relative overflow-hidden">
-        <div className="absolute inset-0 gradient-hero opacity-90" />
-        <div className="relative px-5 pb-6" style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 2rem)" }}>
+      {/* Sticky Header */}
+      <header
+        className="sticky top-0 z-30"
+        style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}
+      >
+        <div
+          className="px-5 pt-4 pb-10"
+          style={{
+            background: "linear-gradient(180deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.7) 40%, hsl(var(--primary) / 0.25) 70%, transparent 100%)",
+          }}
+        >
           <div className="flex items-center justify-between">
             <button
               onClick={() => navigate("/perfil")}
@@ -214,7 +221,7 @@ const Dashboard = () => {
         </div>
       </header>
 
-      <div className="px-5 -mt-3 space-y-4 relative z-10">
+      <div className="px-5 -mt-8 space-y-4 relative z-10">
         {/* Status Hero Card — always first */}
         <StatusHeroCard
           streak={streak}
