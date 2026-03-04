@@ -38,7 +38,7 @@ const StatusHeroCard = ({ dailyScore, scoreFactors, currentDose, latestWeight }:
   return (
     <div
       data-tutorial="dose-card"
-      className="relative rounded-[20px] p-5 animate-fade-in-up overflow-hidden z-20"
+      className="relative rounded-[20px] p-5 animate-fade-in-up z-20"
       style={{
         background: "#FFFFFF",
         boxShadow: "0 12px 30px rgba(0,0,0,0.10)",
@@ -46,12 +46,13 @@ const StatusHeroCard = ({ dailyScore, scoreFactors, currentDose, latestWeight }:
     >
       {/* Info button — top right */}
       <button
-        onClick={() => setShowInfo(!showInfo)}
-        className="absolute top-3 right-3 z-30 w-6 h-6 rounded-full flex items-center justify-center transition-colors"
-        style={{ background: "rgba(0,0,0,0.04)" }}
+        onClick={() => setShowInfo(prev => !prev)}
+        className="absolute top-3 right-3 z-30 w-8 h-8 rounded-full flex items-center justify-center transition-all active:scale-90"
+        style={{ background: showInfo ? "hsl(var(--primary) / 0.12)" : "rgba(0,0,0,0.04)" }}
         aria-label="Sobre o score"
+        type="button"
       >
-        {showInfo ? <X className="w-3 h-3 text-muted-foreground/50" /> : <Info className="w-3 h-3 text-muted-foreground/35" />}
+        {showInfo ? <X className="w-3.5 h-3.5 text-primary" /> : <Info className="w-3.5 h-3.5 text-muted-foreground/50" />}
       </button>
 
 
