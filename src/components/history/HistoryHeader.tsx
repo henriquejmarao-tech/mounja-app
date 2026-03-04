@@ -8,7 +8,7 @@ const HistoryHeader = () => {
           background: "linear-gradient(180deg, hsl(var(--primary)) 0%, hsl(var(--primary)) 40%, hsl(var(--primary) / 0.5) 70%, transparent 100%)",
         }}
       >
-        <h1 className="text-[11px] font-bold text-primary-foreground/80 uppercase tracking-[0.15em]">Seu Progresso</h1>
+        <h1 className="text-[11px] font-bold text-primary-foreground/80 uppercase tracking-[0.15em] text-center">Seu Progresso</h1>
       </div>
     </header>
   );

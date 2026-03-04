@@ -48,7 +48,7 @@ const Community = () => {
           }}
         >
           <div className="flex items-center justify-center mb-4">
-            <h1 className="text-[11px] font-bold text-primary-foreground/80 uppercase tracking-[0.15em]">Comunidade</h1>
+            <h1 className="text-[11px] font-bold text-primary-foreground/80 uppercase tracking-[0.15em] text-center">Comunidade</h1>
           </div>
         </div>
       </header>
