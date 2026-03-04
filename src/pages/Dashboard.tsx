@@ -303,7 +303,7 @@ const Dashboard = () => {
         )}
 
         {/* Block 2a: Alimentação */}
-        <div data-tutorial="suggestion-card" className="rounded-[20px] p-4 animate-fade-in-up" style={{ animationDelay: "60ms", background: "#FFFFFF", boxShadow: "0 8px 24px rgba(17,24,39,0.08)" }}>
+        <div data-tutorial="suggestion-card" className="rounded-[20px] p-4 animate-fade-in-up" style={{ animationDelay: "60ms", background: "#F7F8F7", boxShadow: "0 2px 6px rgba(0,0,0,0.04)" }}>
           <div className="flex items-center gap-2 mb-3.5">
             <div className="w-7 h-7 rounded-[10px] flex items-center justify-center" style={{ background: "hsl(174 42% 48% / 0.1)" }}>
               <Utensils className="w-[18px] h-[18px]" style={{ color: "hsl(174 42% 48%)" }} />
@@ -338,7 +338,7 @@ const Dashboard = () => {
         </div>
 
         {/* Block 2b: Treino */}
-        <div className="rounded-[20px] p-4 animate-fade-in-up" style={{ animationDelay: "90ms", background: "#FFFFFF", boxShadow: "0 8px 24px rgba(17,24,39,0.08)" }}>
+        <div className="rounded-[20px] p-4 animate-fade-in-up" style={{ animationDelay: "90ms", background: "#F7F8F7", boxShadow: "0 2px 6px rgba(0,0,0,0.04)" }}>
           <div className="flex items-center gap-2 mb-3.5">
             <div className="w-7 h-7 rounded-[10px] flex items-center justify-center" style={{ background: "hsl(25 80% 52% / 0.1)" }}>
               <Flame className="w-[18px] h-[18px]" style={{ color: "hsl(25 80% 52%)" }} />
@@ -360,7 +360,7 @@ const Dashboard = () => {
 
         {/* Block 4: Insight */}
         {insight && (
-          <div className="rounded-[20px] p-4 animate-fade-in-up flex items-center gap-3" style={{ animationDelay: "240ms", background: "#FFFFFF", boxShadow: "0 8px 24px rgba(17,24,39,0.08)" }}>
+          <div className="rounded-[20px] p-4 animate-fade-in-up flex items-center gap-3" style={{ animationDelay: "240ms", background: "#F7F8F7", boxShadow: "0 2px 6px rgba(0,0,0,0.04)" }}>
             <div className="w-8 h-8 rounded-[12px] bg-primary/10 flex items-center justify-center shrink-0">
               <Sparkles className="w-[18px] h-[18px] text-primary" />
             </div>

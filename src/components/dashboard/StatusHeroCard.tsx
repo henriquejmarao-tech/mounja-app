@@ -106,7 +106,7 @@ const StatusHeroCard = ({ streak, currentDose, latestWeight }: StatusHeroCardPro
               </defs>
             </svg>
             <div className="flex flex-col items-center z-10">
-              <span className="text-[3.25rem] font-extrabold text-foreground tabular-nums leading-none">
+              <span className="text-[3.5rem] font-extrabold text-foreground tabular-nums leading-none">
                 {streak}
               </span>
               <span className="text-[11px] font-bold text-primary mt-1 uppercase tracking-widest">
