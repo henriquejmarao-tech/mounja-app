@@ -1,4 +1,4 @@
-import { Sparkles, TrendingDown, AlertTriangle } from "lucide-react";
+import { TrendingDown, AlertTriangle, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface Insight {
@@ -9,17 +9,17 @@ export interface Insight {
 
 const getInsightIcon = (type: string) => {
   switch (type) {
-    case "positive": return <TrendingDown className="w-4 h-4 text-primary" />;
-    case "warning": return <AlertTriangle className="w-4 h-4 text-warning" />;
-    default: return <Sparkles className="w-4 h-4 text-info" />;
+    case "positive": return <TrendingDown className="w-3.5 h-3.5 text-primary" />;
+    case "warning": return <AlertTriangle className="w-3.5 h-3.5 text-warning" />;
+    default: return <Info className="w-3.5 h-3.5 text-muted-foreground" />;
   }
 };
 
-const getInsightBg = (type: string) => {
+const getInsightBorder = (type: string) => {
   switch (type) {
-    case "positive": return "border-primary/15 bg-primary/5";
-    case "warning": return "border-warning/15 bg-warning/5";
-    default: return "border-info/15 bg-info/5";
+    case "positive": return "border-l-primary";
+    case "warning": return "border-l-warning";
+    default: return "border-l-muted-foreground";
   }
 };
 
@@ -33,17 +33,17 @@ const InsightsList = ({ insights }: InsightsListProps) => {
   return (
     <div className="animate-fade-in-up" style={{ animationDelay: "300ms" }}>
       <div className="flex items-center gap-2 mb-3">
-        <Sparkles className="w-4 h-4 text-primary" />
-        <h3 className="font-bold text-sm">O que seus dados mostram</h3>
+        <div className="w-2 h-2 rounded-full bg-primary" />
+        <h3 className="font-bold text-xs uppercase tracking-widest text-muted-foreground">Padrões identificados</h3>
       </div>
-      <div className="space-y-3">
+      <div className="space-y-2">
         {insights.map((insight, i) => (
-          <div key={i} className={cn("rounded-2xl p-4 border shadow-card", getInsightBg(insight.type))}>
-            <div className="flex items-center gap-2 mb-1.5">
+          <div key={i} className={cn("bg-card rounded-xl p-3.5 border border-border/50 border-l-[3px] shadow-sm", getInsightBorder(insight.type))}>
+            <div className="flex items-center gap-2 mb-1">
               {getInsightIcon(insight.type)}
-              <h4 className="font-semibold text-sm">{insight.title}</h4>
+              <h4 className="font-semibold text-xs">{insight.title}</h4>
             </div>
-            <p className="text-xs text-muted-foreground leading-relaxed">{insight.description}</p>
+            <p className="text-[12px] text-muted-foreground leading-relaxed ml-5.5">{insight.description}</p>
           </div>
         ))}
       </div>

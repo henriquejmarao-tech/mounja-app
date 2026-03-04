@@ -1,4 +1,4 @@
-import { BookOpen } from "lucide-react";
+import { FileText } from "lucide-react";
 
 interface WeeklyNarrativeProps {
   thisWeekLogs: any[];
@@ -30,11 +30,11 @@ const WeeklyNarrative = ({ thisWeekLogs, lastWeekLogs, workouts, injections }: W
     const lastAvg = lastWeights.reduce((a: number, b: number) => a + b, 0) / lastWeights.length;
     const diff = thisAvg - lastAvg;
     if (diff < -0.3) {
-      narratives.push(`Seu peso caiu em média ${Math.abs(diff).toFixed(1)} kg essa semana. A tendência está positiva!`);
+      narratives.push(`Redução de ${Math.abs(diff).toFixed(1)} kg na média semanal. Tendência favorável.`);
     } else if (diff > 0.5) {
-      narratives.push(`Seu peso subiu levemente (${diff.toFixed(1)} kg vs semana passada). Pode ser retenção — observe nos próximos dias.`);
+      narratives.push(`Aumento de ${diff.toFixed(1)} kg na média semanal. Pode indicar retenção — monitorar nos próximos dias.`);
     } else {
-      narratives.push("Seu peso se manteve estável essa semana.");
+      narratives.push("Peso estável em relação à semana anterior.");
     }
   }
 
@@ -43,14 +43,14 @@ const WeeklyNarrative = ({ thisWeekLogs, lastWeekLogs, workouts, injections }: W
     const totalMin = thisWeekWorkouts.reduce((s: number, w: any) => s + (w.duration_minutes || 0), 0);
     const comparison = lastWeekWorkouts.length > 0
       ? thisWeekWorkouts.length > lastWeekWorkouts.length
-        ? " — mais que na semana passada! 💪"
+        ? " — frequência superior à semana anterior."
         : thisWeekWorkouts.length < lastWeekWorkouts.length
-          ? " — um pouco menos que na semana passada."
-          : " — manteve o ritmo!"
+          ? " — frequência inferior à semana anterior."
+          : " — frequência mantida."
       : ".";
-    narratives.push(`Você treinou ${thisWeekWorkouts.length}x essa semana (${totalMin} min)${comparison}`);
+    narratives.push(`${thisWeekWorkouts.length} treino(s) registrado(s) (${totalMin} min total)${comparison}`);
   } else if (lastWeekWorkouts.length > 0) {
-    narratives.push("Essa semana não houve treinos registrados. Que tal retomar com algo leve?");
+    narratives.push("Nenhum treino registrado nesta semana. Considere retomar com atividade leve.");
   }
 
   // Symptom narrative
@@ -62,9 +62,9 @@ const WeeklyNarrative = ({ thisWeekLogs, lastWeekLogs, workouts, injections }: W
   const lastS = avgSx(lastWeekLogs);
   if (thisS !== null && lastS !== null) {
     if (thisS < lastS - 0.5) {
-      narratives.push("Os sintomas diminuíram em comparação à semana passada. Seu corpo parece estar se adaptando ✨");
+      narratives.push("Sintomas com tendência de redução comparado ao período anterior. Possível adaptação ao tratamento.");
     } else if (thisS > lastS + 0.5) {
-      narratives.push("Os sintomas estão mais intensos essa semana. Aumente a hidratação e prefira refeições leves.");
+      narratives.push("Sintomas mais intensos nesta semana. Recomenda-se aumentar hidratação e priorizar refeições leves.");
     }
   }
 
@@ -76,7 +76,7 @@ const WeeklyNarrative = ({ thisWeekLogs, lastWeekLogs, workouts, injections }: W
   if (recentInj) {
     const daysSince = Math.round((now.getTime() - new Date(recentInj.date).getTime()) / 86400000);
     if (daysSince <= 1) {
-      narratives.push(`Aplicação recente (${recentInj.dose}). É normal sentir mais sintomas nas próximas 48h.`);
+      narratives.push(`Aplicação recente (${recentInj.dose}). Sintomas podem se intensificar nas próximas 48h — esperado.`);
     }
   }
 
@@ -85,9 +85,9 @@ const WeeklyNarrative = ({ thisWeekLogs, lastWeekLogs, workouts, injections }: W
   if (waterLogs.length > 0) {
     const avgW = waterLogs.reduce((s: number, l: any) => s + l.water_ml, 0) / waterLogs.length;
     if (avgW < 1500) {
-      narratives.push(`Sua média de água está em ${Math.round(avgW)}ml/dia. Tentar chegar a 2L pode ajudar com os sintomas.`);
+      narratives.push(`Média de hidratação em ${Math.round(avgW)}ml/dia. Valor abaixo do recomendado (2.000ml).`);
     } else if (avgW >= 2000) {
-      narratives.push("Boa hidratação essa semana! 💧 Isso ajuda a minimizar efeitos colaterais.");
+      narratives.push("Hidratação adequada nesta semana. Fator positivo para redução de efeitos colaterais.");
     }
   }
 
@@ -96,19 +96,15 @@ const WeeklyNarrative = ({ thisWeekLogs, lastWeekLogs, workouts, injections }: W
   return (
     <div className="bg-card rounded-2xl p-5 shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: "260ms" }}>
       <div className="flex items-center gap-2 mb-4">
-        <div className="w-8 h-8 rounded-lg gradient-hero flex items-center justify-center">
-          <BookOpen className="w-4 h-4 text-primary-foreground" />
-        </div>
-        <div>
-          <h2 className="font-bold text-sm">Narrativa da Semana</h2>
-          <p className="text-[10px] text-muted-foreground">Conectando seus hábitos e resultados</p>
-        </div>
+        <div className="w-2 h-2 rounded-full bg-primary" />
+        <h2 className="font-bold text-xs uppercase tracking-widest text-muted-foreground">Análise semanal</h2>
       </div>
-      <div className="space-y-3">
+      <div className="space-y-2.5">
         {narratives.map((text, i) => (
-          <p key={i} className="text-sm text-muted-foreground leading-relaxed">
-            {text}
-          </p>
+          <div key={i} className="flex gap-2.5">
+            <div className="w-1 rounded-full bg-border shrink-0 mt-1" style={{ minHeight: "12px" }} />
+            <p className="text-[13px] text-foreground/80 leading-relaxed">{text}</p>
+          </div>
         ))}
       </div>
     </div>
