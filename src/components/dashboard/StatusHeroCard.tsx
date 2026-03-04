@@ -12,7 +12,7 @@ const StatusHeroCard = ({ streak, currentDose, latestWeight, daysUntilNext }: St
   const maxStreak = 30;
   const progress = Math.min(streak / maxStreak, 1);
   const radius = 52;
-  const strokeWidth = 8;
+  const strokeWidth = 10;
   const circumference = 2 * Math.PI * radius;
   const targetOffset = circumference * (1 - progress);
 
@@ -33,9 +33,11 @@ const StatusHeroCard = ({ streak, currentDose, latestWeight, daysUntilNext }: St
   return (
     <div
       data-tutorial="dose-card"
-      className="relative rounded-2xl p-5 shadow-elevated border border-border/40 animate-fade-in-up overflow-hidden"
+      className="relative rounded-2xl p-5 animate-fade-in-up overflow-hidden"
       style={{
         background: "linear-gradient(145deg, hsl(var(--card)) 0%, hsl(var(--accent)) 100%)",
+        boxShadow: "0 2px 8px -2px hsl(150 12% 18% / 0.06), 0 16px 48px -8px hsl(143 22% 55% / 0.12)",
+        border: "1px solid hsl(var(--border) / 0.5)",
       }}
     >
       {/* Central glow behind streak */}
@@ -48,15 +50,15 @@ const StatusHeroCard = ({ streak, currentDose, latestWeight, daysUntilNext }: St
       />
 
       <div className="relative flex items-center justify-between gap-1">
-        {/* Left: Dose — reduced weight */}
+        {/* Left: Dose — tertiary weight */}
         <div className="flex-1 flex flex-col items-center text-center gap-1">
-          <div className="w-8 h-8 rounded-lg bg-primary/8 flex items-center justify-center">
-            <Pill className="w-3.5 h-3.5 text-primary/70" />
+          <div className="w-7 h-7 rounded-lg bg-primary/6 flex items-center justify-center">
+            <Pill className="w-3 h-3 text-primary/50" />
           </div>
-          <p className="text-sm font-semibold text-foreground/70 tabular-nums leading-tight">
+          <p className="text-xs font-semibold text-foreground/55 tabular-nums leading-tight">
             {currentDose || "—"}
           </p>
-          <p className="text-[10px] text-muted-foreground/70 font-medium leading-tight">Dose atual</p>
+          <p className="text-[10px] text-muted-foreground/55 font-medium leading-tight">Dose atual</p>
         </div>
 
         {/* Center: Streak with animated ring */}
@@ -106,7 +108,7 @@ const StatusHeroCard = ({ streak, currentDose, latestWeight, daysUntilNext }: St
               </defs>
             </svg>
             <div className="flex flex-col items-center z-10">
-              <span className="text-5xl font-extrabold text-foreground tabular-nums leading-none">
+              <span className="text-[3.25rem] font-extrabold text-foreground tabular-nums leading-none">
                 {streak}
               </span>
               <span className="text-[11px] font-bold text-primary mt-1 uppercase tracking-widest">
@@ -117,16 +119,16 @@ const StatusHeroCard = ({ streak, currentDose, latestWeight, daysUntilNext }: St
           <p className="text-[11px] text-muted-foreground font-medium -mt-0.5">Sequência ativa</p>
         </div>
 
-        {/* Right: Weight — reduced weight */}
+        {/* Right: Weight — tertiary weight */}
         <div className="flex-1 flex flex-col items-center text-center gap-1">
-          <div className="w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center">
-            <Weight className="w-3.5 h-3.5 text-muted-foreground/60" />
+          <div className="w-7 h-7 rounded-lg bg-muted/40 flex items-center justify-center">
+            <Weight className="w-3 h-3 text-muted-foreground/45" />
           </div>
-          <p className="text-sm font-semibold text-foreground/70 tabular-nums leading-tight">
+          <p className="text-xs font-semibold text-foreground/55 tabular-nums leading-tight">
             {latestWeight ? `${latestWeight}` : "—"}
-            {latestWeight && <span className="text-[10px] font-medium text-muted-foreground/60 ml-0.5">kg</span>}
+            {latestWeight && <span className="text-[10px] font-medium text-muted-foreground/45 ml-0.5">kg</span>}
           </p>
-          <p className="text-[10px] text-muted-foreground/70 font-medium leading-tight">Peso atual</p>
+          <p className="text-[10px] text-muted-foreground/55 font-medium leading-tight">Peso atual</p>
         </div>
       </div>
 
