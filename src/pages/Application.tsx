@@ -87,34 +87,8 @@ const Application = () => {
           </div>
         </div>
 
-        {/* Application history */}
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-bold text-sm tracking-tight">Histórico</h3>
-            <button className="text-xs text-primary font-semibold">Ver tudo</button>
-          </div>
-          <div className="space-y-2">
-            {applicationHistory.map((app, i) => (
-              <div
-                key={i}
-                className="flex items-center gap-3 bg-card rounded-2xl p-3.5 shadow-card border border-border/50"
-              >
-                <div className="w-10 h-10 rounded-xl bg-sage-light flex items-center justify-center">
-                  <Calendar className="w-5 h-5 text-primary" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-sm">{app.date}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {app.site} · {app.dose}
-                  </p>
-                </div>
-                <div className="w-7 h-7 rounded-full bg-success/10 flex items-center justify-center">
-                  <Check className="w-3.5 h-3.5 text-success" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+
+
 
         {/* Educational content */}
         <div>
