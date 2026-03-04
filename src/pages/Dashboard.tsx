@@ -189,39 +189,39 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-28">
-      {/* Sticky Header */}
+    <div className="min-h-screen pb-28" style={{ background: "hsl(145 12% 95%)" }}>
+      {/* Sticky Header with smooth gradient */}
       <header
         className="sticky top-0 z-30"
         style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}
       >
         <div
-          className="px-5 pt-4 pb-10"
+          className="px-5 pt-4 pb-14"
           style={{
-            background: "linear-gradient(180deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.7) 40%, hsl(var(--primary) / 0.25) 70%, transparent 100%)",
+            background: "linear-gradient(180deg, hsl(var(--primary) / 0.92) 0%, hsl(var(--primary) / 0.6) 30%, hsl(var(--primary) / 0.25) 60%, hsl(var(--primary) / 0.08) 80%, transparent 100%)",
           }}
         >
           <div className="flex items-center justify-between">
             <button
               onClick={() => navigate("/perfil")}
-              className="w-10 h-10 rounded-full bg-primary-foreground/15 backdrop-blur-sm flex items-center justify-center border border-primary-foreground/10 text-primary-foreground font-bold text-sm"
+              className="w-10 h-10 rounded-full bg-primary-foreground/20 backdrop-blur-md flex items-center justify-center border border-primary-foreground/10 text-primary-foreground font-bold text-sm"
             >
               {((profile as any)?.username?.[0] || profile?.name?.[0] || "U").toUpperCase()}
             </button>
-            <div className="text-right">
-              <p className="text-sm text-primary-foreground/80 font-medium">{firstName}, bom te ver 🌿</p>
+            <div className="text-center">
+              <p className="text-sm text-primary-foreground/85 font-medium">{firstName}, bom te ver 🌿</p>
             </div>
             <button
               onClick={() => navigate("/configuracoes")}
-              className="w-10 h-10 rounded-full bg-primary-foreground/15 backdrop-blur-sm flex items-center justify-center border border-primary-foreground/10"
+              className="w-10 h-10 rounded-full bg-primary-foreground/20 backdrop-blur-md flex items-center justify-center border border-primary-foreground/10"
             >
-              <Settings className="w-5 h-5 text-primary-foreground" />
+              <Settings className="w-5 h-5 text-primary-foreground/90" />
             </button>
           </div>
         </div>
       </header>
 
-      <div className="px-5 -mt-8 space-y-4 relative z-10">
+      <div className="px-5 -mt-12 space-y-5 relative z-10">
         {/* Status Hero Card — always first */}
         <StatusHeroCard
           streak={streak}
@@ -230,20 +230,24 @@ const Dashboard = () => {
           daysUntilNext={daysUntilNext}
         />
 
-        {/* Check-in CTA card - only if not checked in today */}
+        {/* Check-in CTA card - soft style */}
         {!todayCheckedIn && (
           <button
             onClick={() => navigate("/registrar")}
-            className="w-full gradient-peach rounded-2xl p-4 shadow-card border border-secondary/30 animate-fade-in-up flex items-center gap-3.5 text-left active:scale-[0.98] transition-all duration-200"
+            className="w-full rounded-2xl px-4 py-3.5 border animate-fade-in-up flex items-center gap-3.5 text-left active:scale-[0.98] transition-all duration-200 group"
+            style={{
+              background: "hsl(var(--secondary) / 0.12)",
+              borderColor: "hsl(var(--secondary) / 0.3)",
+            }}
           >
-            <div className="w-11 h-11 rounded-xl bg-white/50 dark:bg-white/15 flex items-center justify-center shrink-0">
-              <ClipboardCheck className="w-5.5 h-5.5 text-secondary-foreground" />
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: "hsl(var(--secondary) / 0.18)" }}>
+              <ClipboardCheck className="w-4.5 h-4.5 text-secondary-foreground" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-bold text-secondary-foreground">Como você está hoje?</p>
-              <p className="text-xs text-secondary-foreground/70 mt-0.5">Registre sintomas, peso e humor — leva 1 min ✨</p>
+              <p className="text-xs text-secondary-foreground/60 mt-0.5">Registre sintomas, peso e humor — leva 1 min ✨</p>
             </div>
-            <ArrowRight className="w-4.5 h-4.5 text-secondary-foreground/50 shrink-0" />
+            <ArrowRight className="w-4 h-4 text-secondary-foreground/40 shrink-0 group-hover:translate-x-0.5 transition-transform" />
           </button>
         )}
 
