@@ -45,22 +45,22 @@ const DailyLogForm = () => {
         <span className="text-sm">{emoji}</span>
         <span className="text-xs font-semibold">{label}</span>
       </div>
-      <div className="flex gap-1">
-        {Array.from({ length: 11 }, (_, i) => (
+      <div className="flex gap-1.5">
+        {Array.from({ length: 5 }, (_, i) => i + 1).map((n) => (
           <button
-            key={i}
+            key={n}
             type="button"
-            onClick={() => onChange(i)}
+            onClick={() => onChange(value === n ? 0 : n)}
             className={cn(
-              "flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all duration-200 border",
-              value === i
+              "flex-1 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 border",
+              value === n
                 ? "bg-primary text-primary-foreground border-primary shadow-sm scale-105"
-                : i <= value
+                : n <= value
                   ? "bg-primary/15 text-primary border-primary/30"
                   : "bg-muted/50 text-muted-foreground border-border hover:border-primary/30"
             )}
           >
-            {i}
+            {n}
           </button>
         ))}
       </div>
