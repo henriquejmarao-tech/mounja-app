@@ -10,7 +10,7 @@ import JourneySummary from "@/components/history/JourneySummary";
 import WeeklyComparison from "@/components/history/WeeklyComparison";
 import WeightChart from "@/components/history/WeightChart";
 import BodyCompositionChart from "@/components/history/BodyCompositionChart";
-import DoseTimeline from "@/components/history/DoseTimeline";
+
 import WorkoutsSummary from "@/components/history/WorkoutsSummary";
 import WeeklyNarrative from "@/components/history/WeeklyNarrative";
 import InsightsList, { type Insight } from "@/components/history/InsightsList";
@@ -392,7 +392,7 @@ const History = () => {
             />
             <WeightChart weightData={weightData} />
             <SymptomsChart logs={logs} />
-            <DoseTimeline injections={injections} onChanged={fetchData} />
+            
             
             <WeeklyComparison thisWeekLogs={thisWeekLogs} lastWeekLogs={lastWeekLogs} />
             <WeeklyNarrative
