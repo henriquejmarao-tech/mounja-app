@@ -354,7 +354,7 @@ const History = () => {
   const hasData = logs.length > 0 || injections.length > 0 || workouts.length > 0;
 
   return (
-    <div className="min-h-screen bg-background pb-28">
+    <div className="min-h-screen bg-background pb-nav">
       <HistoryHeader />
       <PeriodFilter period={period} onChange={setPeriod} />
 

@@ -245,7 +245,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen pb-28" style={{ background: "#F6F8F7" }}>
+    <div className="min-h-screen pb-nav bg-background">
       {/* Sticky Header */}
       <header className="sticky top-0 z-30 pointer-events-none">
         <div
@@ -305,7 +305,7 @@ const Dashboard = () => {
         <button
           onClick={() => navigate("/aplicacao")}
           className="w-full rounded-[20px] p-4 animate-fade-in-up flex items-center gap-3.5 text-left active:scale-[0.98] transition-all duration-200 group"
-          style={{ background: "#F7F8F7", boxShadow: "0 2px 6px rgba(0,0,0,0.04)", animationDelay: "45ms" }}
+          style={{ background: "hsl(var(--card))", boxShadow: "var(--shadow-card)", animationDelay: "45ms" }}
         >
           <div className="w-7 h-7 rounded-[10px] flex items-center justify-center shrink-0" style={{ background: "hsl(var(--secondary) / 0.08)" }}>
             <Pill className="w-[18px] h-[18px]" style={{ color: "hsl(var(--secondary) / 0.7)" }} />
@@ -322,7 +322,7 @@ const Dashboard = () => {
           <button
             onClick={() => navigate("/registrar")}
             className="w-full rounded-[20px] p-4 animate-fade-in-up flex items-center gap-3.5 text-left active:scale-[0.98] transition-all duration-200 group"
-            style={{ background: "#F7F8F7", boxShadow: "0 2px 6px rgba(0,0,0,0.04)" }}
+            style={{ background: "hsl(var(--card))", boxShadow: "var(--shadow-card)" }}
           >
             <div className="w-8 h-8 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: "hsl(var(--secondary) / 0.12)" }}>
               <ClipboardCheck className="w-[18px] h-[18px] text-secondary-foreground" />
@@ -337,7 +337,7 @@ const Dashboard = () => {
 
         {/* Onboarding completion card — only if NOT complete */}
         {!isProfileComplete && (
-          <div className="rounded-[20px] p-4 animate-fade-in-up" style={{ background: "#F7F8F7", boxShadow: "0 2px 6px rgba(0,0,0,0.04)" }}>
+          <div className="rounded-[20px] p-4 animate-fade-in-up" style={{ background: "hsl(var(--card))", boxShadow: "var(--shadow-card)" }}>
             <button onClick={() => setShowProfileCard(!showProfileCard)} className="w-full flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Target className="w-[18px] h-[18px] text-urgent" />
@@ -407,7 +407,7 @@ const Dashboard = () => {
         <DailyHabitsCard />
 
         {/* Block 2a: Alimentação — quick action */}
-        <div data-tutorial="suggestion-card" className="rounded-[20px] p-4 animate-fade-in-up" style={{ animationDelay: "60ms", background: "#F7F8F7", boxShadow: "0 2px 6px rgba(0,0,0,0.04)" }}>
+        <div data-tutorial="suggestion-card" className="rounded-[20px] p-4 animate-fade-in-up" style={{ animationDelay: "60ms", background: "hsl(var(--card))", boxShadow: "var(--shadow-card)" }}>
           <button onClick={() => setShowFoodCard(!showFoodCard)} className="w-full flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 rounded-[10px] flex items-center justify-center" style={{ background: "hsl(174 42% 48% / 0.07)" }}>
@@ -440,7 +440,7 @@ const Dashboard = () => {
         {(() => {
           const suggestion = getWorkoutSuggestion(weeklyWorkouts, weeklyWorkoutGoal, recentSymptoms, daysUntilNext);
           return (
-            <div className="rounded-[20px] p-4 animate-fade-in-up" style={{ animationDelay: "90ms", background: "#F7F8F7", boxShadow: "0 2px 6px rgba(0,0,0,0.04)" }}>
+            <div className="rounded-[20px] p-4 animate-fade-in-up" style={{ animationDelay: "90ms", background: "hsl(var(--card))", boxShadow: "var(--shadow-card)" }}>
               <button
                 onClick={() => setShowWorkoutModal(!showWorkoutModal)}
                 className="w-full flex items-center justify-between"
@@ -488,7 +488,7 @@ const Dashboard = () => {
 
         {/* Block 4: Insight */}
         {insight && (
-          <div className="rounded-[20px] p-4 animate-fade-in-up flex items-center gap-3" style={{ animationDelay: "240ms", background: "#F7F8F7", boxShadow: "0 2px 6px rgba(0,0,0,0.04)" }}>
+          <div className="rounded-[20px] p-4 animate-fade-in-up flex items-center gap-3" style={{ animationDelay: "240ms", background: "hsl(var(--card))", boxShadow: "var(--shadow-card)" }}>
             <div className="w-8 h-8 rounded-[12px] bg-primary/10 flex items-center justify-center shrink-0">
               <Sparkles className="w-[18px] h-[18px] text-primary" />
             </div>

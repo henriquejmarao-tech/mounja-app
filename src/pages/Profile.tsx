@@ -126,7 +126,7 @@ const Profile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-28">
+    <div className="min-h-screen bg-background pb-nav">
       {/* Header */}
       <header className="relative overflow-hidden">
         <div className="absolute inset-0 gradient-hero opacity-95" />

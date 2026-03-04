@@ -36,7 +36,7 @@ const Community = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen pb-28" style={{ background: "#F6F8F7" }}>
+    <div className="min-h-screen pb-nav bg-background">
       {/* Header */}
       <header className="sticky top-0 z-30">
         <div
@@ -57,7 +57,7 @@ const Community = () => {
         {/* Welcome card */}
         <div
           className="rounded-[20px] p-5 animate-fade-in-up"
-          style={{ background: "#FFFFFF", boxShadow: "0 8px 24px rgba(17,24,39,0.08)" }}
+          style={{ background: "hsl(var(--card))", boxShadow: "0 8px 24px rgba(17,24,39,0.08)" }}
         >
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center">
@@ -89,8 +89,8 @@ const Community = () => {
                 className="rounded-[16px] p-4 animate-fade-in-up"
                 style={{
                   animationDelay: `${i * 60}ms`,
-                  background: "#FFFFFF",
-                  boxShadow: "0 4px 12px rgba(17,24,39,0.06)",
+                  background: "hsl(var(--card))",
+                  boxShadow: "var(--shadow-card)",
                 }}
               >
                 <div className="flex items-center gap-3">

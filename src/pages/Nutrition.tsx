@@ -101,7 +101,7 @@ const Nutrition = () => {
   const showPicker = !selectedMeal || (!generating && !suggestion);
 
   return (
-    <div className="min-h-screen pb-28" style={{ background: "#F6F8F7" }}>
+    <div className="min-h-screen pb-nav bg-background">
       {/* Header */}
       <header className="sticky top-0 z-30">
         <div
@@ -133,7 +133,7 @@ const Nutrition = () => {
           <>
             <div
               className="rounded-[20px] p-5 animate-fade-in-up"
-              style={{ background: "#FFFFFF", boxShadow: "0 8px 24px rgba(17,24,39,0.08)" }}
+              style={{ background: "hsl(var(--card))", boxShadow: "var(--shadow-elevated)" }}
             >
               <div className="flex items-center gap-2 mb-1">
                 <Utensils className="w-4 h-4 text-primary" />
@@ -168,7 +168,7 @@ const Nutrition = () => {
             {generating && (
               <div
                 className="rounded-[20px] p-8 flex flex-col items-center justify-center gap-3"
-                style={{ background: "#FFFFFF", boxShadow: "0 8px 24px rgba(17,24,39,0.08)" }}
+                style={{ background: "hsl(var(--card))", boxShadow: "var(--shadow-elevated)" }}
               >
                 <div className="w-10 h-10 border-3 rounded-full animate-spin" style={{ borderColor: `${selectedMealConfig?.color}30`, borderTopColor: selectedMealConfig?.color }} />
                 <p className="text-sm text-muted-foreground">Pensando no melhor {selectedMealConfig?.label?.toLowerCase()}...</p>
@@ -192,7 +192,7 @@ const Nutrition = () => {
                 {/* Main card */}
                 <div
                   className="rounded-[20px] p-5"
-                  style={{ background: "#FFFFFF", boxShadow: "0 8px 24px rgba(17,24,39,0.08)" }}
+                  style={{ background: "hsl(var(--card))", boxShadow: "var(--shadow-elevated)" }}
                 >
                   {/* Meal name */}
                   <div className="flex items-center gap-3 mb-4">
@@ -243,7 +243,7 @@ const Nutrition = () => {
                 {suggestion.tip && (
                   <div
                     className="rounded-[16px] px-4 py-3"
-                    style={{ background: "#FFFFFF", boxShadow: "0 4px 12px rgba(17,24,39,0.06)" }}
+                    style={{ background: "hsl(var(--card))", boxShadow: "var(--shadow-card)" }}
                   >
                     <p className="text-xs text-foreground/70 leading-relaxed">💡 {suggestion.tip}</p>
                   </div>

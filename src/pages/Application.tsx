@@ -185,7 +185,7 @@ const Application = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-28">
+    <div className="min-h-screen bg-background pb-nav">
       <div className="px-5 space-y-4" style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 1rem)" }}>
         {/* Back button */}
         <button onClick={() => navigate("/")} className="flex items-center gap-1.5 text-muted-foreground active:opacity-70 transition-opacity">
