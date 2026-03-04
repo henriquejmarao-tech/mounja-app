@@ -41,21 +41,21 @@ const DailyLogForm = () => {
 
   const renderScale = (value: number, onChange: (v: number) => void, label: string, emoji: string) => (
     <div className="mb-4">
-      <div className="flex items-center gap-2 mb-2">
+      <div className="flex items-center gap-2 mb-1.5">
         <span className="text-sm">{emoji}</span>
         <span className="text-xs font-semibold">{label}</span>
       </div>
       <div className="flex gap-1.5">
-        {Array.from({ length: 5 }, (_, i) => i + 1).map((n) => (
+        {Array.from({ length: 6 }, (_, i) => i).map((n) => (
           <button
             key={n}
             type="button"
-            onClick={() => onChange(value === n ? 0 : n)}
+            onClick={() => onChange(value === n ? -1 : n)}
             className={cn(
               "flex-1 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 border",
               value === n
                 ? "bg-primary text-primary-foreground border-primary shadow-sm scale-105"
-                : n <= value
+                : n > 0 && n <= value
                   ? "bg-primary/15 text-primary border-primary/30"
                   : "bg-muted/50 text-muted-foreground border-border hover:border-primary/30"
             )}
@@ -63,6 +63,10 @@ const DailyLogForm = () => {
             {n}
           </button>
         ))}
+      </div>
+      <div className="flex justify-between mt-1">
+        <span className="text-[9px] text-muted-foreground">Nenhum</span>
+        <span className="text-[9px] text-muted-foreground">Intenso</span>
       </div>
     </div>
   );
