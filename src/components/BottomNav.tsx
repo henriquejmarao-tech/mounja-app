@@ -1,4 +1,4 @@
-import { Home, Plus, Clock, Leaf, Heart } from "lucide-react";
+import { Home, Plus, Clock, Leaf } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
@@ -7,7 +7,6 @@ const navItems = [
   { icon: Clock, label: "Caminho", path: "/historico" },
   { icon: Plus, label: "Registrar", path: "/registrar", highlight: true },
   { icon: Leaf, label: "Nutrição", path: "/nutricao" },
-  { icon: Heart, label: "Movimento", path: "/treinos" },
 ];
 
 const BottomNav = () => {
