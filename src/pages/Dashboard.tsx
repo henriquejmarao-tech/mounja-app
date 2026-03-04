@@ -305,8 +305,8 @@ const Dashboard = () => {
         {/* Block 2a: Alimentação */}
         <div data-tutorial="suggestion-card" className="rounded-[20px] p-4 animate-fade-in-up" style={{ animationDelay: "60ms", background: "#F7F8F7", boxShadow: "0 2px 6px rgba(0,0,0,0.04)" }}>
           <div className="flex items-center gap-2 mb-3.5">
-            <div className="w-7 h-7 rounded-[10px] flex items-center justify-center" style={{ background: "hsl(174 42% 48% / 0.1)" }}>
-              <Utensils className="w-[18px] h-[18px]" style={{ color: "hsl(174 42% 48%)" }} />
+            <div className="w-7 h-7 rounded-[10px] flex items-center justify-center" style={{ background: "hsl(174 42% 48% / 0.07)" }}>
+              <Utensils className="w-[18px] h-[18px]" style={{ color: "hsl(174 42% 48% / 0.7)" }} />
             </div>
             <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "rgba(17,24,39,0.55)" }}>Alimentação</h3>
           </div>
@@ -340,8 +340,8 @@ const Dashboard = () => {
         {/* Block 2b: Treino */}
         <div className="rounded-[20px] p-4 animate-fade-in-up" style={{ animationDelay: "90ms", background: "#F7F8F7", boxShadow: "0 2px 6px rgba(0,0,0,0.04)" }}>
           <div className="flex items-center gap-2 mb-3.5">
-            <div className="w-7 h-7 rounded-[10px] flex items-center justify-center" style={{ background: "hsl(25 80% 52% / 0.1)" }}>
-              <Flame className="w-[18px] h-[18px]" style={{ color: "hsl(25 80% 52%)" }} />
+            <div className="w-7 h-7 rounded-[10px] flex items-center justify-center" style={{ background: "hsl(25 80% 52% / 0.07)" }}>
+              <Flame className="w-[18px] h-[18px]" style={{ color: "hsl(25 80% 52% / 0.7)" }} />
             </div>
             <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "rgba(17,24,39,0.55)" }}>Treino recomendado</h3>
           </div>
