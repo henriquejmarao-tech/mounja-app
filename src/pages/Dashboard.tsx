@@ -231,12 +231,6 @@ const Dashboard = () => {
         />
 
         <div className="mt-3 space-y-3">
-        {/* Status Hero Card — always first */}
-        <StatusHeroCard
-          streak={streak}
-          currentDose={currentDose}
-          latestWeight={latestWeight}
-        />
 
         {/* Next Injection Card */}
         <NextInjectionCard daysUntilNext={daysUntilNext} currentDose={currentDose} />
