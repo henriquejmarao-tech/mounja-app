@@ -87,9 +87,9 @@ const History = () => {
       const recent = weights.slice(0, 3);
       const trend = recent[0] - recent[recent.length - 1];
       if (trend < 0) {
-        generated.push({ title: "Peso em queda", description: `Voce perdeu ${Math.abs(trend).toFixed(1)} kg nos ultimos registros. Continue assim!`, type: "positive" });
+        generated.push({ title: "Tendência de redução", description: `Perda de ${Math.abs(trend).toFixed(1)} kg nos últimos registros. Tendência favorável.`, type: "positive" });
       } else if (trend > 1) {
-        generated.push({ title: "Peso subindo", description: `Ganho de ${trend.toFixed(1)} kg recentemente. Revise alimentacao e hidratacao.`, type: "warning" });
+        generated.push({ title: "Aumento detectado", description: `Ganho de ${trend.toFixed(1)} kg recentemente. Recomenda-se revisar alimentação e hidratação.`, type: "warning" });
       }
     }
 
@@ -101,7 +101,7 @@ const History = () => {
       });
       const avgNausea = logsAfterInj.length ? logsAfterInj.reduce((s: number, l: any) => s + (l.symptom_nausea || 0), 0) / logsAfterInj.length : 0;
       if (avgNausea >= 4) {
-        generated.push({ title: "Nausea pos-aplicacao", description: "Voce costuma sentir mais nausea nas 48h apos a aplicacao. Tente refeicoes leves nesse periodo.", type: "info" });
+        generated.push({ title: "Náusea pós-aplicação", description: "Padrão de náusea elevada nas 48h após aplicação. Considere refeições leves nesse período.", type: "info" });
       }
     }
 
@@ -111,7 +111,7 @@ const History = () => {
       const avgE1 = logsWithWorkout.reduce((s: number, l: any) => s + (l.energy || 0), 0) / logsWithWorkout.length;
       const avgE2 = logsWithoutWorkout.reduce((s: number, l: any) => s + (l.energy || 0), 0) / logsWithoutWorkout.length;
       if (avgE1 > avgE2 + 1) {
-        generated.push({ title: "Treino aumenta sua energia", description: `Nos dias que voce treina, sua energia e ${avgE1.toFixed(1)} vs ${avgE2.toFixed(1)} sem treino.`, type: "positive" });
+        generated.push({ title: "Correlação treino-energia", description: `Nos dias com treino, seu nível de energia é ${avgE1.toFixed(1)} vs ${avgE2.toFixed(1)} sem treino.`, type: "positive" });
       }
     }
 
@@ -119,7 +119,7 @@ const History = () => {
     if (waterLogs.length >= 3) {
       const avgW = waterLogs.reduce((s: number, l: any) => s + l.water_ml, 0) / waterLogs.length;
       if (avgW < 1500) {
-        generated.push({ title: "Hidratacao baixa", description: `Sua media de agua e ${Math.round(avgW)}ml/dia. Tente chegar a 2L.`, type: "warning" });
+        generated.push({ title: "Hidratação insuficiente", description: `Média de ${Math.round(avgW)}ml/dia. Recomendado: 2.000ml.`, type: "warning" });
       }
     }
 
@@ -368,8 +368,8 @@ const History = () => {
         ) : !hasData ? (
           <div className="text-center py-16">
             <Scale className="w-12 h-12 text-muted-foreground/20 mx-auto mb-3" />
-            <p className="text-sm font-semibold text-muted-foreground">Nenhum registro ainda</p>
-            <p className="text-xs text-muted-foreground mt-1">Comece registrando seu primeiro dia!</p>
+            <p className="text-sm font-semibold text-muted-foreground">Sem dados registrados</p>
+            <p className="text-xs text-muted-foreground mt-1">Registre seu primeiro dia para iniciar a análise.</p>
             <button onClick={() => navigate("/registrar")}
               className="mt-4 gradient-hero text-primary-foreground font-bold py-3 px-6 rounded-2xl text-sm shadow-elevated">
               Registrar agora
@@ -399,9 +399,9 @@ const History = () => {
             <InsightsList insights={insights} />
 
             {allLogs.length < 7 && (
-              <div className="bg-muted/50 rounded-2xl p-4 text-center animate-fade-in-up" style={{ animationDelay: "360ms" }}>
+              <div className="bg-muted/30 rounded-xl p-4 text-center border border-border/50 animate-fade-in-up" style={{ animationDelay: "360ms" }}>
                 <p className="text-xs text-muted-foreground">
-                  Registre pelo menos <span className="font-semibold text-foreground">7 dias</span> para ver insights personalizados sobre sua jornada.
+                  Registre pelo menos <span className="font-semibold text-foreground">7 dias</span> para ativar a análise de padrões e tendências.
                 </p>
               </div>
             )}

@@ -1,4 +1,4 @@
-import { ArrowLeft, FileDown } from "lucide-react";
+import { ArrowLeft, FileDown, BarChart3 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface HistoryHeaderProps {
@@ -29,8 +29,13 @@ const HistoryHeader = ({ showExport, onExport }: HistoryHeaderProps) => {
             </button>
           )}
         </div>
-        <h1 className="text-xl font-bold text-primary-foreground">Seu Caminho</h1>
-        <p className="text-sm text-primary-foreground/70 mt-1">Veja como você tem evoluído, passo a passo</p>
+        <div className="flex items-center gap-2.5">
+          <BarChart3 className="w-5 h-5 text-primary-foreground" />
+          <div>
+            <h1 className="text-xl font-bold text-primary-foreground tracking-tight">Análise da Jornada</h1>
+            <p className="text-[11px] text-primary-foreground/60 font-medium tracking-wide uppercase mt-0.5">Dados e tendências do seu tratamento</p>
+          </div>
+        </div>
       </div>
     </header>
   );

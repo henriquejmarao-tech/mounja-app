@@ -1,4 +1,5 @@
-import { TrendingDown } from "lucide-react";
+import { TrendingDown, TrendingUp, Minus } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface JourneySummaryProps {
   initialWeight: number | null;
@@ -7,40 +8,44 @@ interface JourneySummaryProps {
   injectionCount: number;
 }
 
-const JourneySummary = ({ initialWeight, currentWeight, totalLost, injectionCount }: JourneySummaryProps) => (
-  <div className="bg-card rounded-2xl p-5 shadow-card border border-border/50 animate-fade-in-up">
-    <div className="flex items-center gap-2 mb-4">
-      <div className="w-8 h-8 rounded-lg gradient-hero flex items-center justify-center">
-        <TrendingDown className="w-4 h-4 text-primary-foreground" />
+const JourneySummary = ({ initialWeight, currentWeight, totalLost, injectionCount }: JourneySummaryProps) => {
+  const pctChange = initialWeight && totalLost ? ((totalLost / initialWeight) * 100).toFixed(1) : null;
+  const isLoss = totalLost !== null && totalLost > 0;
+  const isGain = totalLost !== null && totalLost < 0;
+
+  return (
+    <div className="bg-card rounded-2xl p-5 shadow-card border border-border/50 animate-fade-in-up">
+      <div className="flex items-center gap-2 mb-4">
+        <div className="w-2 h-2 rounded-full bg-primary" />
+        <h2 className="font-bold text-xs uppercase tracking-widest text-muted-foreground">Resumo do período</h2>
       </div>
-      <h2 className="font-bold text-sm">Resumo da Jornada</h2>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="bg-muted/40 rounded-xl p-3">
+          <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide mb-1">Peso inicial</p>
+          <p className="text-lg font-bold tabular-nums">{initialWeight ? `${initialWeight} kg` : "—"}</p>
+        </div>
+        <div className="bg-muted/40 rounded-xl p-3">
+          <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide mb-1">Peso atual</p>
+          <p className="text-lg font-bold tabular-nums">{currentWeight ? `${currentWeight} kg` : "—"}</p>
+        </div>
+        <div className={cn("rounded-xl p-3", isLoss ? "bg-primary/8" : isGain ? "bg-destructive/8" : "bg-muted/40")}>
+          <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide mb-1">Variação</p>
+          <div className="flex items-center gap-1.5">
+            {isLoss ? <TrendingDown className="w-3.5 h-3.5 text-primary" /> : isGain ? <TrendingUp className="w-3.5 h-3.5 text-destructive" /> : <Minus className="w-3.5 h-3.5 text-muted-foreground" />}
+            <p className={cn("text-lg font-bold tabular-nums", isLoss ? "text-primary" : isGain ? "text-destructive" : "")}>
+              {totalLost !== null ? `${totalLost > 0 ? "-" : "+"}${Math.abs(totalLost).toFixed(1)} kg` : "—"}
+            </p>
+          </div>
+          {pctChange && <p className="text-[10px] text-muted-foreground mt-0.5">{isLoss ? "-" : "+"}{Math.abs(Number(pctChange))}% do peso inicial</p>}
+        </div>
+        <div className="bg-muted/40 rounded-xl p-3">
+          <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide mb-1">Aplicações</p>
+          <p className="text-lg font-bold tabular-nums">{injectionCount}</p>
+          <p className="text-[10px] text-muted-foreground mt-0.5">no período</p>
+        </div>
+      </div>
     </div>
-    <div className="space-y-2.5">
-      {initialWeight && (
-        <p className="text-sm text-muted-foreground">
-          Você começou com <span className="font-bold text-foreground">{initialWeight} kg</span>.
-        </p>
-      )}
-      {currentWeight && (
-        <p className="text-sm text-muted-foreground">
-          Hoje está com <span className="font-bold text-foreground">{currentWeight} kg</span>.
-        </p>
-      )}
-      {totalLost !== null && totalLost > 0 && (
-        <p className="text-sm font-semibold text-primary">Já perdeu {totalLost.toFixed(1)} kg! 🎉</p>
-      )}
-      {totalLost !== null && totalLost <= 0 && currentWeight && (
-        <p className="text-sm text-muted-foreground">
-          Continue registrando — cada dia conta para entender seu progresso.
-        </p>
-      )}
-      {injectionCount > 0 && (
-        <p className="text-sm text-muted-foreground">
-          {injectionCount} {injectionCount === 1 ? "aplicação registrada" : "aplicações registradas"} no período.
-        </p>
-      )}
-    </div>
-  </div>
-);
+  );
+};
 
 export default JourneySummary;
