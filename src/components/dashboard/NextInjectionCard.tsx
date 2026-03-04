@@ -20,35 +20,22 @@ const NextInjectionCard = ({ daysUntilNext, currentDose }: NextInjectionCardProp
 
   return (
     <div
-      className="rounded-xl px-4 py-3 flex items-center gap-3 animate-fade-in-up border"
+      className="rounded-[18px] px-4 py-3 flex items-center gap-3 animate-fade-in-up shadow-card"
       style={{
-        background: isToday
-          ? "hsl(var(--primary) / 0.08)"
-          : "hsl(var(--card))",
-        borderColor: isToday
-          ? "hsl(var(--primary) / 0.2)"
-          : "hsl(var(--border) / 0.5)",
-        boxShadow: "0 1px 4px -1px hsl(150 12% 18% / 0.04)",
+        background: isToday ? "hsl(var(--primary) / 0.06)" : "white",
         animationDelay: "30ms",
       }}
     >
       {/* Icon */}
       <div
-        className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+        className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
         style={{
           background: isSoon
             ? "hsl(var(--primary) / 0.12)"
             : "hsl(var(--muted) / 0.6)",
         }}
       >
-        <CalendarClock
-          className="w-4 h-4"
-          style={{
-            color: isSoon
-              ? "hsl(var(--primary))"
-              : "hsl(var(--muted-foreground))",
-          }}
-        />
+        <CalendarClock className="w-3.5 h-3.5" style={{ color: isSoon ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))" }} />
       </div>
 
       {/* Text */}
@@ -73,11 +60,10 @@ const NextInjectionCard = ({ daysUntilNext, currentDose }: NextInjectionCardProp
 
       {/* Dose badge */}
       {currentDose && (
-        <div className="flex items-center gap-1.5 rounded-full px-2.5 py-1 border" style={{
-          background: "hsl(var(--muted) / 0.4)",
-          borderColor: "hsl(var(--border) / 0.5)",
+        <div className="flex items-center gap-1.5 rounded-full px-2.5 py-1" style={{
+          background: "hsl(var(--muted) / 0.35)",
         }}>
-          <Pill className="w-3 h-3 text-muted-foreground/60" />
+          <Pill className="w-3 h-3 text-muted-foreground/50" />
           <span className="text-xs font-semibold text-foreground/60">{currentDose}</span>
         </div>
       )}
