@@ -13,23 +13,29 @@ interface StatusHeroCardProps {
   latestWeight: number | null;
 }
 
+const getScoreStatus = (score: number) => {
+  if (score <= 40) return { label: "Baixo", color: "hsl(0 72% 51%)", bgColor: "hsl(0 72% 51% / 0.10)" };
+  if (score <= 70) return { label: "Moderado", color: "hsl(45 93% 47%)", bgColor: "hsl(45 93% 47% / 0.10)" };
+  return { label: "Em dia", color: "hsl(var(--primary))", bgColor: "hsl(var(--primary) / 0.10)" };
+};
+
 const StatusHeroCard = ({ dailyScore, scoreFactors, currentDose, latestWeight }: StatusHeroCardProps) => {
   const maxScore = 100;
   const progress = Math.min(dailyScore / maxScore, 1);
   const radius = 52;
-  const strokeWidth = 12;
+  const strokeWidth = 14;
   const circumference = 2 * Math.PI * radius;
   const targetOffset = circumference * (1 - progress);
 
-  // Animate ring on mount
   const [animatedOffset, setAnimatedOffset] = useState(circumference);
   const mounted = useRef(false);
   const [showInfo, setShowInfo] = useState(false);
+  const status = getScoreStatus(dailyScore);
 
   useEffect(() => {
     if (!mounted.current) {
       mounted.current = true;
-      const timer = setTimeout(() => setAnimatedOffset(targetOffset), 50);
+      const timer = setTimeout(() => setAnimatedOffset(targetOffset), 80);
       return () => clearTimeout(timer);
     }
     setAnimatedOffset(targetOffset);
@@ -129,6 +135,12 @@ const StatusHeroCard = ({ dailyScore, scoreFactors, currentDose, latestWeight }:
             </div>
           </div>
           <p className="text-[11px] text-muted-foreground font-medium -mt-0.5">Score diário</p>
+          <span
+            className="mt-1 px-3 py-0.5 rounded-full text-[10px] font-bold tracking-wide"
+            style={{ color: status.color, background: status.bgColor }}
+          >
+            {status.label}
+          </span>
         </div>
 
         {/* Right: Weight */}
@@ -144,18 +156,23 @@ const StatusHeroCard = ({ dailyScore, scoreFactors, currentDose, latestWeight }:
         </div>
       </div>
 
+      {/* Explanatory text */}
+      <p className="text-[10px] text-center text-muted-foreground/50 mt-3 leading-snug px-2">
+        Baseado em hidratação, alimentação, atividade física e adesão ao tratamento.
+      </p>
+
       {/* Score Factors — toggled by info button */}
       {showInfo && scoreFactors.length > 0 && (
-        <div className="relative mt-4 pt-3 border-t border-border/30 animate-fade-in">
+        <div className="relative mt-3 pt-3 border-t border-border/30 animate-fade-in">
           <div className="grid grid-cols-2 gap-x-3 gap-y-1.5">
             {scoreFactors.map((factor, i) => (
               <div key={i} className="flex items-center gap-1.5">
                 {factor.status === "good" ? (
                   <Check className="w-3 h-3 text-primary shrink-0" />
                 ) : (
-                  <AlertTriangle className="w-3 h-3 text-amber-500 shrink-0" />
+                  <AlertTriangle className="w-3 h-3 text-warning shrink-0" />
                 )}
-                <span className={`text-[11px] font-medium leading-tight ${factor.status === "good" ? "text-foreground/60" : "text-amber-600/80"}`}>
+                <span className={`text-[11px] font-medium leading-tight ${factor.status === "good" ? "text-foreground/60" : "text-warning"}`}>
                   {factor.label}
                 </span>
               </div>
