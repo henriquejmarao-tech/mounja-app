@@ -149,10 +149,10 @@ const Workouts = () => {
     <div className="min-h-screen bg-background pb-28">
       <header className="sticky top-0 z-30">
         <div
-          className="px-5 pb-6"
+          className="px-5 pb-10"
           style={{
-            paddingTop: "calc(env(safe-area-inset-top, 0px) + 1rem)",
-            background: "linear-gradient(180deg, hsl(14, 75%, 55%) 0%, hsl(14, 75%, 55% / 0.85) 40%, hsl(14, 75%, 55% / 0.20) 70%, transparent 100%)",
+            paddingTop: "calc(env(safe-area-inset-top, 0px) + 1.25rem)",
+            background: "linear-gradient(180deg, hsl(14, 75%, 55%) 0%, hsl(14, 75%, 55%) 50%, hsl(14, 75%, 55% / 0.65) 70%, hsl(14, 75%, 55% / 0.15) 85%, transparent 100%)",
           }}
         >
           <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-white/80 mb-4">
