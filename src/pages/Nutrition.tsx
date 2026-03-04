@@ -178,7 +178,7 @@ const Nutrition = () => {
     <div className="min-h-screen bg-background pb-28">
       <header className="sticky top-0 z-30">
         <div
-          className="px-5 pb-10"
+          className="px-5 pb-14"
           style={{
             paddingTop: "calc(env(safe-area-inset-top, 0px) + 1.25rem)",
             background: "linear-gradient(180deg, hsl(174, 42%, 48%) 0%, hsl(174, 42%, 48%) 50%, hsla(174, 42%, 48%, 0.65) 70%, hsla(174, 42%, 48%, 0.15) 85%, transparent 100%)",
