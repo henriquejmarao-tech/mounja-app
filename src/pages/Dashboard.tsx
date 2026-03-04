@@ -308,7 +308,7 @@ const Dashboard = () => {
             <div className="w-7 h-7 rounded-[10px] flex items-center justify-center" style={{ background: "hsl(174 42% 48% / 0.07)" }}>
               <Utensils className="w-[18px] h-[18px]" style={{ color: "hsl(174 42% 48% / 0.7)" }} />
             </div>
-            <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "rgba(17,24,39,0.55)" }}>Alimentação</h3>
+            <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "rgba(17,24,39,0.55)" }}>Está com fome?</h3>
           </div>
 
           <button onClick={() => navigate("/nutricao")} className="w-full text-left group">
@@ -317,8 +317,7 @@ const Dashboard = () => {
                 <Utensils className="w-5 h-5" style={{ color: "hsl(174 42% 48%)" }} />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[15px] font-semibold text-foreground/85">Está com fome? Veja uma sugestão de refeição</p>
-                <p className="text-xs text-muted-foreground/50 mt-1">Sugestões leves e ricas em proteína para manter energia</p>
+                <p className="text-sm text-foreground/80">Ver sugestão de refeição</p>
               </div>
               <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0 group-hover:translate-x-0.5 transition-transform" />
             </div>
