@@ -300,9 +300,11 @@ const Dashboard = () => {
               <p className="text-xl font-bold">
                 {daysUntilNext !== null ? (
                   daysUntilNext === 0 ? (
-                    <span className="text-secondary">Hoje!</span>
+                    <span className="text-secondary font-extrabold">Hoje!</span>
+                  ) : daysUntilNext <= 2 ? (
+                    <span className="text-secondary">{daysUntilNext} <span className="text-sm font-medium">dias</span></span>
                   ) : (
-                    <>{daysUntilNext} <span className="text-sm font-medium text-muted-foreground">dias</span></>
+                    <span className="text-primary">{daysUntilNext} <span className="text-sm font-medium">dias</span></span>
                   )
                 ) : "—"}
               </p>
