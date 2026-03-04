@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { useTutorial } from "@/hooks/useTutorial";
-import { Settings, Sparkles, Flame, Utensils, ChevronDown, ChevronRight, ClipboardCheck, ArrowRight, Dumbbell, Target, Pill, HeartPulse, CalendarClock, CheckCircle2 } from "lucide-react";
+import { Settings, Sparkles, Flame, Utensils, ChevronDown, ChevronRight, ClipboardCheck, ArrowRight, Dumbbell, Target, Pill, HeartPulse, CalendarClock, CheckCircle2, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getWorkoutSuggestion } from "@/components/dashboard/WorkoutSuggestion";
 import StatusHeroCard from "@/components/dashboard/StatusHeroCard";
@@ -300,6 +300,22 @@ const Dashboard = () => {
 
         {/* Next Injection Card */}
         <NextInjectionCard daysUntilNext={daysUntilNext} currentDose={currentDose} />
+
+        {/* Urgências — atualizar sintomas rapidamente */}
+        <button
+          onClick={() => navigate("/registrar", { state: { focusSymptoms: true } })}
+          className="w-full rounded-[20px] p-4 animate-fade-in-up flex items-center gap-3.5 text-left active:scale-[0.98] transition-all duration-200 group"
+          style={{ background: "hsl(var(--urgent-light))", boxShadow: "var(--shadow-card)", border: "1px solid hsl(var(--urgent) / 0.15)" }}
+        >
+          <div className="w-8 h-8 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: "hsl(var(--urgent) / 0.12)" }}>
+            <AlertTriangle className="w-[18px] h-[18px] text-urgent" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-bold text-foreground/85">Urgências</p>
+            <p className="text-xs text-muted-foreground/60 mt-0.5">Atualize sintomas agora — náusea, dor, fadiga...</p>
+          </div>
+          <ArrowRight className="w-3.5 h-3.5 text-urgent/50 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+        </button>
 
         {/* Suas Aplicações card */}
         <button
