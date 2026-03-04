@@ -48,11 +48,11 @@ const Dashboard = () => {
   const [weeklyWorkoutGoal, setWeeklyWorkoutGoal] = useState(3);
   const [recentSymptoms, setRecentSymptoms] = useState<any>(null);
   const [insight, setInsight] = useState<string | null>(null);
-  const [savedDiet, setSavedDiet] = useState<any>(null);
+  const [savedDiet, setSavedDiet] = useState<any>(null); // kept for data fetch compatibility
   const [todayWorkout, setTodayWorkout] = useState<{ type: string; duration: number } | null>(null);
   const [restDayDismissed, setRestDayDismissed] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [showDietModal, setShowDietModal] = useState(false);
+  const [showDietModal, setShowDietModal] = useState(false); // unused now but kept to avoid breaking refs
   const [showWorkoutModal, setShowWorkoutModal] = useState(false);
   const [todayCheckedIn, setTodayCheckedIn] = useState(false);
 
@@ -311,30 +311,18 @@ const Dashboard = () => {
             <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "rgba(17,24,39,0.55)" }}>Alimentação</h3>
           </div>
 
-          {savedDiet ? (
-            <button onClick={() => setShowDietModal(true)} className="w-full text-left group">
-              <div className="flex items-center gap-3 rounded-[16px] px-3.5 py-3.5 group-active:scale-[0.98] transition-all duration-200" style={{ background: "rgba(17,24,39,0.03)", boxShadow: "0 4px 12px rgba(17,24,39,0.06)" }}>
-                <div className="w-8 h-8 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: "hsl(174 42% 48% / 0.1)" }}>
-                  <Salad className="w-5 h-5" style={{ color: "hsl(174 42% 48%)" }} />
-                </div>
-                <p className="text-sm text-foreground/75 flex-1">Sua dieta de hoje</p>
-                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+          <button onClick={() => navigate("/nutricao")} className="w-full text-left group">
+            <div className="flex items-center gap-3 rounded-[16px] px-3.5 py-3.5 group-active:scale-[0.98] transition-all duration-200" style={{ background: "rgba(17,24,39,0.03)", boxShadow: "0 4px 12px rgba(17,24,39,0.06)" }}>
+              <div className="w-8 h-8 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: "hsl(174 42% 48% / 0.1)" }}>
+                <Utensils className="w-5 h-5" style={{ color: "hsl(174 42% 48%)" }} />
               </div>
-            </button>
-          ) : (
-            <button onClick={() => navigate("/nutricao")} className="w-full text-left group">
-              <div className="flex items-center gap-3 rounded-[16px] px-3.5 py-3.5 group-active:scale-[0.98] transition-all duration-200" style={{ background: "rgba(17,24,39,0.03)", boxShadow: "0 4px 12px rgba(17,24,39,0.06)" }}>
-                <div className="w-8 h-8 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: "hsl(174 42% 48% / 0.1)" }}>
-                  <Sparkles className="w-5 h-5" style={{ color: "hsl(174 42% 48%)" }} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-foreground/80">Gerar dieta personalizada</p>
-                  <p className="text-xs text-muted-foreground/55 mt-1">Baseada no seu perfil e tratamento ✨</p>
-                </div>
-                <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+              <div className="flex-1 min-w-0">
+                <p className="text-[15px] font-semibold text-foreground/85">Está com fome? Veja uma sugestão de refeição</p>
+                <p className="text-xs text-muted-foreground/50 mt-1">Sugestões leves e ricas em proteína para manter energia</p>
               </div>
-            </button>
-          )}
+              <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+            </div>
+          </button>
         </div>
 
         {/* Block 2b: Treino */}
@@ -372,87 +360,7 @@ const Dashboard = () => {
 
       </div>
 
-      {/* Diet Detail Modal - fullscreen on mobile */}
-      {showDietModal && savedDiet && (
-        <div className="fixed inset-0 z-[60] bg-card flex flex-col" style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}>
-          {/* Header */}
-          <div className="shrink-0 px-5 pt-4 pb-3 border-b border-border/50 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Utensils className="w-4 h-4 text-primary" />
-              <h2 className="font-bold text-base">Dieta de hoje</h2>
-            </div>
-            <button onClick={() => setShowDietModal(false)} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-              <X className="w-4 h-4" />
-            </button>
-          </div>
 
-          {/* Scrollable content */}
-          <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
-            {savedDiet.context_note && (
-              <div className="bg-primary/5 rounded-xl px-3.5 py-2.5 border border-primary/10">
-                <p className="text-xs text-primary font-medium">{savedDiet.context_note}</p>
-              </div>
-            )}
-            {[
-              { key: "breakfast", label: "Café da manhã", Icon: Coffee },
-              { key: "lunch", label: "Almoço", Icon: Sun },
-              { key: "dinner", label: "Jantar", Icon: Moon },
-              { key: "snack", label: "Lanche", Icon: Cookie },
-            ].map(({ key, label, Icon }) => {
-              const value = savedDiet[key];
-              if (!value) return null;
-              return (
-                <div key={key} className="bg-muted/50 rounded-xl px-4 py-3">
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <Icon className="w-3.5 h-3.5 text-primary" />
-                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">{label}</p>
-                  </div>
-                  <ul className="space-y-1.5">
-                    {value
-                      .split(/\n|,|;|·/)
-                      .map((s: string) => s.replace(/^-\s*/, "").trim())
-                      .filter(Boolean)
-                      .map((item: string, i: number) => (
-                        <li key={i} className="flex items-start gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-primary/40 shrink-0 mt-[7px]" />
-                          <span className="text-[13px] leading-snug">{item}</span>
-                        </li>
-                      ))}
-                  </ul>
-                </div>
-              );
-            })}
-            {(savedDiet.calories_target || savedDiet.protein_target) && (
-              <div className="grid grid-cols-2 gap-3">
-                <div className="bg-muted/50 rounded-xl px-4 py-3 text-center">
-                  <p className="text-[10px] text-muted-foreground font-medium mb-1">Calorias aprox.</p>
-                  <p className="text-lg font-bold text-primary">{savedDiet.calories_target || "—"}</p>
-                </div>
-                <div className="bg-muted/50 rounded-xl px-4 py-3 text-center">
-                  <p className="text-[10px] text-muted-foreground font-medium mb-1">Proteína aprox.</p>
-                  <p className="text-lg font-bold text-primary">{savedDiet.protein_target ? `${savedDiet.protein_target}g` : "—"}</p>
-                </div>
-              </div>
-            )}
-            {savedDiet.tip && (
-              <div className="bg-muted/30 rounded-xl px-4 py-3 border border-border/50">
-                <p className="text-xs font-semibold mb-1">💡 Dica do dia</p>
-                <p className="text-xs text-muted-foreground leading-relaxed">{savedDiet.tip}</p>
-              </div>
-            )}
-          </div>
-
-          {/* Fixed footer */}
-          <div className="shrink-0 px-5 pt-3 border-t border-border/50 bg-card" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 0.75rem)" }}>
-            <button
-              onClick={() => { setShowDietModal(false); navigate("/nutricao"); }}
-              className="w-full py-3.5 rounded-xl gradient-hero text-primary-foreground text-sm font-semibold active:scale-[0.97] transition-all"
-            >
-              Ir para Nutrição
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Workout Detail Modal - fullscreen on mobile */}
       {showWorkoutModal && (() => {

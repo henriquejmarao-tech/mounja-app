@@ -10,7 +10,6 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    // Authenticate user
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
       return new Response(JSON.stringify({ error: "Não autorizado" }), {
@@ -34,7 +33,6 @@ serve(async (req) => {
 
     const userId = claimsData.claims.sub;
 
-    // Fetch user context from database
     const { data: profile } = await supabaseClient
       .from("profiles")
       .select("current_weight, goal, current_dose, age, sex, activity_level, dietary_restrictions, weekly_workouts")
@@ -55,7 +53,6 @@ serve(async (req) => {
       .order("date", { ascending: false })
       .limit(1);
 
-    // Calculate context from DB data
     const avgSymptom = (field: string) => {
       if (!recentLogs?.length) return 0;
       const vals = recentLogs.map((l: any) => l[field] || 0);
@@ -72,28 +69,25 @@ serve(async (req) => {
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
     const systemPrompt = `Você é um assistente de nutrição para pessoas em tratamento com Mounjaro (tirzepatida).
-Gere uma sugestão de dieta para UM DIA com linguagem simples, acolhedora e não clínica.
+Gere UMA sugestão de refeição simples e prática para quando o usuário sente fome.
 
 REGRAS:
 - NÃO prescreva medicamentos nem dê conselhos médicos
-- Use linguagem cotidiana, como um amigo daria dica
-- Porções realistas para brasileiro comum
+- Linguagem simples e acolhedora
+- Foque em: alta proteína, porções pequenas, fácil digestão
 - Considere os sintomas e contexto do usuário
-- Refeições práticas e acessíveis
-- FORMATO DAS REFEIÇÕES: liste cada item em uma linha separada, precedido por "- ". Exemplo:
-  "- 1 iogurte desnatado\n- 1 porção de frutas\n- 2 torradas integrais"
-  NÃO use texto corrido. Sempre use bullet points com "- " no início de cada item.
+- Refeições práticas e acessíveis para brasileiro comum
+- A refeição deve ser UMA ÚNICA refeição (não um plano do dia inteiro)
 
 Responda APENAS com um JSON válido (sem markdown, sem backticks) neste formato:
 {
-  "breakfast": "- item 1\\n- item 2\\n- item 3",
-  "lunch": "- item 1\\n- item 2\\n- item 3",
-  "dinner": "- item 1\\n- item 2\\n- item 3",
-  "snack": "- item 1\\n- item 2",
-  "calories_target": número aproximado de calorias,
-  "protein_target": gramas de proteína sugerida,
-  "tip": "uma dica curta e prática para o dia",
-  "context_note": "frase curta explicando por que a sugestão está assim (ex: 'Dia pós-aplicação, refeições mais leves')"
+  "meal": "Nome curto da refeição (ex: Frango grelhado com legumes)",
+  "items": ["frango grelhado", "arroz integral (porção pequena)", "brócolis e cenoura refogados"],
+  "reason": "Frase curta explicando por que essa refeição é boa agora (ex: Alta proteína para preservar músculo e leve para digestão.)",
+  "calories_approx": número aproximado de calorias,
+  "protein_approx": gramas de proteína aproximada,
+  "tip": "uma dica curta e prática",
+  "context_note": "frase curta sobre o contexto (ex: Pós-aplicação recente, refeição mais leve)"
 }`;
 
     const userMessage = `Contexto do usuário:
@@ -108,7 +102,7 @@ Responda APENAS com um JSON válido (sem markdown, sem backticks) neste formato:
 - Sexo: ${profile?.sex || "não informado"}
 - Idade: ${profile?.age || "não informada"}
 
-Gere a sugestão do dia adaptada a esse contexto.`;
+Sugira UMA refeição adequada para esse momento.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
