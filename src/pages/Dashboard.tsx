@@ -65,9 +65,12 @@ const Dashboard = () => {
 
       setLastInjection(inj[0] || null);
       const todayStr = new Date().toISOString().split("T")[0];
-      const todayLogEntry = logs.find((l: any) => l.date === todayStr);
-      setTodayCheckedIn(!!todayLogEntry);
-      setTodayLog(todayLogEntry || null);
+      const yesterdayDate = new Date();
+      yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+      const yesterdayStr = yesterdayDate.toISOString().split("T")[0];
+      const yesterdayLogEntry = logs.find((l: any) => l.date === yesterdayStr);
+      setTodayCheckedIn(!!yesterdayLogEntry);
+      setTodayLog(yesterdayLogEntry || null);
       setTotalLogs(logs.length);
       setWeeklyWorkouts(workouts.length);
       if (diet[0]) setSavedDiet(diet[0]);
@@ -158,14 +161,14 @@ const Dashboard = () => {
       const streakBonus = Math.round(Math.min(streak, 7) / 7 * 20);
       score += basePts + streakBonus;
       factors.push({
-        label: streak >= 3 ? `Sequência de ${streak} dias! 🔥` : "Check-in feito hoje",
+        label: streak >= 3 ? `Sequência de ${streak} dias! 🔥` : "Check-in registrado ✓",
         status: "good",
       });
     } else {
       // Even without today's check-in, give partial credit for recent streak
       const partial = Math.round(Math.min(Math.max(streak - 1, 0), 5) / 7 * 10);
       score += partial;
-      factors.push({ label: "Faça seu check-in hoje", status: "warning" });
+      factors.push({ label: "Registre o dia de ontem", status: "warning" });
     }
 
     // 2. Food quality (25 pts) — proportional scale
@@ -319,8 +322,8 @@ const Dashboard = () => {
               <ClipboardCheck className="w-[18px] h-[18px] text-secondary-foreground" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-foreground/85">Como você está hoje?</p>
-              <p className="text-xs text-muted-foreground/60 mt-1">Registre sintomas, peso e humor — leva 1 min ✨</p>
+              <p className="text-sm font-bold text-foreground/85">Como foi seu dia ontem?</p>
+              <p className="text-xs text-muted-foreground/60 mt-1">Registre sintomas, peso, água e alimentação — leva 1 min ✨</p>
             </div>
             <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0 group-hover:translate-x-0.5 transition-transform" />
           </button>
