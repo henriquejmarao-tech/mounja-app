@@ -15,34 +15,38 @@ const SymptomsChart = ({ logs }: SymptomsChartProps) => {
       "Dor de cabeça": l.symptom_headache ?? 0,
     }));
 
-  if (data.length < 2) return null;
+  const hasData = data.length >= 2;
 
   return (
     <div className="bg-card rounded-2xl p-5 shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: "320ms" }}>
       <h3 className="font-bold text-sm mb-4 flex items-center gap-2">
         <Heart className="w-4 h-4 text-primary" /> Como você se sentiu
       </h3>
-      <div className="h-52">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} />
-            <XAxis dataKey="date" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
-            <YAxis domain={[0, 10]} tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: "hsl(var(--card))",
-                border: "1px solid hsl(var(--border))",
-                borderRadius: "12px",
-                fontSize: "12px",
-              }}
-            />
-            <Legend wrapperStyle={{ fontSize: "11px" }} />
-            <Line type="monotone" dataKey="Náusea" stroke="hsl(var(--destructive))" strokeWidth={2} dot={{ r: 3 }} />
-            <Line type="monotone" dataKey="Fadiga" stroke="hsl(var(--warning, 38 92% 50%))" strokeWidth={2} dot={{ r: 3 }} />
-            <Line type="monotone" dataKey="Dor de cabeça" stroke="hsl(var(--info, 210 100% 50%))" strokeWidth={2} dot={{ r: 3 }} />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
+      {hasData ? (
+        <div className="h-52">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={data} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} />
+              <XAxis dataKey="date" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
+              <YAxis domain={[0, 10]} tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "hsl(var(--card))",
+                  border: "1px solid hsl(var(--border))",
+                  borderRadius: "12px",
+                  fontSize: "12px",
+                }}
+              />
+              <Legend wrapperStyle={{ fontSize: "11px" }} />
+              <Line type="monotone" dataKey="Náusea" stroke="hsl(var(--destructive))" strokeWidth={2} dot={{ r: 3 }} />
+              <Line type="monotone" dataKey="Fadiga" stroke="hsl(var(--warning, 38 92% 50%))" strokeWidth={2} dot={{ r: 3 }} />
+              <Line type="monotone" dataKey="Dor de cabeça" stroke="hsl(var(--info, 210 100% 50%))" strokeWidth={2} dot={{ r: 3 }} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      ) : (
+        <p className="text-xs text-muted-foreground/60 text-center py-8">Faça mais registros diários, ainda não está disponível.</p>
+      )}
     </div>
   );
 };
