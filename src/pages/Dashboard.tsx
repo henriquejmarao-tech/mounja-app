@@ -235,7 +235,7 @@ const Dashboard = () => {
           <button
             onClick={() => navigate("/registrar")}
             className="w-full rounded-[20px] p-4 animate-fade-in-up flex items-center gap-3.5 text-left active:scale-[0.98] transition-all duration-200 group"
-            style={{ background: "#FFFFFF", boxShadow: "0 8px 24px rgba(17,24,39,0.08)" }}
+            style={{ background: "#F7F8F7", boxShadow: "0 2px 6px rgba(0,0,0,0.04)" }}
           >
             <div className="w-8 h-8 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: "hsl(var(--secondary) / 0.12)" }}>
               <ClipboardCheck className="w-[18px] h-[18px] text-secondary-foreground" />
@@ -250,7 +250,7 @@ const Dashboard = () => {
 
         {/* Onboarding completion card */}
         {(!(profile as any)?.dose_history_completed || !(profile as any)?.health_info_completed || !(profile as any)?.routine_completed) && (
-          <div className="rounded-[20px] p-4 animate-fade-in-up" style={{ background: "#FFFFFF", boxShadow: "0 8px 24px rgba(17,24,39,0.08)" }}>
+          <div className="rounded-[20px] p-4 animate-fade-in-up" style={{ background: "#F7F8F7", boxShadow: "0 2px 6px rgba(0,0,0,0.04)" }}>
             <button onClick={() => setShowProfileCard(!showProfileCard)} className="w-full flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Target className="w-[18px] h-[18px] text-urgent" />
