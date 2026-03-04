@@ -7,6 +7,7 @@ import { useTutorial } from "@/hooks/useTutorial";
 import { Settings, Plus, Sparkles, Flame, Utensils, ChevronRight, X, Coffee, Sun, Moon, Cookie, ClipboardCheck, ArrowRight, Salad, Dumbbell, Timer, Zap, Target, User, Pill, HeartPulse, CalendarClock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import WorkoutSuggestion, { getWorkoutSuggestion } from "@/components/dashboard/WorkoutSuggestion";
+import StatusHeroCard from "@/components/dashboard/StatusHeroCard";
 
 const badges = [
   { id: "first", label: "Primeiro registro", emoji: "🌱", threshold: 1 },
@@ -289,42 +290,12 @@ const Dashboard = () => {
           </div>
         )}
 
-        <div data-tutorial="dose-card" className="bg-card rounded-2xl p-5 shadow-card border border-border/50 animate-fade-in-up">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-[11px] text-muted-foreground font-medium mb-1">Dose atual</p>
-              <p className="text-xl font-bold text-primary">{currentDose || "—"}</p>
-            </div>
-            <div>
-              <p className="text-[11px] text-muted-foreground font-medium mb-1">Próxima aplicação</p>
-              <p className="text-xl font-bold">
-                {daysUntilNext !== null ? (
-                  daysUntilNext === 0 ? (
-                    <span className="text-secondary font-extrabold">Hoje!</span>
-                  ) : daysUntilNext <= 2 ? (
-                    <span className="text-secondary">{daysUntilNext} <span className="text-sm font-medium">dias</span></span>
-                  ) : (
-                    <span className="text-primary">{daysUntilNext} <span className="text-sm font-medium">dias</span></span>
-                  )
-                ) : "—"}
-              </p>
-            </div>
-            <div>
-              <p className="text-[11px] text-muted-foreground font-medium mb-1">Peso atual</p>
-              <p className="text-xl font-bold">
-                {latestWeight ? (
-                  <>{latestWeight} <span className="text-sm font-medium text-muted-foreground">kg</span></>
-                ) : "—"}
-              </p>
-            </div>
-            <div>
-              <p className="text-[11px] text-muted-foreground font-medium mb-1">Treinos esta semana</p>
-              <p className="text-xl font-bold">
-                {weeklyWorkouts}<span className="text-sm font-medium text-muted-foreground">/{weeklyWorkoutGoal}</span>
-              </p>
-            </div>
-          </div>
-        </div>
+        <StatusHeroCard
+          streak={streak}
+          currentDose={currentDose}
+          latestWeight={latestWeight}
+          daysUntilNext={daysUntilNext}
+        />
 
         {/* Block 2a: Alimentação */}
         <div data-tutorial="suggestion-card" className="bg-card rounded-2xl p-4 shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: "60ms" }}>
