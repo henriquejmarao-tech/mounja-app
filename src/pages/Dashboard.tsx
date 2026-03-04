@@ -8,6 +8,7 @@ import { Settings, Plus, Sparkles, Flame, Utensils, ChevronRight, X, Coffee, Sun
 import { cn } from "@/lib/utils";
 import WorkoutSuggestion, { getWorkoutSuggestion } from "@/components/dashboard/WorkoutSuggestion";
 import StatusHeroCard from "@/components/dashboard/StatusHeroCard";
+import NextInjectionCard from "@/components/dashboard/NextInjectionCard";
 
 const badges = [
   { id: "first", label: "Primeiro registro", emoji: "🌱", threshold: 1 },
@@ -227,8 +228,10 @@ const Dashboard = () => {
           streak={streak}
           currentDose={currentDose}
           latestWeight={latestWeight}
-          daysUntilNext={daysUntilNext}
         />
+
+        {/* Next Injection Card */}
+        <NextInjectionCard daysUntilNext={daysUntilNext} currentDose={currentDose} />
 
         {/* Check-in CTA card - soft style */}
         {!todayCheckedIn && (
