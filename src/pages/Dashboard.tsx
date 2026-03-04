@@ -4,9 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { useTutorial } from "@/hooks/useTutorial";
-import { Settings, Plus, Sparkles, Flame, Utensils, ChevronRight, X, Coffee, Sun, Moon, Cookie, ClipboardCheck, ArrowRight, Salad, Dumbbell, Timer, Zap, Target, User, Pill, HeartPulse, CalendarClock } from "lucide-react";
+import { Settings, Plus, Sparkles, Flame, Utensils, ChevronDown, ChevronRight, X, Coffee, Sun, Moon, Cookie, ClipboardCheck, ArrowRight, Salad, Dumbbell, Timer, Zap, Target, User, Pill, HeartPulse, CalendarClock } from "lucide-react";
 import { cn } from "@/lib/utils";
-import WorkoutSuggestion, { getWorkoutSuggestion } from "@/components/dashboard/WorkoutSuggestion";
+import { getWorkoutSuggestion } from "@/components/dashboard/WorkoutSuggestion";
 import StatusHeroCard from "@/components/dashboard/StatusHeroCard";
 import NextInjectionCard from "@/components/dashboard/NextInjectionCard";
 
@@ -324,25 +324,70 @@ const Dashboard = () => {
           </button>
         </div>
 
-        {/* Block 2b: Treino */}
-        <div className="rounded-[20px] p-4 animate-fade-in-up" style={{ animationDelay: "90ms", background: "#F7F8F7", boxShadow: "0 2px 6px rgba(0,0,0,0.04)" }}>
-          <div className="flex items-center gap-2 mb-3.5">
-            <div className="w-7 h-7 rounded-[10px] flex items-center justify-center" style={{ background: "hsl(25 80% 52% / 0.07)" }}>
-              <Flame className="w-[18px] h-[18px]" style={{ color: "hsl(25 80% 52% / 0.7)" }} />
-            </div>
-            <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "rgba(17,24,39,0.55)" }}>Treino recomendado</h3>
-          </div>
+        {/* Block 2b: Treino - collapsible card */}
+        {(() => {
+          const suggestion = getWorkoutSuggestion(weeklyWorkouts, weeklyWorkoutGoal, recentSymptoms, daysUntilNext);
+          return (
+            <div className="rounded-[20px] p-4 animate-fade-in-up" style={{ animationDelay: "90ms", background: "#F7F8F7", boxShadow: "0 2px 6px rgba(0,0,0,0.04)" }}>
+              <button
+                onClick={() => setShowWorkoutModal(!showWorkoutModal)}
+                className="w-full flex items-center justify-between"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-[10px] flex items-center justify-center" style={{ background: "hsl(25 80% 52% / 0.07)" }}>
+                    <Flame className="w-[18px] h-[18px]" style={{ color: "hsl(25 80% 52% / 0.7)" }} />
+                  </div>
+                  <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "rgba(17,24,39,0.55)" }}>Treino recomendado</h3>
+                </div>
+                <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform duration-300", showWorkoutModal && "rotate-180")} />
+              </button>
 
-          <WorkoutSuggestion
-            weeklyWorkouts={weeklyWorkouts}
-            weeklyWorkoutGoal={weeklyWorkoutGoal}
-            recentSymptoms={recentSymptoms}
-            daysUntilNext={daysUntilNext}
-            todayWorkout={todayWorkout}
-            restDayDismissed={restDayDismissed}
-            onOpen={() => setShowWorkoutModal(true)}
-          />
-        </div>
+              {showWorkoutModal && (
+                <div className="mt-3 space-y-3 animate-fade-in-up">
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="rounded-xl px-2 py-2.5 text-center bg-background/80">
+                      <Zap className="w-3.5 h-3.5 mx-auto mb-1" style={{ color: "hsl(25 80% 52%)" }} />
+                      <p className="text-[9px] text-muted-foreground font-medium">Intensidade</p>
+                      <p className="text-xs font-bold mt-0.5">{suggestion.config.label}</p>
+                    </div>
+                    <div className="rounded-xl px-2 py-2.5 text-center bg-background/80">
+                      <Timer className="w-3.5 h-3.5 mx-auto mb-1" style={{ color: "hsl(25 80% 52%)" }} />
+                      <p className="text-[9px] text-muted-foreground font-medium">Duração</p>
+                      <p className="text-xs font-bold mt-0.5">{suggestion.duration} min</p>
+                    </div>
+                    <div className="rounded-xl px-2 py-2.5 text-center bg-background/80">
+                      <Target className="w-3.5 h-3.5 mx-auto mb-1" style={{ color: "hsl(25 80% 52%)" }} />
+                      <p className="text-[9px] text-muted-foreground font-medium">Meta</p>
+                      <p className="text-xs font-bold mt-0.5">{weeklyWorkouts}/{weeklyWorkoutGoal}</p>
+                    </div>
+                  </div>
+
+                  {suggestion.reason && (
+                    <p className="text-xs text-muted-foreground leading-relaxed px-1">💡 {suggestion.reason}</p>
+                  )}
+
+                  <div className="space-y-1.5">
+                    {suggestion.examples.map((ex, i) => (
+                      <div key={i} className="flex items-center gap-2.5 px-1">
+                        <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: "hsl(25 80% 52% / 0.5)" }} />
+                        <p className="text-sm text-foreground/75">{ex}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={() => navigate("/treinos")}
+                    className="w-full py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 active:scale-[0.97] transition-all"
+                    style={{ background: "hsl(25 80% 52% / 0.08)", color: "hsl(25 80% 52%)" }}
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    Nova sugestão de treino
+                  </button>
+                </div>
+              )}
+            </div>
+          );
+        })()}
 
 
         {/* Block 4: Insight */}
@@ -360,84 +405,6 @@ const Dashboard = () => {
       </div>
 
 
-
-      {/* Workout Detail Modal - fullscreen on mobile */}
-      {showWorkoutModal && (() => {
-        const suggestion = getWorkoutSuggestion(weeklyWorkouts, weeklyWorkoutGoal, recentSymptoms, daysUntilNext);
-        return (
-          <div className="fixed inset-0 z-[60] flex flex-col" style={{ paddingTop: "env(safe-area-inset-top, 0px)", background: "linear-gradient(180deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.85) 35%, hsl(var(--background)) 35%)" }}>
-            {/* Header */}
-            <div className="shrink-0 px-5 pt-5 pb-8 flex items-start justify-between">
-              <div>
-                <p className="text-primary-foreground/70 text-xs font-medium uppercase tracking-wider mb-1">Sugestão de hoje</p>
-                <h2 className="text-xl font-bold text-primary-foreground">Treino {suggestion.config.label}</h2>
-              </div>
-              <button onClick={() => setShowWorkoutModal(false)} className="w-8 h-8 rounded-full bg-primary-foreground/20 backdrop-blur-sm flex items-center justify-center">
-                <X className="w-4 h-4 text-primary-foreground" />
-              </button>
-            </div>
-
-            {/* Stats cards overlapping gradient */}
-            <div className="px-5 -mt-3">
-              <div className="grid grid-cols-3 gap-2">
-                <div className="bg-card rounded-2xl px-3 py-4 text-center shadow-md border border-border/30">
-                  <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-2">
-                    <Zap className="w-4 h-4 text-primary" />
-                  </div>
-                  <p className="text-[10px] text-muted-foreground font-medium mb-0.5">Intensidade</p>
-                  <p className="text-sm font-bold">{suggestion.config.label}</p>
-                </div>
-                <div className="bg-card rounded-2xl px-3 py-4 text-center shadow-md border border-border/30">
-                  <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-2">
-                    <Timer className="w-4 h-4 text-primary" />
-                  </div>
-                  <p className="text-[10px] text-muted-foreground font-medium mb-0.5">Duração</p>
-                  <p className="text-sm font-bold">{suggestion.duration} min</p>
-                </div>
-                <div className="bg-card rounded-2xl px-3 py-4 text-center shadow-md border border-border/30">
-                  <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-2">
-                    <Target className="w-4 h-4 text-primary" />
-                  </div>
-                  <p className="text-[10px] text-muted-foreground font-medium mb-0.5">Meta</p>
-                  <p className="text-sm font-bold">{weeklyWorkouts}<span className="text-xs font-medium text-muted-foreground">/{weeklyWorkoutGoal}</span></p>
-                </div>
-              </div>
-            </div>
-
-            {/* Scrollable content */}
-            <div className="flex-1 overflow-y-auto px-5 pt-4 pb-4 space-y-3">
-              {suggestion.reason && (
-                <div className="bg-primary/5 rounded-xl px-4 py-3 border border-primary/10">
-                  <p className="text-xs text-primary font-medium leading-relaxed">💡 {suggestion.reason}</p>
-                </div>
-              )}
-
-              <div className="space-y-2">
-                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide px-1">Exercícios sugeridos</p>
-                {suggestion.examples.map((ex, i) => (
-                  <div key={i} className="bg-card rounded-xl px-4 py-3.5 flex items-center gap-3 shadow-sm border border-border/30">
-                    <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                      <Dumbbell className="w-4 h-4 text-primary" />
-                    </div>
-                    <p className="text-sm leading-relaxed font-medium">{ex}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Fixed footer - only new suggestion button */}
-            <div className="shrink-0 px-5 pt-3 bg-background" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 0.75rem)" }}>
-              <button
-                onClick={() => navigate("/treinos")}
-                className="w-full py-3.5 rounded-xl gradient-hero text-primary-foreground text-sm font-semibold active:scale-[0.97] transition-all flex items-center justify-center gap-2"
-              >
-                <Sparkles className="w-4 h-4" />
-                Nova sugestão de treino
-              </button>
-            </div>
-          </div>
-        );
-      })()}
     </div>
   );
 };
