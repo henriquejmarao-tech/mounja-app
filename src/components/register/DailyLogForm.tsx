@@ -19,7 +19,9 @@ const DailyLogForm = () => {
   const [saving, setSaving] = useState(false);
   const [showOptional, setShowOptional] = useState(false);
 
-  const [logDate, setLogDate] = useState(new Date().toISOString().split("T")[0]);
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const [logDate, setLogDate] = useState(yesterday.toISOString().split("T")[0]);
   const [weight, setWeight] = useState("");
   const [feeling, setFeeling] = useState<number | null>(null);
 
@@ -102,7 +104,7 @@ const DailyLogForm = () => {
     <div className="space-y-4 animate-fade-in-up">
       {/* Date */}
       <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50">
-        <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Data</label>
+        <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Data do registro <span className="text-[10px] text-muted-foreground/60">(padrão: ontem)</span></label>
         <input type="date" value={logDate} onChange={(e) => setLogDate(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-border bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
       </div>
 
@@ -169,6 +171,16 @@ const DailyLogForm = () => {
         </div>
       </div>
 
+      {/* Water - liters with cups estimate */}
+      <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50">
+        <label className="text-xs font-semibold text-muted-foreground block mb-1.5">💧 Água consumida (litros)</label>
+        <input type="number" step="0.1" value={waterL} onChange={(e) => setWaterL(e.target.value)} placeholder="Ex: 2.0" className="w-full px-4 py-3 rounded-xl border border-border bg-background text-lg font-semibold outline-none focus:ring-2 focus:ring-primary/20 text-center" />
+        {waterL && parseFloat(waterL) > 0 && (
+          <p className="text-xs text-muted-foreground mt-2 text-center">
+            ≈ <span className="font-bold text-foreground">{Math.round(parseFloat(waterL) * 1000 / 250)}</span> copos de 250ml
+          </p>
+        )}
+      </div>
       {/* More details toggle */}
       <button onClick={() => setShowOptional(!showOptional)} className="w-full flex items-center justify-between bg-card rounded-2xl p-4 shadow-card border border-border/50 text-sm">
         <div>
@@ -180,12 +192,6 @@ const DailyLogForm = () => {
 
       {showOptional && (
         <div className="space-y-4 animate-fade-in-up">
-          {/* Water - liters, previous day */}
-          <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50">
-            <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Água consumida <span className="font-black text-foreground">ontem</span> (litros)</label>
-            <input type="number" step="0.1" value={waterL} onChange={(e) => setWaterL(e.target.value)} placeholder="Ex: 2.0" className="w-full px-4 py-3 rounded-xl border border-border bg-background text-lg font-semibold outline-none focus:ring-2 focus:ring-primary/20 text-center" />
-          </div>
-
           {/* Measurements */}
           <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50">
             <h3 className="font-semibold text-sm mb-3">Medidas</h3>
