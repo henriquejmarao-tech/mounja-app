@@ -89,7 +89,7 @@ const BottomNav = () => {
           <button
             onClick={() => setShowAiChat(true)}
             className="shrink-0 flex items-center justify-center transition-all duration-200 active:scale-90"
-            style={{ ...pillStyle, width: "56px", height: "64px" }}
+            style={{ ...pillStyle, width: "64px", height: "64px", borderRadius: "20px" }}
           >
             <HelpCircle className="w-[24px] h-[24px] text-white/90" />
           </button>
