@@ -192,15 +192,20 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen pb-28" style={{ background: "#F6F8F7" }}>
       {/* Sticky Header */}
-      <header
-        className="sticky top-0 z-30"
-        style={{ backgroundColor: "hsl(var(--primary))" }}
-      >
+      <header className="sticky top-0 z-30">
+        <div
+          className="absolute inset-x-0 top-0 pointer-events-none"
+          style={{
+            height: "calc(env(safe-area-inset-top, 0px) + 0.5rem)",
+            background: "hsl(var(--primary))",
+          }}
+        />
+
         <div
           className="px-5 pb-16"
           style={{
             paddingTop: "calc(env(safe-area-inset-top, 0px) + 1rem)",
-            background: "linear-gradient(180deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.85) 30%, hsl(var(--primary) / 0.20) 60%, transparent 100%)",
+            background: "linear-gradient(180deg, hsl(var(--primary) / 0.96) 0%, hsl(var(--primary) / 0.72) 28%, hsl(var(--primary) / 0.24) 62%, transparent 100%)",
           }}
         >
           <div className="flex items-center justify-between">
