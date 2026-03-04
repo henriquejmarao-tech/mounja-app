@@ -35,7 +35,7 @@ const StatusHeroCard = ({ streak, currentDose, latestWeight }: StatusHeroCardPro
       className="relative rounded-[20px] p-5 animate-fade-in-up overflow-hidden"
       style={{
         background: "linear-gradient(145deg, hsl(var(--card)) 0%, hsl(var(--accent)) 100%)",
-        boxShadow: "0 8px 24px rgba(17,24,39,0.08)",
+        boxShadow: "0 12px 28px rgba(0,0,0,0.12)",
       }}
     >
       {/* Central glow behind streak */}
