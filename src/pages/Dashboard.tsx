@@ -215,6 +215,14 @@ const Dashboard = () => {
       </header>
 
       <div className="px-5 -mt-3 space-y-4 relative z-10">
+        {/* Status Hero Card — always first */}
+        <StatusHeroCard
+          streak={streak}
+          currentDose={currentDose}
+          latestWeight={latestWeight}
+          daysUntilNext={daysUntilNext}
+        />
+
         {/* Check-in CTA card - only if not checked in today */}
         {!todayCheckedIn && (
           <button
@@ -289,13 +297,6 @@ const Dashboard = () => {
             </div>
           </div>
         )}
-
-        <StatusHeroCard
-          streak={streak}
-          currentDose={currentDose}
-          latestWeight={latestWeight}
-          daysUntilNext={daysUntilNext}
-        />
 
         {/* Block 2a: Alimentação */}
         <div data-tutorial="suggestion-card" className="bg-card rounded-2xl p-4 shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: "60ms" }}>
