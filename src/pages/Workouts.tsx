@@ -190,63 +190,8 @@ const Workouts = () => {
 
             <FeaturedForYou context="movement" />
 
-            {/* Weekly goal + progress */}
-            <div data-tutorial="workout-goal" className="bg-card rounded-2xl p-5 shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: "60ms" }}>
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <Trophy className="w-4 h-4 text-urgent" />
-                  <h3 className="font-semibold text-sm">Meta semanal</h3>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button onClick={() => handleGoalChange(-1)} disabled={savingGoal || weeklyGoal <= 1}
-                    className="w-7 h-7 rounded-full bg-muted flex items-center justify-center disabled:opacity-30">
-                    <Minus className="w-3.5 h-3.5" />
-                  </button>
-                  <span className="text-sm font-bold text-urgent min-w-[3ch] text-center">{weeklyGoal}x</span>
-                  <button onClick={() => handleGoalChange(1)} disabled={savingGoal || weeklyGoal >= 7}
-                    className="w-7 h-7 rounded-full bg-muted flex items-center justify-center disabled:opacity-30">
-                    <Plus className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="flex-1 bg-muted rounded-full h-2.5 overflow-hidden">
-                  <div className="gradient-workout h-full rounded-full transition-all duration-700" style={{ width: `${progress}%` }} />
-                </div>
-                <span className="text-xs font-bold text-urgent">{weeklyCount}/{weeklyGoal}</span>
-              </div>
-              <p className="text-[11px] text-muted-foreground">
-                {weeklyCount >= weeklyGoal
-                  ? "Meta atingida! Parabéns! 🎉"
-                  : weeklyCount > 0
-                  ? `Falta${weeklyGoal - weeklyCount === 1 ? "" : "m"} ${weeklyGoal - weeklyCount} treino${weeklyGoal - weeklyCount === 1 ? "" : "s"} para a meta!`
-                  : "Registre seus treinos para acompanhar o progresso."}
-              </p>
-            </div>
 
-            {/* User level with edit */}
-            <div className="bg-card rounded-2xl p-5 shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: "180ms" }}>
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <Activity className="w-4 h-4 text-urgent" />
-                  <h3 className="font-semibold text-sm">Seu perfil</h3>
-                </div>
-                <span className="text-[10px] font-bold bg-urgent/10 text-urgent px-2.5 py-1 rounded-full">
-                  {levelLabels[activityLevel] || "Iniciante"}
-                </span>
-              </div>
-              <div className="bg-muted/50 rounded-xl p-3 mb-3">
-                <p className="text-[11px] text-muted-foreground font-medium mb-0.5">Frequência sugerida</p>
-                <p className="text-sm font-bold">{frequencySuggestion[activityLevel] || frequencySuggestion.sedentary}</p>
-              </div>
-              <button
-                onClick={() => navigate("/rotina")}
-                className="w-full flex items-center justify-between bg-muted/50 rounded-xl px-3 py-2.5 hover:bg-muted transition-colors"
-              >
-                <p className="text-xs font-semibold">Editar perfil de atividade</p>
-                <ChevronRight className="w-4 h-4 text-muted-foreground" />
-              </button>
-            </div>
+
           </>
         )}
       </div>
