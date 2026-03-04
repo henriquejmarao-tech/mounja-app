@@ -355,45 +355,6 @@ const Dashboard = () => {
           />
         </div>
 
-        {/* Block 3: Streak + badges */}
-        <div className="bg-card rounded-2xl p-5 shadow-card border border-border/50 animate-fade-in-up" style={{ animationDelay: "120ms" }}>
-          <div className="flex items-center gap-3 mb-3">
-            <div className={cn(
-              "w-10 h-10 rounded-xl flex items-center justify-center",
-              streak >= 7 ? "gradient-hero" : streak >= 3 ? "bg-warning/15" : "bg-muted"
-            )}>
-              <Flame className={cn(
-                "w-5 h-5",
-                streak >= 7 ? "text-primary-foreground" : streak >= 3 ? "text-warning" : "text-muted-foreground"
-              )} />
-            </div>
-            <div className="flex-1">
-              <p className="text-lg font-bold">
-                {streak} <span className="text-xs font-medium text-muted-foreground">{streak === 1 ? "dia seguido" : "dias seguidos"}</span>
-              </p>
-              <p className="text-[11px] text-muted-foreground">{getStreakMessage()}</p>
-            </div>
-          </div>
-          <div className="flex gap-1">
-            {Array.from({ length: 7 }).map((_, i) => (
-              <div key={i} className={cn("h-2 flex-1 rounded-full transition-all", i < Math.min(streak, 7) ? "gradient-hero" : "bg-muted")} />
-            ))}
-          </div>
-          {earnedBadges.length > 0 && (
-            <div className="flex gap-1.5 flex-wrap mt-3">
-              {earnedBadges.map((badge) => (
-                <span key={badge.id} className="text-[10px] font-semibold bg-primary/8 text-primary rounded-lg px-2 py-1 border border-primary/10">
-                  {badge.emoji} {badge.label}
-                </span>
-              ))}
-            </div>
-          )}
-          {nextBadge && (
-            <p className="text-[10px] text-muted-foreground mt-2">
-              Mais {nextBadge.threshold - streak} dia{nextBadge.threshold - streak !== 1 ? "s" : ""} para: {nextBadge.emoji} {nextBadge.label}
-            </p>
-          )}
-        </div>
 
         {/* Block 4: Insight */}
         {insight && (
