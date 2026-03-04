@@ -341,9 +341,9 @@ const Application = () => {
                 onClick={() => setOpenCard(i)}
                 className="bg-card rounded-2xl p-4 shadow-card border border-border/50 text-left hover:shadow-elevated hover:border-primary/10 transition-all duration-300 active:scale-[0.98] group"
               >
-                <span className="text-2xl">{card.icon}</span>
-                <p className="font-bold text-xs mt-2.5">{card.title}</p>
-                <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed">{card.description}</p>
+                <span className="text-3xl">{card.icon}</span>
+                <p className="font-bold text-sm mt-2.5">{card.title}</p>
+                <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{card.description}</p>
               </button>
             ))}
           </div>
@@ -373,8 +373,8 @@ const Application = () => {
               <div className="space-y-5 mt-4">
                 {educationalCards[openCard].content.map((section, j) => (
                   <div key={j}>
-                    <h4 className="text-sm font-bold text-foreground/85 mb-1.5">{section.heading}</h4>
-                    <p className="text-[13px] text-muted-foreground leading-relaxed">{section.text}</p>
+                    <h4 className="text-base font-bold text-foreground/85 mb-1.5">{section.heading}</h4>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{section.text}</p>
                   </div>
                 ))}
               </div>
