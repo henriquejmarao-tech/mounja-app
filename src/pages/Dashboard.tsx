@@ -40,6 +40,7 @@ const Dashboard = () => {
   const [showProfileCard, setShowProfileCard] = useState(true);
   const [showFoodCard, setShowFoodCard] = useState(true);
   const [todayLog, setTodayLog] = useState<any>(null);
+  const [allLogs, setAllLogs] = useState<any[]>([]);
   // Track if profile was just completed for one-time message
   const [profileJustCompleted, setProfileJustCompleted] = useState(false);
 
