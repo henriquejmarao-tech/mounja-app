@@ -22,6 +22,13 @@ const Community = () => {
   const [currentQ, setCurrentQ] = useState(0);
   const [showSolution, setShowSolution] = useState(false);
   const [answered, setAnswered] = useState(false);
+  const [selectedGroups, setSelectedGroups] = useState<string[]>(groups.map(g => g.name));
+
+  const toggleGroup = (name: string) => {
+    setSelectedGroups(prev =>
+      prev.includes(name) ? prev.filter(n => n !== name) : [...prev, name]
+    );
+  };
 
   const openTinder = () => {
     setShowTinder(true);
@@ -249,23 +256,46 @@ const Community = () => {
           </div>
 
           <div className="space-y-3">
-            {groups.map((group, i) => (
-              <div key={group.name} className="rounded-[18px] p-4 animate-fade-in-up flex items-center gap-3.5 transition-transform active:scale-[0.98]" style={{ animationDelay: `${i * 50}ms`, background: "#F7FAF8", boxShadow: "0 2px 12px rgba(46,125,90,0.06)" }}>
-                <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 text-2xl" style={{ background: "#E9F5EE" }}>{group.emoji}</div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[13px] font-semibold" style={{ color: "#1a3a2a" }}>{group.name}</p>
-                  <p className="text-[11px] mt-0.5" style={{ color: "#7a9e8a" }}>{group.description}</p>
-                  <div className="flex items-center gap-2 mt-1.5">
-                    <div className="flex items-center gap-1" style={{ color: "#9ab5a5" }}>
-                      <Users className="w-3 h-3" />
-                      <span className="text-[10px] font-medium">{group.members}</span>
+            {groups.map((group, i) => {
+              const isSelected = selectedGroups.includes(group.name);
+              return (
+                <button
+                  key={group.name}
+                  onClick={() => toggleGroup(group.name)}
+                  className="w-full rounded-[18px] p-4 animate-fade-in-up flex items-center gap-3.5 transition-all active:scale-[0.98] text-left"
+                  style={{
+                    animationDelay: `${i * 50}ms`,
+                    background: isSelected ? "#E9F5EE" : "#F7FAF8",
+                    boxShadow: isSelected ? "0 2px 12px rgba(46,125,90,0.12)" : "0 2px 12px rgba(46,125,90,0.06)",
+                    border: isSelected ? "1.5px solid #A8D5BA" : "1.5px solid transparent",
+                  }}
+                >
+                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 text-2xl" style={{ background: isSelected ? "#CDE7DA" : "#E9F5EE" }}>{group.emoji}</div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[13px] font-semibold" style={{ color: "#1a3a2a" }}>{group.name}</p>
+                    <p className="text-[11px] mt-0.5" style={{ color: "#7a9e8a" }}>{group.description}</p>
+                    <div className="flex items-center gap-2 mt-1.5">
+                      <div className="flex items-center gap-1" style={{ color: "#9ab5a5" }}>
+                        <Users className="w-3 h-3" />
+                        <span className="text-[10px] font-medium">{group.members}</span>
+                      </div>
+                      <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full" style={{ color: "#FF8F5A", background: "rgba(255,143,90,0.1)" }}>{group.activity}</span>
                     </div>
-                    <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full" style={{ color: "#FF8F5A", background: "rgba(255,143,90,0.1)" }}>{group.activity}</span>
                   </div>
-                </div>
-                <ChevronRight className="w-4 h-4 shrink-0" style={{ color: "#c5d8cc" }} />
-              </div>
-            ))}
+                  <div
+                    className="w-5 h-5 rounded-md shrink-0 flex items-center justify-center transition-all"
+                    style={{
+                      background: isSelected ? "#2E7D5A" : "transparent",
+                      border: isSelected ? "none" : "2px solid #c5d8cc",
+                    }}
+                  >
+                    {isSelected && (
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6L5 8.5L9.5 3.5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    )}
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </div>
 
