@@ -48,17 +48,15 @@ const Dashboard = () => {
       const weekAgo = localDateStr(new Date(Date.now() - 7 * 86400000));
       const today = localDateStr();
 
-      const [injRes, logsRes, workoutsRes, dietRes, todayWorkoutRes] = await Promise.all([
+      const [injRes, logsRes, dietRes, todayWorkoutRes] = await Promise.all([
         supabase.from("injections").select("*").eq("user_id", user.id).order("date", { ascending: false }).limit(1),
         supabase.from("daily_logs").select("date, weight, symptom_nausea, symptom_fatigue, symptom_headache, mood, energy, water_ml, food_quality").eq("user_id", user.id).order("date", { ascending: false }).limit(60),
-        supabase.from("workouts" as any).select("*").eq("user_id", user.id).gte("date", weekAgo),
         supabase.from("diet_suggestions" as any).select("breakfast, lunch, dinner, snack, calories_target, protein_target, tip, context_note").eq("user_id", user.id).eq("date", today).limit(1),
         supabase.from("workouts" as any).select("workout_type, duration_minutes").eq("user_id", user.id).eq("date", today).limit(1),
       ]);
 
       const inj = (injRes.data as any[]) || [];
       const logs = (logsRes.data as any[]) || [];
-      const workouts = (workoutsRes.data as any[]) || [];
       const diet = (dietRes.data as any[]) || [];
       const todayW = (todayWorkoutRes.data as any[]) || [];
 
