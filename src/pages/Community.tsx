@@ -309,7 +309,6 @@ const Community = () => {
             <Share2 className="w-3.5 h-3.5 text-white" />
           </div>
         </button>
-        </div>
       </div>
     </div>
   );
