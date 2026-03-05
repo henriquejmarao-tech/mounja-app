@@ -107,8 +107,8 @@ const Dashboard = () => {
           const currentW = latestWeight;
           if (initialW && currentW && initialW - currentW > 0) {
             setInsight(`Você já perdeu ${(initialW - currentW).toFixed(1)} kg desde o início. Continue assim! 💪`);
-          } else if (workouts.length >= 3) {
-            setInsight(`${workouts.length} treinos esta semana! Seu corpo agradece. 🏋️`);
+          } else if (weeklyWorkoutCount >= 3) {
+            setInsight(`${weeklyWorkoutCount} treinos esta semana! Seu corpo agradece. 🏋️`);
           }
         }
       }
