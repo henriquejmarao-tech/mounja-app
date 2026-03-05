@@ -200,29 +200,49 @@ const Dashboard = () => {
       factors.push({ label: "Registre sua água", status: "warning" });
     }
 
-    // 4. Weight day-over-day (30 pts) — sensitive to small daily changes
-    // Find today's weight and previous day's weight from logs
+    // 4. Weight with streak-based scoring (30 pts)
+    // Streak: consecutive days of weight loss → progressive bonus
     const todayWeight = todayLog?.weight;
-    const previousLog = allLogs.find((l: any) => l.date !== todayLog?.date && l.weight);
+    // Build sorted logs with weight (newest first, already sorted)
+    const logsWithWeight = allLogs.filter((l: any) => l.weight);
+
+    // Count consecutive weight-loss days ending today
+    let weightLossStreak = 0;
+    if (todayWeight && logsWithWeight.length >= 2) {
+      for (let i = 0; i < logsWithWeight.length - 1; i++) {
+        const current = logsWithWeight[i];
+        const previous = logsWithWeight[i + 1];
+        if (Number(current.weight) < Number(previous.weight)) {
+          weightLossStreak++;
+        } else {
+          break;
+        }
+      }
+    }
+
+    const previousLog = logsWithWeight.find((l: any) => l.date !== todayLog?.date);
     const prevWeight = previousLog?.weight;
 
     if (todayWeight && prevWeight) {
-      const diff = prevWeight - todayWeight; // positive = lost weight
+      const diff = Number(prevWeight) - Number(todayWeight); // positive = lost weight
       if (diff > 0) {
-        // Any loss is great; scale: 0.1kg → 20pts, 0.3kg+ → 30pts
-        const pts = Math.min(Math.round((diff / 0.3) * 30), 30);
+        // Base: 10pts for any loss. Streak multiplier: 1→+2, 2→+4, ..., 10+→+20
+        const streakBonus = Math.min(weightLossStreak, 10) * 2;
+        const pts = Math.min(10 + streakBonus, 30);
         score += pts;
-        factors.push({ label: `−${diff.toFixed(1)} kg vs anterior 🎯`, status: "good" });
+        const streakLabel = weightLossStreak >= 2 ? ` (${weightLossStreak} dias seguidos 🔥)` : "";
+        factors.push({ label: `−${diff.toFixed(2)} kg${streakLabel}`, status: "good" });
       } else if (Math.abs(diff) <= 0.2) {
-        // Stable (within ±0.2kg) — good
-        score += 22;
+        // Stable (within ±0.2kg)
+        score += 18;
         factors.push({ label: "Peso estável ✓", status: "good" });
       } else {
-        // Gained > 0.2kg
-        const penalty = Math.min(Math.abs(diff) / 0.5, 1);
-        const pts = Math.round(10 * (1 - penalty));
+        // Gained > 0.2kg — progressive penalty
+        const gainAmount = Math.abs(diff);
+        const penalty = Math.min(gainAmount / 0.5, 1);
+        const pts = Math.round(8 * (1 - penalty));
         score += pts;
-        factors.push({ label: `+${Math.abs(diff).toFixed(1)} kg vs anterior`, status: "warning" });
+        factors.push({ label: `+${gainAmount.toFixed(2)} kg vs anterior`, status: "warning" });
       }
     } else if (todayWeight) {
       score += 15;

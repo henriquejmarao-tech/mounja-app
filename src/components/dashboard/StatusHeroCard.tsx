@@ -143,7 +143,7 @@ const StatusHeroCard = ({ dailyScore, scoreFactors, currentDose, latestWeight }:
             <Weight className="w-3 h-3 text-muted-foreground/45" />
           </div>
           <p className="text-xs font-semibold text-foreground/55 tabular-nums leading-tight">
-            {latestWeight ? `${latestWeight}` : "—"}
+            {latestWeight ? `${Number(latestWeight).toFixed(2)}` : "—"}
             {latestWeight && <span className="text-[10px] font-medium text-muted-foreground/45 ml-0.5">kg</span>}
           </p>
           <p className="text-[10px] text-muted-foreground/55 font-medium leading-tight">Peso atual</p>

@@ -18,12 +18,12 @@ const computeDailyScore = (
   profile: any,
   _lastInjectionDate: string | null,
   _intervalDays: number,
-  _streakAtDate: number = 1,
+  weightLossStreak: number = 0,
   prevWeight: number | null = null
 ): number => {
   let score = 0;
 
-  // 1. Check-in (20 pts) — flat for having logged
+  // 1. Check-in (20 pts)
   score += 20;
 
   // 2. Food quality (25 pts)
@@ -38,16 +38,17 @@ const computeDailyScore = (
     score += Math.round(Math.min(log.water_ml / target, 1) * 25);
   }
 
-  // 4. Weight day-over-day (30 pts)
+  // 4. Weight with streak-based scoring (30 pts)
   if (log.weight && prevWeight) {
-    const diff = prevWeight - log.weight;
+    const diff = Number(prevWeight) - Number(log.weight);
     if (diff > 0) {
-      score += Math.min(Math.round((diff / 0.3) * 30), 30);
+      const streakBonus = Math.min(weightLossStreak, 10) * 2;
+      score += Math.min(10 + streakBonus, 30);
     } else if (Math.abs(diff) <= 0.2) {
-      score += 22;
+      score += 18;
     } else {
       const penalty = Math.min(Math.abs(diff) / 0.5, 1);
-      score += Math.round(10 * (1 - penalty));
+      score += Math.round(8 * (1 - penalty));
     }
   } else if (log.weight) {
     score += 15;
