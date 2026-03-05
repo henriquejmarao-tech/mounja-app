@@ -277,6 +277,15 @@ const Community = () => {
             {activeGroups.length === 0 ? "Selecione grupos para filtrar as dúvidas" : `${activeGroups.length} grupo${activeGroups.length > 1 ? "s" : ""} ativo${activeGroups.length > 1 ? "s" : ""}`}
           </p>
         </div>
+
+        {/* Coming soon */}
+        <div className="rounded-[20px] p-5 text-center animate-fade-in-up" style={{ animationDelay: "350ms", background: "#F7FAF8", border: "1px dashed #CDE7DA" }}>
+          <MessageCircle className="w-8 h-8 mx-auto mb-2" style={{ color: "#A8D5BA" }} />
+          <p className="text-sm font-semibold" style={{ color: "#2E7D5A" }}>Em breve</p>
+          <p className="text-xs mt-1" style={{ color: "#7a9e8a" }}>Chat nos grupos, desafios e ranking entre amigos</p>
+        </div>
+      </div>
+    </div>
   );
 };
 
