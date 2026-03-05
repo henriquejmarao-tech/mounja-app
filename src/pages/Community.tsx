@@ -22,6 +22,13 @@ const Community = () => {
   const [currentQ, setCurrentQ] = useState(0);
   const [showSolution, setShowSolution] = useState(false);
   const [answered, setAnswered] = useState(false);
+  const [activeGroups, setActiveGroups] = useState<string[]>(["Iniciantes Mounjaro"]);
+
+  const toggleGroup = (name: string) => {
+    setActiveGroups((prev) =>
+      prev.includes(name) ? prev.filter((g) => g !== name) : [...prev, name]
+    );
+  };
 
   const openTinder = () => {
     setShowTinder(true);
