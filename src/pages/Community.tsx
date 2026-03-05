@@ -80,7 +80,7 @@ const Community = () => {
         <div className="flex-1 px-5 flex flex-col min-h-0">
           <div
             className="flex-1 rounded-[24px] p-6 flex flex-col relative overflow-hidden"
-            style={{ background: "rgba(255,255,255,0.07)", backdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.08)" }}
+            style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.08)" }}
           >
             <div className="absolute -top-8 -right-8 w-28 h-28 rounded-full opacity-[0.04]" style={{ background: "#FF8F5A" }} />
             <div className="absolute -bottom-6 -left-6 w-20 h-20 rounded-full opacity-[0.04]" style={{ background: "#A8D5BA" }} />
