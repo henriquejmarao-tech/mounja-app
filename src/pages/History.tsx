@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Scale, FileDown } from "lucide-react";
+import { localDateStr } from "@/lib/utils";
 import { toast } from "sonner";
 import HistoryHeader from "@/components/history/HistoryHeader";
 import PeriodFilter, { type Period } from "@/components/history/PeriodFilter";
@@ -66,7 +67,7 @@ const History = () => {
     let dietQuery = supabase.from("diet_suggestions").select("*").eq("user_id", user.id).order("date", { ascending: false });
 
     if (since) {
-      const sinceStr = since.toISOString().split("T")[0];
+      const sinceStr = localDateStr(since);
       logsQuery = logsQuery.gte("date", sinceStr);
       injQuery = injQuery.gte("date", sinceStr);
       workoutsQuery = workoutsQuery.gte("date", sinceStr);
@@ -338,7 +339,7 @@ const History = () => {
       addLine("Este relatorio e de carater informativo e educacional.", 7, false, [160, 160, 160]);
       addLine("Nao substitui acompanhamento medico profissional.", 7, false, [160, 160, 160]);
 
-      doc.save(`relatorio-jornada-${new Date().toISOString().split("T")[0]}.pdf`);
+      doc.save(`relatorio-jornada-${localDateStr()}.pdf`);
       toast.success("PDF gerado com sucesso!");
     } catch {
       toast.error("Erro ao gerar o PDF.");

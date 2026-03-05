@@ -3,7 +3,7 @@ import { ArrowLeft, Sparkles, Leaf, Utensils, RefreshCw, X, Coffee, Sun, Moon, C
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { cn } from "@/lib/utils";
+import { cn, localDateStr } from "@/lib/utils";
 import { toast } from "sonner";
 
 interface MealSuggestion {
@@ -35,7 +35,7 @@ const Nutrition = () => {
   useEffect(() => {
     if (!user) { setLoading(false); return; }
     const fetchData = async () => {
-      const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString().split("T")[0];
+      const weekAgo = localDateStr(new Date(Date.now() - 7 * 86400000));
       const [logsRes, injRes, workoutsRes] = await Promise.all([
         supabase.from("daily_logs").select("symptom_nausea, symptom_fatigue, symptom_headache, symptom_constipation, symptom_diarrhea, weight").eq("user_id", user.id).order("date", { ascending: false }).limit(7),
         supabase.from("injections").select("date").eq("user_id", user.id).order("date", { ascending: false }).limit(1),

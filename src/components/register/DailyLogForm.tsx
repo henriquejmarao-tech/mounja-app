@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Check, ChevronDown, ChevronUp, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
+import { cn, localDateStr } from "@/lib/utils";
 
 const feelingOptions = [
   { value: 1, emoji: "😞", label: "Mal" },
@@ -30,7 +30,7 @@ const DailyLogForm = () => {
   const [existingLogId, setExistingLogId] = useState<string | null>(null);
 
   const today = new Date();
-  const todayStr = today.toISOString().split("T")[0];
+  const todayStr = localDateStr(today);
   const [logDate] = useState(todayStr);
   const [weight, setWeight] = useState("");
   const [feeling, setFeeling] = useState<number | null>(null);

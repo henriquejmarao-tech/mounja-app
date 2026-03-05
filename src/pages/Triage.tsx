@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Check } from "lucide-react";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
+import { cn, localDateStr } from "@/lib/utils";
 
 const doses = ["2.5 mg", "5 mg", "7.5 mg", "10 mg", "12.5 mg", "15 mg"];
 const goals = [
@@ -73,7 +73,7 @@ const Triage = () => {
 
       // Create daily_log with weight from triage
       if (currentWeight) {
-        const today = new Date().toISOString().split("T")[0];
+        const today = localDateStr();
         const { error: logError } = await supabase.from("daily_logs").insert({
           user_id: user.id,
           date: today,
@@ -158,7 +158,7 @@ const Triage = () => {
 
         <div>
           <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Data da última aplicação *</label>
-          <input type="date" value={lastApplicationDate} max={new Date().toISOString().split("T")[0]} onChange={(e) => setLastApplicationDate(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-border bg-card text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
+          <input type="date" value={lastApplicationDate} max={localDateStr()} onChange={(e) => setLastApplicationDate(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-border bg-card text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
           <p className="text-[10px] text-muted-foreground mt-1">Usada para criar seu primeiro registro de aplicação.</p>
         </div>
 
