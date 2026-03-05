@@ -200,8 +200,7 @@ const Community = () => {
 
           <div className="relative z-10">
             <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/50 mb-1">Descubra</p>
-            <h2 className="text-lg font-bold text-white leading-tight mb-1">Acompanhe as tendências</h2>
-            <p className="text-[12px] text-white/60 mb-5">Veja o que a comunidade GLP-1 está sentindo e compartilhe sua experiência</p>
+            <h2 className="text-lg font-bold text-white leading-tight mb-5">Acompanhe as tendências</h2>
 
             <div className="rounded-[16px] p-4 mb-4" style={{ background: "rgba(255,255,255,0.12)", backdropFilter: "blur(8px)" }}>
               <p className="text-[11px] text-white/50 mb-1.5">Dúvida da comunidade</p>
