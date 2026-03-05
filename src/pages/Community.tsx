@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Users, MessageCircle, Heart, Star, TrendingUp, Award } from "lucide-react";
+import { ArrowLeft, Users, MessageCircle, Heart, Star, TrendingUp, Award, Share2, Gift, ChevronRight, Lock } from "lucide-react";
 
 const communityTopics = [
   {
@@ -30,6 +30,13 @@ const communityTopics = [
     members: 156,
     color: "hsl(174 42% 48%)",
   },
+];
+
+const groups = [
+  { name: "Iniciantes Mounjaro", members: 48, emoji: "🌱", color: "hsl(var(--primary))" },
+  { name: "Meta: -10kg", members: 72, emoji: "🎯", color: "hsl(25 80% 52%)" },
+  { name: "Treino + Mounjaro", members: 35, emoji: "💪", color: "hsl(174 42% 48%)" },
+  { name: "Receitas Low Carb", members: 61, emoji: "🥗", color: "hsl(45 93% 47%)" },
 ];
 
 const Community = () => {
@@ -114,11 +121,73 @@ const Community = () => {
           </div>
         </div>
 
+        {/* Groups */}
+        <div>
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-2 h-2 rounded-full bg-primary" />
+            <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "rgba(17,24,39,0.55)" }}>
+              Grupos
+            </h3>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2.5">
+            {groups.map((group, i) => (
+              <div
+                key={group.name}
+                className="rounded-[16px] p-4 animate-fade-in-up relative overflow-hidden"
+                style={{
+                  animationDelay: `${i * 60 + 300}ms`,
+                  background: "hsl(var(--card))",
+                  boxShadow: "var(--shadow-card)",
+                }}
+              >
+                <div className="text-2xl mb-2">{group.emoji}</div>
+                <p className="text-xs font-semibold text-foreground/85 leading-tight">{group.name}</p>
+                <div className="flex items-center gap-1 mt-2 text-muted-foreground/40">
+                  <Users className="w-3 h-3" />
+                  <span className="text-[10px] font-medium">{group.members}</span>
+                </div>
+                <div className="absolute top-3 right-3">
+                  <Lock className="w-3 h-3 text-muted-foreground/30" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Refer a friend */}
+        <button
+          onClick={() => {
+            if (navigator.share) {
+              navigator.share({
+                title: "Mounjá",
+                text: "Estou usando o Mounjá para acompanhar meu tratamento com Mounjaro. Experimente também!",
+                url: "https://mounja-app.lovable.app",
+              });
+            }
+          }}
+          className="w-full rounded-[20px] p-5 animate-fade-in-up flex items-center gap-4 text-left"
+          style={{
+            animationDelay: "400ms",
+            background: "linear-gradient(135deg, hsl(var(--primary) / 0.1) 0%, hsl(var(--primary) / 0.05) 100%)",
+            border: "1px solid hsl(var(--primary) / 0.15)",
+          }}
+        >
+          <div className="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0" style={{ background: "hsl(var(--primary) / 0.15)" }}>
+            <Gift className="w-5 h-5 text-primary" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-bold text-foreground/85">Convide um amigo</p>
+            <p className="text-xs text-muted-foreground/60 mt-0.5">Compartilhe o app e ganhe recompensas 🎁</p>
+          </div>
+          <Share2 className="w-4 h-4 text-primary/50 shrink-0" />
+        </button>
+
         {/* Coming soon */}
         <div
           className="rounded-[20px] p-5 text-center animate-fade-in-up"
           style={{
-            animationDelay: "300ms",
+            animationDelay: "500ms",
             background: "hsl(var(--primary) / 0.06)",
             border: "1px dashed hsl(var(--primary) / 0.2)",
           }}
@@ -126,7 +195,7 @@ const Community = () => {
           <MessageCircle className="w-8 h-8 text-primary/40 mx-auto mb-2" />
           <p className="text-sm font-semibold text-foreground/70">Em breve</p>
           <p className="text-xs text-muted-foreground/60 mt-1">
-            Fórum de discussão, grupos e mensagens diretas
+            Fórum de discussão, grupos ativos e mensagens diretas
           </p>
         </div>
       </div>
