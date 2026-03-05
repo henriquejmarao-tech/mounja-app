@@ -1,37 +1,36 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Users, MessageCircle, Share2, Gift, Plus, X, Sparkles, EyeOff, Eye, Info } from "lucide-react";
-
-const groups = [
-  { name: "Iniciantes Mounjaro", members: 48, emoji: "🌱", description: "Para quem está começando o tratamento", activity: "5 novos posts" },
-  { name: "Meta: -10kg", members: 72, emoji: "🎯", description: "Juntos rumo ao objetivo", activity: "ativo agora" },
-  { name: "Treino + Mounjaro", members: 35, emoji: "💪", description: "Exercícios durante o tratamento", activity: "3 novos posts" },
-  { name: "Receitas Low Carb", members: 61, emoji: "🥗", description: "Receitas que funcionam", activity: "ativo agora" },
-  { name: "Bem-estar mental", members: 29, emoji: "🧘", description: "Cuidando da mente também", activity: "2 novos posts" },
-];
-
-const sampleQuestions = [
-  { id: 1, question: "Vocês também sentem mais enjoo na primeira semana após aumentar a dose?", author: "Ana M.", votes: 34, time: "2h atrás", group: "Iniciantes Mounjaro", groupEmoji: "🌱" },
-  { id: 2, question: "Alguém mais percebeu queda de cabelo depois do 3º mês?", author: "Carlos R.", votes: 21, time: "5h atrás", group: "Bem-estar mental", groupEmoji: "🧘" },
-  { id: 3, question: "É normal sentir muita sede nos primeiros dias?", author: "Julia S.", votes: 47, time: "1h atrás", group: "Treino + Mounjaro", groupEmoji: "💪" },
-];
+import { Users, Share2, Gift, Plus, X, Sparkles, EyeOff, Info, Loader2 } from "lucide-react";
+import { useCommunityGroups, useCommunityQuestions, useCommunityAI } from "@/hooks/useCommunity";
+import { formatDistanceToNow } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 const Community = () => {
   const navigate = useNavigate();
   const [showTinder, setShowTinder] = useState(false);
   const [currentQ, setCurrentQ] = useState(0);
   const [showSolution, setShowSolution] = useState(false);
-  const [answered, setAnswered] = useState(false);
-  const [selectedGroups, setSelectedGroups] = useState<string[]>(groups.map(g => g.name));
   const [showInfo, setShowInfo] = useState(false);
+  const [showAskForm, setShowAskForm] = useState(false);
+  const [newQuestion, setNewQuestion] = useState("");
+  const [selectedGroupForQuestion, setSelectedGroupForQuestion] = useState<string>("");
 
-  const toggleGroup = (name: string) => {
-    setSelectedGroups(prev =>
-      prev.includes(name) ? prev.filter(n => n !== name) : [...prev, name]
-    );
-  };
+  const { groups, myGroupIds, hiddenGroupIds, loading: groupsLoading, toggleGroupHidden } = useCommunityGroups();
+
+  // Visible group IDs = joined and not hidden
+  const visibleGroupIds = useMemo(() =>
+    myGroupIds.filter(id => !hiddenGroupIds.includes(id)),
+    [myGroupIds, hiddenGroupIds]
+  );
+
+  const { questions, loading: questionsLoading, vote, createQuestion } = useCommunityQuestions(visibleGroupIds);
+  const { aiAnswer, aiLoading, getAIAnswer, resetAI } = useCommunityAI();
 
   const openTinder = () => {
+    if (questions.length === 0) return;
+    setCurrentQ(0);
+    setShowSolution(false);
+    resetAI();
     setShowTinder(true);
     document.body.setAttribute("data-hide-nav", "true");
   };
@@ -39,23 +38,54 @@ const Community = () => {
   const closeTinder = () => {
     setShowTinder(false);
     setCurrentQ(0);
-    setAnswered(false);
     setShowSolution(false);
+    resetAI();
     document.body.removeAttribute("data-hide-nav");
   };
 
-  const q = sampleQuestions[currentQ];
+  const q = questions[currentQ] || null;
 
-  const handleAnswer = () => setAnswered(true);
-
-  const handleNext = () => {
-    setAnswered(false);
-    setShowSolution(false);
-    setCurrentQ((prev) => (prev + 1) % sampleQuestions.length);
+  const handleVote = async (type: "also_feel" | "dont_feel") => {
+    if (!q) return;
+    await vote(q.id, type);
   };
 
+  const handleNext = () => {
+    setShowSolution(false);
+    resetAI();
+    setCurrentQ((prev) => (prev + 1) % questions.length);
+  };
+
+  const handleShowSolution = () => {
+    if (!q) return;
+    setShowSolution(true);
+    getAIAnswer(q.question);
+  };
+
+  const handleCreateQuestion = async () => {
+    if (!newQuestion.trim() || !selectedGroupForQuestion) return;
+    await createQuestion(newQuestion.trim(), selectedGroupForQuestion);
+    setNewQuestion("");
+    setSelectedGroupForQuestion("");
+    setShowAskForm(false);
+  };
+
+  const timeAgo = (date: string) => {
+    try {
+      return formatDistanceToNow(new Date(date), { addSuffix: true, locale: ptBR });
+    } catch {
+      return "";
+    }
+  };
+
+  // Get the latest question for preview card
+  const previewQuestion = questions[0];
+
+  // My groups (joined ones)
+  const myGroups = groups.filter(g => myGroupIds.includes(g.id));
+
   // ---- Tinder fullscreen ----
-  if (showTinder) {
+  if (showTinder && q) {
     return (
       <div
         className="fixed inset-0 z-50 flex flex-col"
@@ -75,7 +105,7 @@ const Community = () => {
 
         {/* Progress dots */}
         <div className="flex items-center justify-center gap-1.5 px-5 mb-4">
-          {sampleQuestions.map((_, i) => (
+          {questions.slice(0, 10).map((_, i) => (
             <div
               key={i}
               className="h-1 rounded-full transition-all duration-300"
@@ -97,18 +127,18 @@ const Community = () => {
               {/* Author */}
               <div className="flex items-center gap-2 mb-6">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold" style={{ background: "rgba(168,213,186,0.2)", color: "#A8D5BA" }}>
-                  {q.author.charAt(0)}
+                  {(q.author_name || "A").charAt(0)}
                 </div>
                 <div>
-                  <p className="text-[12px] font-semibold text-white/80">{q.author}</p>
-                  <p className="text-[10px] text-white/30">{q.time}</p>
+                  <p className="text-[12px] font-semibold text-white/80">{q.author_name || "Anônimo"}</p>
+                  <p className="text-[10px] text-white/30">{timeAgo(q.created_at)}</p>
                 </div>
                 <div className="ml-auto flex items-center gap-1.5">
                   <div className="flex items-center gap-1 px-2 py-1 rounded-lg" style={{ background: "rgba(168,213,186,0.15)" }}>
-                    <span className="text-[10px] font-bold" style={{ color: "#A8D5BA" }}>😔 {Math.round(q.votes * 0.6)}</span>
+                    <span className="text-[10px] font-bold" style={{ color: "#A8D5BA" }}>😔 {q.also_feel_count}</span>
                   </div>
                   <div className="flex items-center gap-1 px-2 py-1 rounded-lg" style={{ background: "rgba(255,143,90,0.15)" }}>
-                    <span className="text-[10px] font-bold" style={{ color: "#FF8F5A" }}>🙂 {Math.round(q.votes * 0.4)}</span>
+                    <span className="text-[10px] font-bold" style={{ color: "#FF8F5A" }}>🙂 {q.dont_feel_count}</span>
                   </div>
                 </div>
               </div>
@@ -116,7 +146,7 @@ const Community = () => {
               {/* Group badge + Question */}
               <div className="flex-1 flex flex-col items-center justify-center gap-3">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold" style={{ background: "rgba(168,213,186,0.15)", color: "#A8D5BA" }}>
-                  {q.groupEmoji} {q.group}
+                  {q.group_emoji} {q.group_name}
                 </span>
                 <p className="text-[20px] font-bold text-white leading-relaxed text-center px-2">"{q.question}"</p>
               </div>
@@ -133,20 +163,27 @@ const Community = () => {
                     </div>
                     <p className="text-[12px] font-bold uppercase tracking-wider" style={{ color: "#A8D5BA" }}>Resposta IA</p>
                   </div>
-                  <p className="text-[15px] text-white/80 leading-[1.7]">
-                    É comum sentir enjoo ao aumentar a dose de GLP-1. Isso ocorre porque o corpo precisa se adaptar ao novo nível do medicamento. Geralmente melhora em 3-5 dias. Comer porções menores e evitar alimentos gordurosos pode ajudar.
-                  </p>
+                  {aiLoading ? (
+                    <div className="flex items-center gap-2 py-2">
+                      <Loader2 className="w-4 h-4 animate-spin" style={{ color: "#A8D5BA" }} />
+                      <p className="text-[13px] text-white/50">Gerando resposta...</p>
+                    </div>
+                  ) : (
+                    <p className="text-[15px] text-white/80 leading-[1.7]">
+                      {aiAnswer || "Erro ao gerar resposta."}
+                    </p>
+                  )}
                 </div>
               )}
 
               {/* Action buttons */}
-              {!answered ? (
+              {!q.user_vote ? (
                 <div className="flex flex-col gap-2.5 mt-auto">
                   <div className="flex items-center gap-2.5">
-                    <button onClick={handleAnswer} className="flex-1 py-5 rounded-2xl text-[15px] font-bold transition-transform active:scale-95" style={{ background: "rgba(168,213,186,0.2)", color: "#A8D5BA", border: "1px solid rgba(168,213,186,0.15)" }}>
+                    <button onClick={() => handleVote("also_feel")} className="flex-1 py-5 rounded-2xl text-[15px] font-bold transition-transform active:scale-95" style={{ background: "rgba(168,213,186,0.2)", color: "#A8D5BA", border: "1px solid rgba(168,213,186,0.15)" }}>
                       😔 Também sinto
                     </button>
-                    <button onClick={handleAnswer} className="flex-1 py-5 rounded-2xl text-[15px] font-bold transition-transform active:scale-95" style={{ background: "rgba(255,143,90,0.2)", color: "#FF8F5A", border: "1px solid rgba(255,143,90,0.15)" }}>
+                    <button onClick={() => handleVote("dont_feel")} className="flex-1 py-5 rounded-2xl text-[15px] font-bold transition-transform active:scale-95" style={{ background: "rgba(255,143,90,0.2)", color: "#FF8F5A", border: "1px solid rgba(255,143,90,0.15)" }}>
                       🙂 Não sinto
                     </button>
                   </div>
@@ -157,7 +194,7 @@ const Community = () => {
               ) : (
                 <div className="flex items-center gap-3 mt-auto animate-fade-in-up">
                   {!showSolution && (
-                    <button onClick={() => setShowSolution(true)} className="flex-1 py-3.5 rounded-2xl text-[13px] font-bold transition-transform active:scale-95 flex items-center justify-center gap-2" style={{ background: "rgba(168,213,186,0.12)", color: "#A8D5BA", border: "1px solid rgba(168,213,186,0.2)" }}>
+                    <button onClick={handleShowSolution} className="flex-1 py-3.5 rounded-2xl text-[13px] font-bold transition-transform active:scale-95 flex items-center justify-center gap-2" style={{ background: "rgba(168,213,186,0.12)", color: "#A8D5BA", border: "1px solid rgba(168,213,186,0.2)" }}>
                       <Sparkles className="w-4 h-4" />
                       Ver solução IA
                     </button>
@@ -208,17 +245,31 @@ const Community = () => {
 
             <div className="rounded-[16px] p-4 mb-4" style={{ background: "rgba(255,255,255,0.12)", backdropFilter: "blur(8px)" }}>
               <p className="text-[11px] text-white/50 mb-1.5">Dúvida da comunidade</p>
-              <p className="text-[14px] font-semibold text-white leading-snug">"Vocês também sentem mais enjoo na primeira semana após aumentar a dose?"</p>
+              {questionsLoading ? (
+                <div className="flex items-center gap-2 py-1">
+                  <Loader2 className="w-3 h-3 animate-spin text-white/40" />
+                  <p className="text-[13px] text-white/40">Carregando...</p>
+                </div>
+              ) : previewQuestion ? (
+                <p className="text-[14px] font-semibold text-white leading-snug">"{previewQuestion.question}"</p>
+              ) : (
+                <p className="text-[13px] text-white/40">Nenhuma dúvida ainda. Seja o primeiro a perguntar!</p>
+              )}
             </div>
 
             <div className="flex items-center gap-3">
-              <button className="flex-1 py-3 rounded-2xl text-[12px] font-bold transition-transform active:scale-[0.97] flex items-center justify-center gap-2" style={{ background: "rgba(255,255,255,0.15)", color: "white" }}>
+              <button
+                onClick={() => setShowAskForm(true)}
+                className="flex-1 py-3 rounded-2xl text-[12px] font-bold transition-transform active:scale-[0.97] flex items-center justify-center gap-2"
+                style={{ background: "rgba(255,255,255,0.15)", color: "white" }}
+              >
                 <Plus className="w-4 h-4" />
                 Fazer pergunta
               </button>
               <button
                 onClick={openTinder}
-                className="flex-[1.4] py-3.5 rounded-2xl text-[13px] font-bold transition-transform active:scale-[0.97] flex items-center justify-center gap-2"
+                disabled={questions.length === 0}
+                className="flex-[1.4] py-3.5 rounded-2xl text-[13px] font-bold transition-transform active:scale-[0.97] flex items-center justify-center gap-2 disabled:opacity-50"
                 style={{ background: "#FF8F5A", color: "white", boxShadow: "0 4px 16px rgba(255,143,90,0.35)" }}
               >
                 🔥 Explorar dúvidas
@@ -226,6 +277,61 @@ const Community = () => {
             </div>
           </div>
         </div>
+
+        {/* Ask question form */}
+        {showAskForm && (
+          <div
+            className="rounded-[20px] p-5 animate-fade-in-up"
+            style={{ background: "#F7FAF8", border: "1.5px solid #CDE7DA" }}
+          >
+            <p className="text-[11px] font-bold uppercase tracking-wider mb-3" style={{ color: "rgba(17,24,39,0.5)" }}>Nova pergunta</p>
+
+            <textarea
+              placeholder="Escreva sua dúvida..."
+              value={newQuestion}
+              onChange={e => setNewQuestion(e.target.value)}
+              rows={3}
+              className="w-full px-4 py-3 rounded-xl text-[13px] font-medium mb-3 outline-none resize-none"
+              style={{ background: "#E9F5EE", color: "#1a3a2a", border: "1px solid #CDE7DA" }}
+            />
+
+            <p className="text-[10px] font-semibold mb-2" style={{ color: "#7a9e8a" }}>Grupo:</p>
+            <div className="flex flex-wrap gap-2 mb-4">
+              {myGroups.map(g => (
+                <button
+                  key={g.id}
+                  onClick={() => setSelectedGroupForQuestion(g.id)}
+                  className="px-3 py-1.5 rounded-full text-[11px] font-semibold transition-all"
+                  style={{
+                    background: selectedGroupForQuestion === g.id ? "#2E7D5A" : "#E9F5EE",
+                    color: selectedGroupForQuestion === g.id ? "white" : "#2E7D5A",
+                    border: selectedGroupForQuestion === g.id ? "1.5px solid #2E7D5A" : "1.5px solid #CDE7DA",
+                  }}
+                >
+                  {g.emoji} {g.name}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => { setShowAskForm(false); setNewQuestion(""); setSelectedGroupForQuestion(""); }}
+                className="flex-1 py-3 rounded-2xl text-[12px] font-bold transition-transform active:scale-95"
+                style={{ background: "#E9F5EE", color: "#7a9e8a" }}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleCreateQuestion}
+                disabled={!newQuestion.trim() || !selectedGroupForQuestion}
+                className="flex-1 py-3 rounded-2xl text-[12px] font-bold transition-transform active:scale-95 disabled:opacity-40"
+                style={{ background: "#2E7D5A", color: "white", boxShadow: "0 4px 16px rgba(46,125,90,0.3)" }}
+              >
+                Publicar
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Groups */}
         <div>
@@ -249,54 +355,60 @@ const Community = () => {
             </p>
           )}
 
-          <div className="space-y-3">
-            {groups.map((group, i) => {
-              const isSelected = selectedGroups.includes(group.name);
-              return (
-                <button
-                  key={group.name}
-                  onClick={() => toggleGroup(group.name)}
-                  className="w-full rounded-[18px] p-4 animate-fade-in-up flex items-center gap-3.5 transition-all active:scale-[0.98] text-left"
-                  style={{
-                    animationDelay: `${i * 50}ms`,
-                    background: isSelected ? "#E9F5EE" : "#F7FAF8",
-                    boxShadow: isSelected ? "0 2px 12px rgba(46,125,90,0.12)" : "0 2px 12px rgba(46,125,90,0.06)",
-                    border: isSelected ? "1.5px solid #A8D5BA" : "1.5px solid transparent",
-                  }}
-                >
-                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 text-2xl" style={{ background: isSelected ? "#CDE7DA" : "#E9F5EE" }}>{group.emoji}</div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[13px] font-semibold" style={{ color: "#1a3a2a" }}>{group.name}</p>
-                    <p className="text-[11px] mt-0.5" style={{ color: "#7a9e8a" }}>{group.description}</p>
-                    <div className="flex items-center gap-2 mt-1.5">
-                      <div className="flex items-center gap-1" style={{ color: "#9ab5a5" }}>
-                        <Users className="w-3 h-3" />
-                        <span className="text-[10px] font-medium">{group.members}</span>
+          {groupsLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="w-5 h-5 animate-spin" style={{ color: "#2E7D5A" }} />
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {myGroups.map((group, i) => {
+                const isVisible = !hiddenGroupIds.includes(group.id);
+                return (
+                  <button
+                    key={group.id}
+                    onClick={() => toggleGroupHidden(group.id)}
+                    className="w-full rounded-[18px] p-4 animate-fade-in-up flex items-center gap-3.5 transition-all active:scale-[0.98] text-left"
+                    style={{
+                      animationDelay: `${i * 50}ms`,
+                      background: isVisible ? "#E9F5EE" : "#F7FAF8",
+                      boxShadow: isVisible ? "0 2px 12px rgba(46,125,90,0.12)" : "0 2px 12px rgba(46,125,90,0.06)",
+                      border: isVisible ? "1.5px solid #A8D5BA" : "1.5px solid transparent",
+                    }}
+                  >
+                    <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 text-2xl" style={{ background: isVisible ? "#CDE7DA" : "#E9F5EE" }}>{group.emoji}</div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[13px] font-semibold" style={{ color: "#1a3a2a" }}>{group.name}</p>
+                      <p className="text-[11px] mt-0.5" style={{ color: "#7a9e8a" }}>{group.description}</p>
+                      <div className="flex items-center gap-2 mt-1.5">
+                        <div className="flex items-center gap-1" style={{ color: "#9ab5a5" }}>
+                          <Users className="w-3 h-3" />
+                          <span className="text-[10px] font-medium">{group.member_count || 0}</span>
+                        </div>
                       </div>
-                      <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full" style={{ color: "#FF8F5A", background: "rgba(255,143,90,0.1)" }}>{group.activity}</span>
                     </div>
-                  </div>
-                  {/* Eye toggle + checkbox */}
-                  <div className="flex items-center gap-2 shrink-0">
-                    {isSelected ? (
-                      <div
-                        className="w-5 h-5 rounded-md flex items-center justify-center"
-                        style={{ background: "#2E7D5A" }}
-                      >
-                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6L5 8.5L9.5 3.5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                      </div>
-                    ) : (
-                      <div className="w-5 h-5 rounded-md flex items-center justify-center" style={{ background: "rgba(200,200,200,0.2)" }}>
-                        <EyeOff className="w-3 h-3" style={{ color: "#b0b0b0" }} />
-                      </div>
-                    )}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      {isVisible ? (
+                        <div className="w-5 h-5 rounded-md flex items-center justify-center" style={{ background: "#2E7D5A" }}>
+                          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6L5 8.5L9.5 3.5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                        </div>
+                      ) : (
+                        <div className="w-5 h-5 rounded-md flex items-center justify-center" style={{ background: "rgba(200,200,200,0.2)" }}>
+                          <EyeOff className="w-3 h-3" style={{ color: "#b0b0b0" }} />
+                        </div>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+              {myGroups.length === 0 && !groupsLoading && (
+                <div className="rounded-[20px] p-6 text-center" style={{ background: "#F7FAF8", border: "1px dashed #CDE7DA" }}>
+                  <p className="text-[13px] font-semibold" style={{ color: "#2E7D5A" }}>Você ainda não participa de nenhum grupo</p>
+                  <p className="text-[11px] mt-1" style={{ color: "#7a9e8a" }}>Toque em "Adicionar" para explorar grupos</p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
-
 
         {/* Invite friend card */}
         <button
