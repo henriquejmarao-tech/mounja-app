@@ -240,6 +240,12 @@ const Community = () => {
             </button>
           </div>
 
+          {showInfo && (
+            <p className="text-[11px] mb-3 px-1 animate-fade-in" style={{ color: "#7a9e8a" }}>
+              Selecione os grupos cujas dúvidas você quer ver em "Acompanhe as tendências".
+            </p>
+          )}
+
           <div className="space-y-3">
             {groups.map((group, i) => {
               const isSelected = selectedGroups.includes(group.name);
