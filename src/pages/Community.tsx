@@ -11,9 +11,9 @@ const groups = [
 ];
 
 const sampleQuestions = [
-  { id: 1, question: "Vocês também sentem mais enjoo na primeira semana após aumentar a dose?", author: "Ana M.", votes: 34, time: "2h atrás" },
-  { id: 2, question: "Alguém mais percebeu queda de cabelo depois do 3º mês?", author: "Carlos R.", votes: 21, time: "5h atrás" },
-  { id: 3, question: "É normal sentir muita sede nos primeiros dias?", author: "Julia S.", votes: 47, time: "1h atrás" },
+  { id: 1, question: "Vocês também sentem mais enjoo na primeira semana após aumentar a dose?", author: "Ana M.", votes: 34, time: "2h atrás", group: "Iniciantes Mounjaro", groupEmoji: "🌱" },
+  { id: 2, question: "Alguém mais percebeu queda de cabelo depois do 3º mês?", author: "Carlos R.", votes: 21, time: "5h atrás", group: "Bem-estar mental", groupEmoji: "🧘" },
+  { id: 3, question: "É normal sentir muita sede nos primeiros dias?", author: "Julia S.", votes: 47, time: "1h atrás", group: "Treino + Mounjaro", groupEmoji: "💪" },
 ];
 
 const Community = () => {
