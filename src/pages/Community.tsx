@@ -95,8 +95,13 @@ const Community = () => {
                   <p className="text-[12px] font-semibold text-white/80">{q.author}</p>
                   <p className="text-[10px] text-white/30">{q.time}</p>
                 </div>
-                <div className="ml-auto flex items-center gap-1 px-2 py-0.5 rounded-full" style={{ background: "rgba(255,143,90,0.15)" }}>
-                  <span className="text-[10px] font-bold" style={{ color: "#FF8F5A" }}>{q.votes} pessoas</span>
+                <div className="ml-auto flex items-center gap-1.5">
+                  <div className="flex items-center gap-1 px-2 py-1 rounded-lg" style={{ background: "rgba(168,213,186,0.15)" }}>
+                    <span className="text-[10px] font-bold" style={{ color: "#A8D5BA" }}>😔 {Math.round(q.votes * 0.6)}</span>
+                  </div>
+                  <div className="flex items-center gap-1 px-2 py-1 rounded-lg" style={{ background: "rgba(255,143,90,0.15)" }}>
+                    <span className="text-[10px] font-bold" style={{ color: "#FF8F5A" }}>🙂 {Math.round(q.votes * 0.4)}</span>
+                  </div>
                 </div>
               </div>
 
