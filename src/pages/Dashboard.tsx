@@ -202,7 +202,7 @@ const Dashboard = () => {
     // 4. Weight day-over-day (30 pts) — sensitive to small daily changes
     // Find today's weight and previous day's weight from logs
     const todayWeight = todayLog?.weight;
-    const previousLog = logs.find((l: any) => l.date !== todayLog?.date && l.weight);
+    const previousLog = allLogs.find((l: any) => l.date !== todayLog?.date && l.weight);
     const prevWeight = previousLog?.weight;
 
     if (todayWeight && prevWeight) {
@@ -231,7 +231,7 @@ const Dashboard = () => {
     }
 
     return { dailyScore: Math.min(score, 100), scoreFactors: factors };
-  }, [totalLogs, todayLog, streak, profile, latestWeight, logs]);
+  }, [totalLogs, todayLog, profile, latestWeight, allLogs]);
 
   // Check if onboarding is complete
   const isProfileComplete = !!(profile as any)?.dose_history_completed && !!(profile as any)?.health_info_completed && !!(profile as any)?.routine_completed;
