@@ -10,6 +10,8 @@ export interface CommunityGroup {
   description: string | null;
   created_by: string | null;
   created_at: string;
+  is_private: boolean;
+  invite_code: string | null;
   member_count?: number;
 }
 
