@@ -20,11 +20,11 @@ const Community = () => {
           className="px-5 pb-10"
           style={{
             paddingTop: "calc(env(safe-area-inset-top, 0px) + 1.25rem)",
-            background: "linear-gradient(180deg, #2E7D5A 0%, #2E7D5A 40%, #A8D5BA 80%, transparent 100%)",
+            background: "linear-gradient(180deg, hsl(var(--primary)) 0%, hsl(var(--primary)) 40%, hsl(var(--primary) / 0.5) 70%, transparent 100%)",
           }}
         >
           <div className="flex items-center justify-center mb-4">
-            <h1 className="text-base font-bold text-primary-foreground/90 tracking-wide text-center">Comunidade</h1>
+            <h1 className="text-[11px] font-bold text-primary-foreground/80 uppercase tracking-[0.15em] text-center">Comunidade</h1>
           </div>
         </div>
       </header>
