@@ -69,6 +69,7 @@ const Dashboard = () => {
       const todayLogEntry = logs.find((l: any) => l.date === todayStr);
       setTodayCheckedIn(!!todayLogEntry);
       setTodayLog(todayLogEntry || null);
+      setAllLogs(logs);
       setTotalLogs(logs.length);
       setWeeklyWorkouts(workouts.length);
       if (diet[0]) setSavedDiet(diet[0]);
