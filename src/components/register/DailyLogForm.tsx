@@ -56,12 +56,15 @@ const DailyLogForm = () => {
     if (!user) return;
     const loadToday = async () => {
       setLoading(true);
-      const { data } = await supabase
+      const { data: rows } = await supabase
         .from("daily_logs")
         .select("*")
         .eq("user_id", user.id)
         .eq("date", todayStr)
-        .maybeSingle();
+        .order("created_at", { ascending: false })
+        .limit(1);
+
+      const data = rows?.[0] ?? null;
 
       if (data) {
         setExistingLogId(data.id);
