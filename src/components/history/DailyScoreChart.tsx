@@ -18,38 +18,39 @@ const computeDailyScore = (
   profile: any,
   _lastInjectionDate: string | null,
   _intervalDays: number,
-  streakAtDate: number = 1
+  _streakAtDate: number = 1,
+  prevWeight: number | null = null
 ): number => {
   let score = 0;
 
-  // 1. Check-in consistency (30 pts) — the log exists so base 10 + streak bonus
-  const streakBonus = Math.round(Math.min(streakAtDate, 7) / 7 * 20);
-  score += 10 + streakBonus;
+  // 1. Check-in (20 pts) — flat for having logged
+  score += 20;
 
-  // 2. Food quality (25 pts) — proportional
+  // 2. Food quality (25 pts)
   if (log.food_quality) {
     const foodMap: Record<string, number> = { great: 25, good: 20, regular: 12, ok: 12, bad: 5, poor: 5 };
     score += foodMap[log.food_quality] ?? 10;
   }
 
-  // 3. Hydration (25 pts) — proportional to target
+  // 3. Hydration (25 pts)
   if (log.water_ml) {
     const target = profile?.daily_water_ml || 2000;
     score += Math.round(Math.min(log.water_ml / target, 1) * 25);
   }
 
-  // 4. Weight progress (20 pts) — if weight logged, give tracking credit
-  if (log.weight && profile?.current_weight) {
-    const lost = profile.current_weight - log.weight;
-    if (lost > 0) {
-      score += Math.round(Math.min(lost / (profile.current_weight * 0.10), 1) * 20);
-    } else if (lost === 0) {
-      score += 10;
+  // 4. Weight day-over-day (30 pts)
+  if (log.weight && prevWeight) {
+    const diff = prevWeight - log.weight;
+    if (diff > 0) {
+      score += Math.min(Math.round((diff / 0.3) * 30), 30);
+    } else if (Math.abs(diff) <= 0.2) {
+      score += 22;
     } else {
-      score += 5;
+      const penalty = Math.min(Math.abs(diff) / 0.5, 1);
+      score += Math.round(10 * (1 - penalty));
     }
   } else if (log.weight) {
-    score += 10;
+    score += 15;
   }
 
   return Math.min(score, 100);
@@ -71,24 +72,24 @@ const DailyScoreChart = ({ logs, profile, lastInjectionDate, intervalDays }: Dai
 
   const hasData = pastLogs.length >= 2;
 
-  // Compute streak for each log date
-  const dateSet = new Set(pastLogs.map((l) => l.date));
-  const computeStreak = (date: string) => {
-    let s = 1;
-    const d = new Date(date + "T12:00:00");
-    for (let i = 1; i <= 7; i++) {
-      const prev = new Date(d);
-      prev.setDate(prev.getDate() - i);
-      if (dateSet.has(prev.toISOString().split("T")[0])) s++;
-      else break;
+  const scoreData = hasData ? pastLogs.slice(-14).map((l, idx, arr) => {
+    // Find previous log with weight for day-over-day comparison
+    let prevWeight: number | null = null;
+    for (let i = idx - 1; i >= 0; i--) {
+      if (arr[i].weight) { prevWeight = arr[i].weight; break; }
     }
-    return s;
-  };
-
-  const scoreData = hasData ? pastLogs.slice(-14).map((l) => ({
-    date: new Date(l.date + "T12:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
-    score: computeDailyScore(l, profile, lastInjectionDate, intervalDays, computeStreak(l.date)),
-  })) : [];
+    // Also check logs before the slice window
+    if (!prevWeight) {
+      const sliceStart = pastLogs.length > 14 ? pastLogs.length - 14 : 0;
+      for (let i = sliceStart + idx - 1; i >= 0; i--) {
+        if (pastLogs[i]?.weight) { prevWeight = pastLogs[i].weight; break; }
+      }
+    }
+    return {
+      date: new Date(l.date + "T12:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
+      score: computeDailyScore(l, profile, lastInjectionDate, intervalDays, 1, prevWeight),
+    };
+  }) : [];
 
   const avgScore = scoreData.length
     ? Math.round(scoreData.reduce((s, d) => s + d.score, 0) / scoreData.length)

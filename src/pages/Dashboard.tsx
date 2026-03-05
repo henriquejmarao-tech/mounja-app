@@ -40,6 +40,7 @@ const Dashboard = () => {
   const [showProfileCard, setShowProfileCard] = useState(true);
   const [showFoodCard, setShowFoodCard] = useState(true);
   const [todayLog, setTodayLog] = useState<any>(null);
+  const [allLogs, setAllLogs] = useState<any[]>([]);
   // Track if profile was just completed for one-time message
   const [profileJustCompleted, setProfileJustCompleted] = useState(false);
 
@@ -68,6 +69,7 @@ const Dashboard = () => {
       const todayLogEntry = logs.find((l: any) => l.date === todayStr);
       setTodayCheckedIn(!!todayLogEntry);
       setTodayLog(todayLogEntry || null);
+      setAllLogs(logs);
       setTotalLogs(logs.length);
       setWeeklyWorkouts(workouts.length);
       if (diet[0]) setSavedDiet(diet[0]);
@@ -162,19 +164,12 @@ const Dashboard = () => {
     let score = 0;
     const factors: { label: string; status: "good" | "warning" }[] = [];
 
-    // 1. Check-in consistency (30 pts) — streak-based, proportional
+    // 1. Check-in hoje (20 pts) — presença, sem streak
     if (todayLog) {
-      const basePts = 10;
-      const streakBonus = Math.round(Math.min(streak, 7) / 7 * 20);
-      score += basePts + streakBonus;
-      factors.push({
-        label: streak >= 3 ? `Sequência de ${streak} dias! 🔥` : "Check-in registrado ✓",
-        status: "good",
-      });
+      score += 20;
+      factors.push({ label: "Check-in registrado ✓", status: "good" });
     } else {
-      const partial = Math.round(Math.min(Math.max(streak - 1, 0), 5) / 7 * 10);
-      score += partial;
-      factors.push({ label: "Registre o dia de ontem", status: "warning" });
+      factors.push({ label: "Faça seu check-in de hoje", status: "warning" });
     }
 
     // 2. Food quality (25 pts) — proportional scale
@@ -204,31 +199,39 @@ const Dashboard = () => {
       factors.push({ label: "Registre sua água", status: "warning" });
     }
 
-    // 4. Weight progress (20 pts) — proportional to trend
-    const initialWeight = profile?.current_weight;
-    if (latestWeight && initialWeight && initialWeight > 0) {
-      const lostKg = initialWeight - latestWeight;
-      if (lostKg > 0) {
-        const lossRatio = Math.min(lostKg / (initialWeight * 0.10), 1);
-        const pts = Math.round(lossRatio * 20);
+    // 4. Weight day-over-day (30 pts) — sensitive to small daily changes
+    // Find today's weight and previous day's weight from logs
+    const todayWeight = todayLog?.weight;
+    const previousLog = allLogs.find((l: any) => l.date !== todayLog?.date && l.weight);
+    const prevWeight = previousLog?.weight;
+
+    if (todayWeight && prevWeight) {
+      const diff = prevWeight - todayWeight; // positive = lost weight
+      if (diff > 0) {
+        // Any loss is great; scale: 0.1kg → 20pts, 0.3kg+ → 30pts
+        const pts = Math.min(Math.round((diff / 0.3) * 30), 30);
         score += pts;
-        factors.push({ label: `${lostKg.toFixed(1)} kg perdidos 🎯`, status: "good" });
-      } else if (lostKg === 0) {
-        score += 10;
-        factors.push({ label: "Peso estável", status: "good" });
+        factors.push({ label: `−${diff.toFixed(1)} kg vs anterior 🎯`, status: "good" });
+      } else if (Math.abs(diff) <= 0.2) {
+        // Stable (within ±0.2kg) — good
+        score += 22;
+        factors.push({ label: "Peso estável ✓", status: "good" });
       } else {
-        score += 5;
-        factors.push({ label: "Peso subiu um pouco", status: "warning" });
+        // Gained > 0.2kg
+        const penalty = Math.min(Math.abs(diff) / 0.5, 1);
+        const pts = Math.round(10 * (1 - penalty));
+        score += pts;
+        factors.push({ label: `+${Math.abs(diff).toFixed(1)} kg vs anterior`, status: "warning" });
       }
-    } else if (latestWeight) {
-      score += 10;
-      factors.push({ label: "Continue pesando-se", status: "good" });
+    } else if (todayWeight) {
+      score += 15;
+      factors.push({ label: "Peso registrado, sem comparação", status: "good" });
     } else {
       factors.push({ label: "Registre seu peso", status: "warning" });
     }
 
     return { dailyScore: Math.min(score, 100), scoreFactors: factors };
-  }, [totalLogs, todayLog, streak, profile, latestWeight]);
+  }, [totalLogs, todayLog, profile, latestWeight, allLogs]);
 
   // Check if onboarding is complete
   const isProfileComplete = !!(profile as any)?.dose_history_completed && !!(profile as any)?.health_info_completed && !!(profile as any)?.routine_completed;
