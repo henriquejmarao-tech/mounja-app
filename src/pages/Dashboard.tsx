@@ -10,6 +10,7 @@ import { getWorkoutSuggestion } from "@/components/dashboard/WorkoutSuggestion";
 import StatusHeroCard from "@/components/dashboard/StatusHeroCard";
 import NextInjectionCard from "@/components/dashboard/NextInjectionCard";
 import DailyHabitsCard from "@/components/dashboard/DailyHabitsCard";
+import SymptomInsightsCard from "@/components/dashboard/SymptomInsightsCard";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -419,8 +420,8 @@ const Dashboard = () => {
           </div>
         )}
 
-        {/* Daily Habits Insights Card */}
-        <DailyHabitsCard />
+        {/* AI Symptom Insights Card */}
+        <SymptomInsightsCard />
 
         {/* Block 2a: Alimentação — quick action */}
         <div data-tutorial="suggestion-card" className="rounded-[20px] p-4 animate-fade-in-up" style={{ animationDelay: "60ms", background: "hsl(var(--card))", boxShadow: "var(--shadow-card)" }}>
@@ -511,6 +512,9 @@ const Dashboard = () => {
             <p className="text-sm text-foreground/75 leading-relaxed">{insight}</p>
           </div>
         )}
+
+        {/* Daily Habits — moved to footer */}
+        <DailyHabitsCard />
 
         </div>{/* end inner space-y-4 */}
 
