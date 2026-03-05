@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Users, MessageCircle, Heart, Star, TrendingUp, Award } from "lucide-react";
+import { ArrowLeft, Users, MessageCircle, Heart, Star, TrendingUp, Award, Share2, Gift, ChevronRight, Lock } from "lucide-react";
 
 const communityTopics = [
   {
