@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.symptom-insights]
 verify_jwt = false
+
+[functions.community-ai-answer]
+verify_jwt = false
