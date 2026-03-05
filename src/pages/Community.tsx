@@ -196,11 +196,6 @@ const Community = () => {
             <div className="rounded-[16px] p-4 mb-4" style={{ background: "rgba(255,255,255,0.12)", backdropFilter: "blur(8px)" }}>
               <p className="text-[11px] text-white/50 mb-1.5">Dúvida da comunidade</p>
               <p className="text-[14px] font-semibold text-white leading-snug">"Vocês também sentem mais enjoo na primeira semana após aumentar a dose?"</p>
-              <div className="flex items-center gap-2 mt-3">
-                <button className="flex-1 py-2 rounded-xl text-[11px] font-bold" style={{ background: "rgba(255,255,255,0.15)", color: "#A8D5BA" }}>😔 Também sinto</button>
-                <button className="w-12 py-2 rounded-xl text-[14px]" style={{ background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.25)" }}>🤷</button>
-                <button className="flex-1 py-2 rounded-xl text-[11px] font-bold" style={{ background: "rgba(255,255,255,0.15)", color: "#FF8F5A" }}>🙂 Não sinto</button>
-              </div>
             </div>
 
             <div className="flex items-center gap-3">
