@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Users, MessageCircle, Share2, Gift, ChevronRight, Plus, X, Sparkles, ChevronDown } from "lucide-react";
+import { Users, MessageCircle, Share2, Gift, Plus, X, Sparkles } from "lucide-react";
 
 const groups = [
   { name: "Iniciantes Mounjaro", members: 48, emoji: "🌱", description: "Para quem está começando o tratamento", activity: "5 novos posts" },
@@ -247,7 +247,7 @@ const Community = () => {
           <div className="flex items-center justify-between mb-3.5">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full" style={{ background: "#2E7D5A" }} />
-              <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "rgba(17,24,39,0.5)" }}>Seus grupos</h3>
+              <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "rgba(17,24,39,0.5)" }}>Filtrar tendências</h3>
             </div>
             <button className="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full" style={{ color: "#FF8F5A", background: "rgba(255,143,90,0.1)" }}>
               <Plus className="w-3 h-3" />
