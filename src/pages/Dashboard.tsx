@@ -65,12 +65,9 @@ const Dashboard = () => {
 
       setLastInjection(inj[0] || null);
       const todayStr = localDateStr();
-      const yesterdayDate = new Date();
-      yesterdayDate.setDate(yesterdayDate.getDate() - 1);
-      const yesterdayStr = localDateStr(yesterdayDate);
-      const yesterdayLogEntry = logs.find((l: any) => l.date === yesterdayStr);
-      setTodayCheckedIn(!!yesterdayLogEntry);
-      setTodayLog(yesterdayLogEntry || null);
+      const todayLogEntry = logs.find((l: any) => l.date === todayStr);
+      setTodayCheckedIn(!!todayLogEntry);
+      setTodayLog(todayLogEntry || null);
       setTotalLogs(logs.length);
       setWeeklyWorkouts(workouts.length);
       if (diet[0]) setSavedDiet(diet[0]);
