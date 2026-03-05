@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Users, MessageCircle, Share2, Gift, Plus, X, Sparkles, EyeOff, Eye } from "lucide-react";
+import { Users, MessageCircle, Share2, Gift, Plus, X, Sparkles, EyeOff, Eye, Info } from "lucide-react";
 
 const groups = [
   { name: "Iniciantes Mounjaro", members: 48, emoji: "🌱", description: "Para quem está começando o tratamento", activity: "5 novos posts" },
@@ -201,7 +201,10 @@ const Community = () => {
           <div className="relative z-10">
             <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/50 mb-1">Descubra</p>
             <h2 className="text-lg font-bold text-white leading-tight mb-1">Acompanhe as tendências</h2>
-            <p className="text-[12px] text-white/60 mb-5">Veja o que a comunidade GLP-1 está sentindo e compartilhe sua experiência</p>
+            <div className="flex items-center gap-1.5 mb-5">
+              <Info className="w-3 h-3 text-white/40 shrink-0" />
+              <p className="text-[11px] text-white/50">Exibe dúvidas dos grupos que você selecionou abaixo</p>
+            </div>
 
             <div className="rounded-[16px] p-4 mb-4" style={{ background: "rgba(255,255,255,0.12)", backdropFilter: "blur(8px)" }}>
               <p className="text-[11px] text-white/50 mb-1.5">Dúvida da comunidade</p>
