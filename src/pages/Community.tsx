@@ -113,9 +113,13 @@ const Community = () => {
                 </div>
               </div>
 
-              {/* Question */}
-              <div className="flex-1 flex items-center justify-center">
+              {/* Group badge + Question */}
+              <div className="flex-1 flex flex-col items-center justify-center gap-3">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold" style={{ background: "rgba(168,213,186,0.15)", color: "#A8D5BA" }}>
+                  {q.groupEmoji} {q.group}
+                </span>
                 <p className="text-[20px] font-bold text-white leading-relaxed text-center px-2">"{q.question}"</p>
+              </div>
               </div>
 
               {/* Solution panel */}
