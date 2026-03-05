@@ -120,7 +120,6 @@ const Community = () => {
                 </span>
                 <p className="text-[20px] font-bold text-white leading-relaxed text-center px-2">"{q.question}"</p>
               </div>
-              </div>
 
               {/* Solution panel */}
               {showSolution && (
