@@ -69,20 +69,8 @@ const Dashboard = () => {
       setTodayLog(todayLogEntry || null);
       setAllLogs(logs);
       setTotalLogs(logs.length);
-      setWeeklyWorkouts(workouts.length);
       if (diet[0]) setSavedDiet(diet[0]);
       if (todayW[0]) setTodayWorkout({ type: todayW[0].workout_type, duration: todayW[0].duration_minutes });
-
-      const wLog = logs.find((l) => l.weight);
-      setLatestWeight(wLog?.weight ?? null);
-
-      // Recent symptoms (last 3 days)
-      const recent3 = logs.slice(0, 3);
-      if (recent3.length > 0) {
-        const avgNausea = recent3.reduce((s: number, l: any) => s + (l.symptom_nausea || 0), 0) / recent3.length;
-        const avgFatigue = recent3.reduce((s: number, l: any) => s + (l.symptom_fatigue || 0), 0) / recent3.length;
-        setRecentSymptoms({ nausea: avgNausea, fatigue: avgFatigue });
-      }
 
       // Streak
       let s = 0;
