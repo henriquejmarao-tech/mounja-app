@@ -125,15 +125,15 @@ const Community = () => {
               {!answered ? (
                 <div className="flex flex-col gap-2.5 mt-auto">
                   <div className="flex items-center gap-2.5">
-                    <button onClick={handleAnswer} className="flex-1 py-4.5 rounded-2xl text-[15px] font-bold transition-transform active:scale-95" style={{ background: "rgba(168,213,186,0.15)", color: "#A8D5BA" }}>
+                    <button onClick={handleAnswer} className="flex-1 py-5 rounded-2xl text-[15px] font-bold transition-transform active:scale-95" style={{ background: "rgba(168,213,186,0.2)", color: "#A8D5BA", border: "1px solid rgba(168,213,186,0.15)" }}>
                       😔 Também sinto
                     </button>
-                    <button onClick={handleAnswer} className="flex-1 py-4.5 rounded-2xl text-[15px] font-bold transition-transform active:scale-95" style={{ background: "rgba(255,143,90,0.15)", color: "#FF8F5A" }}>
+                    <button onClick={handleAnswer} className="flex-1 py-5 rounded-2xl text-[15px] font-bold transition-transform active:scale-95" style={{ background: "rgba(255,143,90,0.2)", color: "#FF8F5A", border: "1px solid rgba(255,143,90,0.15)" }}>
                       🙂 Não sinto
                     </button>
                   </div>
-                  <button onClick={handleAnswer} className="w-full py-3 rounded-2xl text-[14px] transition-transform active:scale-95" style={{ background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.25)" }}>
-                    🤷 Neutro
+                  <button onClick={handleNext} className="w-full py-2.5 rounded-xl text-[12px] font-medium transition-transform active:scale-95" style={{ background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.3)" }}>
+                    Próximo post →
                   </button>
                 </div>
               ) : (
