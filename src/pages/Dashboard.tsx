@@ -318,21 +318,8 @@ const Dashboard = () => {
           <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0 group-hover:translate-x-0.5 transition-transform" />
         </button>
 
-        {/* Mudanças nos sintomas */}
-        <button
-          onClick={() => navigate("/registrar", { state: { focusSymptoms: true } })}
-          className="w-full rounded-[20px] p-4 animate-fade-in-up flex items-center gap-3.5 text-left active:scale-[0.98] transition-all duration-200 group bg-card border border-border/50"
-          style={{ boxShadow: "var(--shadow-card)" }}
-        >
-          <div className="w-8 h-8 rounded-[12px] bg-primary/10 flex items-center justify-center shrink-0">
-            <HeartPulse className="w-[18px] h-[18px] text-primary" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-bold text-foreground/85">Mudanças nos sintomas?</p>
-            <p className="text-xs text-muted-foreground/60 mt-0.5">Registre aqui</p>
-          </div>
-          <ArrowRight className="w-3.5 h-3.5 text-primary/40 shrink-0 group-hover:translate-x-0.5 transition-transform" />
-        </button>
+        {/* Sintomas — unified card (register + AI insights) */}
+        <SymptomInsightsCard />
 
         {/* Check-in CTA */}
         {!todayCheckedIn && (
@@ -420,8 +407,6 @@ const Dashboard = () => {
           </div>
         )}
 
-        {/* AI Symptom Insights Card */}
-        <SymptomInsightsCard />
 
         {/* Block 2a: Alimentação — quick action */}
         <div data-tutorial="suggestion-card" className="rounded-[20px] p-4 animate-fade-in-up" style={{ animationDelay: "60ms", background: "hsl(var(--card))", boxShadow: "var(--shadow-card)" }}>

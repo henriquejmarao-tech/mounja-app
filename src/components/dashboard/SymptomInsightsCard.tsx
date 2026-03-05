@@ -1,7 +1,8 @@
 import { useState, useCallback, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { supabase } from "@/integrations/supabase/client";
-import { Stethoscope, RefreshCw, ChevronDown } from "lucide-react";
+import { Stethoscope, RefreshCw, ChevronDown, HeartPulse, ArrowRight } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -13,6 +14,7 @@ interface Recommendation {
 }
 
 const SymptomInsightsCard = () => {
+  const navigate = useNavigate();
   const { dose, recentSymptoms } = useApplicationData();
   const [expanded, setExpanded] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -58,46 +60,25 @@ const SymptomInsightsCard = () => {
     }
   }, [recentSymptoms, daysSinceInjection, dose.currentDose]);
 
-  // Auto-fetch on first render if user has symptoms
   useEffect(() => {
     if (hasSymptoms && !fetched) {
       fetchInsights();
     }
   }, [hasSymptoms, fetched, fetchInsights]);
 
-  if (!hasSymptoms) {
-    return (
-      <div
-        className="rounded-[20px] p-4 animate-fade-in-up"
-        style={{ animationDelay: "120ms", background: "hsl(var(--card))", boxShadow: "var(--shadow-card)" }}
-      >
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-[10px] flex items-center justify-center bg-primary/8">
-            <Stethoscope className="w-[18px] h-[18px] text-primary" />
-          </div>
-          <h3 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground/55">
-            O que seus sintomas sugerem?
-          </h3>
-        </div>
-        <p className="text-xs text-muted-foreground/50 mt-2.5 leading-relaxed">
-          Registre seus sintomas no check-in para receber recomendações personalizadas com IA.
-        </p>
-      </div>
-    );
-  }
-
   return (
     <div
-      className="rounded-[20px] p-4 animate-fade-in-up"
+      className="rounded-[20px] animate-fade-in-up overflow-hidden"
       style={{ animationDelay: "120ms", background: "hsl(var(--card))", boxShadow: "var(--shadow-card)" }}
     >
-      <button onClick={() => setExpanded(!expanded)} className="w-full flex items-center justify-between">
+      {/* Header */}
+      <button onClick={() => setExpanded(!expanded)} className="w-full flex items-center justify-between p-4 pb-3">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-[10px] flex items-center justify-center bg-primary/8">
             <Stethoscope className="w-[18px] h-[18px] text-primary" />
           </div>
           <h3 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground/55">
-            O que seus sintomas sugerem?
+            Sintomas
           </h3>
         </div>
         <div className="flex items-center gap-1">
@@ -120,44 +101,72 @@ const SymptomInsightsCard = () => {
       </button>
 
       {expanded && (
-        <div className="mt-3.5 animate-fade-in-up">
-          {summary && !loading && (
-            <p className="text-xs text-primary/70 font-medium mb-3 px-0.5">{summary}</p>
-          )}
+        <div className="px-4 pb-4 animate-fade-in-up">
+          {/* Register symptoms CTA */}
+          <button
+            onClick={() => navigate("/registrar", { state: { focusSymptoms: true } })}
+            className="w-full rounded-xl p-3 flex items-center gap-3 text-left active:scale-[0.98] transition-all duration-200 group bg-primary/[0.04] border border-primary/10 mb-3"
+          >
+            <div className="w-7 h-7 rounded-[10px] bg-primary/10 flex items-center justify-center shrink-0">
+              <HeartPulse className="w-4 h-4 text-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[13px] font-semibold text-foreground/80">Mudanças nos sintomas?</p>
+              <p className="text-[11px] text-muted-foreground/55 mt-0.5">Registre aqui</p>
+            </div>
+            <ArrowRight className="w-3.5 h-3.5 text-primary/40 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+          </button>
 
-          <div className="space-y-2.5">
-            {loading ? (
-              Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="flex items-start gap-3 rounded-xl px-3.5 py-3 bg-muted/30">
-                  <Skeleton className="w-8 h-8 rounded-lg shrink-0" />
-                  <div className="flex-1 space-y-1.5">
-                    <Skeleton className="h-3.5 w-28" />
-                    <Skeleton className="h-3 w-full" />
-                  </div>
-                </div>
-              ))
-            ) : recommendations ? (
-              recommendations.map((rec, i) => (
-                <div
-                  key={i}
-                  className="flex items-start gap-3 rounded-xl px-3.5 py-3 bg-primary/[0.04] border border-primary/10"
-                >
-                  <span className="text-lg mt-0.5 shrink-0">{rec.emoji}</span>
-                  <div className="min-w-0">
-                    <p className="text-xs font-bold text-foreground/80">{rec.title}</p>
-                    <p className="text-[11px] text-muted-foreground leading-relaxed mt-0.5">{rec.text}</p>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p className="text-xs text-muted-foreground/50">Erro ao carregar. Tente novamente.</p>
-            )}
-          </div>
-
-          {!loading && recommendations && (
-            <p className="text-[10px] text-muted-foreground mt-2.5 text-center opacity-50">
-              ✨ Análise gerada por IA · baseada nos seus registros recentes
+          {/* AI Insights */}
+          {!hasSymptoms ? (
+            <p className="text-xs text-muted-foreground/50 leading-relaxed">
+              Registre seus sintomas no check-in para receber recomendações personalizadas com IA.
             </p>
+          ) : (
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/45 mb-2.5">
+                O que seus sintomas sugerem?
+              </p>
+
+              {summary && !loading && (
+                <p className="text-xs text-primary/70 font-medium mb-3 px-0.5">{summary}</p>
+              )}
+
+              <div className="space-y-2.5">
+                {loading ? (
+                  Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="flex items-start gap-3 rounded-xl px-3.5 py-3 bg-muted/30">
+                      <Skeleton className="w-8 h-8 rounded-lg shrink-0" />
+                      <div className="flex-1 space-y-1.5">
+                        <Skeleton className="h-3.5 w-28" />
+                        <Skeleton className="h-3 w-full" />
+                      </div>
+                    </div>
+                  ))
+                ) : recommendations ? (
+                  recommendations.map((rec, i) => (
+                    <div
+                      key={i}
+                      className="flex items-start gap-3 rounded-xl px-3.5 py-3 bg-primary/[0.04] border border-primary/10"
+                    >
+                      <span className="text-lg mt-0.5 shrink-0">{rec.emoji}</span>
+                      <div className="min-w-0">
+                        <p className="text-xs font-bold text-foreground/80">{rec.title}</p>
+                        <p className="text-[11px] text-muted-foreground leading-relaxed mt-0.5">{rec.text}</p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-xs text-muted-foreground/50">Erro ao carregar. Tente novamente.</p>
+                )}
+              </div>
+
+              {!loading && recommendations && (
+                <p className="text-[10px] text-muted-foreground mt-2.5 text-center opacity-50">
+                  ✨ Análise gerada por IA · baseada nos seus registros recentes
+                </p>
+              )}
+            </div>
           )}
         </div>
       )}
