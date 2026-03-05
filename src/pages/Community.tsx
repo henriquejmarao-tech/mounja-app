@@ -32,6 +32,13 @@ const communityTopics = [
   },
 ];
 
+const groups = [
+  { name: "Iniciantes Mounjaro", members: 48, emoji: "🌱", color: "hsl(var(--primary))" },
+  { name: "Meta: -10kg", members: 72, emoji: "🎯", color: "hsl(25 80% 52%)" },
+  { name: "Treino + Mounjaro", members: 35, emoji: "💪", color: "hsl(174 42% 48%)" },
+  { name: "Receitas Low Carb", members: 61, emoji: "🥗", color: "hsl(45 93% 47%)" },
+];
+
 const Community = () => {
   const navigate = useNavigate();
 
