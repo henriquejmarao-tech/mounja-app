@@ -407,8 +407,6 @@ const Dashboard = () => {
           </div>
         )}
 
-        {/* AI Symptom Insights Card */}
-        <SymptomInsightsCard />
 
         {/* Block 2a: Alimentação — quick action */}
         <div data-tutorial="suggestion-card" className="rounded-[20px] p-4 animate-fade-in-up" style={{ animationDelay: "60ms", background: "hsl(var(--card))", boxShadow: "var(--shadow-card)" }}>
