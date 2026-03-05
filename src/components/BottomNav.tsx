@@ -1,7 +1,7 @@
 import { Home, Plus, Clock, Users, HelpCircle } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AiChat from "@/components/AiChat";
 
 const navItems = [
@@ -15,9 +15,19 @@ const BottomNav = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [showAiChat, setShowAiChat] = useState(false);
+  const [hidden, setHidden] = useState(false);
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setHidden(document.body.hasAttribute("data-hide-nav"));
+    });
+    observer.observe(document.body, { attributes: true, attributeFilter: ["data-hide-nav"] });
+    return () => observer.disconnect();
+  }, []);
 
   const hiddenRoutes = ["/onboarding", "/auth", "/triagem", "/reset-password"];
   if (hiddenRoutes.some((r) => location.pathname.startsWith(r))) return null;
+  if (hidden) return null;
 
   const pillStyle = {
     background: "rgba(28, 52, 45, 0.72)",
@@ -27,19 +37,6 @@ const BottomNav = () => {
     boxShadow: "0 10px 35px rgba(0, 0, 0, 0.18)",
     border: "1px solid rgba(255, 255, 255, 0.08)",
   };
-
-  const [hidden, setHidden] = useState(false);
-
-  // Listen for data-hide-nav attribute changes
-  useState(() => {
-    const observer = new MutationObserver(() => {
-      setHidden(document.body.hasAttribute("data-hide-nav"));
-    });
-    observer.observe(document.body, { attributes: true, attributeFilter: ["data-hide-nav"] });
-    return () => observer.disconnect();
-  });
-
-  if (hidden) return null;
 
   return (
     <>
@@ -54,7 +51,6 @@ const BottomNav = () => {
         }}
       >
         <div className="flex items-center gap-2.5">
-          {/* Main nav pill */}
           <div
             className="flex-1 flex items-center justify-around px-3 py-3"
             style={{ ...pillStyle, height: "64px" }}
@@ -71,10 +67,7 @@ const BottomNav = () => {
                     className="flex items-center justify-center w-7 h-7 rounded-full transition-all duration-300"
                     style={
                       isActive
-                        ? {
-                            boxShadow: "0 0 10px rgba(88, 168, 128, 0.45)",
-                            transform: "scale(1.1)",
-                          }
+                        ? { boxShadow: "0 0 10px rgba(88, 168, 128, 0.45)", transform: "scale(1.1)" }
                         : undefined
                     }
                   >
@@ -85,12 +78,7 @@ const BottomNav = () => {
                       )}
                     />
                   </div>
-                  <span
-                    className={cn(
-                      "text-[10px] transition-all",
-                      isActive ? "text-white font-bold" : "text-white/40 font-medium"
-                    )}
-                  >
+                  <span className={cn("text-[10px] transition-all", isActive ? "text-white font-bold" : "text-white/40 font-medium")}>
                     {item.label}
                   </span>
                 </button>
@@ -98,7 +86,6 @@ const BottomNav = () => {
             })}
           </div>
 
-          {/* Chat button — same height as nav pill */}
           <button
             onClick={() => setShowAiChat(true)}
             className="shrink-0 flex items-center justify-center transition-all duration-200 active:scale-90"
