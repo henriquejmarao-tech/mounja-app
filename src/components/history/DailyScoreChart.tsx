@@ -18,12 +18,12 @@ const computeDailyScore = (
   profile: any,
   _lastInjectionDate: string | null,
   _intervalDays: number,
-  _streakAtDate: number = 1,
+  weightLossStreak: number = 0,
   prevWeight: number | null = null
 ): number => {
   let score = 0;
 
-  // 1. Check-in (20 pts) — flat for having logged
+  // 1. Check-in (20 pts)
   score += 20;
 
   // 2. Food quality (25 pts)
@@ -38,16 +38,17 @@ const computeDailyScore = (
     score += Math.round(Math.min(log.water_ml / target, 1) * 25);
   }
 
-  // 4. Weight day-over-day (30 pts)
+  // 4. Weight with streak-based scoring (30 pts)
   if (log.weight && prevWeight) {
-    const diff = prevWeight - log.weight;
+    const diff = Number(prevWeight) - Number(log.weight);
     if (diff > 0) {
-      score += Math.min(Math.round((diff / 0.3) * 30), 30);
+      const streakBonus = Math.min(weightLossStreak, 10) * 2;
+      score += Math.min(10 + streakBonus, 30);
     } else if (Math.abs(diff) <= 0.2) {
-      score += 22;
+      score += 18;
     } else {
       const penalty = Math.min(Math.abs(diff) / 0.5, 1);
-      score += Math.round(10 * (1 - penalty));
+      score += Math.round(8 * (1 - penalty));
     }
   } else if (log.weight) {
     score += 15;
@@ -73,21 +74,38 @@ const DailyScoreChart = ({ logs, profile, lastInjectionDate, intervalDays }: Dai
   const hasData = pastLogs.length >= 2;
 
   const scoreData = hasData ? pastLogs.slice(-14).map((l, idx, arr) => {
-    // Find previous log with weight for day-over-day comparison
+    // Find previous log with weight
     let prevWeight: number | null = null;
     for (let i = idx - 1; i >= 0; i--) {
       if (arr[i].weight) { prevWeight = arr[i].weight; break; }
     }
-    // Also check logs before the slice window
     if (!prevWeight) {
       const sliceStart = pastLogs.length > 14 ? pastLogs.length - 14 : 0;
       for (let i = sliceStart + idx - 1; i >= 0; i--) {
         if (pastLogs[i]?.weight) { prevWeight = pastLogs[i].weight; break; }
       }
     }
+
+    // Compute weight loss streak ending at this log
+    let weightLossStreak = 0;
+    const globalIdx = pastLogs.length > 14 ? pastLogs.length - 14 + idx : idx;
+    if (l.weight && prevWeight && Number(prevWeight) > Number(l.weight)) {
+      weightLossStreak = 1;
+      // Look further back for consecutive losses
+      for (let i = globalIdx - 1; i >= 1; i--) {
+        const curr = pastLogs[i];
+        const prev = pastLogs[i - 1];
+        if (curr?.weight && prev?.weight && Number(prev.weight) > Number(curr.weight)) {
+          weightLossStreak++;
+        } else {
+          break;
+        }
+      }
+    }
+
     return {
       date: new Date(l.date + "T12:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
-      score: computeDailyScore(l, profile, lastInjectionDate, intervalDays, 1, prevWeight),
+      score: computeDailyScore(l, profile, lastInjectionDate, intervalDays, weightLossStreak, prevWeight),
     };
   }) : [];
 
