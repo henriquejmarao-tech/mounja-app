@@ -25,12 +25,9 @@ const Dashboard = () => {
   }, [profile?.triage_completed, triggerPostTriageTutorial]);
 
   const [lastInjection, setLastInjection] = useState<any>(null);
-  const [latestWeight, setLatestWeight] = useState<number | null>(null);
   const [streak, setStreak] = useState(0);
   const [totalLogs, setTotalLogs] = useState(0);
-  const [weeklyWorkouts, setWeeklyWorkouts] = useState(0);
   const [weeklyWorkoutGoal, setWeeklyWorkoutGoal] = useState(3);
-  const [recentSymptoms, setRecentSymptoms] = useState<any>(null);
   const [insight, setInsight] = useState<string | null>(null);
   const [savedDiet, setSavedDiet] = useState<any>(null);
   const [todayWorkout, setTodayWorkout] = useState<{ type: string; duration: number } | null>(null);
