@@ -45,7 +45,6 @@ const Dashboard = () => {
   useEffect(() => {
     if (!user) return;
     const fetchData = async () => {
-      const weekAgo = localDateStr(new Date(Date.now() - 7 * 86400000));
       const today = localDateStr();
 
       const [injRes, logsRes, dietRes, todayWorkoutRes] = await Promise.all([
