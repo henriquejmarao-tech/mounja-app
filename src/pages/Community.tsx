@@ -21,11 +21,7 @@ const Community = () => {
   const [showTinder, setShowTinder] = useState(false);
   const [currentQ, setCurrentQ] = useState(0);
   const [showSolution, setShowSolution] = useState(false);
-
-  // Hide bottom nav when tinder is open
-  useState(() => {
-    return undefined;
-  });
+  const [answered, setAnswered] = useState(false);
 
   const openTinder = () => {
     setShowTinder(true);
@@ -39,7 +35,6 @@ const Community = () => {
     setShowSolution(false);
     document.body.removeAttribute("data-hide-nav");
   };
-  const [answered, setAnswered] = useState(false);
 
   const q = sampleQuestions[currentQ];
 
@@ -63,7 +58,7 @@ const Community = () => {
           className="flex items-center justify-between px-5 shrink-0"
           style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 1rem)", paddingBottom: "0.75rem" }}
         >
-          <button onClick={() => { setShowTinder(false); setCurrentQ(0); setAnswered(false); setShowSolution(false); }}>
+          <button onClick={closeTinder}>
             <X className="w-5 h-5 text-white/60" />
           </button>
           <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-white/40">Dúvidas GLP-1</p>
@@ -128,15 +123,17 @@ const Community = () => {
 
               {/* Action buttons */}
               {!answered ? (
-                <div className="flex items-center gap-3 mt-auto">
-                  <button onClick={handleAnswer} className="flex-1 py-3.5 rounded-2xl text-[13px] font-bold transition-transform active:scale-95" style={{ background: "rgba(168,213,186,0.15)", color: "#A8D5BA" }}>
-                    😔 Também sinto
-                  </button>
-                  <button onClick={handleAnswer} className="w-14 py-3.5 rounded-2xl text-[16px] transition-transform active:scale-95" style={{ background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.25)" }}>
-                    🤷
-                  </button>
-                  <button onClick={handleAnswer} className="flex-1 py-3.5 rounded-2xl text-[13px] font-bold transition-transform active:scale-95" style={{ background: "rgba(255,143,90,0.15)", color: "#FF8F5A" }}>
-                    🙂 Não sinto
+                <div className="flex flex-col gap-2.5 mt-auto">
+                  <div className="flex items-center gap-2.5">
+                    <button onClick={handleAnswer} className="flex-1 py-4.5 rounded-2xl text-[15px] font-bold transition-transform active:scale-95" style={{ background: "rgba(168,213,186,0.15)", color: "#A8D5BA" }}>
+                      😔 Também sinto
+                    </button>
+                    <button onClick={handleAnswer} className="flex-1 py-4.5 rounded-2xl text-[15px] font-bold transition-transform active:scale-95" style={{ background: "rgba(255,143,90,0.15)", color: "#FF8F5A" }}>
+                      🙂 Não sinto
+                    </button>
+                  </div>
+                  <button onClick={handleAnswer} className="w-full py-3 rounded-2xl text-[14px] transition-transform active:scale-95" style={{ background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.25)" }}>
+                    🤷 Neutro
                   </button>
                 </div>
               ) : (
@@ -212,7 +209,7 @@ const Community = () => {
                 Fazer pergunta
               </button>
               <button
-                onClick={() => setShowTinder(true)}
+                onClick={openTinder}
                 className="flex-[1.4] py-3.5 rounded-2xl text-[13px] font-bold transition-transform active:scale-[0.97] flex items-center justify-center gap-2"
                 style={{ background: "#FF8F5A", color: "white", boxShadow: "0 4px 16px rgba(255,143,90,0.35)" }}
               >
