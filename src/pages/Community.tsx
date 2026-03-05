@@ -224,24 +224,6 @@ const Community = () => {
           </div>
         </div>
 
-        {/* Invite friend card */}
-        <button
-          onClick={() => { if (navigator.share) navigator.share({ title: "Mounjá", text: "Estou usando o Mounjá para acompanhar meu tratamento com Mounjaro. Experimente também!", url: "https://mounja-app.lovable.app" }); }}
-          className="w-full rounded-[20px] p-5 animate-fade-in-up flex items-center gap-4 text-left transition-transform active:scale-[0.98]"
-          style={{ background: "#E9F5EE", border: "1.5px solid #CDE7DA" }}
-        >
-          <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0" style={{ background: "#2E7D5A" }}>
-            <Gift className="w-5 h-5 text-white" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-bold" style={{ color: "#1a3a2a" }}>Convide um amigo</p>
-            <p className="text-xs mt-0.5" style={{ color: "#5a8a6e" }}>Compartilhe o app e ganhe recompensas 🎁</p>
-          </div>
-          <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style={{ background: "#FF8F5A" }}>
-            <Share2 className="w-3.5 h-3.5 text-white" />
-          </div>
-        </button>
-
         {/* Groups */}
         <div>
           <div className="flex items-center justify-between mb-3.5">
@@ -309,6 +291,24 @@ const Community = () => {
           <p className="text-sm font-semibold" style={{ color: "#2E7D5A" }}>Em breve</p>
           <p className="text-xs mt-1" style={{ color: "#7a9e8a" }}>Chat nos grupos, desafios e ranking entre amigos</p>
         </div>
+
+        {/* Invite friend card */}
+        <button
+          onClick={() => { if (navigator.share) navigator.share({ title: "Mounjá", text: "Estou usando o Mounjá para acompanhar meu tratamento com Mounjaro. Experimente também!", url: "https://mounja-app.lovable.app" }); }}
+          className="w-full rounded-[20px] p-5 animate-fade-in-up flex items-center gap-4 text-left transition-transform active:scale-[0.98]"
+          style={{ background: "#E9F5EE", border: "1.5px solid #CDE7DA" }}
+        >
+          <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0" style={{ background: "#2E7D5A" }}>
+            <Gift className="w-5 h-5 text-white" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-bold" style={{ color: "#1a3a2a" }}>Convide um amigo</p>
+            <p className="text-xs mt-0.5" style={{ color: "#5a8a6e" }}>Compartilhe o app e ganhe recompensas 🎁</p>
+          </div>
+          <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style={{ background: "#FF8F5A" }}>
+            <Share2 className="w-3.5 h-3.5 text-white" />
+          </div>
+        </button>
       </div>
     </div>
   );
