@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Users, MessageCircle, Share2, Gift, Plus, X, Sparkles } from "lucide-react";
+import { Users, MessageCircle, Share2, Gift, Plus, X, Sparkles, EyeOff, Eye } from "lucide-react";
 
 const groups = [
   { name: "Iniciantes Mounjaro", members: 48, emoji: "🌱", description: "Para quem está começando o tratamento", activity: "5 novos posts" },
@@ -249,9 +249,9 @@ const Community = () => {
               <div className="w-2 h-2 rounded-full" style={{ background: "#2E7D5A" }} />
               <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "rgba(17,24,39,0.5)" }}>Filtrar tendências</h3>
             </div>
-            <button className="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full" style={{ color: "#FF8F5A", background: "rgba(255,143,90,0.1)" }}>
+            <button onClick={() => navigate("/comunidade/grupos")} className="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full" style={{ color: "#FF8F5A", background: "rgba(255,143,90,0.1)" }}>
               <Plus className="w-3 h-3" />
-              Criar
+              Adicionar
             </button>
           </div>
 
@@ -282,15 +282,19 @@ const Community = () => {
                       <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full" style={{ color: "#FF8F5A", background: "rgba(255,143,90,0.1)" }}>{group.activity}</span>
                     </div>
                   </div>
-                  <div
-                    className="w-5 h-5 rounded-md shrink-0 flex items-center justify-center transition-all"
-                    style={{
-                      background: isSelected ? "#2E7D5A" : "transparent",
-                      border: isSelected ? "none" : "2px solid #c5d8cc",
-                    }}
-                  >
-                    {isSelected && (
-                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6L5 8.5L9.5 3.5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  {/* Eye toggle + checkbox */}
+                  <div className="flex items-center gap-2 shrink-0">
+                    {isSelected ? (
+                      <div
+                        className="w-5 h-5 rounded-md flex items-center justify-center"
+                        style={{ background: "#2E7D5A" }}
+                      >
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6L5 8.5L9.5 3.5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      </div>
+                    ) : (
+                      <div className="w-5 h-5 rounded-md flex items-center justify-center" style={{ background: "rgba(200,200,200,0.2)" }}>
+                        <EyeOff className="w-3 h-3" style={{ color: "#b0b0b0" }} />
+                      </div>
                     )}
                   </div>
                 </button>

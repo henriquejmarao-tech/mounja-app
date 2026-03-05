@@ -22,6 +22,7 @@ import History from "./pages/History";
 import Insights from "./pages/Insights";
 import Settings from "./pages/Settings";
 import Community from "./pages/Community";
+import ManageGroups from "./pages/ManageGroups";
 import Nutrition from "./pages/Nutrition";
 import Workouts from "./pages/Workouts";
 import Application from "./pages/Application";
@@ -86,6 +87,7 @@ const AppRoutes = () => {
         <Route path="/insights" element={<ProtectedRoute><TriageGuard><Insights /></TriageGuard></ProtectedRoute>} />
         <Route path="/configuracoes" element={<ProtectedRoute><TriageGuard><Settings /></TriageGuard></ProtectedRoute>} />
         <Route path="/comunidade" element={<ProtectedRoute><TriageGuard><Community /></TriageGuard></ProtectedRoute>} />
+        <Route path="/comunidade/grupos" element={<ProtectedRoute><TriageGuard><ManageGroups /></TriageGuard></ProtectedRoute>} />
         <Route path="/nutricao" element={<ProtectedRoute><TriageGuard><Nutrition /></TriageGuard></ProtectedRoute>} />
         <Route path="/treinos" element={<ProtectedRoute><TriageGuard><Workouts /></TriageGuard></ProtectedRoute>} />
         <Route path="/aplicacao" element={<ProtectedRoute><TriageGuard><Application /></TriageGuard></ProtectedRoute>} />
