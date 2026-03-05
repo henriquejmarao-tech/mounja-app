@@ -21,6 +21,24 @@ const Community = () => {
   const [showTinder, setShowTinder] = useState(false);
   const [currentQ, setCurrentQ] = useState(0);
   const [showSolution, setShowSolution] = useState(false);
+
+  // Hide bottom nav when tinder is open
+  useState(() => {
+    return undefined;
+  });
+
+  const openTinder = () => {
+    setShowTinder(true);
+    document.body.setAttribute("data-hide-nav", "true");
+  };
+
+  const closeTinder = () => {
+    setShowTinder(false);
+    setCurrentQ(0);
+    setAnswered(false);
+    setShowSolution(false);
+    document.body.removeAttribute("data-hide-nav");
+  };
   const [answered, setAnswered] = useState(false);
 
   const q = sampleQuestions[currentQ];

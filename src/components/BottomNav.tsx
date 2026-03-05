@@ -28,6 +28,19 @@ const BottomNav = () => {
     border: "1px solid rgba(255, 255, 255, 0.08)",
   };
 
+  const [hidden, setHidden] = useState(false);
+
+  // Listen for data-hide-nav attribute changes
+  useState(() => {
+    const observer = new MutationObserver(() => {
+      setHidden(document.body.hasAttribute("data-hide-nav"));
+    });
+    observer.observe(document.body, { attributes: true, attributeFilter: ["data-hide-nav"] });
+    return () => observer.disconnect();
+  });
+
+  if (hidden) return null;
+
   return (
     <>
       <nav
