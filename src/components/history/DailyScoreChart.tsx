@@ -72,24 +72,24 @@ const DailyScoreChart = ({ logs, profile, lastInjectionDate, intervalDays }: Dai
 
   const hasData = pastLogs.length >= 2;
 
-  // Compute streak for each log date
-  const dateSet = new Set(pastLogs.map((l) => l.date));
-  const computeStreak = (date: string) => {
-    let s = 1;
-    const d = new Date(date + "T12:00:00");
-    for (let i = 1; i <= 7; i++) {
-      const prev = new Date(d);
-      prev.setDate(prev.getDate() - i);
-      if (dateSet.has(prev.toISOString().split("T")[0])) s++;
-      else break;
+  const scoreData = hasData ? pastLogs.slice(-14).map((l, idx, arr) => {
+    // Find previous log with weight for day-over-day comparison
+    let prevWeight: number | null = null;
+    for (let i = idx - 1; i >= 0; i--) {
+      if (arr[i].weight) { prevWeight = arr[i].weight; break; }
     }
-    return s;
-  };
-
-  const scoreData = hasData ? pastLogs.slice(-14).map((l) => ({
-    date: new Date(l.date + "T12:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
-    score: computeDailyScore(l, profile, lastInjectionDate, intervalDays, computeStreak(l.date)),
-  })) : [];
+    // Also check logs before the slice window
+    if (!prevWeight) {
+      const sliceStart = pastLogs.length > 14 ? pastLogs.length - 14 : 0;
+      for (let i = sliceStart + idx - 1; i >= 0; i--) {
+        if (pastLogs[i]?.weight) { prevWeight = pastLogs[i].weight; break; }
+      }
+    }
+    return {
+      date: new Date(l.date + "T12:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
+      score: computeDailyScore(l, profile, lastInjectionDate, intervalDays, 1, prevWeight),
+    };
+  }) : [];
 
   const avgScore = scoreData.length
     ? Math.round(scoreData.reduce((s, d) => s + d.score, 0) / scoreData.length)
