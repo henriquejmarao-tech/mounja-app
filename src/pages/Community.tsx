@@ -108,14 +108,16 @@ const Community = () => {
               {/* Solution panel */}
               {showSolution && (
                 <div
-                  className="rounded-[16px] p-4 mb-4 animate-fade-in-up"
-                  style={{ background: "rgba(168,213,186,0.1)", border: "1px solid rgba(168,213,186,0.15)" }}
+                  className="rounded-[20px] p-5 mb-4 animate-fade-in-up"
+                  style={{ background: "rgba(168,213,186,0.12)", border: "1px solid rgba(168,213,186,0.15)" }}
                 >
-                  <div className="flex items-center gap-2 mb-2">
-                    <Sparkles className="w-4 h-4" style={{ color: "#A8D5BA" }} />
-                    <p className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "#A8D5BA" }}>Resposta IA</p>
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <div className="w-7 h-7 rounded-full flex items-center justify-center" style={{ background: "rgba(168,213,186,0.2)" }}>
+                      <Sparkles className="w-4 h-4" style={{ color: "#A8D5BA" }} />
+                    </div>
+                    <p className="text-[12px] font-bold uppercase tracking-wider" style={{ color: "#A8D5BA" }}>Resposta IA</p>
                   </div>
-                  <p className="text-[13px] text-white/70 leading-relaxed">
+                  <p className="text-[15px] text-white/80 leading-[1.7]">
                     É comum sentir enjoo ao aumentar a dose de GLP-1. Isso ocorre porque o corpo precisa se adaptar ao novo nível do medicamento. Geralmente melhora em 3-5 dias. Comer porções menores e evitar alimentos gordurosos pode ajudar.
                   </p>
                 </div>
