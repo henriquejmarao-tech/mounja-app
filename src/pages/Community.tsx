@@ -1,42 +1,12 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Users, MessageCircle, Heart, Star, TrendingUp, Award, Share2, Gift, ChevronRight, Lock } from "lucide-react";
-
-const communityTopics = [
-  {
-    icon: TrendingUp,
-    title: "Primeiros passos",
-    description: "Dicas de quem está começando o tratamento",
-    members: 234,
-    color: "hsl(var(--primary))",
-  },
-  {
-    icon: Heart,
-    title: "Efeitos colaterais",
-    description: "Compartilhe e aprenda a lidar com os sintomas",
-    members: 189,
-    color: "hsl(25 80% 52%)",
-  },
-  {
-    icon: Star,
-    title: "Conquistas",
-    description: "Celebre seus marcos e inspire outros",
-    members: 312,
-    color: "hsl(45 93% 47%)",
-  },
-  {
-    icon: Award,
-    title: "Receitas saudáveis",
-    description: "Troque receitas que funcionam no tratamento",
-    members: 156,
-    color: "hsl(174 42% 48%)",
-  },
-];
+import { Users, MessageCircle, Share2, Gift, ChevronRight, Plus } from "lucide-react";
 
 const groups = [
-  { name: "Iniciantes Mounjaro", members: 48, emoji: "🌱", color: "hsl(var(--primary))" },
-  { name: "Meta: -10kg", members: 72, emoji: "🎯", color: "hsl(25 80% 52%)" },
-  { name: "Treino + Mounjaro", members: 35, emoji: "💪", color: "hsl(174 42% 48%)" },
-  { name: "Receitas Low Carb", members: 61, emoji: "🥗", color: "hsl(45 93% 47%)" },
+  { name: "Iniciantes Mounjaro", members: 48, emoji: "🌱", description: "Para quem está começando o tratamento" },
+  { name: "Meta: -10kg", members: 72, emoji: "🎯", description: "Juntos rumo ao objetivo" },
+  { name: "Treino + Mounjaro", members: 35, emoji: "💪", description: "Exercícios durante o tratamento" },
+  { name: "Receitas Low Carb", members: 61, emoji: "🥗", description: "Receitas que funcionam" },
+  { name: "Bem-estar mental", members: 29, emoji: "🧘", description: "Cuidando da mente também" },
 ];
 
 const Community = () => {
@@ -61,101 +31,7 @@ const Community = () => {
       </header>
 
       <div className="px-5 -mt-2 space-y-4">
-        {/* Welcome card */}
-        <div
-          className="rounded-[20px] p-5 animate-fade-in-up"
-          style={{ background: "hsl(var(--card))", boxShadow: "0 8px 24px rgba(17,24,39,0.08)" }}
-        >
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center">
-              <Users className="w-5 h-5 text-primary" />
-            </div>
-            <div>
-              <h2 className="text-sm font-bold text-foreground/85">Bem-vindo à comunidade</h2>
-              <p className="text-xs text-muted-foreground">Conecte-se com pessoas na mesma jornada</p>
-            </div>
-          </div>
-          <p className="text-xs text-muted-foreground/70 leading-relaxed">
-            Em breve você poderá compartilhar experiências, trocar dicas e encontrar apoio de quem entende o que você está vivendo. 🌿
-          </p>
-        </div>
-
-        {/* Topics */}
-        <div>
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-2 h-2 rounded-full bg-primary" />
-            <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "rgba(17,24,39,0.55)" }}>
-              Tópicos populares
-            </h3>
-          </div>
-
-          <div className="space-y-2.5">
-            {communityTopics.map((topic, i) => (
-              <div
-                key={topic.title}
-                className="rounded-[16px] p-4 animate-fade-in-up"
-                style={{
-                  animationDelay: `${i * 60}ms`,
-                  background: "hsl(var(--card))",
-                  boxShadow: "var(--shadow-card)",
-                }}
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className="w-9 h-9 rounded-[12px] flex items-center justify-center shrink-0"
-                    style={{ background: `${topic.color}10` }}
-                  >
-                    <topic.icon className="w-[18px] h-[18px]" style={{ color: topic.color }} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-foreground/85">{topic.title}</p>
-                    <p className="text-xs text-muted-foreground/60 mt-0.5">{topic.description}</p>
-                  </div>
-                  <div className="flex items-center gap-1 text-muted-foreground/40">
-                    <Users className="w-3 h-3" />
-                    <span className="text-[10px] font-medium">{topic.members}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Groups */}
-        <div>
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-2 h-2 rounded-full bg-primary" />
-            <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "rgba(17,24,39,0.55)" }}>
-              Grupos
-            </h3>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2.5">
-            {groups.map((group, i) => (
-              <div
-                key={group.name}
-                className="rounded-[16px] p-4 animate-fade-in-up relative overflow-hidden"
-                style={{
-                  animationDelay: `${i * 60 + 300}ms`,
-                  background: "hsl(var(--card))",
-                  boxShadow: "var(--shadow-card)",
-                }}
-              >
-                <div className="text-2xl mb-2">{group.emoji}</div>
-                <p className="text-xs font-semibold text-foreground/85 leading-tight">{group.name}</p>
-                <div className="flex items-center gap-1 mt-2 text-muted-foreground/40">
-                  <Users className="w-3 h-3" />
-                  <span className="text-[10px] font-medium">{group.members}</span>
-                </div>
-                <div className="absolute top-3 right-3">
-                  <Lock className="w-3 h-3 text-muted-foreground/30" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Refer a friend */}
+        {/* Refer a friend - TOP */}
         <button
           onClick={() => {
             if (navigator.share) {
@@ -168,8 +44,7 @@ const Community = () => {
           }}
           className="w-full rounded-[20px] p-5 animate-fade-in-up flex items-center gap-4 text-left"
           style={{
-            animationDelay: "400ms",
-            background: "linear-gradient(135deg, hsl(var(--primary) / 0.1) 0%, hsl(var(--primary) / 0.05) 100%)",
+            background: "linear-gradient(135deg, hsl(var(--primary) / 0.12) 0%, hsl(var(--primary) / 0.04) 100%)",
             border: "1px solid hsl(var(--primary) / 0.15)",
           }}
         >
@@ -183,11 +58,56 @@ const Community = () => {
           <Share2 className="w-4 h-4 text-primary/50 shrink-0" />
         </button>
 
+        {/* Groups - WHOOP style */}
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-primary" />
+              <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "rgba(17,24,39,0.55)" }}>
+                Seus grupos
+              </h3>
+            </div>
+            <button className="flex items-center gap-1 text-primary text-[11px] font-semibold">
+              <Plus className="w-3.5 h-3.5" />
+              Criar
+            </button>
+          </div>
+
+          <div className="space-y-2">
+            {groups.map((group, i) => (
+              <div
+                key={group.name}
+                className="rounded-[16px] p-4 animate-fade-in-up flex items-center gap-3"
+                style={{
+                  animationDelay: `${i * 50}ms`,
+                  background: "hsl(var(--card))",
+                  boxShadow: "var(--shadow-card)",
+                }}
+              >
+                <div className="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 text-xl" style={{ background: "hsl(var(--muted))" }}>
+                  {group.emoji}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-foreground/85">{group.name}</p>
+                  <p className="text-[11px] text-muted-foreground/50 mt-0.5">{group.description}</p>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex items-center gap-1 text-muted-foreground/40">
+                    <Users className="w-3 h-3" />
+                    <span className="text-[10px] font-medium">{group.members}</span>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-muted-foreground/30" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Coming soon */}
         <div
           className="rounded-[20px] p-5 text-center animate-fade-in-up"
           style={{
-            animationDelay: "500ms",
+            animationDelay: "350ms",
             background: "hsl(var(--primary) / 0.06)",
             border: "1px dashed hsl(var(--primary) / 0.2)",
           }}
@@ -195,7 +115,7 @@ const Community = () => {
           <MessageCircle className="w-8 h-8 text-primary/40 mx-auto mb-2" />
           <p className="text-sm font-semibold text-foreground/70">Em breve</p>
           <p className="text-xs text-muted-foreground/60 mt-1">
-            Fórum de discussão, grupos ativos e mensagens diretas
+            Chat nos grupos, desafios e ranking entre amigos
           </p>
         </div>
       </div>
