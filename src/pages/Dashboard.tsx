@@ -15,7 +15,7 @@ import SymptomInsightsCard from "@/components/dashboard/SymptomInsightsCard";
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, profile } = useAuth();
-  const { dose, recentSymptoms: ssotSymptoms, weeklyWorkoutCount, latestWeight: ssotWeight, loading: ssotLoading } = useApplicationData();
+  const { dose, recentSymptoms, weeklyWorkoutCount, latestWeight, loading: ssotLoading, refresh: refreshSSoT } = useApplicationData();
   const { triggerPostTriageTutorial } = useTutorial();
 
   useEffect(() => {
@@ -25,12 +25,9 @@ const Dashboard = () => {
   }, [profile?.triage_completed, triggerPostTriageTutorial]);
 
   const [lastInjection, setLastInjection] = useState<any>(null);
-  const [latestWeight, setLatestWeight] = useState<number | null>(null);
   const [streak, setStreak] = useState(0);
   const [totalLogs, setTotalLogs] = useState(0);
-  const [weeklyWorkouts, setWeeklyWorkouts] = useState(0);
   const [weeklyWorkoutGoal, setWeeklyWorkoutGoal] = useState(3);
-  const [recentSymptoms, setRecentSymptoms] = useState<any>(null);
   const [insight, setInsight] = useState<string | null>(null);
   const [savedDiet, setSavedDiet] = useState<any>(null);
   const [todayWorkout, setTodayWorkout] = useState<{ type: string; duration: number } | null>(null);
@@ -48,20 +45,17 @@ const Dashboard = () => {
   useEffect(() => {
     if (!user) return;
     const fetchData = async () => {
-      const weekAgo = localDateStr(new Date(Date.now() - 7 * 86400000));
       const today = localDateStr();
 
-      const [injRes, logsRes, workoutsRes, dietRes, todayWorkoutRes] = await Promise.all([
+      const [injRes, logsRes, dietRes, todayWorkoutRes] = await Promise.all([
         supabase.from("injections").select("*").eq("user_id", user.id).order("date", { ascending: false }).limit(1),
         supabase.from("daily_logs").select("date, weight, symptom_nausea, symptom_fatigue, symptom_headache, mood, energy, water_ml, food_quality").eq("user_id", user.id).order("date", { ascending: false }).limit(60),
-        supabase.from("workouts" as any).select("*").eq("user_id", user.id).gte("date", weekAgo),
         supabase.from("diet_suggestions" as any).select("breakfast, lunch, dinner, snack, calories_target, protein_target, tip, context_note").eq("user_id", user.id).eq("date", today).limit(1),
         supabase.from("workouts" as any).select("workout_type, duration_minutes").eq("user_id", user.id).eq("date", today).limit(1),
       ]);
 
       const inj = (injRes.data as any[]) || [];
       const logs = (logsRes.data as any[]) || [];
-      const workouts = (workoutsRes.data as any[]) || [];
       const diet = (dietRes.data as any[]) || [];
       const todayW = (todayWorkoutRes.data as any[]) || [];
 
@@ -72,20 +66,8 @@ const Dashboard = () => {
       setTodayLog(todayLogEntry || null);
       setAllLogs(logs);
       setTotalLogs(logs.length);
-      setWeeklyWorkouts(workouts.length);
       if (diet[0]) setSavedDiet(diet[0]);
       if (todayW[0]) setTodayWorkout({ type: todayW[0].workout_type, duration: todayW[0].duration_minutes });
-
-      const wLog = logs.find((l) => l.weight);
-      setLatestWeight(wLog?.weight ?? null);
-
-      // Recent symptoms (last 3 days)
-      const recent3 = logs.slice(0, 3);
-      if (recent3.length > 0) {
-        const avgNausea = recent3.reduce((s: number, l: any) => s + (l.symptom_nausea || 0), 0) / recent3.length;
-        const avgFatigue = recent3.reduce((s: number, l: any) => s + (l.symptom_fatigue || 0), 0) / recent3.length;
-        setRecentSymptoms({ nausea: avgNausea, fatigue: avgFatigue });
-      }
 
       // Streak
       let s = 0;
@@ -121,11 +103,11 @@ const Dashboard = () => {
 
         if (!insight) {
           const initialW = profile?.current_weight;
-          const currentW = latestWeight ?? wLog?.weight;
+          const currentW = latestWeight;
           if (initialW && currentW && initialW - currentW > 0) {
             setInsight(`Você já perdeu ${(initialW - currentW).toFixed(1)} kg desde o início. Continue assim! 💪`);
-          } else if (workouts.length >= 3) {
-            setInsight(`${workouts.length} treinos esta semana! Seu corpo agradece. 🏋️`);
+          } else if (weeklyWorkoutCount >= 3) {
+            setInsight(`${weeklyWorkoutCount} treinos esta semana! Seu corpo agradece. 🏋️`);
           }
         }
       }
@@ -460,7 +442,7 @@ const Dashboard = () => {
 
         {/* Block 2b: Treino - collapsible card */}
         {(() => {
-          const suggestion = getWorkoutSuggestion(weeklyWorkouts, weeklyWorkoutGoal, recentSymptoms, daysUntilNext);
+          const suggestion = getWorkoutSuggestion(weeklyWorkoutCount, weeklyWorkoutGoal, recentSymptoms, daysUntilNext);
           return (
             <div className="rounded-[20px] p-4 animate-fade-in-up" style={{ animationDelay: "90ms", background: "hsl(var(--card))", boxShadow: "var(--shadow-card)" }}>
               <button
