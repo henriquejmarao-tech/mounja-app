@@ -10,6 +10,8 @@ export interface CommunityGroup {
   description: string | null;
   created_by: string | null;
   created_at: string;
+  is_private: boolean;
+  invite_code: string | null;
   member_count?: number;
 }
 
@@ -126,10 +128,15 @@ export function useCommunityGroups() {
   };
 
   const createGroup = async (name: string, emoji: string, description: string) => {
-    if (!user) return;
+    if (!user) return null;
+
+    // Generate invite code via RPC
+    const { data: codeData } = await supabase.rpc("generate_invite_code");
+    const inviteCode = codeData as string;
+
     const { data, error } = await supabase
       .from("community_groups")
-      .insert({ name, emoji, description, created_by: user.id })
+      .insert({ name, emoji, description, created_by: user.id, is_private: true, invite_code: inviteCode })
       .select()
       .single();
     if (error) {
@@ -144,6 +151,30 @@ export function useCommunityGroups() {
     return data;
   };
 
+  const joinByCode = async (code: string) => {
+    if (!user) return false;
+    const { data: groupId } = await supabase.rpc("find_group_by_code", { _code: code });
+    if (!groupId) {
+      toast.error("Código inválido");
+      return false;
+    }
+    const { error } = await supabase
+      .from("community_group_members")
+      .insert({ user_id: user.id, group_id: groupId });
+    if (error) {
+      if (error.code === "23505") {
+        toast("Você já participa deste grupo");
+      } else {
+        toast.error("Erro ao entrar no grupo");
+        return false;
+      }
+    } else {
+      toast.success("Você entrou no grupo!");
+    }
+    await fetchGroups();
+    return true;
+  };
+
   return {
     groups,
     myGroupIds,
@@ -153,6 +184,7 @@ export function useCommunityGroups() {
     leaveGroup,
     toggleGroupHidden,
     createGroup,
+    joinByCode,
     refreshGroups: fetchGroups,
   };
 }

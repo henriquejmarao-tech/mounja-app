@@ -53,6 +53,8 @@ export type Database = {
           description: string | null
           emoji: string
           id: string
+          invite_code: string | null
+          is_private: boolean
           name: string
         }
         Insert: {
@@ -61,6 +63,8 @@ export type Database = {
           description?: string | null
           emoji?: string
           id?: string
+          invite_code?: string | null
+          is_private?: boolean
           name: string
         }
         Update: {
@@ -69,6 +73,8 @@ export type Database = {
           description?: string | null
           emoji?: string
           id?: string
+          invite_code?: string | null
+          is_private?: boolean
           name?: string
         }
         Relationships: []
@@ -541,7 +547,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      find_group_by_code: { Args: { _code: string }; Returns: string }
+      generate_invite_code: { Args: never; Returns: string }
+      is_group_member: {
+        Args: { _group_id: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never

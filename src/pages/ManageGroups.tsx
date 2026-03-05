@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Users, Plus, Search, Globe, Loader2 } from "lucide-react";
+import { ArrowLeft, Users, Plus, Search, Globe, Loader2, Lock, Copy, KeyRound } from "lucide-react";
 import { useCommunityGroups } from "@/hooks/useCommunity";
+import { toast } from "sonner";
 
 const ManageGroups = () => {
   const navigate = useNavigate();
@@ -11,8 +12,11 @@ const ManageGroups = () => {
   const [newGroupDesc, setNewGroupDesc] = useState("");
   const [newGroupEmoji, setNewGroupEmoji] = useState("🌟");
   const [creating, setCreating] = useState(false);
+  const [showJoinByCode, setShowJoinByCode] = useState(false);
+  const [inviteCodeInput, setInviteCodeInput] = useState("");
+  const [joiningByCode, setJoiningByCode] = useState(false);
 
-  const { groups, myGroupIds, loading, joinGroup, leaveGroup, createGroup } = useCommunityGroups();
+  const { groups, myGroupIds, loading, joinGroup, leaveGroup, createGroup, joinByCode } = useCommunityGroups();
 
   const myGroups = groups.filter(g => myGroupIds.includes(g.id));
   const discoverGroups = groups.filter(g => !myGroupIds.includes(g.id));
@@ -27,11 +31,30 @@ const ManageGroups = () => {
   const handleCreate = async () => {
     if (!newGroupName.trim()) return;
     setCreating(true);
-    await createGroup(newGroupName.trim(), newGroupEmoji, newGroupDesc.trim());
+    const result = await createGroup(newGroupName.trim(), newGroupEmoji, newGroupDesc.trim());
     setShowCreate(false);
     setNewGroupName("");
     setNewGroupDesc("");
     setCreating(false);
+    if (result?.invite_code) {
+      toast.success(`Grupo criado! Código: ${result.invite_code}`);
+    }
+  };
+
+  const handleJoinByCode = async () => {
+    if (!inviteCodeInput.trim()) return;
+    setJoiningByCode(true);
+    const ok = await joinByCode(inviteCodeInput.trim());
+    setJoiningByCode(false);
+    if (ok) {
+      setInviteCodeInput("");
+      setShowJoinByCode(false);
+    }
+  };
+
+  const copyCode = (code: string) => {
+    navigator.clipboard.writeText(code);
+    toast.success("Código copiado!");
   };
 
   const GroupCard = ({ group, isJoined }: { group: typeof groups[0]; isJoined: boolean }) => (
@@ -45,23 +68,41 @@ const ManageGroups = () => {
     >
       <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 text-2xl" style={{ background: "#E9F5EE" }}>{group.emoji}</div>
       <div className="flex-1 min-w-0">
-        <p className="text-[13px] font-semibold" style={{ color: "#1a3a2a" }}>{group.name}</p>
+        <div className="flex items-center gap-1.5">
+          <p className="text-[13px] font-semibold" style={{ color: "#1a3a2a" }}>{group.name}</p>
+          {group.is_private && <Lock className="w-3 h-3 shrink-0" style={{ color: "#9ab5a5" }} />}
+        </div>
         <p className="text-[11px] mt-0.5" style={{ color: "#7a9e8a" }}>{group.description}</p>
-        <div className="flex items-center gap-1 mt-1" style={{ color: "#9ab5a5" }}>
-          <Users className="w-3 h-3" />
-          <span className="text-[10px] font-medium">{group.member_count || 0} membros</span>
+        <div className="flex items-center gap-2 mt-1">
+          <div className="flex items-center gap-1" style={{ color: "#9ab5a5" }}>
+            <Users className="w-3 h-3" />
+            <span className="text-[10px] font-medium">{group.member_count || 0} membros</span>
+          </div>
+          {/* Show invite code for private groups the user is in */}
+          {group.is_private && isJoined && group.invite_code && (
+            <button
+              onClick={(e) => { e.stopPropagation(); copyCode(group.invite_code!); }}
+              className="flex items-center gap-1 px-1.5 py-0.5 rounded-md transition-all active:scale-95"
+              style={{ background: "rgba(46,125,90,0.1)" }}
+            >
+              <span className="text-[9px] font-mono font-bold" style={{ color: "#2E7D5A" }}>{group.invite_code}</span>
+              <Copy className="w-2.5 h-2.5" style={{ color: "#2E7D5A" }} />
+            </button>
+          )}
         </div>
       </div>
-      <button
-        onClick={() => isJoined ? leaveGroup(group.id) : joinGroup(group.id)}
-        className="px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all active:scale-95"
-        style={isJoined
-          ? { background: "#E9F5EE", color: "#2E7D5A", border: "1.5px solid #A8D5BA" }
-          : { background: "#FF8F5A", color: "white" }
-        }
-      >
-        {isJoined ? "Sair" : "Entrar"}
-      </button>
+      {!group.is_private || isJoined ? (
+        <button
+          onClick={() => isJoined ? leaveGroup(group.id) : joinGroup(group.id)}
+          className="px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all active:scale-95"
+          style={isJoined
+            ? { background: "#E9F5EE", color: "#2E7D5A", border: "1.5px solid #A8D5BA" }
+            : { background: "#FF8F5A", color: "white" }
+          }
+        >
+          {isJoined ? "Sair" : "Entrar"}
+        </button>
+      ) : null}
     </div>
   );
 
@@ -118,13 +159,64 @@ const ManageGroups = () => {
                 {filtered.length === 0 && (
                   <div className="rounded-[20px] p-6 text-center" style={{ background: "#F7FAF8", border: "1px dashed #CDE7DA" }}>
                     <p className="text-[13px] font-semibold" style={{ color: "#2E7D5A" }}>Nenhum grupo encontrado</p>
-                    <p className="text-[11px] mt-1" style={{ color: "#7a9e8a" }}>Que tal criar um novo?</p>
+                    <p className="text-[11px] mt-1" style={{ color: "#7a9e8a" }}>Que tal criar um ou entrar com código?</p>
                   </div>
                 )}
               </div>
             </div>
           ) : (
             <>
+              {/* Join by code card */}
+              {!showJoinByCode ? (
+                <button
+                  onClick={() => setShowJoinByCode(true)}
+                  className="w-full rounded-[20px] p-4 flex items-center gap-3.5 text-left transition-transform active:scale-[0.98] animate-fade-in-up"
+                  style={{ background: "#F7FAF8", border: "1.5px solid #CDE7DA" }}
+                >
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: "#E9F5EE" }}>
+                    <KeyRound className="w-4 h-4" style={{ color: "#2E7D5A" }} />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-[13px] font-semibold" style={{ color: "#1a3a2a" }}>Entrar com código</p>
+                    <p className="text-[10px] mt-0.5" style={{ color: "#7a9e8a" }}>Use o código de convite de um grupo privado</p>
+                  </div>
+                </button>
+              ) : (
+                <div
+                  className="rounded-[20px] p-5 animate-fade-in-up"
+                  style={{ background: "#F7FAF8", border: "1.5px solid #CDE7DA" }}
+                >
+                  <p className="text-[11px] font-bold uppercase tracking-wider mb-3" style={{ color: "rgba(17,24,39,0.5)" }}>Código de convite</p>
+                  <input
+                    type="text"
+                    placeholder="Ex: A3F2B1"
+                    value={inviteCodeInput}
+                    onChange={e => setInviteCodeInput(e.target.value.toUpperCase())}
+                    maxLength={6}
+                    className="w-full px-4 py-3 rounded-xl text-[15px] font-mono font-bold text-center mb-3 outline-none uppercase tracking-[0.3em]"
+                    style={{ background: "#E9F5EE", color: "#1a3a2a", border: "1px solid #CDE7DA" }}
+                  />
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => { setShowJoinByCode(false); setInviteCodeInput(""); }}
+                      className="flex-1 py-3 rounded-2xl text-[12px] font-bold transition-transform active:scale-95"
+                      style={{ background: "#E9F5EE", color: "#7a9e8a" }}
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      onClick={handleJoinByCode}
+                      disabled={inviteCodeInput.length < 4 || joiningByCode}
+                      className="flex-1 py-3 rounded-2xl text-[12px] font-bold transition-transform active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+                      style={{ background: "#2E7D5A", color: "white", boxShadow: "0 4px 16px rgba(46,125,90,0.3)" }}
+                    >
+                      {joiningByCode && <Loader2 className="w-3 h-3 animate-spin" />}
+                      Entrar
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {/* Create group card */}
               {!showCreate ? (
                 <button
@@ -137,15 +229,21 @@ const ManageGroups = () => {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-bold text-white">Criar novo grupo</p>
-                    <p className="text-[11px] mt-0.5 text-white/60">Reúna pessoas com interesses em comum</p>
+                    <p className="text-[11px] mt-0.5 text-white/60">Privado — compartilhe o código de convite</p>
                   </div>
+                  <Lock className="w-4 h-4 text-white/40 shrink-0" />
                 </button>
               ) : (
                 <div
                   className="rounded-[20px] p-5 animate-fade-in-up"
                   style={{ background: "#F7FAF8", border: "1.5px solid #CDE7DA" }}
                 >
-                  <p className="text-[11px] font-bold uppercase tracking-wider mb-4" style={{ color: "rgba(17,24,39,0.5)" }}>Criar grupo</p>
+                  <div className="flex items-center gap-2 mb-4">
+                    <p className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "rgba(17,24,39,0.5)" }}>Criar grupo</p>
+                    <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold" style={{ background: "rgba(46,125,90,0.1)", color: "#2E7D5A" }}>
+                      <Lock className="w-2.5 h-2.5" /> Privado
+                    </span>
+                  </div>
 
                   {/* Emoji picker */}
                   <div className="flex items-center gap-2 mb-4">
@@ -218,7 +316,7 @@ const ManageGroups = () => {
                 </div>
               </div>
 
-              {/* Discover groups */}
+              {/* Discover groups (only public ones) */}
               {discoverGroups.length > 0 && (
                 <div>
                   <div className="flex items-center gap-2 mb-3">
