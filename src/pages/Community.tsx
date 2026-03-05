@@ -2,11 +2,11 @@ import { useNavigate } from "react-router-dom";
 import { Users, MessageCircle, Share2, Gift, ChevronRight, Plus } from "lucide-react";
 
 const groups = [
-  { name: "Iniciantes Mounjaro", members: 48, emoji: "🌱", description: "Para quem está começando o tratamento" },
-  { name: "Meta: -10kg", members: 72, emoji: "🎯", description: "Juntos rumo ao objetivo" },
-  { name: "Treino + Mounjaro", members: 35, emoji: "💪", description: "Exercícios durante o tratamento" },
-  { name: "Receitas Low Carb", members: 61, emoji: "🥗", description: "Receitas que funcionam" },
-  { name: "Bem-estar mental", members: 29, emoji: "🧘", description: "Cuidando da mente também" },
+  { name: "Iniciantes Mounjaro", members: 48, emoji: "🌱", description: "Para quem está começando o tratamento", activity: "5 novos posts" },
+  { name: "Meta: -10kg", members: 72, emoji: "🎯", description: "Juntos rumo ao objetivo", activity: "ativo agora" },
+  { name: "Treino + Mounjaro", members: 35, emoji: "💪", description: "Exercícios durante o tratamento", activity: "3 novos posts" },
+  { name: "Receitas Low Carb", members: 61, emoji: "🥗", description: "Receitas que funcionam", activity: "ativo agora" },
+  { name: "Bem-estar mental", members: 29, emoji: "🧘", description: "Cuidando da mente também", activity: "2 novos posts" },
 ];
 
 const Community = () => {
@@ -20,18 +20,17 @@ const Community = () => {
           className="px-5 pb-10"
           style={{
             paddingTop: "calc(env(safe-area-inset-top, 0px) + 1.25rem)",
-            background:
-              "linear-gradient(180deg, hsl(var(--primary)) 0%, hsl(var(--primary)) 40%, hsl(var(--primary) / 0.5) 70%, transparent 100%)",
+            background: "linear-gradient(180deg, #2E7D5A 0%, #2E7D5A 40%, #A8D5BA 80%, transparent 100%)",
           }}
         >
           <div className="flex items-center justify-center mb-4">
-            <h1 className="text-[11px] font-bold text-primary-foreground/80 uppercase tracking-[0.15em] text-center">Comunidade</h1>
+            <h1 className="text-base font-bold text-primary-foreground/90 tracking-wide text-center">Comunidade</h1>
           </div>
         </div>
       </header>
 
-      <div className="px-5 -mt-2 space-y-4">
-        {/* Refer a friend - TOP */}
+      <div className="px-5 -mt-2 space-y-5">
+        {/* Invite friend card */}
         <button
           onClick={() => {
             if (navigator.share) {
@@ -42,62 +41,81 @@ const Community = () => {
               });
             }
           }}
-          className="w-full rounded-[20px] p-5 animate-fade-in-up flex items-center gap-4 text-left"
+          className="w-full rounded-[20px] p-5 animate-fade-in-up flex items-center gap-4 text-left transition-transform active:scale-[0.98]"
           style={{
-            background: "linear-gradient(135deg, hsl(var(--primary) / 0.12) 0%, hsl(var(--primary) / 0.04) 100%)",
-            border: "1px solid hsl(var(--primary) / 0.15)",
+            background: "#E9F5EE",
+            border: "1.5px solid #CDE7DA",
           }}
         >
-          <div className="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0" style={{ background: "hsl(var(--primary) / 0.15)" }}>
-            <Gift className="w-5 h-5 text-primary" />
+          <div
+            className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
+            style={{ background: "#2E7D5A" }}
+          >
+            <Gift className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-bold text-foreground/85">Convide um amigo</p>
-            <p className="text-xs text-muted-foreground/60 mt-0.5">Compartilhe o app e ganhe recompensas 🎁</p>
+            <p className="text-sm font-bold" style={{ color: "#1a3a2a" }}>Convide um amigo</p>
+            <p className="text-xs mt-0.5" style={{ color: "#5a8a6e" }}>
+              Compartilhe o app e ganhe recompensas 🎁
+            </p>
           </div>
-          <Share2 className="w-4 h-4 text-primary/50 shrink-0" />
+          <div
+            className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
+            style={{ background: "#FF8F5A" }}
+          >
+            <Share2 className="w-3.5 h-3.5 text-white" />
+          </div>
         </button>
 
-        {/* Groups - WHOOP style */}
+        {/* Groups */}
         <div>
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-3.5">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-primary" />
-              <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "rgba(17,24,39,0.55)" }}>
+              <div className="w-2 h-2 rounded-full" style={{ background: "#2E7D5A" }} />
+              <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "rgba(17,24,39,0.5)" }}>
                 Seus grupos
               </h3>
             </div>
-            <button className="flex items-center gap-1 text-primary text-[11px] font-semibold">
-              <Plus className="w-3.5 h-3.5" />
+            <button
+              className="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full transition-colors"
+              style={{ color: "#FF8F5A", background: "rgba(255,143,90,0.1)" }}
+            >
+              <Plus className="w-3 h-3" />
               Criar
             </button>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-3">
             {groups.map((group, i) => (
               <div
                 key={group.name}
-                className="rounded-[16px] p-4 animate-fade-in-up flex items-center gap-3"
+                className="rounded-[18px] p-4 animate-fade-in-up flex items-center gap-3.5 transition-transform active:scale-[0.98]"
                 style={{
                   animationDelay: `${i * 50}ms`,
-                  background: "hsl(var(--card))",
-                  boxShadow: "var(--shadow-card)",
+                  background: "#F7FAF8",
+                  boxShadow: "0 2px 12px rgba(46,125,90,0.06)",
                 }}
               >
-                <div className="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 text-xl" style={{ background: "hsl(var(--muted))" }}>
+                <div
+                  className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 text-2xl"
+                  style={{ background: "#E9F5EE" }}
+                >
                   {group.emoji}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-foreground/85">{group.name}</p>
-                  <p className="text-[11px] text-muted-foreground/50 mt-0.5">{group.description}</p>
-                </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <div className="flex items-center gap-1 text-muted-foreground/40">
-                    <Users className="w-3 h-3" />
-                    <span className="text-[10px] font-medium">{group.members}</span>
+                  <p className="text-[13px] font-semibold" style={{ color: "#1a3a2a" }}>{group.name}</p>
+                  <p className="text-[11px] mt-0.5" style={{ color: "#7a9e8a" }}>{group.description}</p>
+                  <div className="flex items-center gap-2 mt-1.5">
+                    <div className="flex items-center gap-1" style={{ color: "#9ab5a5" }}>
+                      <Users className="w-3 h-3" />
+                      <span className="text-[10px] font-medium">{group.members}</span>
+                    </div>
+                    <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full" style={{ color: "#FF8F5A", background: "rgba(255,143,90,0.1)" }}>
+                      {group.activity}
+                    </span>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-muted-foreground/30" />
                 </div>
+                <ChevronRight className="w-4 h-4 shrink-0" style={{ color: "#c5d8cc" }} />
               </div>
             ))}
           </div>
@@ -108,13 +126,13 @@ const Community = () => {
           className="rounded-[20px] p-5 text-center animate-fade-in-up"
           style={{
             animationDelay: "350ms",
-            background: "hsl(var(--primary) / 0.06)",
-            border: "1px dashed hsl(var(--primary) / 0.2)",
+            background: "#F7FAF8",
+            border: "1px dashed #CDE7DA",
           }}
         >
-          <MessageCircle className="w-8 h-8 text-primary/40 mx-auto mb-2" />
-          <p className="text-sm font-semibold text-foreground/70">Em breve</p>
-          <p className="text-xs text-muted-foreground/60 mt-1">
+          <MessageCircle className="w-8 h-8 mx-auto mb-2" style={{ color: "#A8D5BA" }} />
+          <p className="text-sm font-semibold" style={{ color: "#2E7D5A" }}>Em breve</p>
+          <p className="text-xs mt-1" style={{ color: "#7a9e8a" }}>
             Chat nos grupos, desafios e ranking entre amigos
           </p>
         </div>
