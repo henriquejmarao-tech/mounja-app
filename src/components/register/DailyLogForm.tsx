@@ -194,7 +194,7 @@ const DailyLogForm = () => {
       {/* Weight */}
       <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50">
         <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Peso hoje (kg) *</label>
-        <input type="number" step="0.1" value={weight} onChange={(e) => setWeight(e.target.value)} placeholder="Ex: 85.5" className="w-full px-4 py-3 rounded-xl border border-border bg-background text-lg font-semibold outline-none focus:ring-2 focus:ring-primary/20 text-center" />
+        <input type="number" step="0.01" value={weight} onChange={(e) => setWeight(e.target.value)} placeholder="Ex: 85.50" className="w-full px-4 py-3 rounded-xl border border-border bg-background text-lg font-semibold outline-none focus:ring-2 focus:ring-primary/20 text-center" />
       </div>
 
       {/* Feeling */}
