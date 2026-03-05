@@ -23,6 +23,7 @@ const Community = () => {
   const [showSolution, setShowSolution] = useState(false);
   const [answered, setAnswered] = useState(false);
   const [selectedGroups, setSelectedGroups] = useState<string[]>(groups.map(g => g.name));
+  const [showInfo, setShowInfo] = useState(false);
 
   const toggleGroup = (name: string) => {
     setSelectedGroups(prev =>
