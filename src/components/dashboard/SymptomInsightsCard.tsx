@@ -102,35 +102,16 @@ const SymptomInsightsCard = () => {
 
       {expanded && (
         <div className="px-4 pb-4 animate-fade-in-up">
-          {/* Register symptoms CTA */}
-          <button
-            onClick={() => navigate("/registrar", { state: { focusSymptoms: true } })}
-            className="w-full rounded-xl p-3 flex items-center gap-3 text-left active:scale-[0.98] transition-all duration-200 group bg-primary/[0.04] border border-primary/10 mb-3"
-          >
-            <div className="w-7 h-7 rounded-[10px] bg-primary/10 flex items-center justify-center shrink-0">
-              <HeartPulse className="w-4 h-4 text-primary" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[13px] font-semibold text-foreground/80">Mudanças nos sintomas?</p>
-              <p className="text-[11px] text-muted-foreground/55 mt-0.5">Registre aqui</p>
-            </div>
-            <ArrowRight className="w-3.5 h-3.5 text-primary/40 shrink-0 group-hover:translate-x-0.5 transition-transform" />
-          </button>
-
-          {/* AI Insights */}
+          {/* AI Insights — above the register CTA */}
           {!hasSymptoms ? (
-            <p className="text-xs text-muted-foreground/50 leading-relaxed">
+            <p className="text-xs text-muted-foreground/50 leading-relaxed mb-3">
               Registre seus sintomas no check-in para receber recomendações personalizadas com IA.
             </p>
           ) : (
-            <div>
+            <div className="mb-3">
               <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/45 mb-2.5">
                 O que seus sintomas sugerem?
               </p>
-
-              {summary && !loading && (
-                <p className="text-xs text-primary/70 font-medium mb-3 px-0.5">{summary}</p>
-              )}
 
               <div className="space-y-2.5">
                 {loading ? (
@@ -163,11 +144,26 @@ const SymptomInsightsCard = () => {
 
               {!loading && recommendations && (
                 <p className="text-[10px] text-muted-foreground mt-2.5 text-center opacity-50">
-                  ✨ Análise gerada por IA · baseada nos seus registros recentes
+                  Análise gerada por IA · baseada nos seus registros recentes
                 </p>
               )}
             </div>
           )}
+
+          {/* Register symptoms CTA — below insights */}
+          <button
+            onClick={() => navigate("/registrar", { state: { focusSymptoms: true } })}
+            className="w-full rounded-xl p-3 flex items-center gap-3 text-left active:scale-[0.98] transition-all duration-200 group bg-primary/[0.04] border border-primary/10"
+          >
+            <div className="w-7 h-7 rounded-[10px] bg-primary/10 flex items-center justify-center shrink-0">
+              <HeartPulse className="w-4 h-4 text-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[13px] font-semibold text-foreground/80">Mudanças nos sintomas?</p>
+              <p className="text-[11px] text-muted-foreground/55 mt-0.5">Registre aqui</p>
+            </div>
+            <ArrowRight className="w-3.5 h-3.5 text-primary/40 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+          </button>
         </div>
       )}
     </div>
