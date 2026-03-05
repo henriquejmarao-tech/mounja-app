@@ -231,7 +231,7 @@ const Dashboard = () => {
         const pts = Math.min(10 + streakBonus, 30);
         score += pts;
         const streakLabel = weightLossStreak >= 2 ? ` (${weightLossStreak} dias seguidos 🔥)` : "";
-        factors.push({ label: `−${diff.toFixed(2)} kg${streakLabel}`, status: "good" });
+        factors.push({ label: `Emagreceu${streakLabel}`, status: "good" });
       } else if (Math.abs(diff) <= 0.2) {
         // Stable (within ±0.2kg)
         score += 18;
