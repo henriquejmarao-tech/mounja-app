@@ -155,11 +155,7 @@ const Community = () => {
           </div>
         </div>
 
-        {/* Bottom hint */}
-        <div className="flex flex-col items-center py-4 shrink-0" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 1rem)" }}>
-          <ChevronDown className="w-4 h-4 text-white/20 animate-bounce" />
-          <p className="text-[10px] text-white/20 mt-1">Deslize para fechar</p>
-        </div>
+        <div className="shrink-0" style={{ height: "calc(env(safe-area-inset-bottom, 0px) + 1rem)" }} />
       </div>
     );
   }
