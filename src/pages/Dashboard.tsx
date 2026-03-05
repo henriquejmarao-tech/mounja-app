@@ -106,7 +106,7 @@ const Dashboard = () => {
 
         if (!insight) {
           const initialW = profile?.current_weight;
-          const currentW = latestWeight ?? wLog?.weight;
+          const currentW = latestWeight;
           if (initialW && currentW && initialW - currentW > 0) {
             setInsight(`Você já perdeu ${(initialW - currentW).toFixed(1)} kg desde o início. Continue assim! 💪`);
           } else if (workouts.length >= 3) {
@@ -445,7 +445,7 @@ const Dashboard = () => {
 
         {/* Block 2b: Treino - collapsible card */}
         {(() => {
-          const suggestion = getWorkoutSuggestion(weeklyWorkouts, weeklyWorkoutGoal, recentSymptoms, daysUntilNext);
+          const suggestion = getWorkoutSuggestion(weeklyWorkoutCount, weeklyWorkoutGoal, recentSymptoms, daysUntilNext);
           return (
             <div className="rounded-[20px] p-4 animate-fade-in-up" style={{ animationDelay: "90ms", background: "hsl(var(--card))", boxShadow: "var(--shadow-card)" }}>
               <button
