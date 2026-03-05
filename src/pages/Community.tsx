@@ -20,7 +20,7 @@ const Community = () => {
           className="px-5 pb-10"
           style={{
             paddingTop: "calc(env(safe-area-inset-top, 0px) + 1.25rem)",
-            background: "linear-gradient(180deg, #2E7D5A 0%, #2E7D5A 40%, #A8D5BA 80%, transparent 100%)",
+            background: "linear-gradient(180deg, hsl(var(--primary)) 0%, hsl(var(--primary)) 40%, hsl(var(--primary) / 0.5) 70%, transparent 100%)",
           }}
         >
           <div className="flex items-center justify-center mb-4">
