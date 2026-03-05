@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Users, MessageCircle, Share2, Gift, Plus, X, Sparkles, EyeOff, Eye } from "lucide-react";
+import { Users, MessageCircle, Share2, Gift, Plus, X, Sparkles, EyeOff, Eye, Info } from "lucide-react";
 
 const groups = [
   { name: "Iniciantes Mounjaro", members: 48, emoji: "🌱", description: "Para quem está começando o tratamento", activity: "5 novos posts" },
