@@ -230,6 +230,9 @@ const Community = () => {
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full" style={{ background: "#2E7D5A" }} />
               <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "rgba(17,24,39,0.5)" }}>Filtrar tendências</h3>
+              <button onClick={() => setShowInfo(!showInfo)} className="ml-0.5 opacity-30 hover:opacity-50 transition-opacity">
+                <Info className="w-3.5 h-3.5" style={{ color: "#1a3a2a" }} />
+              </button>
             </div>
             <button onClick={() => navigate("/comunidade/grupos")} className="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full" style={{ color: "#FF8F5A", background: "rgba(255,143,90,0.1)" }}>
               <Plus className="w-3 h-3" />
