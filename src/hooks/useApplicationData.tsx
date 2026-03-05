@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { localDateStr } from "@/lib/utils";
 
 // ─── Canonical Models ───────────────────────────────────────────────
 export interface CanonicalDose {
@@ -97,7 +98,7 @@ export const ApplicationDataProvider = ({ children }: { children: ReactNode }) =
       return;
     }
 
-    const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString().split("T")[0];
+    const weekAgo = localDateStr(new Date(Date.now() - 7 * 86400000));
 
     const [injRes, logsRes, workoutsRes] = await Promise.all([
       supabase.from("injections").select("*").eq("user_id", user.id).order("date", { ascending: false }),

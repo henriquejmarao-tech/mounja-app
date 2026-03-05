@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { cn } from "@/lib/utils";
+import { cn, localDateStr } from "@/lib/utils";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { toast } from "sonner";
 import DoseTimeline from "@/components/history/DoseTimeline";
@@ -84,7 +84,7 @@ const Application = () => {
   // Settings form state — next dose
   const [editDose, setEditDose] = useState(dose.currentDose || "2.5 mg");
   const [editInterval, setEditInterval] = useState(dose.applicationIntervalDays || 7);
-  const [editNextDate, setEditNextDate] = useState(dose.nextApplicationAt ? new Date(dose.nextApplicationAt).toISOString().split("T")[0] : "");
+  const [editNextDate, setEditNextDate] = useState(dose.nextApplicationAt ? localDateStr(new Date(dose.nextApplicationAt)) : "");
   const [saving, setSaving] = useState(false);
 
   const injections = getApplicationTimeline();
@@ -117,7 +117,7 @@ const Application = () => {
 
   // Daily insight cached
   const patternInsight = useMemo(() => {
-    const today = new Date().toISOString().split("T")[0];
+    const today = localDateStr();
     const cacheKey = "app_pattern_insight";
     const cached = localStorage.getItem(cacheKey);
     if (cached) {
@@ -165,8 +165,8 @@ const Application = () => {
       if (editNextDate && injections.length > 0) {
         const nextDate = new Date(editNextDate + "T12:00:00");
         const newLastDate = new Date(nextDate.getTime() - editInterval * 86400000);
-        const newLastDateStr = newLastDate.toISOString().split("T")[0];
-        const today = new Date().toISOString().split("T")[0];
+        const newLastDateStr = localDateStr(newLastDate);
+        const today = localDateStr();
         
         // Only adjust if the back-calculated date is not in the future
         if (newLastDateStr <= today) {
@@ -211,7 +211,7 @@ const Application = () => {
                 onClick={() => {
                   setEditDose(dose.currentDose || "2.5 mg");
                   setEditInterval(dose.applicationIntervalDays || 7);
-                  setEditNextDate(dose.nextApplicationAt ? new Date(dose.nextApplicationAt).toISOString().split("T")[0] : "");
+                  setEditNextDate(dose.nextApplicationAt ? localDateStr(new Date(dose.nextApplicationAt)) : "");
                   setShowSettings(true);
                 }}
                 className="w-8 h-8 rounded-xl bg-muted/40 flex items-center justify-center active:scale-95 transition-transform"
@@ -403,7 +403,7 @@ const Application = () => {
               <input
                 type="date"
                 value={editNextDate}
-                min={new Date().toISOString().split("T")[0]}
+                min={localDateStr()}
                 onChange={(e) => setEditNextDate(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl border border-border bg-card text-sm outline-none focus:ring-2 focus:ring-primary/20"
               />

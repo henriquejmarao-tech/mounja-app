@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { useTutorial } from "@/hooks/useTutorial";
 import { Settings, Sparkles, Flame, Utensils, ChevronDown, ChevronRight, ClipboardCheck, ArrowRight, Dumbbell, Target, Pill, HeartPulse, CalendarClock, CheckCircle2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, localDateStr } from "@/lib/utils";
 import { getWorkoutSuggestion } from "@/components/dashboard/WorkoutSuggestion";
 import StatusHeroCard from "@/components/dashboard/StatusHeroCard";
 import NextInjectionCard from "@/components/dashboard/NextInjectionCard";
@@ -46,8 +46,8 @@ const Dashboard = () => {
   useEffect(() => {
     if (!user) return;
     const fetchData = async () => {
-      const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString().split("T")[0];
-      const today = new Date().toISOString().split("T")[0];
+      const weekAgo = localDateStr(new Date(Date.now() - 7 * 86400000));
+      const today = localDateStr();
 
       const [injRes, logsRes, workoutsRes, dietRes, todayWorkoutRes] = await Promise.all([
         supabase.from("injections").select("*").eq("user_id", user.id).order("date", { ascending: false }).limit(1),
@@ -64,10 +64,10 @@ const Dashboard = () => {
       const todayW = (todayWorkoutRes.data as any[]) || [];
 
       setLastInjection(inj[0] || null);
-      const todayStr = new Date().toISOString().split("T")[0];
+      const todayStr = localDateStr();
       const yesterdayDate = new Date();
       yesterdayDate.setDate(yesterdayDate.getDate() - 1);
-      const yesterdayStr = yesterdayDate.toISOString().split("T")[0];
+      const yesterdayStr = localDateStr(yesterdayDate);
       const yesterdayLogEntry = logs.find((l: any) => l.date === yesterdayStr);
       setTodayCheckedIn(!!yesterdayLogEntry);
       setTodayLog(yesterdayLogEntry || null);
