@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Users, MessageCircle, Share2, Gift, Plus, X, Sparkles, EyeOff, Eye } from "lucide-react";
+import { Users, MessageCircle, Share2, Gift, Plus, X, Sparkles, EyeOff, Eye, Info } from "lucide-react";
 
 const groups = [
   { name: "Iniciantes Mounjaro", members: 48, emoji: "🌱", description: "Para quem está começando o tratamento", activity: "5 novos posts" },
@@ -23,6 +23,7 @@ const Community = () => {
   const [showSolution, setShowSolution] = useState(false);
   const [answered, setAnswered] = useState(false);
   const [selectedGroups, setSelectedGroups] = useState<string[]>(groups.map(g => g.name));
+  const [showInfo, setShowInfo] = useState(false);
 
   const toggleGroup = (name: string) => {
     setSelectedGroups(prev =>
@@ -200,8 +201,7 @@ const Community = () => {
 
           <div className="relative z-10">
             <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/50 mb-1">Descubra</p>
-            <h2 className="text-lg font-bold text-white leading-tight mb-1">Acompanhe as tendências</h2>
-            <p className="text-[12px] text-white/60 mb-5">Veja o que a comunidade GLP-1 está sentindo e compartilhe sua experiência</p>
+            <h2 className="text-lg font-bold text-white leading-tight mb-5">Acompanhe as tendências</h2>
 
             <div className="rounded-[16px] p-4 mb-4" style={{ background: "rgba(255,255,255,0.12)", backdropFilter: "blur(8px)" }}>
               <p className="text-[11px] text-white/50 mb-1.5">Dúvida da comunidade</p>
@@ -230,12 +230,21 @@ const Community = () => {
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full" style={{ background: "#2E7D5A" }} />
               <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "rgba(17,24,39,0.5)" }}>Filtrar tendências</h3>
+              <button onClick={() => setShowInfo(!showInfo)} className="ml-0.5 opacity-30 hover:opacity-50 transition-opacity">
+                <Info className="w-3.5 h-3.5" style={{ color: "#1a3a2a" }} />
+              </button>
             </div>
             <button onClick={() => navigate("/comunidade/grupos")} className="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full" style={{ color: "#FF8F5A", background: "rgba(255,143,90,0.1)" }}>
               <Plus className="w-3 h-3" />
               Adicionar
             </button>
           </div>
+
+          {showInfo && (
+            <p className="text-[11px] mb-3 px-1 animate-fade-in" style={{ color: "#7a9e8a" }}>
+              Selecione os grupos cujas dúvidas você quer ver em "Acompanhe as tendências".
+            </p>
+          )}
 
           <div className="space-y-3">
             {groups.map((group, i) => {
