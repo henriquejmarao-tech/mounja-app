@@ -21,6 +21,18 @@ import ContextualHint from "@/components/tutorial/ContextualHint";
 
 const periodDays: Record<Period, number | null> = { "7d": 7, "30d": 30, "90d": 90, Total: null };
 
+/** Keep only the latest log per date (by created_at), so charts show one data point per day. */
+const deduplicateByDate = (logs: any[]): any[] => {
+  const map = new Map<string, any>();
+  for (const log of logs) {
+    const existing = map.get(log.date);
+    if (!existing || (log.created_at && existing.created_at && log.created_at > existing.created_at)) {
+      map.set(log.date, log);
+    }
+  }
+  return Array.from(map.values());
+};
+
 const sanitize = (t: string | null): string => {
   if (!t) return "";
   return t.replace(/Ã©/g, "é").replace(/Ã£/g, "ã").replace(/Ã§/g, "ç")
@@ -62,10 +74,10 @@ const History = () => {
     }
 
     const [logsRes, injRes, workoutsRes, allRes, dietRes] = await Promise.all([logsQuery, injQuery, workoutsQuery, allLogsQuery, dietQuery]);
-    const l = (logsRes.data as any[]) || [];
+    const l = deduplicateByDate((logsRes.data as any[]) || []);
     const inj = (injRes.data as any[]) || [];
     const wk = (workoutsRes.data as any[]) || [];
-    const all = (allRes.data as any[]) || [];
+    const all = deduplicateByDate((allRes.data as any[]) || []);
     const diets = (dietRes.data as any[]) || [];
     setLogs(l);
     setInjections(inj);
