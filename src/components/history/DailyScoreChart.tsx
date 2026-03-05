@@ -74,21 +74,38 @@ const DailyScoreChart = ({ logs, profile, lastInjectionDate, intervalDays }: Dai
   const hasData = pastLogs.length >= 2;
 
   const scoreData = hasData ? pastLogs.slice(-14).map((l, idx, arr) => {
-    // Find previous log with weight for day-over-day comparison
+    // Find previous log with weight
     let prevWeight: number | null = null;
     for (let i = idx - 1; i >= 0; i--) {
       if (arr[i].weight) { prevWeight = arr[i].weight; break; }
     }
-    // Also check logs before the slice window
     if (!prevWeight) {
       const sliceStart = pastLogs.length > 14 ? pastLogs.length - 14 : 0;
       for (let i = sliceStart + idx - 1; i >= 0; i--) {
         if (pastLogs[i]?.weight) { prevWeight = pastLogs[i].weight; break; }
       }
     }
+
+    // Compute weight loss streak ending at this log
+    let weightLossStreak = 0;
+    const globalIdx = pastLogs.length > 14 ? pastLogs.length - 14 + idx : idx;
+    if (l.weight && prevWeight && Number(prevWeight) > Number(l.weight)) {
+      weightLossStreak = 1;
+      // Look further back for consecutive losses
+      for (let i = globalIdx - 1; i >= 1; i--) {
+        const curr = pastLogs[i];
+        const prev = pastLogs[i - 1];
+        if (curr?.weight && prev?.weight && Number(prev.weight) > Number(curr.weight)) {
+          weightLossStreak++;
+        } else {
+          break;
+        }
+      }
+    }
+
     return {
       date: new Date(l.date + "T12:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
-      score: computeDailyScore(l, profile, lastInjectionDate, intervalDays, 1, prevWeight),
+      score: computeDailyScore(l, profile, lastInjectionDate, intervalDays, weightLossStreak, prevWeight),
     };
   }) : [];
 
