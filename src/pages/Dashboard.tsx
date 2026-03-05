@@ -15,7 +15,7 @@ import SymptomInsightsCard from "@/components/dashboard/SymptomInsightsCard";
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, profile } = useAuth();
-  const { dose, recentSymptoms: ssotSymptoms, weeklyWorkoutCount, latestWeight: ssotWeight, loading: ssotLoading } = useApplicationData();
+  const { dose, recentSymptoms, weeklyWorkoutCount, latestWeight, loading: ssotLoading, refresh: refreshSSoT } = useApplicationData();
   const { triggerPostTriageTutorial } = useTutorial();
 
   useEffect(() => {
