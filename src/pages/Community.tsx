@@ -22,13 +22,6 @@ const Community = () => {
   const [currentQ, setCurrentQ] = useState(0);
   const [showSolution, setShowSolution] = useState(false);
   const [answered, setAnswered] = useState(false);
-  const [activeGroups, setActiveGroups] = useState<string[]>(["Iniciantes Mounjaro"]);
-
-  const toggleGroup = (name: string) => {
-    setActiveGroups((prev) =>
-      prev.includes(name) ? prev.filter((g) => g !== name) : [...prev, name]
-    );
-  };
 
   const openTinder = () => {
     setShowTinder(true);
@@ -242,40 +235,38 @@ const Community = () => {
           </div>
         </button>
 
-        {/* Group filter chips */}
+        {/* Groups */}
         <div>
-          <div className="flex items-center gap-2 mb-3.5">
-            <div className="w-2 h-2 rounded-full" style={{ background: "#2E7D5A" }} />
-            <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "rgba(17,24,39,0.5)" }}>Filtrar dúvidas por grupo</h3>
+          <div className="flex items-center justify-between mb-3.5">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full" style={{ background: "#2E7D5A" }} />
+              <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "rgba(17,24,39,0.5)" }}>Seus grupos</h3>
+            </div>
+            <button className="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full" style={{ color: "#FF8F5A", background: "rgba(255,143,90,0.1)" }}>
+              <Plus className="w-3 h-3" />
+              Criar
+            </button>
           </div>
 
-          <div className="flex flex-wrap gap-2">
-            {groups.map((group) => {
-              const isActive = activeGroups.includes(group.name);
-              return (
-                <button
-                  key={group.name}
-                  onClick={() => toggleGroup(group.name)}
-                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-full text-[12px] font-semibold transition-all duration-200 active:scale-95"
-                  style={{
-                    background: isActive ? "rgba(46,125,90,0.15)" : "#F7FAF8",
-                    color: isActive ? "#2E7D5A" : "#7a9e8a",
-                    border: isActive ? "1.5px solid rgba(46,125,90,0.3)" : "1.5px solid #E9F5EE",
-                    boxShadow: isActive ? "0 2px 8px rgba(46,125,90,0.1)" : "none",
-                  }}
-                >
-                  <span>{group.emoji}</span>
-                  <span>{group.name}</span>
-                  {isActive && (
-                    <span className="ml-0.5 w-1.5 h-1.5 rounded-full" style={{ background: "#2E7D5A" }} />
-                  )}
-                </button>
-              );
-            })}
+          <div className="space-y-3">
+            {groups.map((group, i) => (
+              <div key={group.name} className="rounded-[18px] p-4 animate-fade-in-up flex items-center gap-3.5 transition-transform active:scale-[0.98]" style={{ animationDelay: `${i * 50}ms`, background: "#F7FAF8", boxShadow: "0 2px 12px rgba(46,125,90,0.06)" }}>
+                <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 text-2xl" style={{ background: "#E9F5EE" }}>{group.emoji}</div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[13px] font-semibold" style={{ color: "#1a3a2a" }}>{group.name}</p>
+                  <p className="text-[11px] mt-0.5" style={{ color: "#7a9e8a" }}>{group.description}</p>
+                  <div className="flex items-center gap-2 mt-1.5">
+                    <div className="flex items-center gap-1" style={{ color: "#9ab5a5" }}>
+                      <Users className="w-3 h-3" />
+                      <span className="text-[10px] font-medium">{group.members}</span>
+                    </div>
+                    <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full" style={{ color: "#FF8F5A", background: "rgba(255,143,90,0.1)" }}>{group.activity}</span>
+                  </div>
+                </div>
+                <ChevronRight className="w-4 h-4 shrink-0" style={{ color: "#c5d8cc" }} />
+              </div>
+            ))}
           </div>
-          <p className="text-[10px] mt-2.5" style={{ color: "#9ab5a5" }}>
-            {activeGroups.length === 0 ? "Selecione grupos para filtrar as dúvidas" : `${activeGroups.length} grupo${activeGroups.length > 1 ? "s" : ""} ativo${activeGroups.length > 1 ? "s" : ""}`}
-          </p>
         </div>
 
         {/* Coming soon */}
