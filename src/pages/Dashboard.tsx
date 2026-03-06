@@ -205,7 +205,7 @@ const Dashboard = () => {
               label: "Atualizar\npeso",
               emoji: "⚖️",
               bg: "bg-card",
-              action: () => navigate("/log"),
+              action: () => setWeightPickerOpen(true),
             },
             {
               label: "Fotos de\nprogresso",
