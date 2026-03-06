@@ -201,7 +201,7 @@ const Dashboard = () => {
               label: "Registrar\nsintomas",
               emoji: "📋",
               bg: "bg-card",
-              action: () => navigate("/log"),
+              action: () => setSymptomDrawerOpen(true),
             },
             {
               label: "Atualizar\npeso",
