@@ -372,7 +372,7 @@ const History = () => {
       <PeriodFilter period={period} onChange={setPeriod} />
 
       <div data-tutorial="charts-area" className="px-5 space-y-4">
-        <ContextualHint id="export-pdf" message="Você pode exportar seu relatório completo em PDF." />
+        
         {loading ? (
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
