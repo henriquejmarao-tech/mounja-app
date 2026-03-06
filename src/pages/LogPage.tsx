@@ -96,7 +96,9 @@ const LogPage = () => {
     setWaterMl(existing?.water_ml?.toString() || "");
     setNotes(existing?.notes || "");
     const syms: Record<string, number> = {};
-    symptomKeys.forEach((s) => { syms[s.key] = existing?.[s.key] || 0; });
+    symptomCategories.forEach((cat) => {
+      cat.items.forEach((s) => { syms[s.key] = existing?.[s.key] || 0; });
+    });
     setSymptoms(syms);
   }, [user, dateStr]);
 
@@ -202,38 +204,31 @@ const LogPage = () => {
           </div>
         </div>
 
-        {/* Symptoms */}
-        <div className="bg-card rounded-2xl p-5 shadow-card border border-border/50">
-          <div className="flex items-center gap-2 mb-3">
-            <Activity className="w-4 h-4 text-primary" />
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Sintomas</p>
-          </div>
-          <div className="space-y-3">
-            {symptomKeys.map((s) => (
-              <div key={s.key}>
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-sm text-foreground">{s.emoji} {s.label}</span>
-                  <span className="text-xs text-muted-foreground">{symptoms[s.key] || 0}/5</span>
-                </div>
-                <div className="flex gap-1.5">
-                  {[0, 1, 2, 3, 4, 5].map((v) => (
+        {/* Symptoms - Chip toggle style */}
+        <div className="space-y-3">
+          {symptomCategories.map((cat) => (
+            <div key={cat.title} className="bg-card rounded-2xl p-5 shadow-card border border-border/50">
+              <h3 className="font-bold text-base text-foreground mb-3">{cat.title}</h3>
+              <div className="flex flex-wrap gap-2">
+                {cat.items.map((s) => {
+                  const isActive = (symptoms[s.key] || 0) > 0;
+                  return (
                     <button
-                      key={v}
-                      onClick={() => setSymptoms({ ...symptoms, [s.key]: symptoms[s.key] === v ? 0 : v })}
+                      key={s.key}
+                      onClick={() => setSymptoms({ ...symptoms, [s.key]: isActive ? 0 : 1 })}
                       className={cn(
-                        "flex-1 py-2 rounded-lg text-xs font-semibold transition-all active:scale-90",
-                        symptoms[s.key] === v
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-secondary/60 text-muted-foreground"
+                        "inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full text-sm font-medium transition-all active:scale-95",
+                        isActive ? cat.activeColor : cat.color
                       )}
                     >
-                      {v}
+                      <span className="text-base">{s.emoji}</span>
+                      {s.label}
                     </button>
-                  ))}
-                </div>
+                  );
+                })}
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
 
         {/* Food */}
