@@ -7,13 +7,57 @@ import { toast } from "sonner";
 import { Calendar } from "@/components/ui/calendar";
 import { Syringe, Scale, Utensils, Activity, ChevronDown, ChevronUp, Save } from "lucide-react";
 
-const symptomKeys = [
-  { key: "symptom_nausea", label: "Náusea", emoji: "🤢" },
-  { key: "symptom_fatigue", label: "Fadiga", emoji: "😴" },
-  { key: "symptom_headache", label: "Dor de cabeça", emoji: "🤕" },
-  { key: "symptom_constipation", label: "Constipação", emoji: "😣" },
-  { key: "symptom_diarrhea", label: "Diarreia", emoji: "💧" },
-  { key: "symptom_injection_pain", label: "Dor na aplicação", emoji: "💉" },
+const symptomCategories = [
+  {
+    title: "Sintomas",
+    color: "bg-blue-100 text-blue-700",
+    activeColor: "bg-blue-200 text-blue-800 ring-2 ring-blue-400/50",
+    items: [
+      { key: "symptom_nausea", label: "Náusea", emoji: "🤢" },
+      { key: "symptom_constipation", label: "Constipação", emoji: "😣" },
+      { key: "symptom_diarrhea", label: "Diarreia", emoji: "💧" },
+      { key: "symptom_headache", label: "Dor de cabeça", emoji: "🤕" },
+      { key: "symptom_fatigue", label: "Fadiga", emoji: "😴" },
+      { key: "symptom_dizziness", label: "Tontura", emoji: "😵" },
+      { key: "symptom_bloating", label: "Inchaço", emoji: "🎈" },
+      { key: "symptom_heartburn", label: "Azia", emoji: "🔥" },
+    ],
+  },
+  {
+    title: "Apetite",
+    color: "bg-orange-100 text-orange-700",
+    activeColor: "bg-orange-200 text-orange-800 ring-2 ring-orange-400/50",
+    items: [
+      { key: "appetite_suppressed", label: "Sem apetite", emoji: "🚫" },
+      { key: "appetite_cravings", label: "Compulsão", emoji: "🍫" },
+      { key: "appetite_healthy", label: "Comendo bem", emoji: "🥗" },
+      { key: "appetite_junk", label: "Junk food", emoji: "🍔" },
+    ],
+  },
+  {
+    title: "Reação na aplicação",
+    color: "bg-red-100 text-red-700",
+    activeColor: "bg-red-200 text-red-800 ring-2 ring-red-400/50",
+    items: [
+      { key: "symptom_injection_pain", label: "Dor", emoji: "💉" },
+      { key: "injection_swelling", label: "Inchaço", emoji: "🔺" },
+      { key: "injection_rash", label: "Vermelhidão", emoji: "🔴" },
+      { key: "injection_bruising", label: "Hematoma", emoji: "🟣" },
+    ],
+  },
+  {
+    title: "Humor",
+    color: "bg-yellow-100 text-yellow-700",
+    activeColor: "bg-yellow-200 text-yellow-800 ring-2 ring-yellow-400/50",
+    items: [
+      { key: "mood_calm", label: "Calmo", emoji: "😌" },
+      { key: "mood_happy", label: "Feliz", emoji: "😊" },
+      { key: "mood_energetic", label: "Energético", emoji: "⚡" },
+      { key: "mood_anxious", label: "Ansioso", emoji: "😰" },
+      { key: "mood_foggy", label: "Confuso", emoji: "🌫️" },
+      { key: "mood_irritable", label: "Irritado", emoji: "😤" },
+    ],
+  },
 ];
 
 const LogPage = () => {
