@@ -238,60 +238,28 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* ── Progress Snapshot ── */}
+      {/* ── Weight Trends ── */}
       <div className="px-5 mb-4 animate-fade-in-up" style={{ animationDelay: "160ms" }}>
-        <div className="bg-card rounded-2xl p-5 shadow-card border border-border/50">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-base font-bold text-foreground">Progresso</h2>
-            <button onClick={() => navigate("/progress")} className="text-xs text-primary font-semibold">
-              Ver tudo →
-            </button>
-          </div>
-          <div className="grid grid-cols-3 gap-3 mb-4">
-            <div className="text-center">
-              <p className="text-[11px] text-muted-foreground font-medium">Inicial</p>
-              <p className="text-lg font-bold text-foreground tabular-nums">
-                {initialWeight ?? "—"}
-                {initialWeight && <span className="text-xs text-muted-foreground ml-0.5">kg</span>}
-              </p>
-            </div>
-            <div className="text-center">
-              <p className="text-[11px] text-muted-foreground font-medium">Atual</p>
-              <p className="text-lg font-bold text-primary tabular-nums">
-                {currentWeight ? Number(currentWeight).toFixed(1) : "—"}
-                {currentWeight && <span className="text-xs text-muted-foreground ml-0.5">kg</span>}
-              </p>
-            </div>
-            <div className="text-center">
-              <p className="text-[11px] text-muted-foreground font-medium">Objetivo</p>
-              <p className="text-lg font-bold text-foreground tabular-nums">
-                {goalWeight ?? "—"}
-                {goalWeight && <span className="text-xs text-muted-foreground ml-0.5">kg</span>}
-              </p>
-            </div>
-          </div>
-          {weightHistory.length >= 2 && (
-            <div className="h-20 -mx-1">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={weightHistory.slice(-10)}>
-                  <YAxis domain={["dataMin - 1", "dataMax + 1"]} hide />
-                  <Line
-                    type="monotone"
-                    dataKey="peso"
-                    stroke="hsl(250, 58%, 58%)"
-                    strokeWidth={2.5}
-                    dot={false}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          )}
-        </div>
+        <WeightTrendsCard weightHistory={weightHistory} />
+      </div>
+
+      {/* ── Milestones ── */}
+      <div className="px-5 mb-4 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
+        <MilestonesCard
+          initialWeight={initialWeight}
+          currentWeight={currentWeight}
+          goalWeight={goalWeight}
+        />
+      </div>
+
+      {/* ── Side Effect History ── */}
+      <div className="px-5 mb-4 animate-fade-in-up" style={{ animationDelay: "240ms" }}>
+        <SideEffectHistoryCard />
       </div>
 
       {/* ── Insight ── */}
       {insight && (
-        <div className="px-5 mb-4 animate-fade-in-up" style={{ animationDelay: "240ms" }}>
+        <div className="px-5 mb-4 animate-fade-in-up" style={{ animationDelay: "280ms" }}>
           <div className="bg-accent rounded-2xl p-4 border border-primary/10 flex items-start gap-3">
             <Lightbulb className="w-5 h-5 text-primary shrink-0 mt-0.5" />
             <p className="text-sm text-foreground leading-relaxed">{insight}</p>
