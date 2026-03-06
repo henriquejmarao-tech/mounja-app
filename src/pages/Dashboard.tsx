@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -7,6 +7,7 @@ import { Scale, Camera, ClipboardList, Lightbulb } from "lucide-react";
 import { cn, localDateStr } from "@/lib/utils";
 import { toast } from "sonner";
 import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
+import WeightPickerDrawer from "@/components/WeightPickerDrawer";
 
 const Dashboard = () => {
   const navigate = useNavigate();
