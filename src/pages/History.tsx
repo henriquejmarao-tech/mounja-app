@@ -18,7 +18,7 @@ import InsightsList, { type Insight } from "@/components/history/InsightsList";
 import SymptomsChart from "@/components/history/SymptomsChart";
 import DailyScoreChart from "@/components/history/DailyScoreChart";
 
-import ContextualHint from "@/components/tutorial/ContextualHint";
+
 
 const periodDays: Record<Period, number | null> = { "7d": 7, "30d": 30, "90d": 90, Total: null };
 
