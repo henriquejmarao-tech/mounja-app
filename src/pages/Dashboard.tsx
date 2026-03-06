@@ -306,6 +306,10 @@ const Dashboard = () => {
         open={symptomDrawerOpen}
         onOpenChange={setSymptomDrawerOpen}
       />
+      <PhotoDrawer
+        open={photoDrawerOpen}
+        onOpenChange={setPhotoDrawerOpen}
+      />
     </div>
   );
 };
