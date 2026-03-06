@@ -247,9 +247,9 @@ const Dashboard = () => {
       {/* Sticky Header */}
       <header className="sticky top-0 z-30 pointer-events-none">
         <div
-          className="px-5 pb-16"
+          className="px-6 pb-14"
           style={{
-            paddingTop: "calc(env(safe-area-inset-top, 0px) + 1rem)",
+            paddingTop: "calc(env(safe-area-inset-top, 0px) + 0.75rem)",
             background: "linear-gradient(180deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.85) 30%, hsl(var(--primary) / 0.20) 60%, transparent 100%)",
           }}
         >
@@ -258,7 +258,7 @@ const Dashboard = () => {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => navigate("/perfil")}
-                className="w-11 h-11 rounded-full flex items-center justify-center text-primary font-bold text-sm shadow-lg"
+                className="w-10 h-10 rounded-full flex items-center justify-center text-primary font-bold text-sm shadow-lg"
                 style={{ background: "rgba(255,255,255,0.92)", boxShadow: "0 4px 14px rgba(0,0,0,0.12)" }}
               >
                 {((profile as any)?.username?.[0] || profile?.name?.[0] || "U").toUpperCase()}
@@ -276,7 +276,7 @@ const Dashboard = () => {
             <div className="text-center flex-1" />
             <button
               onClick={() => navigate("/configuracoes")}
-              className="w-11 h-11 rounded-full flex items-center justify-center shadow-lg"
+              className="w-10 h-10 rounded-full flex items-center justify-center shadow-lg"
               style={{ background: "rgba(255,255,255,0.92)", boxShadow: "0 4px 14px rgba(0,0,0,0.12)" }}
             >
               <Settings className="w-5 h-5 text-primary" />
@@ -285,7 +285,7 @@ const Dashboard = () => {
         </div>
       </header>
 
-      <div className="px-5 -mt-10 relative z-20">
+      <div className="px-5 -mt-8 relative z-20">
         {/* Status Hero Card — Daily Treatment Score */}
         <StatusHeroCard
           dailyScore={dailyScore}
