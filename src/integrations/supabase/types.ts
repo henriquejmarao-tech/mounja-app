@@ -461,6 +461,33 @@ export type Database = {
         }
         Relationships: []
       }
+      progress_photos: {
+        Row: {
+          created_at: string | null
+          date: string
+          id: string
+          notes: string | null
+          photo_url: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          date: string
+          id?: string
+          notes?: string | null
+          photo_url: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          id?: string
+          notes?: string | null
+          photo_url?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       workout_suggestions: {
         Row: {
           context_note: string | null
