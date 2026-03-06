@@ -76,7 +76,7 @@ const slides = [
 
 const Tutorial = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, refreshProfile } = useAuth();
   const [current, setCurrent] = useState(0);
 
   const slide = slides[current];
