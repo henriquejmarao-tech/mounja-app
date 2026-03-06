@@ -8,6 +8,7 @@ import { cn, localDateStr } from "@/lib/utils";
 import { toast } from "sonner";
 import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
 import WeightPickerDrawer from "@/components/WeightPickerDrawer";
+import SymptomCheckinDrawer from "@/components/SymptomCheckinDrawer";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ const Dashboard = () => {
   const [insight, setInsight] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [weightPickerOpen, setWeightPickerOpen] = useState(false);
+  const [symptomDrawerOpen, setSymptomDrawerOpen] = useState(false);
 
   const handleWeightSave = useCallback(async (weight: number) => {
     if (!user) return;
@@ -199,7 +201,7 @@ const Dashboard = () => {
               label: "Registrar\nsintomas",
               emoji: "📋",
               bg: "bg-card",
-              action: () => navigate("/log"),
+              action: () => setSymptomDrawerOpen(true),
             },
             {
               label: "Atualizar\npeso",
@@ -297,6 +299,10 @@ const Dashboard = () => {
         onOpenChange={setWeightPickerOpen}
         initialWeight={currentWeight ? Number(currentWeight) : 74}
         onSave={handleWeightSave}
+      />
+      <SymptomCheckinDrawer
+        open={symptomDrawerOpen}
+        onOpenChange={setSymptomDrawerOpen}
       />
     </div>
   );
