@@ -20,6 +20,7 @@ import Settings from "./pages/Settings";
 import Community from "./pages/Community";
 import ManageGroups from "./pages/ManageGroups";
 import Application from "./pages/Application";
+import RegisterInjection from "./pages/RegisterInjection";
 import MyTriage from "./pages/MyTriage";
 import Profile from "./pages/Profile";
 import DoseHistory from "./pages/DoseHistory";
