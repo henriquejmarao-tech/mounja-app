@@ -7,8 +7,6 @@ import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { ApplicationDataProvider } from "@/hooks/useApplicationData";
 import { TutorialProvider } from "@/hooks/useTutorial";
 import BottomNav from "./components/BottomNav";
-import TutorialOverlay from "./components/tutorial/TutorialOverlay";
-import TutorialStartDialog from "./components/tutorial/TutorialStartDialog";
 import InstallPrompt from "./components/pwa/InstallPrompt";
 import PwaUpdater from "./components/pwa/PwaUpdater";
 
@@ -32,6 +30,7 @@ import DoseHistory from "./pages/DoseHistory";
 import HealthInfo from "./pages/HealthInfo";
 import RoutinePreferences from "./pages/RoutinePreferences";
 import NotFound from "./pages/NotFound";
+import Tutorial from "./pages/Tutorial";
 
 const queryClient = new QueryClient();
 
@@ -96,12 +95,11 @@ const AppRoutes = () => {
         <Route path="/historico-dose" element={<ProtectedRoute><TriageGuard><DoseHistory /></TriageGuard></ProtectedRoute>} />
         <Route path="/saude" element={<ProtectedRoute><TriageGuard><HealthInfo /></TriageGuard></ProtectedRoute>} />
         <Route path="/rotina" element={<ProtectedRoute><TriageGuard><RoutinePreferences /></TriageGuard></ProtectedRoute>} />
+        <Route path="/tutorial" element={<ProtectedRoute><Tutorial /></ProtectedRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>
       <BottomNav />
-      <TutorialOverlay />
-      <TutorialStartDialog />
     </>
   );
 };

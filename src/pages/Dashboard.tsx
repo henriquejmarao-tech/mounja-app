@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { useTutorial } from "@/hooks/useTutorial";
 import { Settings, Sparkles, Flame, Utensils, ChevronDown, ChevronRight, ClipboardCheck, ArrowRight, Dumbbell, Target, Pill, HeartPulse, CalendarClock, CheckCircle2 } from "lucide-react";
+import TutorialCard from "@/components/dashboard/TutorialCard";
 import { cn, localDateStr } from "@/lib/utils";
 import { getWorkoutSuggestion } from "@/components/dashboard/WorkoutSuggestion";
 import StatusHeroCard from "@/components/dashboard/StatusHeroCard";
@@ -16,13 +17,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { user, profile } = useAuth();
   const { dose, recentSymptoms, weeklyWorkoutCount, latestWeight, loading: ssotLoading, refresh: refreshSSoT } = useApplicationData();
-  const { triggerPostTriageTutorial } = useTutorial();
-
-  useEffect(() => {
-    if (profile?.triage_completed) {
-      triggerPostTriageTutorial();
-    }
-  }, [profile?.triage_completed, triggerPostTriageTutorial]);
+  const { tutorialCompleted } = useTutorial();
 
   const [lastInjection, setLastInjection] = useState<any>(null);
   const [streak, setStreak] = useState(0);
@@ -300,6 +295,9 @@ const Dashboard = () => {
         />
 
         <div className="mt-3.5 space-y-4">
+
+        {/* Tutorial Card — only for new users */}
+        {!tutorialCompleted && <TutorialCard />}
 
         {/* Next Injection Card */}
         <NextInjectionCard daysUntilNext={daysUntilNext} currentDose={currentDose} />
