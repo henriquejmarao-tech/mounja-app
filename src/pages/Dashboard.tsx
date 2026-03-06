@@ -20,6 +20,7 @@ const Dashboard = () => {
   const [insight, setInsight] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [weightPickerOpen, setWeightPickerOpen] = useState(false);
+  const [symptomDrawerOpen, setSymptomDrawerOpen] = useState(false);
 
   const handleWeightSave = useCallback(async (weight: number) => {
     if (!user) return;
