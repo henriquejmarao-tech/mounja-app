@@ -168,10 +168,10 @@ const Dashboard = () => {
                   </p>
                 )}
                 <button
-                  onClick={() => navigate("/aplicacao")}
+                  onClick={() => navigate("/registrar-aplicacao")}
                   className="mt-5 bg-primary text-primary-foreground px-8 py-3 rounded-full text-sm font-bold shadow-elevated active:scale-95 transition-transform"
                 >
-                  Editar tratamento
+                  Registrar aplicação
                 </button>
               </>
             ) : (
