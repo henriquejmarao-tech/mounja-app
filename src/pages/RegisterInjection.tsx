@@ -115,6 +115,7 @@ const RegisterInjection = () => {
     setSaving(true);
     try {
       const dose = `${doseValue} mg`;
+      // Update profile current_dose so Dashboard reflects the change
       await setConfirmedApplication({
         date: localDateStr(today),
         dose,
