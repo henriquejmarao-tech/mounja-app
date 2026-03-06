@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 
 const navItems = [
-  { icon: Home, label: "Home", path: "/" },
+  { icon: Home, label: "Today", path: "/" },
   { icon: FileText, label: "Log", path: "/log" },
   { icon: TrendingUp, label: "Progress", path: "/progress" },
   { icon: Settings, label: "Settings", path: "/settings" },
@@ -29,45 +29,34 @@ const BottomNav = () => {
 
   return (
     <nav
-      className="fixed z-50"
+      className="fixed z-50 left-0 right-0"
       style={{
-        bottom: "calc(env(safe-area-inset-bottom, 0px) + 12px)",
-        left: "50%",
-        transform: "translateX(-50%)",
-        width: "calc(100% - 32px)",
-        maxWidth: "420px",
+        bottom: 0,
+        paddingBottom: "env(safe-area-inset-bottom, 0px)",
+        background: "hsl(var(--card))",
+        borderTop: "1px solid hsl(var(--border))",
       }}
     >
-      <div
-        className="flex items-center justify-around px-2 py-2"
-        style={{
-          background: "hsl(var(--card) / 0.92)",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
-          borderRadius: "20px",
-          boxShadow: "0 4px 24px hsl(220 20% 14% / 0.08), 0 0 0 1px hsl(var(--border) / 0.5)",
-          height: "60px",
-        }}
-      >
+      <div className="max-w-lg mx-auto flex items-center justify-around px-4 py-2">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (
             <button
               key={item.path}
               onClick={() => navigate(item.path)}
-              className="flex flex-col items-center gap-0.5 px-4 py-1.5 transition-all duration-200 active:scale-90 rounded-xl"
+              className="flex flex-col items-center gap-0.5 px-4 py-1.5 transition-all duration-200 active:scale-90"
             >
               <item.icon
                 className={cn(
-                  "w-[20px] h-[20px] transition-all duration-200",
-                  isActive ? "text-primary" : "text-muted-foreground"
+                  "w-[22px] h-[22px] transition-all duration-200",
+                  isActive ? "text-primary" : "text-muted-foreground/60"
                 )}
-                strokeWidth={isActive ? 2.5 : 1.8}
+                strokeWidth={isActive ? 2.5 : 1.5}
               />
               <span
                 className={cn(
                   "text-[10px] transition-all",
-                  isActive ? "text-primary font-semibold" : "text-muted-foreground font-medium"
+                  isActive ? "text-primary font-bold" : "text-muted-foreground/60 font-medium"
                 )}
               >
                 {item.label}
