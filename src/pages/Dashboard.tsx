@@ -291,6 +291,13 @@ const Dashboard = () => {
           </div>
         </div>
       )}
+
+      <WeightPickerDrawer
+        open={weightPickerOpen}
+        onOpenChange={setWeightPickerOpen}
+        initialWeight={currentWeight ? Number(currentWeight) : 74}
+        onSave={handleWeightSave}
+      />
     </div>
   );
 };
