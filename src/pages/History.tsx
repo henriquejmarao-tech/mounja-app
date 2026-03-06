@@ -18,7 +18,7 @@ import InsightsList, { type Insight } from "@/components/history/InsightsList";
 import SymptomsChart from "@/components/history/SymptomsChart";
 import DailyScoreChart from "@/components/history/DailyScoreChart";
 
-import ContextualHint from "@/components/tutorial/ContextualHint";
+
 
 const periodDays: Record<Period, number | null> = { "7d": 7, "30d": 30, "90d": 90, Total: null };
 
@@ -372,7 +372,7 @@ const History = () => {
       <PeriodFilter period={period} onChange={setPeriod} />
 
       <div data-tutorial="charts-area" className="px-5 space-y-4">
-        <ContextualHint id="export-pdf" message="Você pode exportar seu relatório completo em PDF." />
+        
         {loading ? (
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
