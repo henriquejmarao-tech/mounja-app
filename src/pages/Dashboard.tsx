@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -7,6 +7,7 @@ import { Scale, Camera, ClipboardList, Lightbulb } from "lucide-react";
 import { cn, localDateStr } from "@/lib/utils";
 import { toast } from "sonner";
 import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
+import WeightPickerDrawer from "@/components/WeightPickerDrawer";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -17,6 +18,23 @@ const Dashboard = () => {
   const [weightHistory, setWeightHistory] = useState<{ date: string; peso: number }[]>([]);
   const [insight, setInsight] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [weightPickerOpen, setWeightPickerOpen] = useState(false);
+
+  const handleWeightSave = useCallback(async (weight: number) => {
+    if (!user) return;
+    const dateStr = localDateStr(new Date());
+    const { data } = await supabase.from("daily_logs").select("id").eq("user_id", user.id).eq("date", dateStr).limit(1);
+    const existing = (data as any[])?.[0];
+    if (existing) {
+      await supabase.from("daily_logs").update({ weight }).eq("id", existing.id);
+    } else {
+      await supabase.from("daily_logs").insert({ user_id: user.id, date: dateStr, weight });
+    }
+    toast.success("Peso atualizado ✓");
+    // Refresh weight history
+    const { data: logs } = await supabase.from("daily_logs").select("date, weight").eq("user_id", user.id).not("weight", "is", null).order("date", { ascending: true });
+    if (logs) setWeightHistory((logs as any[]).map((l) => ({ date: l.date, peso: l.weight })));
+  }, [user]);
 
   const daysUntilNext = dose.nextApplicationAt
     ? Math.max(0, Math.ceil((new Date(dose.nextApplicationAt).getTime() - Date.now()) / 86400000))
@@ -187,7 +205,7 @@ const Dashboard = () => {
               label: "Atualizar\npeso",
               emoji: "⚖️",
               bg: "bg-card",
-              action: () => navigate("/log"),
+              action: () => setWeightPickerOpen(true),
             },
             {
               label: "Fotos de\nprogresso",
@@ -273,6 +291,13 @@ const Dashboard = () => {
           </div>
         </div>
       )}
+
+      <WeightPickerDrawer
+        open={weightPickerOpen}
+        onOpenChange={setWeightPickerOpen}
+        initialWeight={currentWeight ? Number(currentWeight) : 74}
+        onSave={handleWeightSave}
+      />
     </div>
   );
 };
