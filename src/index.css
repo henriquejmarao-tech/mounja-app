@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,95 +6,81 @@
 
 @layer base {
   :root {
-    --background: 37 27% 95%;
-    --foreground: 150 12% 18%;
+    --background: 0 0% 98%;
+    --foreground: 220 20% 14%;
 
-    --card: 37 20% 98%;
-    --card-foreground: 150 12% 18%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 14%;
 
-    --popover: 37 20% 98%;
-    --popover-foreground: 150 12% 18%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 14%;
 
-    --primary: 153 46% 34%;
+    --primary: 168 56% 42%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 18 80% 84%;
-    --secondary-foreground: 18 40% 30%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 220 20% 30%;
 
-    --muted: 140 14% 92%;
-    --muted-foreground: 150 6% 46%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 10% 50%;
 
-    --accent: 150 30% 90%;
-    --accent-foreground: 150 22% 25%;
+    --accent: 168 40% 94%;
+    --accent-foreground: 168 50% 28%;
 
-    --destructive: 0 60% 52%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --urgent: 14 75% 55%;
-    --urgent-light: 14 60% 94%;
+    --warning: 38 92% 50%;
+    --success: 168 56% 42%;
+    --info: 210 70% 55%;
 
-    --border: 140 12% 88%;
-    --input: 140 12% 88%;
-    --ring: 153 46% 34%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 168 56% 42%;
 
-    --radius: 1rem;
+    --radius: 0.75rem;
 
-    --sidebar-background: 37 27% 95%;
-    --sidebar-foreground: 150 12% 18%;
-    --sidebar-primary: 153 46% 34%;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 220 20% 14%;
+    --sidebar-primary: 168 56% 42%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 140 14% 92%;
-    --sidebar-accent-foreground: 150 12% 18%;
-    --sidebar-border: 140 12% 88%;
-    --sidebar-ring: 153 46% 34%;
+    --sidebar-accent: 220 14% 96%;
+    --sidebar-accent-foreground: 220 20% 14%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 168 56% 42%;
 
-    /* Custom tokens — Mounjá palette */
-    --peach: 18 80% 84%;
-    --peach-light: 18 70% 95%;
-    --sage: 153 46% 34%;
-    --sage-light: 144 35% 75%;
-    --sage-dark: 153 50% 22%;
-    --cream: 37 27% 95%;
-    --cream-card: 37 20% 98%;
-    --mist: 207 30% 77%;
-    --mint: 150 40% 90%;
-    --leaf: 153 46% 34%;
-    --success: 153 50% 38%;
-    --warning: 38 78% 58%;
-    --info: 207 40% 58%;
+    /* Semantic tokens */
+    --surface: 0 0% 100%;
+    --surface-hover: 220 14% 97%;
+    --text-primary: 220 20% 14%;
+    --text-secondary: 220 10% 50%;
+    --text-tertiary: 220 8% 65%;
 
-    --gradient-hero: linear-gradient(135deg, hsl(153, 46%, 34%) 0%, hsl(150, 42%, 42%) 50%, hsl(144, 35%, 75%) 100%);
-    --gradient-nutrition: linear-gradient(135deg, hsl(174, 42%, 48%) 0%, hsl(180, 35%, 42%) 50%, hsl(168, 38%, 52%) 100%);
-    --gradient-peach: linear-gradient(135deg, hsl(18, 80%, 84%) 0%, hsl(22, 70%, 78%) 100%);
-    --gradient-workout: linear-gradient(135deg, hsl(14, 75%, 55%) 0%, hsl(25, 80%, 52%) 50%, hsl(35, 75%, 55%) 100%);
-    --gradient-warm: linear-gradient(180deg, hsl(37, 27%, 95%) 0%, hsl(150, 20%, 93%) 100%);
-    --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.5) 100%);
-    --shadow-card: 0 1px 3px 0 hsl(150 12% 18% / 0.03), 0 4px 12px -2px hsl(150 12% 18% / 0.05);
-    --shadow-elevated: 0 2px 6px -1px hsl(150 12% 18% / 0.05), 0 12px 32px -6px hsl(153 46% 34% / 0.1);
-    --shadow-glow: 0 0 28px -6px hsl(153 46% 34% / 0.18);
-    --bg-surface: 0 0% 100%;
+    --shadow-sm: 0 1px 2px 0 hsl(220 20% 14% / 0.04);
+    --shadow-card: 0 1px 3px 0 hsl(220 20% 14% / 0.04), 0 4px 12px -2px hsl(220 20% 14% / 0.04);
+    --shadow-elevated: 0 4px 16px -2px hsl(220 20% 14% / 0.08), 0 12px 40px -8px hsl(168 56% 42% / 0.06);
   }
 
   .dark {
-    --background: 150 14% 7%;
-    --foreground: 37 20% 94%;
-    --card: 150 12% 11%;
-    --card-foreground: 37 20% 94%;
-    --popover: 150 12% 11%;
-    --popover-foreground: 37 20% 94%;
-    --primary: 153 42% 45%;
-    --primary-foreground: 150 14% 7%;
-    --secondary: 18 60% 55%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: 150 10% 16%;
-    --muted-foreground: 150 6% 56%;
-    --accent: 153 20% 18%;
-    --accent-foreground: 153 35% 60%;
-    --destructive: 0 55% 35%;
-    --destructive-foreground: 37 20% 94%;
-    --border: 150 10% 20%;
-    --input: 150 10% 20%;
-    --ring: 153 42% 45%;
+    --background: 220 16% 8%;
+    --foreground: 220 10% 92%;
+    --card: 220 14% 12%;
+    --card-foreground: 220 10% 92%;
+    --popover: 220 14% 12%;
+    --popover-foreground: 220 10% 92%;
+    --primary: 168 50% 48%;
+    --primary-foreground: 220 16% 8%;
+    --secondary: 220 12% 18%;
+    --secondary-foreground: 220 10% 80%;
+    --muted: 220 12% 18%;
+    --muted-foreground: 220 8% 55%;
+    --accent: 168 30% 18%;
+    --accent-foreground: 168 40% 65%;
+    --destructive: 0 60% 40%;
+    --destructive-foreground: 220 10% 92%;
+    --border: 220 12% 20%;
+    --input: 220 12% 20%;
+    --ring: 168 50% 48%;
   }
 }
 
@@ -105,54 +91,20 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 }
 
 @layer utilities {
-  .gradient-hero {
-    background: var(--gradient-hero);
-  }
-  .gradient-nutrition {
-    background: var(--gradient-nutrition);
-  }
-  .gradient-peach {
-    background: var(--gradient-peach);
-  }
-  .gradient-coral {
-    background: var(--gradient-peach);
-  }
-  .gradient-workout {
-    background: var(--gradient-workout);
-  }
-  .gradient-glass {
-    background: var(--gradient-glass);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-  }
   .shadow-card {
     box-shadow: var(--shadow-card);
   }
   .shadow-elevated {
     box-shadow: var(--shadow-elevated);
   }
-  .shadow-glow {
-    box-shadow: var(--shadow-glow);
-  }
-  .text-gradient {
-    background: var(--gradient-hero);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
 }
-
-/* Accessibility: bump very small text sizes for readability */
-.text-\[9px\] { font-size: 0.75rem !important; line-height: 1rem; }
-.text-\[10px\] { font-size: 0.8125rem !important; line-height: 1.125rem; }
-.text-\[11px\] { font-size: 0.8125rem !important; line-height: 1.125rem; }
 
 /* Mobile-first: consistent bottom padding for pages with BottomNav */
 .pb-nav {
