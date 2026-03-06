@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, User, Bell, Shield, HelpCircle, ChevronRight, LogOut, Crown, Sparkles, MessageSquare, Star, Send, Bug, Lightbulb, X, BookOpen, Syringe } from "lucide-react";
+import { User, Bell, Shield, HelpCircle, ChevronRight, LogOut, MessageSquare, Star, Send, Bug, Lightbulb, X, BookOpen, Syringe } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
@@ -30,180 +30,102 @@ const Settings = () => {
   const handleSaveInterval = async () => {
     if (!user) return;
     const val = parseInt(intervalDays);
-    if (!val || val < 1) {
-      toast.error("Intervalo deve ser um número inteiro positivo.");
-      return;
-    }
+    if (!val || val < 1) { toast.error("Intervalo deve ser positivo."); return; }
     setSavingInterval(true);
     const { error } = await supabase.from("profiles").update({ application_interval_days: val } as any).eq("id", user.id);
-    if (error) {
-      toast.error("Erro ao salvar.");
-    } else {
-      await refreshProfile();
-      await refresh();
-      toast.success("Intervalo atualizado. ✅");
-    }
+    if (error) { toast.error("Erro ao salvar."); }
+    else { await refreshProfile(); await refresh(); toast.success("Intervalo atualizado ✓"); }
     setSavingInterval(false);
   };
 
-  const menuItems = [
-    { icon: User, label: "Minha Triagem", route: "/minha-triagem", description: "Editar peso, objetivo e dados pessoais" },
-    { icon: Bell, label: "Notificações", description: "Lembretes e alertas" },
-    { icon: Shield, label: "Privacidade", description: "Dados e segurança" },
-    { icon: HelpCircle, label: "Ajuda e Suporte", description: "Dúvidas frequentes" },
-  ];
-
-  const handleLogout = async () => {
-    await signOut();
-    navigate("/auth");
-  };
+  const handleLogout = async () => { await signOut(); navigate("/auth"); };
 
   const handleSendFeedback = async () => {
     if (!user) return;
-    if (!message.trim()) {
-      toast.error("Escreva sua mensagem.");
-      return;
-    }
-    if (message.trim().length > 1000) {
-      toast.error("Mensagem muito longa (máximo 1000 caracteres).");
-      return;
-    }
-    if (feedbackType === "rating" && rating === 0) {
-      toast.error("Selecione uma avaliação.");
-      return;
-    }
+    if (!message.trim()) { toast.error("Escreva sua mensagem."); return; }
+    if (feedbackType === "rating" && rating === 0) { toast.error("Selecione uma avaliação."); return; }
     setSending(true);
-    const { error } = await supabase.from("feedback").insert({
-      user_id: user.id,
-      type: feedbackType,
-      rating: feedbackType === "rating" ? rating : null,
-      message: message.trim(),
-    } as any);
-    if (error) {
-      toast.error("Erro ao enviar. Tente novamente.");
-    } else {
-      toast.success("Obrigado pelo seu feedback! 💚");
-      setShowFeedback(false);
-      setMessage("");
-      setRating(0);
-    }
+    const { error } = await supabase.from("feedback").insert({ user_id: user.id, type: feedbackType, rating: feedbackType === "rating" ? rating : null, message: message.trim() } as any);
+    if (error) { toast.error("Erro ao enviar."); }
+    else { toast.success("Obrigado pelo feedback! 💚"); setShowFeedback(false); setMessage(""); setRating(0); }
     setSending(false);
   };
 
+  const menuItems = [
+    { icon: User, label: "Meus dados", route: "/minha-triagem", desc: "Peso, objetivo e dados pessoais" },
+    { icon: Syringe, label: "Aplicações", route: "/aplicacao", desc: "Histórico e rodízio" },
+    { icon: BookOpen, label: "Tutorial", route: "/tutorial", desc: "Reveja como usar o app" },
+    { icon: Bell, label: "Notificações", desc: "Lembretes e alertas" },
+    { icon: Shield, label: "Privacidade", desc: "Dados e segurança" },
+    { icon: HelpCircle, label: "Ajuda", desc: "Dúvidas frequentes" },
+  ];
+
   return (
     <div className="min-h-screen bg-background pb-nav">
-      <header className="relative overflow-hidden">
-        <div className="absolute inset-0 gradient-hero opacity-95" />
-        <div className="relative px-5 pb-8" style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 1.5rem)" }}>
-          <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-primary-foreground/80 mb-6">
-            <ArrowLeft className="w-5 h-5" />
-            <span className="text-sm font-medium">Voltar</span>
-          </button>
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-primary-foreground/20 backdrop-blur-sm flex items-center justify-center text-primary-foreground text-xl font-bold border border-primary-foreground/10">
-              {profile?.name?.[0]?.toUpperCase() || "U"}
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-primary-foreground">{profile?.name || "Usuário"}</h1>
-              <p className="text-sm text-primary-foreground/80">{user?.email}</p>
-              {profile?.current_dose && (
-                <p className="text-xs text-primary-foreground/60 mt-0.5">Dose {profile.current_dose}</p>
-              )}
-            </div>
+      <div className="px-6 pt-safe pb-2">
+        <h1 className="text-2xl font-bold text-foreground">Settings</h1>
+      </div>
+
+      <div className="px-5 space-y-4 mt-2">
+        {/* Profile header */}
+        <div className="bg-card rounded-2xl p-5 shadow-card border border-border/50 flex items-center gap-4">
+          <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary text-xl font-bold">
+            {profile?.name?.[0]?.toUpperCase() || "U"}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-base font-bold text-foreground truncate">{profile?.name || "Usuário"}</p>
+            <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+            {profile?.current_dose && <p className="text-xs text-primary font-medium mt-0.5">Dose {profile.current_dose}</p>}
           </div>
         </div>
-      </header>
 
-      <div className="px-5 mt-4 space-y-4">
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-2.5">
-          {[
-            { value: profile?.weekly_workouts || 0, label: "Treinos/sem", color: "text-primary" },
-            { value: profile?.current_dose || "—", label: "Dose atual", color: "text-secondary" },
-            { value: profile?.activity_level === "sedentary" ? "Sedentário" : profile?.activity_level === "light" ? "Leve" : profile?.activity_level === "moderate" ? "Moderado" : "Alto", label: "Atividade", color: "text-foreground" },
-          ].map((stat, i) => (
-            <div key={i} className="bg-card rounded-2xl p-3.5 shadow-card border border-border/50 text-center">
-              <p className={`text-lg font-bold ${stat.color}`}>{stat.value}</p>
-              <p className="text-[10px] text-muted-foreground mt-1 font-medium">{stat.label}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Application interval */}
-        <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50 space-y-3">
-          <div className="flex items-center gap-2">
-            <Syringe className="w-4 h-4 text-primary" />
-            <h3 className="font-semibold text-sm">Aplicações</h3>
-          </div>
-          <div>
-            <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Intervalo entre aplicações (dias)</label>
-            <div className="flex gap-2">
-              <input
-                type="number" min="1" value={intervalDays}
-                onChange={(e) => setIntervalDays(e.target.value)}
-                className="flex-1 px-4 py-3 rounded-xl border border-border bg-card text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
-              />
-              <button onClick={handleSaveInterval} disabled={savingInterval}
-                className="px-4 py-3 rounded-xl gradient-hero text-primary-foreground text-xs font-bold disabled:opacity-50">
-                {savingInterval ? "..." : "Salvar"}
-              </button>
-            </div>
+        {/* Interval config */}
+        <div className="bg-card rounded-2xl p-5 shadow-card border border-border/50 space-y-3">
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Intervalo entre aplicações</p>
+          <div className="flex gap-2">
+            <input type="number" min="1" value={intervalDays} onChange={(e) => setIntervalDays(e.target.value)}
+              className="flex-1 px-4 py-3 rounded-xl border border-border bg-secondary/30 text-sm outline-none focus:ring-2 focus:ring-primary/20"
+            />
+            <button onClick={handleSaveInterval} disabled={savingInterval}
+              className="px-5 py-3 rounded-xl bg-primary text-primary-foreground text-xs font-bold disabled:opacity-50">
+              {savingInterval ? "..." : "Salvar"}
+            </button>
           </div>
         </div>
 
         {/* Menu */}
         <div className="bg-card rounded-2xl shadow-card border border-border/50 overflow-hidden">
           {menuItems.map((item, i) => (
-            <button
-              key={i}
-              onClick={() => item.route && navigate(item.route)}
-              className="w-full flex items-center gap-3 px-4 py-4 hover:bg-muted/40 transition-colors border-b border-border/50 last:border-0"
+            <button key={i} onClick={() => item.route && navigate(item.route)}
+              className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-secondary/40 transition-colors border-b border-border/30 last:border-0"
             >
-              <div className="w-9 h-9 rounded-xl bg-muted/60 flex items-center justify-center">
+              <div className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center">
                 <item.icon className="w-4 h-4 text-muted-foreground" />
               </div>
               <div className="flex-1 text-left">
                 <span className="text-sm font-medium block">{item.label}</span>
-                {item.description && <span className="text-[10px] text-muted-foreground">{item.description}</span>}
+                {item.desc && <span className="text-[11px] text-muted-foreground">{item.desc}</span>}
               </div>
               <ChevronRight className="w-4 h-4 text-muted-foreground/40" />
             </button>
           ))}
         </div>
 
-        {/* Review tutorial button */}
-        <button
-          onClick={() => navigate("/tutorial")}
-          className="w-full flex items-center gap-3 bg-card rounded-2xl p-4 shadow-card border border-border/50 hover:border-primary/10 transition-all active:scale-[0.98]"
-        >
-          <div className="w-9 h-9 rounded-xl bg-muted/60 flex items-center justify-center">
-            <BookOpen className="w-4 h-4 text-muted-foreground" />
-          </div>
-          <div className="flex-1 text-left">
-            <span className="text-sm font-medium block">Rever tutorial</span>
-            <span className="text-[10px] text-muted-foreground">Veja novamente como usar o app</span>
-          </div>
-          <ChevronRight className="w-4 h-4 text-muted-foreground/40" />
-        </button>
-
-        {/* Feedback button */}
-        <button
-          onClick={() => setShowFeedback(true)}
-          className="w-full flex items-center gap-3 bg-card rounded-2xl p-4 shadow-card border border-primary/10 hover:border-primary/20 transition-all active:scale-[0.98]"
+        {/* Feedback */}
+        <button onClick={() => setShowFeedback(true)}
+          className="w-full flex items-center gap-3 bg-card rounded-2xl p-4 shadow-card border border-primary/10 active:scale-[0.98] transition-transform"
         >
           <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
             <MessageSquare className="w-4 h-4 text-primary" />
           </div>
           <div className="flex-1 text-left">
-            <span className="text-sm font-semibold block">Dar opinião</span>
-            <span className="text-[10px] text-muted-foreground">Avalie, sugira ou reporte um problema</span>
+            <span className="text-sm font-semibold">Dar opinião</span>
+            <span className="text-[11px] text-muted-foreground block">Avalie, sugira ou reporte</span>
           </div>
-          <ChevronRight className="w-4 h-4 text-muted-foreground/40" />
         </button>
 
         {/* Logout */}
-        <button
-          onClick={handleLogout}
+        <button onClick={handleLogout}
           className="w-full flex items-center justify-center gap-2 py-3.5 text-destructive text-sm font-semibold rounded-2xl hover:bg-destructive/5 transition-colors"
         >
           <LogOut className="w-4 h-4" />
@@ -213,85 +135,42 @@ const Settings = () => {
 
       {/* Feedback modal */}
       {showFeedback && (
-        <div className="fixed inset-0 z-[60] flex items-end justify-center bg-foreground/40 backdrop-blur-sm" onClick={() => setShowFeedback(false)}>
-          <div
-            className="bg-card w-full max-w-lg rounded-t-3xl p-5 pb-8 animate-fade-in-up shadow-elevated"
-            onClick={(e) => e.stopPropagation()}
-          >
+        <div className="fixed inset-0 z-[60] flex items-end justify-center bg-foreground/30 backdrop-blur-sm" onClick={() => setShowFeedback(false)}>
+          <div className="bg-card w-full max-w-lg rounded-t-3xl p-5 pb-8 animate-fade-in-up shadow-elevated" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-5">
               <h2 className="font-bold text-lg">Dar opinião</h2>
-              <button onClick={() => setShowFeedback(false)} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+              <button onClick={() => setShowFeedback(false)} className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
                 <X className="w-4 h-4 text-muted-foreground" />
               </button>
             </div>
-
-            {/* Type selector */}
             <div className="flex gap-2 mb-5">
               {feedbackTypes.map((ft) => (
-                <button
-                  key={ft.value}
-                  onClick={() => setFeedbackType(ft.value)}
-                  className={cn(
-                    "flex-1 flex flex-col items-center gap-1.5 py-3 rounded-xl border transition-all text-xs font-semibold",
-                    feedbackType === ft.value
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "bg-muted/50 border-border text-muted-foreground"
+                <button key={ft.value} onClick={() => setFeedbackType(ft.value)}
+                  className={cn("flex-1 flex flex-col items-center gap-1.5 py-3 rounded-xl border transition-all text-xs font-semibold",
+                    feedbackType === ft.value ? "bg-primary text-primary-foreground border-primary" : "bg-secondary border-border text-muted-foreground"
                   )}
                 >
-                  <span className="text-lg">{ft.emoji}</span>
-                  {ft.label}
+                  <span className="text-lg">{ft.emoji}</span>{ft.label}
                 </button>
               ))}
             </div>
-
-            {/* Rating stars */}
             {feedbackType === "rating" && (
-              <div className="mb-4">
-                <p className="text-xs font-semibold text-muted-foreground mb-2">Como está sua experiência?</p>
-                <div className="flex gap-2 justify-center">
-                  {[1, 2, 3, 4, 5].map((s) => (
-                    <button
-                      key={s}
-                      onClick={() => setRating(s)}
-                      className="p-1 transition-transform active:scale-90"
-                    >
-                      <Star className={cn("w-8 h-8 transition-colors", s <= rating ? "fill-warning text-warning" : "text-muted-foreground/30")} />
-                    </button>
-                  ))}
-                </div>
+              <div className="mb-4 flex gap-2 justify-center">
+                {[1, 2, 3, 4, 5].map((s) => (
+                  <button key={s} onClick={() => setRating(s)} className="p-1 active:scale-90 transition-transform">
+                    <Star className={cn("w-8 h-8", s <= rating ? "fill-warning text-warning" : "text-muted-foreground/30")} />
+                  </button>
+                ))}
               </div>
             )}
-
-            {/* Message */}
-            <div className="mb-5">
-              <p className="text-xs font-semibold text-muted-foreground mb-1.5">
-                {feedbackType === "rating" ? "Quer contar mais?" : feedbackType === "suggestion" ? "O que podemos melhorar?" : "O que aconteceu?"}
-              </p>
-              <textarea
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder={feedbackType === "bug" ? "Descreva o erro que encontrou..." : "Escreva sua mensagem..."}
-                rows={3}
-                maxLength={1000}
-                className="w-full px-4 py-3 rounded-xl border border-border bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
-              />
-              <p className="text-[10px] text-muted-foreground text-right mt-1">{message.length}/1000</p>
-            </div>
-
-            {/* Send */}
-            <button
-              onClick={handleSendFeedback}
-              disabled={sending || !message.trim()}
-              className="w-full gradient-hero text-primary-foreground font-bold py-4 rounded-2xl flex items-center justify-center gap-2 shadow-elevated disabled:opacity-50"
+            <textarea value={message} onChange={(e) => setMessage(e.target.value)}
+              placeholder="Escreva sua mensagem..." rows={3} maxLength={1000}
+              className="w-full px-4 py-3 rounded-xl border border-border bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 resize-none mb-4"
+            />
+            <button onClick={handleSendFeedback} disabled={sending || !message.trim()}
+              className="w-full bg-primary text-primary-foreground font-bold py-4 rounded-2xl flex items-center justify-center gap-2 shadow-elevated disabled:opacity-50"
             >
-              {sending ? (
-                <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-              ) : (
-                <>
-                  <Send className="w-4 h-4" />
-                  Enviar
-                </>
-              )}
+              {sending ? <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" /> : <><Send className="w-4 h-4" />Enviar</>}
             </button>
           </div>
         </div>
