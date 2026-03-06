@@ -300,6 +300,10 @@ const Dashboard = () => {
         initialWeight={currentWeight ? Number(currentWeight) : 74}
         onSave={handleWeightSave}
       />
+      <SymptomCheckinDrawer
+        open={symptomDrawerOpen}
+        onOpenChange={setSymptomDrawerOpen}
+      />
     </div>
   );
 };
