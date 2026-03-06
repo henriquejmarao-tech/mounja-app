@@ -8,6 +8,7 @@ import { cn, localDateStr } from "@/lib/utils";
 import { toast } from "sonner";
 import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
 import WeightPickerDrawer from "@/components/WeightPickerDrawer";
+import SymptomCheckinDrawer from "@/components/SymptomCheckinDrawer";
 
 const Dashboard = () => {
   const navigate = useNavigate();
