@@ -88,6 +88,7 @@ const AppRoutes = () => {
         <Route path="/comunidade/grupos" element={<ProtectedRoute><TriageGuard><ManageGroups /></TriageGuard></ProtectedRoute>} />
 
         <Route path="/aplicacao" element={<ProtectedRoute><TriageGuard><Application /></TriageGuard></ProtectedRoute>} />
+        <Route path="/registrar-aplicacao" element={<ProtectedRoute><TriageGuard><RegisterInjection /></TriageGuard></ProtectedRoute>} />
         <Route path="/minha-triagem" element={<ProtectedRoute><TriageGuard><MyTriage /></TriageGuard></ProtectedRoute>} />
         <Route path="/perfil" element={<ProtectedRoute><TriageGuard><Profile /></TriageGuard></ProtectedRoute>} />
         <Route path="/historico-dose" element={<ProtectedRoute><TriageGuard><DoseHistory /></TriageGuard></ProtectedRoute>} />
