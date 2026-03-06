@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
 import WeightPickerDrawer from "@/components/WeightPickerDrawer";
 import SymptomCheckinDrawer from "@/components/SymptomCheckinDrawer";
+import PhotoDrawer from "@/components/PhotoDrawer";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ const Dashboard = () => {
   const [todayLog, setTodayLog] = useState<any>(null);
   const [weightHistory, setWeightHistory] = useState<{ date: string; peso: number }[]>([]);
   const [insight, setInsight] = useState<string | null>(null);
+  const [photoDrawerOpen, setPhotoDrawerOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [weightPickerOpen, setWeightPickerOpen] = useState(false);
   const [symptomDrawerOpen, setSymptomDrawerOpen] = useState(false);
@@ -213,7 +215,7 @@ const Dashboard = () => {
               label: "Fotos de\nprogresso",
               emoji: "📸",
               bg: "bg-card",
-              action: () => navigate("/progress"),
+              action: () => setPhotoDrawerOpen(true),
             },
           ].map((item, i) => (
             <button
@@ -303,6 +305,10 @@ const Dashboard = () => {
       <SymptomCheckinDrawer
         open={symptomDrawerOpen}
         onOpenChange={setSymptomDrawerOpen}
+      />
+      <PhotoDrawer
+        open={photoDrawerOpen}
+        onOpenChange={setPhotoDrawerOpen}
       />
     </div>
   );
