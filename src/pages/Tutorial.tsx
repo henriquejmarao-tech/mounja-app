@@ -88,6 +88,7 @@ const Tutorial = () => {
       await supabase.from("profiles").update({ 
         tutorial_version_completed: "v2" 
       } as any).eq("id", user.id);
+      await refreshProfile();
     }
     navigate("/", { replace: true });
   };
