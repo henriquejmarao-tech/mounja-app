@@ -7,13 +7,57 @@ import { toast } from "sonner";
 import { Calendar } from "@/components/ui/calendar";
 import { Syringe, Scale, Utensils, Activity, ChevronDown, ChevronUp, Save } from "lucide-react";
 
-const symptomKeys = [
-  { key: "symptom_nausea", label: "Náusea", emoji: "🤢" },
-  { key: "symptom_fatigue", label: "Fadiga", emoji: "😴" },
-  { key: "symptom_headache", label: "Dor de cabeça", emoji: "🤕" },
-  { key: "symptom_constipation", label: "Constipação", emoji: "😣" },
-  { key: "symptom_diarrhea", label: "Diarreia", emoji: "💧" },
-  { key: "symptom_injection_pain", label: "Dor na aplicação", emoji: "💉" },
+const symptomCategories = [
+  {
+    title: "Sintomas",
+    color: "bg-blue-100 text-blue-700",
+    activeColor: "bg-blue-200 text-blue-800 ring-2 ring-blue-400/50",
+    items: [
+      { key: "symptom_nausea", label: "Náusea", emoji: "🤢" },
+      { key: "symptom_constipation", label: "Constipação", emoji: "😣" },
+      { key: "symptom_diarrhea", label: "Diarreia", emoji: "💧" },
+      { key: "symptom_headache", label: "Dor de cabeça", emoji: "🤕" },
+      { key: "symptom_fatigue", label: "Fadiga", emoji: "😴" },
+      { key: "symptom_dizziness", label: "Tontura", emoji: "😵" },
+      { key: "symptom_bloating", label: "Inchaço", emoji: "🎈" },
+      { key: "symptom_heartburn", label: "Azia", emoji: "🔥" },
+    ],
+  },
+  {
+    title: "Apetite",
+    color: "bg-orange-100 text-orange-700",
+    activeColor: "bg-orange-200 text-orange-800 ring-2 ring-orange-400/50",
+    items: [
+      { key: "appetite_suppressed", label: "Sem apetite", emoji: "🚫" },
+      { key: "appetite_cravings", label: "Compulsão", emoji: "🍫" },
+      { key: "appetite_healthy", label: "Comendo bem", emoji: "🥗" },
+      { key: "appetite_junk", label: "Junk food", emoji: "🍔" },
+    ],
+  },
+  {
+    title: "Reação na aplicação",
+    color: "bg-red-100 text-red-700",
+    activeColor: "bg-red-200 text-red-800 ring-2 ring-red-400/50",
+    items: [
+      { key: "symptom_injection_pain", label: "Dor", emoji: "💉" },
+      { key: "injection_swelling", label: "Inchaço", emoji: "🔺" },
+      { key: "injection_rash", label: "Vermelhidão", emoji: "🔴" },
+      { key: "injection_bruising", label: "Hematoma", emoji: "🟣" },
+    ],
+  },
+  {
+    title: "Humor",
+    color: "bg-yellow-100 text-yellow-700",
+    activeColor: "bg-yellow-200 text-yellow-800 ring-2 ring-yellow-400/50",
+    items: [
+      { key: "mood_calm", label: "Calmo", emoji: "😌" },
+      { key: "mood_happy", label: "Feliz", emoji: "😊" },
+      { key: "mood_energetic", label: "Energético", emoji: "⚡" },
+      { key: "mood_anxious", label: "Ansioso", emoji: "😰" },
+      { key: "mood_foggy", label: "Confuso", emoji: "🌫️" },
+      { key: "mood_irritable", label: "Irritado", emoji: "😤" },
+    ],
+  },
 ];
 
 const LogPage = () => {
@@ -52,7 +96,9 @@ const LogPage = () => {
     setWaterMl(existing?.water_ml?.toString() || "");
     setNotes(existing?.notes || "");
     const syms: Record<string, number> = {};
-    symptomKeys.forEach((s) => { syms[s.key] = existing?.[s.key] || 0; });
+    symptomCategories.forEach((cat) => {
+      cat.items.forEach((s) => { syms[s.key] = existing?.[s.key] || 0; });
+    });
     setSymptoms(syms);
   }, [user, dateStr]);
 
@@ -158,38 +204,31 @@ const LogPage = () => {
           </div>
         </div>
 
-        {/* Symptoms */}
-        <div className="bg-card rounded-2xl p-5 shadow-card border border-border/50">
-          <div className="flex items-center gap-2 mb-3">
-            <Activity className="w-4 h-4 text-primary" />
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Sintomas</p>
-          </div>
-          <div className="space-y-3">
-            {symptomKeys.map((s) => (
-              <div key={s.key}>
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-sm text-foreground">{s.emoji} {s.label}</span>
-                  <span className="text-xs text-muted-foreground">{symptoms[s.key] || 0}/5</span>
-                </div>
-                <div className="flex gap-1.5">
-                  {[0, 1, 2, 3, 4, 5].map((v) => (
+        {/* Symptoms - Chip toggle style */}
+        <div className="space-y-3">
+          {symptomCategories.map((cat) => (
+            <div key={cat.title} className="bg-card rounded-2xl p-5 shadow-card border border-border/50">
+              <h3 className="font-bold text-base text-foreground mb-3">{cat.title}</h3>
+              <div className="flex flex-wrap gap-2">
+                {cat.items.map((s) => {
+                  const isActive = (symptoms[s.key] || 0) > 0;
+                  return (
                     <button
-                      key={v}
-                      onClick={() => setSymptoms({ ...symptoms, [s.key]: symptoms[s.key] === v ? 0 : v })}
+                      key={s.key}
+                      onClick={() => setSymptoms({ ...symptoms, [s.key]: isActive ? 0 : 1 })}
                       className={cn(
-                        "flex-1 py-2 rounded-lg text-xs font-semibold transition-all active:scale-90",
-                        symptoms[s.key] === v
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-secondary/60 text-muted-foreground"
+                        "inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full text-sm font-medium transition-all active:scale-95",
+                        isActive ? cat.activeColor : cat.color
                       )}
                     >
-                      {v}
+                      <span className="text-base">{s.emoji}</span>
+                      {s.label}
                     </button>
-                  ))}
-                </div>
+                  );
+                })}
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
 
         {/* Food */}
