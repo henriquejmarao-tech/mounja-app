@@ -94,12 +94,12 @@ const Triage = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <header className="px-5 pb-4" style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 1.5rem)" }}>
-        <h1 className="text-lg font-bold">Vamos começar 🌿</h1>
-        <p className="text-xs text-muted-foreground mt-1">Preencha o essencial — leva menos de 1 minuto.</p>
+      <header className="px-6 pb-5" style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 2rem)" }}>
+        <h1 className="text-xl font-bold">Vamos começar 🌿</h1>
+        <p className="text-sm text-muted-foreground mt-1.5">Preencha o essencial — leva menos de 1 minuto.</p>
       </header>
 
-      <div className="flex-1 px-5 pb-4 overflow-y-auto space-y-4">
+      <div className="flex-1 px-6 pb-6 overflow-y-auto space-y-5">
         <div>
           <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Nome *</label>
           <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Seu nome" className="w-full px-4 py-3 rounded-xl border border-border bg-card text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
@@ -201,7 +201,7 @@ const Triage = () => {
         )}
       </div>
 
-      <div className="px-5 pb-8 pt-2">
+      <div className="px-6 pb-8 pt-3">
         <button onClick={handleSave} disabled={saving || !canSave}
           className="w-full gradient-hero text-primary-foreground font-bold py-4 rounded-2xl flex items-center justify-center gap-2 shadow-elevated hover:shadow-glow active:scale-[0.98] transition-all duration-300 disabled:opacity-50">
           {saving ? (
