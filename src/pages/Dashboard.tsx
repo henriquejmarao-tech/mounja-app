@@ -197,12 +197,11 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* ── Hero Treatment Card ── */}
       <div className="px-5 mb-5 animate-fade-in-up">
         <div
-          className="rounded-3xl overflow-hidden relative"
+          className="rounded-3xl overflow-hidden relative transition-all duration-500"
           style={{
-            background: "linear-gradient(160deg, hsl(250, 60%, 68%) 0%, hsl(240, 50%, 72%) 40%, hsl(220, 55%, 82%) 100%)",
+            background: heroGradient,
             minHeight: "220px",
           }}
         >
@@ -220,6 +219,7 @@ const Dashboard = () => {
           <div className="relative flex flex-col items-center justify-center text-center px-6 py-10">
             {hasTreatment ? (
               selectedDayHasInjection ? (
+                /* ── STATE 1: Injection day (vibrant) ── */
                 <>
                   <p className="text-white/80 text-base font-semibold tracking-wide">Mounjaro®</p>
                   <p className="text-white text-5xl font-extrabold mt-1 tracking-tight">
@@ -232,14 +232,31 @@ const Dashboard = () => {
                     Edit Treatment
                   </button>
                 </>
-              ) : (
+              ) : selectedIsInPast ? (
+                /* ── STATE 2: Past day without injection (muted) ── */
                 <>
-                  <p className="text-white/80 text-base font-semibold tracking-wide">Next treatment</p>
-                  <p className="text-white text-5xl font-extrabold mt-1 tracking-tight">
-                    {daysUntilNext !== null
-                      ? daysUntilNext === 0
+                  <p className="text-foreground/60 text-base font-semibold tracking-wide">
+                    {selectedDate.toLocaleDateString("en-US", { month: "long", day: "numeric" })}
+                  </p>
+                  <p className="text-foreground/80 text-2xl font-extrabold mt-2 leading-tight">
+                    No treatment logged
+                  </p>
+                  <button
+                    onClick={() => navigate("/registrar-aplicacao")}
+                    className="mt-5 bg-primary text-primary-foreground px-8 py-3 rounded-full text-sm font-bold shadow-elevated active:scale-95 transition-transform"
+                  >
+                    Log Treatment
+                  </button>
+                </>
+              ) : (
+                /* ── STATE 3: Present/future without injection (muted) ── */
+                <>
+                  <p className="text-foreground/60 text-base font-semibold tracking-wide">Next treatment</p>
+                  <p className="text-foreground/90 text-5xl font-extrabold mt-1 tracking-tight">
+                    {daysUntilNextFromSelected !== null
+                      ? daysUntilNextFromSelected === 0
                         ? "Today"
-                        : `${daysUntilNext} days`
+                        : `${daysUntilNextFromSelected} days`
                       : "—"}
                   </p>
                   <button
@@ -252,7 +269,7 @@ const Dashboard = () => {
               )
             ) : (
               <>
-                <p className="text-white text-2xl font-extrabold leading-tight">
+                <p className="text-foreground/80 text-2xl font-extrabold leading-tight">
                   Registre seu{"\n"}primeiro tratamento
                 </p>
                 <button
@@ -265,9 +282,9 @@ const Dashboard = () => {
             )}
             <button
               onClick={() => navigate("/progress")}
-              className="mt-2 text-white/60 text-xs font-medium"
+              className="mt-2 text-foreground/40 text-xs font-medium"
             >
-              Ver tudo
+              View all
             </button>
           </div>
         </div>
