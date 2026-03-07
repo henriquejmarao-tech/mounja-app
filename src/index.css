@@ -118,6 +118,15 @@
   padding-top: calc(env(safe-area-inset-top, 0px) + 1rem);
 }
 
+/* Hide scrollbar for scroll pickers */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* Prevent rubber-band bounce on iOS */
 html {
   overflow: hidden;
