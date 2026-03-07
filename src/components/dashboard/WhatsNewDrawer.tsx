@@ -10,13 +10,13 @@ const WhatsNewDrawer = ({ open, onOpenChange }: WhatsNewDrawerProps) => {
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent className="pb-safe">
         <div className="px-6 pt-4 pb-6 space-y-5">
-          <h2 className="text-2xl font-extrabold text-foreground">What's New</h2>
+          <h2 className="text-2xl font-extrabold text-foreground">Novidades</h2>
 
           <ul className="space-y-4">
             <li className="flex items-start gap-3">
               <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-foreground shrink-0" />
               <p className="text-[15px] text-foreground leading-relaxed">
-                <strong>Tela de Refeições redesenhada</strong>: Gráficos nutricionais semanais, controle de água e streak diário para manter sua motivação.
+                <strong>Tela de Refeições redesenhada</strong>: Gráficos nutricionais semanais, controle de água e sequência diária para manter sua motivação.
               </p>
             </li>
             <li className="flex items-start gap-3">
