@@ -31,6 +31,7 @@ const Dashboard = () => {
   const [calendarDrawerOpen, setCalendarDrawerOpen] = useState(false);
   const [whatsNewOpen, setWhatsNewOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [weekInjections, setWeekInjections] = useState<Set<string>>(new Set());
 
   const selectedDateStr = localDateStr(selectedDate);
   const isSelectedToday = selectedDateStr === localDateStr(new Date());
@@ -85,13 +86,24 @@ const Dashboard = () => {
     if (!user) return;
     const fetchData = async () => {
       const today = localDateStr();
-      const [logRes, weightRes] = await Promise.all([
+
+      // Get week boundaries for injection dots
+      const todayDate = new Date();
+      const dayOfWeek = todayDate.getDay();
+      const monday = new Date(todayDate);
+      monday.setDate(todayDate.getDate() - ((dayOfWeek + 6) % 7));
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate() + 6);
+
+      const [logRes, weightRes, injRes] = await Promise.all([
         supabase.from("daily_logs").select("*").eq("user_id", user.id).eq("date", today).limit(1),
         supabase.from("daily_logs").select("date, weight").eq("user_id", user.id).not("weight", "is", null).order("date", { ascending: true }).limit(30),
+        supabase.from("injections").select("date").eq("user_id", user.id).gte("date", localDateStr(monday)).lte("date", localDateStr(sunday)),
       ]);
       setTodayLog((logRes.data as any[])?.[0] || null);
       const wData = ((weightRes.data as any[]) || []).map((l) => ({ date: l.date, peso: Number(l.weight) }));
       setWeightHistory(wData);
+      setWeekInjections(new Set(((injRes.data as any[]) || []).map((i) => i.date)));
 
       if (wData.length >= 3) {
         const diff = wData[0].peso - wData[wData.length - 1].peso;
@@ -103,6 +115,7 @@ const Dashboard = () => {
   }, [user]);
 
   const hasTreatment = !!dose.currentDose;
+  const selectedDayHasInjection = weekInjections.has(selectedDateStr);
   const initialWeight = profile?.current_weight;
   const goalWeight = profile?.goal ? parseFloat(profile.goal) : null;
   const currentWeight = latestWeight || (weightHistory.length > 0 ? weightHistory[weightHistory.length - 1].peso : null);
@@ -139,6 +152,7 @@ const Dashboard = () => {
         <div className="flex items-center justify-between">
       {weekDays.map((d, i) => {
               const isSelected = localDateStr(d.full) === selectedDateStr;
+              const hasInjection = weekInjections.has(localDateStr(d.full));
               return (
                 <button
                   key={i}
@@ -158,6 +172,8 @@ const Dashboard = () => {
                   >
                     {d.date}
                   </div>
+                  {/* Injection dot indicator */}
+                  <div className={cn("w-1.5 h-1.5 rounded-full transition-all", hasInjection ? "bg-primary" : "bg-transparent")} />
                 </button>
               );
             })}
@@ -186,23 +202,37 @@ const Dashboard = () => {
 
           <div className="relative flex flex-col items-center justify-center text-center px-6 py-10">
             {hasTreatment ? (
-              <>
-                <p className="text-white/80 text-base font-semibold tracking-wide">Mounjaro®</p>
-                <p className="text-white text-5xl font-extrabold mt-1 tracking-tight">
-                  {dose.currentDose}
-                </p>
-                {daysUntilNext !== null && (
-                  <p className="text-white/70 text-sm font-medium mt-2">
-                    {daysUntilNext === 0 ? "Aplicação hoje" : daysUntilNext === 1 ? "Próxima: amanhã" : `Próxima: em ${daysUntilNext} dias`}
+              selectedDayHasInjection ? (
+                <>
+                  <p className="text-white/80 text-base font-semibold tracking-wide">Mounjaro®</p>
+                  <p className="text-white text-5xl font-extrabold mt-1 tracking-tight">
+                    {dose.currentDose}
                   </p>
-                )}
-                <button
-                  onClick={() => navigate("/registrar-aplicacao")}
-                  className="mt-5 bg-primary text-primary-foreground px-8 py-3 rounded-full text-sm font-bold shadow-elevated active:scale-95 transition-transform"
-                >
-                  Registrar aplicação
-                </button>
-              </>
+                  <button
+                    onClick={() => navigate("/plano-tratamento")}
+                    className="mt-5 bg-primary text-primary-foreground px-8 py-3 rounded-full text-sm font-bold shadow-elevated active:scale-95 transition-transform"
+                  >
+                    Edit Treatment
+                  </button>
+                </>
+              ) : (
+                <>
+                  <p className="text-white/80 text-base font-semibold tracking-wide">Next treatment</p>
+                  <p className="text-white text-5xl font-extrabold mt-1 tracking-tight">
+                    {daysUntilNext !== null
+                      ? daysUntilNext === 0
+                        ? "Today"
+                        : `${daysUntilNext} days`
+                      : "—"}
+                  </p>
+                  <button
+                    onClick={() => navigate("/registrar-aplicacao")}
+                    className="mt-5 bg-primary text-primary-foreground px-8 py-3 rounded-full text-sm font-bold shadow-elevated active:scale-95 transition-transform"
+                  >
+                    Log Treatment
+                  </button>
+                </>
+              )
             ) : (
               <>
                 <p className="text-white text-2xl font-extrabold leading-tight">
