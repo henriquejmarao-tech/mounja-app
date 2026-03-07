@@ -52,9 +52,6 @@ const Dashboard = () => {
     if (logs) setWeightHistory((logs as any[]).map((l) => ({ date: l.date, peso: l.weight })));
   }, [user]);
 
-  const daysUntilNext = dose.nextApplicationAt
-    ? Math.max(0, Math.ceil((new Date(dose.nextApplicationAt).getTime() - Date.now()) / 86400000))
-    : null;
 
   // Week strip data
   const weekDays = useMemo(() => {
@@ -116,9 +113,26 @@ const Dashboard = () => {
 
   const hasTreatment = !!dose.currentDose;
   const selectedDayHasInjection = weekInjections.has(selectedDateStr);
+  const selectedIsInPast = selectedDateStr < localDateStr(new Date());
   const initialWeight = profile?.current_weight;
   const goalWeight = profile?.goal ? parseFloat(profile.goal) : null;
   const currentWeight = latestWeight || (weightHistory.length > 0 ? weightHistory[weightHistory.length - 1].peso : null);
+
+  // Calculate days until next injection from selected date perspective
+  const daysUntilNextFromSelected = useMemo(() => {
+    if (!dose.nextApplicationAt) return null;
+    const nextDate = new Date(dose.nextApplicationAt);
+    const diffMs = nextDate.getTime() - selectedDate.getTime();
+    return Math.max(0, Math.ceil(diffMs / 86400000));
+  }, [dose.nextApplicationAt, selectedDate]);
+
+  // Hero card state: 3 modes
+  // 1. Injection day (vibrant) — selected day has injection record
+  // 2. Past without injection (muted) — can log a past injection
+  // 3. Present/future without injection (muted) — shows countdown
+  const heroGradient = selectedDayHasInjection
+    ? "linear-gradient(160deg, hsl(250, 60%, 58%) 0%, hsl(240, 55%, 62%) 40%, hsl(220, 50%, 72%) 100%)"
+    : "linear-gradient(160deg, hsl(250, 40%, 78%) 0%, hsl(240, 35%, 82%) 40%, hsl(220, 40%, 88%) 100%)";
 
   if (loading) {
     return (
@@ -180,12 +194,11 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* ── Hero Treatment Card ── */}
       <div className="px-5 mb-5 animate-fade-in-up">
         <div
-          className="rounded-3xl overflow-hidden relative"
+          className="rounded-3xl overflow-hidden relative transition-all duration-500"
           style={{
-            background: "linear-gradient(160deg, hsl(250, 60%, 68%) 0%, hsl(240, 50%, 72%) 40%, hsl(220, 55%, 82%) 100%)",
+            background: heroGradient,
             minHeight: "220px",
           }}
         >
@@ -203,6 +216,7 @@ const Dashboard = () => {
           <div className="relative flex flex-col items-center justify-center text-center px-6 py-10">
             {hasTreatment ? (
               selectedDayHasInjection ? (
+                /* ── STATE 1: Injection day (vibrant) ── */
                 <>
                   <p className="text-white/80 text-base font-semibold tracking-wide">Mounjaro®</p>
                   <p className="text-white text-5xl font-extrabold mt-1 tracking-tight">
@@ -215,14 +229,31 @@ const Dashboard = () => {
                     Edit Treatment
                   </button>
                 </>
-              ) : (
+              ) : selectedIsInPast ? (
+                /* ── STATE 2: Past day without injection (muted) ── */
                 <>
-                  <p className="text-white/80 text-base font-semibold tracking-wide">Next treatment</p>
-                  <p className="text-white text-5xl font-extrabold mt-1 tracking-tight">
-                    {daysUntilNext !== null
-                      ? daysUntilNext === 0
+                  <p className="text-foreground/60 text-base font-semibold tracking-wide">
+                    {selectedDate.toLocaleDateString("en-US", { month: "long", day: "numeric" })}
+                  </p>
+                  <p className="text-foreground/80 text-2xl font-extrabold mt-2 leading-tight">
+                    No treatment logged
+                  </p>
+                  <button
+                    onClick={() => navigate("/registrar-aplicacao")}
+                    className="mt-5 bg-primary text-primary-foreground px-8 py-3 rounded-full text-sm font-bold shadow-elevated active:scale-95 transition-transform"
+                  >
+                    Log Treatment
+                  </button>
+                </>
+              ) : (
+                /* ── STATE 3: Present/future without injection (muted) ── */
+                <>
+                  <p className="text-foreground/60 text-base font-semibold tracking-wide">Next treatment</p>
+                  <p className="text-foreground/90 text-5xl font-extrabold mt-1 tracking-tight">
+                    {daysUntilNextFromSelected !== null
+                      ? daysUntilNextFromSelected === 0
                         ? "Today"
-                        : `${daysUntilNext} days`
+                        : `${daysUntilNextFromSelected} days`
                       : "—"}
                   </p>
                   <button
@@ -235,7 +266,7 @@ const Dashboard = () => {
               )
             ) : (
               <>
-                <p className="text-white text-2xl font-extrabold leading-tight">
+                <p className="text-foreground/80 text-2xl font-extrabold leading-tight">
                   Registre seu{"\n"}primeiro tratamento
                 </p>
                 <button
@@ -248,9 +279,9 @@ const Dashboard = () => {
             )}
             <button
               onClick={() => navigate("/progress")}
-              className="mt-2 text-white/60 text-xs font-medium"
+              className="mt-2 text-foreground/40 text-xs font-medium"
             >
-              Ver tudo
+              View all
             </button>
           </div>
         </div>
