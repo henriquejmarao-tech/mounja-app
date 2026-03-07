@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.community-ai-answer]
 verify_jwt = false
+
+[functions.nutrition-goals]
+verify_jwt = false
