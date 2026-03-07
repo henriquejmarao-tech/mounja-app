@@ -68,11 +68,15 @@ const ScrollPicker = ({
         <div
           ref={containerRef}
           onScroll={handleScroll}
+          onTouchStart={(e) => e.stopPropagation()}
+          onTouchMove={(e) => e.stopPropagation()}
           className="overflow-y-auto scrollbar-hide w-32"
           style={{
             height: containerHeight,
             scrollSnapType: "y mandatory",
             WebkitOverflowScrolling: "touch",
+            overscrollBehavior: "contain",
+            touchAction: "pan-y",
           }}
         >
           {/* Top padding */}
