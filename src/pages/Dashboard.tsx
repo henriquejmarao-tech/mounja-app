@@ -295,6 +295,10 @@ const Dashboard = () => {
         open={photoDrawerOpen}
         onOpenChange={setPhotoDrawerOpen}
       />
+      <CalendarDrawer
+        open={calendarDrawerOpen}
+        onOpenChange={setCalendarDrawerOpen}
+      />
     </div>
   );
 };
