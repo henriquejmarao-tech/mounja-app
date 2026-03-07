@@ -151,6 +151,7 @@ const Dashboard = () => {
         <div className="flex items-center justify-between">
       {weekDays.map((d, i) => {
               const isSelected = localDateStr(d.full) === selectedDateStr;
+              const hasInjection = weekInjections.has(localDateStr(d.full));
               return (
                 <button
                   key={i}
@@ -170,6 +171,8 @@ const Dashboard = () => {
                   >
                     {d.date}
                   </div>
+                  {/* Injection dot indicator */}
+                  <div className={cn("w-1.5 h-1.5 rounded-full transition-all", hasInjection ? "bg-primary" : "bg-transparent")} />
                 </button>
               );
             })}
