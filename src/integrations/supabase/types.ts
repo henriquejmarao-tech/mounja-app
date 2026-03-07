@@ -335,6 +335,7 @@ export type Database = {
           application_frequency: string | null
           application_interval_days: number | null
           avg_sleep_hours: number | null
+          calories_goal: number | null
           common_side_effects: Json | null
           compulsion_effect: number | null
           created_at: string | null
@@ -344,6 +345,7 @@ export type Database = {
           dietary_restrictions: Json | null
           dose_history_completed: boolean | null
           dose_increase_details: string | null
+          fiber_goal: number | null
           first_login_at: string | null
           goal: string | null
           has_increased_dose: boolean | null
@@ -356,6 +358,7 @@ export type Database = {
           medications: string | null
           mounjaro_start_date: string | null
           name: string | null
+          protein_goal: number | null
           routine_completed: boolean | null
           satiety_effect: number | null
           sex: string | null
@@ -368,6 +371,7 @@ export type Database = {
           tutorial_version_completed: string | null
           updated_at: string | null
           username: string | null
+          water_glasses_goal: number | null
           weekly_workout_goal: number | null
           weekly_workouts: number | null
         }
@@ -379,6 +383,7 @@ export type Database = {
           application_frequency?: string | null
           application_interval_days?: number | null
           avg_sleep_hours?: number | null
+          calories_goal?: number | null
           common_side_effects?: Json | null
           compulsion_effect?: number | null
           created_at?: string | null
@@ -388,6 +393,7 @@ export type Database = {
           dietary_restrictions?: Json | null
           dose_history_completed?: boolean | null
           dose_increase_details?: string | null
+          fiber_goal?: number | null
           first_login_at?: string | null
           goal?: string | null
           has_increased_dose?: boolean | null
@@ -400,6 +406,7 @@ export type Database = {
           medications?: string | null
           mounjaro_start_date?: string | null
           name?: string | null
+          protein_goal?: number | null
           routine_completed?: boolean | null
           satiety_effect?: number | null
           sex?: string | null
@@ -412,6 +419,7 @@ export type Database = {
           tutorial_version_completed?: string | null
           updated_at?: string | null
           username?: string | null
+          water_glasses_goal?: number | null
           weekly_workout_goal?: number | null
           weekly_workouts?: number | null
         }
@@ -423,6 +431,7 @@ export type Database = {
           application_frequency?: string | null
           application_interval_days?: number | null
           avg_sleep_hours?: number | null
+          calories_goal?: number | null
           common_side_effects?: Json | null
           compulsion_effect?: number | null
           created_at?: string | null
@@ -432,6 +441,7 @@ export type Database = {
           dietary_restrictions?: Json | null
           dose_history_completed?: boolean | null
           dose_increase_details?: string | null
+          fiber_goal?: number | null
           first_login_at?: string | null
           goal?: string | null
           has_increased_dose?: boolean | null
@@ -444,6 +454,7 @@ export type Database = {
           medications?: string | null
           mounjaro_start_date?: string | null
           name?: string | null
+          protein_goal?: number | null
           routine_completed?: boolean | null
           satiety_effect?: number | null
           sex?: string | null
@@ -456,6 +467,7 @@ export type Database = {
           tutorial_version_completed?: string | null
           updated_at?: string | null
           username?: string | null
+          water_glasses_goal?: number | null
           weekly_workout_goal?: number | null
           weekly_workouts?: number | null
         }

@@ -6,13 +6,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { localDateStr, cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import EditGoalsDrawer from "@/components/meals/EditGoalsDrawer";
 
-const DAYS = ["S", "T", "Q", "Q", "S", "S", "D"];
-const GLASSES_GOAL = 11;
+const DAYS = ["M", "T", "W", "T", "F", "S", "S"];
 const ML_PER_GLASS = 250;
 
 const MealsPage = () => {
-  const { user, profile } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
   const { latestWeight } = useApplicationData();
   const navigate = useNavigate();
 
@@ -21,14 +21,17 @@ const MealsPage = () => {
   const [todayLog, setTodayLog] = useState<any>(null);
   const [weekLogs, setWeekLogs] = useState<any[]>([]);
   const [saving, setSaving] = useState(false);
+  const [selectedMacro, setSelectedMacro] = useState<string | null>(null);
+  const [goalsOpen, setGoalsOpen] = useState(false);
 
   const dateStr = localDateStr(currentDate);
   const isToday = dateStr === localDateStr(new Date());
 
-  // Nutrition goals (could come from profile in the future)
-  const caloriesGoal = 1650;
-  const proteinGoal = 107;
-  const fiberGoal = 25;
+  // Goals from profile
+  const caloriesGoal = profile?.calories_goal || 1650;
+  const proteinGoal = profile?.protein_goal || 107;
+  const fiberGoal = profile?.fiber_goal || 25;
+  const glassesGoal = profile?.water_glasses_goal || 11;
 
   // Current values from today's log
   const caloriesCurrent = todayLog?.calories || 0;
@@ -36,8 +39,8 @@ const MealsPage = () => {
   const fiberCurrent = todayLog?.fiber || 0;
 
   const dateLabel = isToday
-    ? "Hoje"
-    : currentDate.toLocaleDateString("pt-BR", { weekday: "short", day: "numeric", month: "short" });
+    ? "Today"
+    : currentDate.toLocaleDateString("en-US", { weekday: "short", day: "numeric", month: "short" });
 
   const navigateDate = (dir: number) => {
     const d = new Date(currentDate);
@@ -45,7 +48,6 @@ const MealsPage = () => {
     setCurrentDate(d);
   };
 
-  // Get current week start (Monday)
   const getWeekStart = (date: Date) => {
     const d = new Date(date);
     const day = d.getDay();
@@ -122,7 +124,6 @@ const MealsPage = () => {
     setSaving(false);
   };
 
-  // Check which days have meal logs
   const dayHasLog = (dayIndex: number) => {
     const d = new Date(weekStart);
     d.setDate(d.getDate() + dayIndex);
@@ -130,7 +131,6 @@ const MealsPage = () => {
     return weekLogs.some((l) => l.date === ds && l.food_quality);
   };
 
-  // Weekly bar chart heights (food_quality mapped to values)
   const dayBarHeight = (dayIndex: number) => {
     const d = new Date(weekStart);
     d.setDate(d.getDate() + dayIndex);
@@ -141,29 +141,41 @@ const MealsPage = () => {
     return map[log.food_quality] || 0;
   };
 
+  const handleSaveGoals = async (goals: { calories: number; protein: number; fiber: number; water: number }) => {
+    if (!user) return;
+    await supabase.from("profiles").update({
+      calories_goal: goals.calories,
+      protein_goal: goals.protein,
+      fiber_goal: goals.fiber,
+      water_glasses_goal: goals.water,
+    }).eq("id", user.id);
+    await refreshProfile();
+    toast.success("Metas atualizadas!");
+  };
+
+  const macros = [
+    { key: "calories", value: caloriesCurrent, goal: caloriesGoal, label: `of ${caloriesGoal.toLocaleString()} calories`, suffix: "" },
+    { key: "protein", value: proteinCurrent, goal: proteinGoal, label: `of ${proteinGoal}g protein`, suffix: "g" },
+    { key: "fiber", value: fiberCurrent, goal: fiberGoal, label: `of ${fiberGoal}g fiber`, suffix: "g" },
+  ];
+
   return (
     <div className="min-h-screen pb-nav bg-background">
-      {/* Header with date navigation */}
+      {/* Header */}
       <div
         className="flex items-center justify-between px-6"
         style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 0.75rem)" }}
       >
-        <button
-          onClick={() => navigateDate(-1)}
-          className="p-2 -ml-2 active:scale-90 transition-transform"
-        >
+        <button onClick={() => navigateDate(-1)} className="p-2 -ml-2 active:scale-90 transition-transform">
           <ChevronLeft className="w-5 h-5 text-foreground" />
         </button>
         <h1 className="text-base font-bold text-foreground">{dateLabel}</h1>
-        <button
-          onClick={() => navigateDate(1)}
-          className="p-2 -mr-2 active:scale-90 transition-transform"
-        >
+        <button onClick={() => navigateDate(1)} className="p-2 -mr-2 active:scale-90 transition-transform">
           <ChevronRight className="w-5 h-5 text-foreground" />
         </button>
       </div>
 
-      {/* Orange gradient hero card */}
+      {/* Hero card */}
       <div className="px-5 mt-3">
         <div
           className="rounded-[24px] p-5 space-y-4"
@@ -171,27 +183,25 @@ const MealsPage = () => {
             background: "linear-gradient(145deg, hsl(25, 85%, 55%) 0%, hsl(30, 90%, 50%) 50%, hsl(20, 80%, 45%) 100%)",
           }}
         >
-          {/* Macro summary row */}
+          {/* Macros row */}
           <div className="flex items-start">
-            {/* Calories - highlighted */}
-            <div className="flex-1">
-              <div className="bg-white/20 backdrop-blur-sm rounded-2xl px-4 py-3 inline-block">
-                <p className="text-2xl font-extrabold text-white">{caloriesCurrent}</p>
-                <p className="text-[11px] text-white/80 font-medium">
-                  de {caloriesGoal.toLocaleString()} calorias
+            {macros.map((m) => (
+              <button
+                key={m.key}
+                onClick={() => setSelectedMacro(selectedMacro === m.key ? null : m.key)}
+                className={cn(
+                  "flex-1 text-center pt-2 transition-all duration-200 rounded-2xl",
+                  selectedMacro === m.key
+                    ? "bg-white/20 backdrop-blur-sm px-4 py-3"
+                    : ""
+                )}
+              >
+                <p className="text-2xl font-extrabold text-white">
+                  {m.value}{m.suffix}
                 </p>
-              </div>
-            </div>
-            {/* Protein */}
-            <div className="flex-1 text-center pt-2">
-              <p className="text-2xl font-extrabold text-white">{proteinCurrent}g</p>
-              <p className="text-[11px] text-white/80 font-medium">de {proteinGoal}g proteína</p>
-            </div>
-            {/* Fiber */}
-            <div className="flex-1 text-center pt-2">
-              <p className="text-2xl font-extrabold text-white">{fiberCurrent}g</p>
-              <p className="text-[11px] text-white/80 font-medium">de {fiberGoal}g fibra</p>
-            </div>
+                <p className="text-[11px] text-white/80 font-medium">{m.label}</p>
+              </button>
+            ))}
           </div>
 
           {/* Water intake */}
@@ -200,9 +210,9 @@ const MealsPage = () => {
               <Droplets className="w-5 h-5 text-white/80" />
               <div>
                 <p className="text-base font-bold text-white">
-                  {waterGlasses} de {GLASSES_GOAL} copos
+                  {waterGlasses} of {glassesGoal} glasses
                 </p>
-                <p className="text-[11px] text-white/65 font-medium">consumo de água</p>
+                <p className="text-[11px] text-white/65 font-medium">water intake</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -223,22 +233,23 @@ const MealsPage = () => {
             </div>
           </div>
 
-          {/* This Week section */}
+          {/* This Week */}
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4">
             <div className="flex items-center justify-between mb-4">
-              <p className="text-sm font-bold text-white">Esta Semana</p>
-              <button className="text-xs font-semibold text-white/80 flex items-center gap-1 active:scale-95 transition-transform">
-                Editar metas <ChevronRight className="w-3 h-3" />
+              <p className="text-sm font-bold text-white">This Week</p>
+              <button
+                onClick={() => setGoalsOpen(true)}
+                className="text-xs font-semibold text-white/80 flex items-center gap-1 active:scale-95 transition-transform"
+              >
+                Edit goals <ChevronRight className="w-3 h-3" />
               </button>
             </div>
 
-            {/* Dashed goal line */}
             <div className="relative h-16 mb-2">
               <div
                 className="absolute left-0 right-0 border-t-2 border-dashed border-white/25"
                 style={{ top: "20%" }}
               />
-              {/* Bars */}
               <div className="flex items-end justify-between h-full px-1">
                 {DAYS.map((_, i) => {
                   const height = dayBarHeight(i);
@@ -260,7 +271,6 @@ const MealsPage = () => {
               </div>
             </div>
 
-            {/* Day labels */}
             <div className="flex justify-between px-1">
               {DAYS.map((day, i) => (
                 <div key={i} className="flex-1 text-center">
@@ -279,15 +289,14 @@ const MealsPage = () => {
         </div>
       </div>
 
-      {/* Today's Meals section */}
+      {/* Today's Meals */}
       <div className="px-5 mt-6">
-        <h2 className="text-lg font-bold text-foreground mb-3">Refeições de Hoje</h2>
+        <h2 className="text-lg font-bold text-foreground mb-3">Today's Meals</h2>
 
         <div className="bg-card rounded-[20px] p-6 border border-border/50 shadow-card text-center">
-          <p className="text-base font-bold text-foreground mb-1">Comece sua sequência!</p>
-          <p className="text-sm text-muted-foreground mb-4">Registre refeições diariamente para criar o hábito</p>
+          <p className="text-base font-bold text-foreground mb-1">Start your streak!</p>
+          <p className="text-sm text-muted-foreground mb-4">Log meals daily to build momentum</p>
 
-          {/* Week streak dots */}
           <div className="flex items-center justify-center gap-2">
             {DAYS.map((day, i) => {
               const hasLog = dayHasLog(i);
@@ -312,7 +321,7 @@ const MealsPage = () => {
         </div>
       </div>
 
-      {/* FAB to add meal / go to nutrition */}
+      {/* FAB */}
       <button
         onClick={() => navigate("/nutrition")}
         className="fixed right-5 z-40 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-elevated flex items-center justify-center active:scale-90 transition-transform"
@@ -320,6 +329,14 @@ const MealsPage = () => {
       >
         <Plus className="w-6 h-6" />
       </button>
+
+      {/* Edit Goals Drawer */}
+      <EditGoalsDrawer
+        open={goalsOpen}
+        onOpenChange={setGoalsOpen}
+        goals={{ calories: caloriesGoal, protein: proteinGoal, fiber: fiberGoal, water: glassesGoal }}
+        onSave={handleSaveGoals}
+      />
     </div>
   );
 };
