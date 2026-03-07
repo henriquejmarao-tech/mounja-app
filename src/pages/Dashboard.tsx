@@ -202,23 +202,37 @@ const Dashboard = () => {
 
           <div className="relative flex flex-col items-center justify-center text-center px-6 py-10">
             {hasTreatment ? (
-              <>
-                <p className="text-white/80 text-base font-semibold tracking-wide">Mounjaro®</p>
-                <p className="text-white text-5xl font-extrabold mt-1 tracking-tight">
-                  {dose.currentDose}
-                </p>
-                {daysUntilNext !== null && (
-                  <p className="text-white/70 text-sm font-medium mt-2">
-                    {daysUntilNext === 0 ? "Aplicação hoje" : daysUntilNext === 1 ? "Próxima: amanhã" : `Próxima: em ${daysUntilNext} dias`}
+              selectedDayHasInjection ? (
+                <>
+                  <p className="text-white/80 text-base font-semibold tracking-wide">Mounjaro®</p>
+                  <p className="text-white text-5xl font-extrabold mt-1 tracking-tight">
+                    {dose.currentDose}
                   </p>
-                )}
-                <button
-                  onClick={() => navigate("/registrar-aplicacao")}
-                  className="mt-5 bg-primary text-primary-foreground px-8 py-3 rounded-full text-sm font-bold shadow-elevated active:scale-95 transition-transform"
-                >
-                  Registrar aplicação
-                </button>
-              </>
+                  <button
+                    onClick={() => navigate("/plano-tratamento")}
+                    className="mt-5 bg-primary text-primary-foreground px-8 py-3 rounded-full text-sm font-bold shadow-elevated active:scale-95 transition-transform"
+                  >
+                    Edit Treatment
+                  </button>
+                </>
+              ) : (
+                <>
+                  <p className="text-white/80 text-base font-semibold tracking-wide">Next treatment</p>
+                  <p className="text-white text-5xl font-extrabold mt-1 tracking-tight">
+                    {daysUntilNext !== null
+                      ? daysUntilNext === 0
+                        ? "Today"
+                        : `${daysUntilNext} days`
+                      : "—"}
+                  </p>
+                  <button
+                    onClick={() => navigate("/registrar-aplicacao")}
+                    className="mt-5 bg-primary text-primary-foreground px-8 py-3 rounded-full text-sm font-bold shadow-elevated active:scale-95 transition-transform"
+                  >
+                    Log Treatment
+                  </button>
+                </>
+              )
             ) : (
               <>
                 <p className="text-white text-2xl font-extrabold leading-tight">
