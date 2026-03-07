@@ -9,15 +9,16 @@ import { Camera, Trash2, Shield } from "lucide-react";
 interface PhotoDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  date?: Date;
 }
 
-const PhotoDrawer = ({ open, onOpenChange }: PhotoDrawerProps) => {
+const PhotoDrawer = ({ open, onOpenChange, date }: PhotoDrawerProps) => {
   const { user } = useAuth();
   const [uploading, setUploading] = useState(false);
   const [todayPhoto, setTodayPhoto] = useState<{ id: string; url: string; date: string } | null>(null);
   const [loadingPhoto, setLoadingPhoto] = useState(false);
 
-  const dateStr = localDateStr(new Date());
+  const dateStr = localDateStr(date || new Date());
 
   const loadTodayPhoto = useCallback(async () => {
     if (!user) return;
