@@ -32,7 +32,7 @@ const Welcome = () => {
       <div className="px-6 pb-10 pt-4 space-y-3" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 2.5rem)" }}>
         <button
           onClick={() => navigate("/triagem")}
-          className="w-full gradient-hero text-primary-foreground font-bold py-4 rounded-2xl flex items-center justify-center gap-2 shadow-elevated hover:shadow-glow active:scale-[0.98] transition-all duration-300 text-base"
+          className="w-full bg-primary text-primary-foreground font-bold py-4 rounded-2xl flex items-center justify-center gap-2 shadow-elevated hover:bg-primary/90 active:scale-[0.98] transition-all duration-300 text-base"
         >
           Primeiro uso
           <ArrowRight className="w-5 h-5" />
