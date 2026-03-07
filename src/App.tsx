@@ -31,6 +31,7 @@ import RoutinePreferences from "./pages/RoutinePreferences";
 import NotFound from "./pages/NotFound";
 import Tutorial from "./pages/Tutorial";
 import TreatmentPlan from "./pages/TreatmentPlan";
+import ProgressDetail from "./pages/ProgressDetail";
 
 const queryClient = new QueryClient();
 
@@ -101,6 +102,7 @@ const AppRoutes = () => {
         <Route path="/rotina" element={<ProtectedRoute><TriageGuard><RoutinePreferences /></TriageGuard></ProtectedRoute>} />
         <Route path="/tutorial" element={<ProtectedRoute><Tutorial /></ProtectedRoute>} />
         <Route path="/plano-tratamento" element={<ProtectedRoute><TriageGuard><TreatmentPlan /></TriageGuard></ProtectedRoute>} />
+        <Route path="/progress-detail" element={<ProtectedRoute><TriageGuard><ProgressDetail /></TriageGuard></ProtectedRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>
