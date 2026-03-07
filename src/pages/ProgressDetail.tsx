@@ -81,7 +81,8 @@ const ProgressDetail = () => {
   const bmi = currentWeight && heightCm ? (currentWeight / ((heightCm / 100) ** 2)).toFixed(1) : null;
 
   // Progress bar (0 to 1)
-  const goalWeight = profile?.goal ? parseFloat(profile.goal) : null;
+  const goalWeightRaw = profile?.goal ? parseFloat(String(profile.goal).replace(",", ".")) : NaN;
+  const goalWeight = isNaN(goalWeightRaw) ? null : goalWeightRaw;
   const weightProgress =
     initialWeight && goalWeight && currentWeight && !isNaN(goalWeight)
       ? Math.min(1, Math.max(0, (Number(initialWeight) - currentWeight) / (Number(initialWeight) - goalWeight)))

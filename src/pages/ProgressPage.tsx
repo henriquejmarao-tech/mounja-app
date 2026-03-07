@@ -71,7 +71,8 @@ const ProgressPage = () => {
 
   const initialWeight = profile?.current_weight;
   const currentWeight = weightData.length > 0 ? weightData[weightData.length - 1].peso : (initialWeight ? Number(initialWeight) : null);
-  const goalWeight = profile?.goal ? parseFloat(profile.goal) : null;
+  const goalWeightRaw = profile?.goal ? parseFloat(String(profile.goal).replace(",", ".")) : NaN;
+  const goalWeight = isNaN(goalWeightRaw) ? null : goalWeightRaw;
   const totalLost = initialWeight && currentWeight ? Number(initialWeight) - currentWeight : null;
 
   const startDate = profile?.mounjaro_start_date ? new Date(profile.mounjaro_start_date + "T12:00:00") : null;
