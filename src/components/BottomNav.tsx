@@ -31,7 +31,7 @@ const BottomNav = () => {
     <nav
       className="fixed z-50 left-0 right-0 bottom-0 bg-card border-t border-border/60"
       style={{
-        paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 4px)",
+        paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 12px)",
       }}
     >
       <div className="max-w-lg mx-auto flex items-center justify-around px-2 pt-2 pb-1">
