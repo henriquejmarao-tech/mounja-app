@@ -68,8 +68,7 @@ const MealsPage = () => {
   const fetchData = useCallback(async () => {
     if (!user) return;
 
-    const weekStartStr = localDateStr(weekStart);
-    const weekEnd = new Date(weekStart);
+    const weekEnd = new Date(weekStartStr + "T00:00:00");
     weekEnd.setDate(weekEnd.getDate() + 6);
     const weekEndStr = localDateStr(weekEnd);
 
@@ -92,7 +91,7 @@ const MealsPage = () => {
     setTodayLog(log);
     setWaterGlasses(log?.water_ml ? Math.round(log.water_ml / ML_PER_GLASS) : 0);
     setWeekLogs((weekRes.data as any[]) || []);
-  }, [user, dateStr, weekStart]);
+  }, [user, dateStr, weekStartStr]);
 
   useEffect(() => {
     fetchData();
