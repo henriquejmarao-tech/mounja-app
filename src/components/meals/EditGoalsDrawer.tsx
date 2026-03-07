@@ -1,6 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface GoalsData {
   calories: number;
@@ -21,8 +23,9 @@ const EditGoalsDrawer = ({ open, onOpenChange, goals, onSave }: EditGoalsDrawerP
   const [protein, setProtein] = useState(String(goals.protein));
   const [fiber, setFiber] = useState(String(goals.fiber));
   const [water, setWater] = useState(String(goals.water));
+  const [generating, setGenerating] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
 
-  // Sync state when goals prop changes or drawer opens
   useEffect(() => {
     if (open) {
       setCalories(String(goals.calories));
@@ -32,21 +35,58 @@ const EditGoalsDrawer = ({ open, onOpenChange, goals, onSave }: EditGoalsDrawerP
     }
   }, [open, goals.calories, goals.protein, goals.fiber, goals.water]);
 
-  const handleSave = () => {
-    onSave({
-      calories: parseInt(calories) || 1650,
-      protein: parseFloat(protein) || 107,
-      fiber: parseFloat(fiber) || 25,
-      water: parseInt(water) || 11,
-    });
-    onOpenChange(false);
+  const saveGoals = useCallback((c: string, p: string, f: string, w: string) => {
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      onSave({
+        calories: parseInt(c) || 1650,
+        protein: parseFloat(p) || 107,
+        fiber: parseFloat(f) || 25,
+        water: parseInt(w) || 11,
+      });
+    }, 600);
+  }, [onSave]);
+
+  const handleChange = (setter: (v: string) => void, value: string, field: "cal" | "pro" | "fib" | "wat") => {
+    setter(value);
+    const c = field === "cal" ? value : calories;
+    const p = field === "pro" ? value : protein;
+    const f = field === "fib" ? value : fiber;
+    const w = field === "wat" ? value : water;
+    saveGoals(c, p, f, w);
+  };
+
+  const handleGenerateAI = async () => {
+    setGenerating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("nutrition-goals");
+      if (error) throw error;
+      if (data?.calories) {
+        setCalories(String(Math.round(data.calories)));
+        setProtein(String(data.protein));
+        setFiber(String(data.fiber));
+        setWater(String(Math.round(data.water)));
+        // Save immediately
+        onSave({
+          calories: Math.round(data.calories),
+          protein: data.protein,
+          fiber: data.fiber,
+          water: Math.round(data.water),
+        });
+        toast.success("Metas geradas com IA ✓");
+      }
+    } catch (err: any) {
+      console.error(err);
+      toast.error("Erro ao gerar metas");
+    }
+    setGenerating(false);
   };
 
   const rows = [
-    { emoji: "🔥", label: "Calories", unit: "(kcal)", value: calories, onChange: setCalories },
-    { emoji: "🍖", label: "Protein", unit: "(g)", value: protein, onChange: setProtein },
-    { emoji: "🌾", label: "Fiber", unit: "(g)", value: fiber, onChange: setFiber },
-    { emoji: "💧", label: "Water", unit: "(copos)", value: water, onChange: setWater },
+    { emoji: "🔥", label: "Calorias", unit: "(kcal)", value: calories, onChange: (v: string) => handleChange(setCalories, v, "cal") },
+    { emoji: "🍖", label: "Proteína", unit: "(g)", value: protein, onChange: (v: string) => handleChange(setProtein, v, "pro") },
+    { emoji: "🌾", label: "Fibra", unit: "(g)", value: fiber, onChange: (v: string) => handleChange(setFiber, v, "fib") },
+    { emoji: "💧", label: "Água", unit: "(copos)", value: water, onChange: (v: string) => handleChange(setWater, v, "wat") },
   ];
 
   return (
@@ -55,7 +95,7 @@ const EditGoalsDrawer = ({ open, onOpenChange, goals, onSave }: EditGoalsDrawerP
         <div className="mx-auto w-full max-w-md px-6 pb-6">
           <DrawerHeader className="px-0 pt-2 pb-6">
             <DrawerTitle className="text-left text-xl font-bold text-foreground">
-              Edit nutrition goals
+              Editar metas nutricionais
             </DrawerTitle>
           </DrawerHeader>
 
@@ -81,11 +121,16 @@ const EditGoalsDrawer = ({ open, onOpenChange, goals, onSave }: EditGoalsDrawerP
           </div>
 
           <button
-            onClick={handleSave}
-            className="w-full flex items-center justify-center gap-2 border border-border rounded-2xl py-4 text-base font-semibold text-foreground active:scale-[0.97] transition-transform mb-3"
+            onClick={handleGenerateAI}
+            disabled={generating}
+            className="w-full flex items-center justify-center gap-2 border border-border rounded-2xl py-4 text-base font-semibold text-foreground active:scale-[0.97] transition-transform mb-3 disabled:opacity-60"
           >
-            <Sparkles className="w-5 h-5" />
-            Auto generate goals
+            {generating ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
+            ) : (
+              <Sparkles className="w-5 h-5" />
+            )}
+            {generating ? "Gerando metas..." : "Gerar metas com IA"}
           </button>
         </div>
       </DrawerContent>

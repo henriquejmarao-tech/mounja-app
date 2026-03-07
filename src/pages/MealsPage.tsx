@@ -39,8 +39,8 @@ const MealsPage = () => {
   const fiberCurrent = todayLog?.fiber || 0;
 
   const dateLabel = isToday
-    ? "Today"
-    : currentDate.toLocaleDateString("en-US", { weekday: "short", day: "numeric", month: "short" });
+    ? "Hoje"
+    : currentDate.toLocaleDateString("pt-BR", { weekday: "short", day: "numeric", month: "short" });
 
   const navigateDate = (dir: number) => {
     const d = new Date(currentDate);
@@ -154,9 +154,9 @@ const MealsPage = () => {
   };
 
   const macros = [
-    { key: "calories", value: caloriesCurrent, goal: caloriesGoal, label: `of ${caloriesGoal.toLocaleString()} calories`, suffix: "" },
-    { key: "protein", value: proteinCurrent, goal: proteinGoal, label: `of ${proteinGoal}g protein`, suffix: "g" },
-    { key: "fiber", value: fiberCurrent, goal: fiberGoal, label: `of ${fiberGoal}g fiber`, suffix: "g" },
+    { key: "calories", value: caloriesCurrent, goal: caloriesGoal, label: `de ${caloriesGoal.toLocaleString()} calorias`, suffix: "" },
+    { key: "protein", value: proteinCurrent, goal: proteinGoal, label: `de ${proteinGoal}g proteína`, suffix: "g" },
+    { key: "fiber", value: fiberCurrent, goal: fiberGoal, label: `de ${fiberGoal}g fibra`, suffix: "g" },
   ];
 
   return (
@@ -210,9 +210,9 @@ const MealsPage = () => {
               <Droplets className="w-5 h-5 text-white/80" />
               <div>
                 <p className="text-base font-bold text-white">
-                  {waterGlasses} of {glassesGoal} glasses
+                  {waterGlasses} de {glassesGoal} copos
                 </p>
-                <p className="text-[11px] text-white/65 font-medium">water intake</p>
+                <p className="text-[11px] text-white/65 font-medium">consumo de água</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -236,12 +236,12 @@ const MealsPage = () => {
           {/* This Week */}
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4">
             <div className="flex items-center justify-between mb-4">
-              <p className="text-sm font-bold text-white">This Week</p>
+              <p className="text-sm font-bold text-white">Esta Semana</p>
               <button
                 onClick={() => setGoalsOpen(true)}
                 className="text-xs font-semibold text-white/80 flex items-center gap-1 active:scale-95 transition-transform"
               >
-                Edit goals <ChevronRight className="w-3 h-3" />
+                Editar metas <ChevronRight className="w-3 h-3" />
               </button>
             </div>
 
@@ -291,11 +291,11 @@ const MealsPage = () => {
 
       {/* Today's Meals */}
       <div className="px-5 mt-6">
-        <h2 className="text-lg font-bold text-foreground mb-3">Today's Meals</h2>
+        <h2 className="text-lg font-bold text-foreground mb-3">Refeições de Hoje</h2>
 
         <div className="bg-card rounded-[20px] p-6 border border-border/50 shadow-card text-center">
-          <p className="text-base font-bold text-foreground mb-1">Start your streak!</p>
-          <p className="text-sm text-muted-foreground mb-4">Log meals daily to build momentum</p>
+          <p className="text-base font-bold text-foreground mb-1">Comece sua sequência!</p>
+          <p className="text-sm text-muted-foreground mb-4">Registre refeições diariamente para criar o hábito</p>
 
           <div className="flex items-center justify-center gap-2">
             {DAYS.map((day, i) => {
