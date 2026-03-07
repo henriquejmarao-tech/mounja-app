@@ -86,13 +86,24 @@ const Dashboard = () => {
     if (!user) return;
     const fetchData = async () => {
       const today = localDateStr();
-      const [logRes, weightRes] = await Promise.all([
+
+      // Get week boundaries for injection dots
+      const todayDate = new Date();
+      const dayOfWeek = todayDate.getDay();
+      const monday = new Date(todayDate);
+      monday.setDate(todayDate.getDate() - ((dayOfWeek + 6) % 7));
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate() + 6);
+
+      const [logRes, weightRes, injRes] = await Promise.all([
         supabase.from("daily_logs").select("*").eq("user_id", user.id).eq("date", today).limit(1),
         supabase.from("daily_logs").select("date, weight").eq("user_id", user.id).not("weight", "is", null).order("date", { ascending: true }).limit(30),
+        supabase.from("injections").select("date").eq("user_id", user.id).gte("date", localDateStr(monday)).lte("date", localDateStr(sunday)),
       ]);
       setTodayLog((logRes.data as any[])?.[0] || null);
       const wData = ((weightRes.data as any[]) || []).map((l) => ({ date: l.date, peso: Number(l.weight) }));
       setWeightHistory(wData);
+      setWeekInjections(new Set(((injRes.data as any[]) || []).map((i) => i.date)));
 
       if (wData.length >= 3) {
         const diff = wData[0].peso - wData[wData.length - 1].peso;
