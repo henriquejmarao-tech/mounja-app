@@ -86,6 +86,16 @@
     font-family: 'Plus Jakarta Sans', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+    overscroll-behavior-y: none;
+  }
+
+  /* Allow text selection on inputs/textareas */
+  input, textarea, [contenteditable] {
+    -webkit-user-select: text;
+    user-select: text;
   }
 }
 
@@ -106,4 +116,16 @@
 /* Safe-area top padding utility */
 .pt-safe {
   padding-top: calc(env(safe-area-inset-top, 0px) + 1rem);
+}
+
+/* Prevent rubber-band bounce on iOS */
+html {
+  overflow: hidden;
+  height: 100%;
+}
+
+body {
+  overflow: auto;
+  height: 100%;
+  -webkit-overflow-scrolling: touch;
 }
