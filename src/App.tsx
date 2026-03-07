@@ -135,7 +135,7 @@ const App = () => (
         <AuthProvider>
           <ApplicationDataProvider>
             <TutorialProvider>
-              <div className="max-w-lg mx-auto relative flex flex-col" style={{ minHeight: "100vh", minHeight: "100dvh" }}>
+              <div className="max-w-lg mx-auto relative flex flex-col" style={{ minHeight: "100dvh" }}>
                 <AppRoutes />
               </div>
             </TutorialProvider>
