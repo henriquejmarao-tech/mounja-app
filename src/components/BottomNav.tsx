@@ -30,8 +30,12 @@ const BottomNav = () => {
   return (
     <nav
       className="fixed z-50 left-0 right-0 bottom-0 bg-card border-t border-border/40"
+      style={{
+        paddingBottom: "var(--safe-area-bottom)",
+        minHeight: "calc(var(--tab-bar-height) + var(--safe-area-bottom))",
+      }}
     >
-      <div className="max-w-lg mx-auto flex items-center justify-around px-4" style={{ height: "56px" }}>
+      <div className="max-w-lg mx-auto flex items-center justify-around px-4" style={{ height: "var(--tab-bar-height)" }}>
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (
@@ -59,8 +63,6 @@ const BottomNav = () => {
           );
         })}
       </div>
-      {/* Safe area spacer — fills the home indicator zone with the same bg */}
-      <div style={{ height: "env(safe-area-inset-bottom, 0px)" }} />
     </nav>
   );
 };

@@ -51,6 +51,9 @@
 
     --shadow-card: 0 2px 8px 0 hsl(230 25% 14% / 0.04), 0 0 0 1px hsl(240 12% 92% / 0.6);
     --shadow-elevated: 0 8px 30px -6px hsl(250 58% 58% / 0.12), 0 4px 14px -4px hsl(230 25% 14% / 0.06);
+
+    --tab-bar-height: 56px;
+    --safe-area-bottom: max(env(safe-area-inset-bottom, 0px), 12px);
   }
 
   .dark {
@@ -108,9 +111,16 @@
   }
 }
 
+/* iOS legacy fallback for safe area */
+@supports (padding-bottom: constant(safe-area-inset-bottom)) {
+  :root {
+    --safe-area-bottom: max(constant(safe-area-inset-bottom), 12px);
+  }
+}
+
 /* Mobile-first: consistent bottom padding for pages with BottomNav */
 .pb-nav {
-  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 90px);
+  padding-bottom: calc(var(--tab-bar-height) + var(--safe-area-bottom) + 24px);
 }
 
 /* Safe-area top padding utility */
