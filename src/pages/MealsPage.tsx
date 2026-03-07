@@ -148,7 +148,7 @@ const MealsPage = () => {
       protein_goal: goals.protein,
       fiber_goal: goals.fiber,
       water_glasses_goal: goals.water,
-    }).eq("id", user.id);
+    } as any).eq("id", user.id);
     await refreshProfile();
     toast.success("Metas atualizadas!");
   };
