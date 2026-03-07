@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { ChevronLeft, ChevronRight, Minus, Plus, Droplets } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
@@ -20,7 +20,7 @@ const MealsPage = () => {
   const [waterGlasses, setWaterGlasses] = useState(0);
   const [todayLog, setTodayLog] = useState<any>(null);
   const [weekLogs, setWeekLogs] = useState<any[]>([]);
-  const [saving, setSaving] = useState(false);
+  
   const [selectedMacro, setSelectedMacro] = useState<string | null>(null);
   const [goalsOpen, setGoalsOpen] = useState(false);
 
@@ -58,6 +58,7 @@ const MealsPage = () => {
   };
 
   const weekStart = getWeekStart(currentDate);
+  const weekStartStr = localDateStr(weekStart);
   const todayDayIndex = (() => {
     const now = new Date();
     const ws = getWeekStart(now);
@@ -67,8 +68,7 @@ const MealsPage = () => {
   const fetchData = useCallback(async () => {
     if (!user) return;
 
-    const weekStartStr = localDateStr(weekStart);
-    const weekEnd = new Date(weekStart);
+    const weekEnd = new Date(weekStartStr + "T00:00:00");
     weekEnd.setDate(weekEnd.getDate() + 6);
     const weekEndStr = localDateStr(weekEnd);
 
@@ -91,37 +91,51 @@ const MealsPage = () => {
     setTodayLog(log);
     setWaterGlasses(log?.water_ml ? Math.round(log.water_ml / ML_PER_GLASS) : 0);
     setWeekLogs((weekRes.data as any[]) || []);
-  }, [user, dateStr, weekStart]);
+  }, [user, dateStr, weekStartStr]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
-  const updateWater = async (delta: number) => {
+  // Debounced water save — optimistic UI, single DB write
+  const waterRef = useRef(waterGlasses);
+  const waterDebounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const savingWaterRef = useRef(false);
+
+  const updateWater = (delta: number) => {
     if (!user) return;
     const newGlasses = Math.max(0, waterGlasses + delta);
     setWaterGlasses(newGlasses);
-    setSaving(true);
+    waterRef.current = newGlasses;
 
-    try {
-      const ml = newGlasses * ML_PER_GLASS;
-      if (todayLog) {
-        await supabase
-          .from("daily_logs")
-          .update({ water_ml: ml })
-          .eq("id", todayLog.id);
-      } else {
-        await supabase.from("daily_logs").insert({
-          user_id: user.id,
-          date: dateStr,
-          water_ml: ml,
-        });
+    // Clear any pending save
+    clearTimeout(waterDebounceRef.current);
+
+    // Debounce: save after 500ms of no clicks
+    waterDebounceRef.current = setTimeout(async () => {
+      if (savingWaterRef.current) return;
+      savingWaterRef.current = true;
+      const ml = waterRef.current * ML_PER_GLASS;
+      try {
+        if (todayLog) {
+          await supabase
+            .from("daily_logs")
+            .update({ water_ml: ml })
+            .eq("id", todayLog.id);
+          setTodayLog((prev: any) => prev ? { ...prev, water_ml: ml } : prev);
+        } else {
+          const { data } = await supabase
+            .from("daily_logs")
+            .insert({ user_id: user.id, date: dateStr, water_ml: ml })
+            .select()
+            .single();
+          if (data) setTodayLog(data);
+        }
+      } catch {
+        toast.error("Erro ao salvar água");
       }
-      await fetchData();
-    } catch {
-      toast.error("Erro ao salvar água");
-    }
-    setSaving(false);
+      savingWaterRef.current = false;
+    }, 500);
   };
 
   const dayHasLog = (dayIndex: number) => {
@@ -218,15 +232,14 @@ const MealsPage = () => {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => updateWater(-1)}
-                disabled={saving || waterGlasses <= 0}
+                disabled={waterGlasses <= 0}
                 className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center active:scale-90 transition-transform disabled:opacity-40"
               >
                 <Minus className="w-4 h-4 text-white" />
               </button>
               <button
                 onClick={() => updateWater(1)}
-                disabled={saving}
-                className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center active:scale-90 transition-transform disabled:opacity-40"
+                className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center active:scale-90 transition-transform"
               >
                 <Plus className="w-4 h-4 text-white" />
               </button>
