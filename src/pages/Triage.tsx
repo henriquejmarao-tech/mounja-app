@@ -668,7 +668,7 @@ const Triage = () => {
             <h1 className="text-2xl font-bold text-foreground text-center mb-2 mt-4">Quando foi sua última aplicação?</h1>
             <p className="text-sm text-muted-foreground text-center mb-8">Isso nos ajuda a calcular seu próximo tratamento</p>
             <div className="flex-1 flex items-center justify-center">
-              <input type="date" value={lastApplicationDate} max={localDateStr()}
+              <input type="date" value={lastApplicationDate} max={new Date().toISOString().split("T")[0]}
                 onChange={(e) => setLastApplicationDate(e.target.value)}
                 className="w-full max-w-xs px-5 py-4 rounded-2xl border-2 border-primary/30 bg-card text-lg text-center font-semibold text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none" />
             </div>
