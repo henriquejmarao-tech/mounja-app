@@ -1,11 +1,11 @@
-import { Home, FileText, TrendingUp, Settings } from "lucide-react";
+import { Home, UtensilsCrossed, TrendingUp, Settings } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 
 const navItems = [
   { icon: Home, label: "Today", path: "/" },
-  { icon: FileText, label: "Log", path: "/log" },
+  { icon: UtensilsCrossed, label: "Meals", path: "/meals" },
   { icon: TrendingUp, label: "Progress", path: "/progress" },
   { icon: Settings, label: "Settings", path: "/settings" },
 ];

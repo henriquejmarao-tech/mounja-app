@@ -15,6 +15,8 @@ import ResetPassword from "./pages/ResetPassword";
 import Triage from "./pages/Triage";
 import Dashboard from "./pages/Dashboard";
 import LogPage from "./pages/LogPage";
+import MealsPage from "./pages/MealsPage";
+import Nutrition from "./pages/Nutrition";
 import ProgressPage from "./pages/ProgressPage";
 import Settings from "./pages/Settings";
 import Community from "./pages/Community";
@@ -77,6 +79,8 @@ const AppRoutes = () => {
 
         <Route path="/" element={<ProtectedRoute><TriageGuard><Dashboard /></TriageGuard></ProtectedRoute>} />
         <Route path="/log" element={<ProtectedRoute><TriageGuard><LogPage /></TriageGuard></ProtectedRoute>} />
+        <Route path="/meals" element={<ProtectedRoute><TriageGuard><MealsPage /></TriageGuard></ProtectedRoute>} />
+        <Route path="/nutrition" element={<ProtectedRoute><TriageGuard><Nutrition /></TriageGuard></ProtectedRoute>} />
         <Route path="/progress" element={<ProtectedRoute><TriageGuard><ProgressPage /></TriageGuard></ProtectedRoute>} />
         <Route path="/settings" element={<ProtectedRoute><TriageGuard><Settings /></TriageGuard></ProtectedRoute>} />
 
