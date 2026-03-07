@@ -23,7 +23,7 @@ const BottomNav = () => {
     return () => observer.disconnect();
   }, []);
 
-  const hiddenRoutes = ["/onboarding", "/auth", "/triagem", "/reset-password", "/tutorial"];
+  const hiddenRoutes = ["/onboarding", "/auth", "/triagem", "/reset-password", "/tutorial", "/welcome"];
   if (hiddenRoutes.some((r) => location.pathname.startsWith(r))) return null;
   if (hidden) return null;
 
