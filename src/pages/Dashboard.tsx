@@ -30,10 +30,14 @@ const Dashboard = () => {
   const [symptomDrawerOpen, setSymptomDrawerOpen] = useState(false);
   const [calendarDrawerOpen, setCalendarDrawerOpen] = useState(false);
   const [whatsNewOpen, setWhatsNewOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+
+  const selectedDateStr = localDateStr(selectedDate);
+  const isSelectedToday = selectedDateStr === localDateStr(new Date());
 
   const handleWeightSave = useCallback(async (weight: number) => {
     if (!user) return;
-    const dateStr = localDateStr(new Date());
+    const dateStr = selectedDateStr;
     const { data } = await supabase.from("daily_logs").select("id").eq("user_id", user.id).eq("date", dateStr).limit(1);
     const existing = (data as any[])?.[0];
     if (existing) {
@@ -133,21 +137,30 @@ const Dashboard = () => {
       {/* Week strip */}
       <div className="px-5 mt-2 mb-4">
         <div className="flex items-center justify-between">
-          {weekDays.map((d, i) => (
-            <div key={i} className="flex flex-col items-center gap-1">
-              <span className="text-[11px] font-semibold text-muted-foreground">{d.label}</span>
-              <div
-                className={cn(
-                  "w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all",
-                  d.isToday
-                    ? "bg-primary text-primary-foreground shadow-elevated"
-                    : "text-foreground/70"
-                )}
-              >
-                {d.date}
-              </div>
-            </div>
-          ))}
+      {weekDays.map((d, i) => {
+              const isSelected = localDateStr(d.full) === selectedDateStr;
+              return (
+                <button
+                  key={i}
+                  onClick={() => setSelectedDate(d.full)}
+                  className="flex flex-col items-center gap-1 active:scale-90 transition-transform"
+                >
+                  <span className="text-[11px] font-semibold text-muted-foreground">{d.label}</span>
+                  <div
+                    className={cn(
+                      "w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all",
+                      isSelected
+                        ? "bg-primary text-primary-foreground shadow-elevated"
+                        : d.isToday
+                          ? "ring-2 ring-primary/30 text-foreground"
+                          : "text-foreground/70"
+                    )}
+                  >
+                    {d.date}
+                  </div>
+                </button>
+              );
+            })}
         </div>
       </div>
 
@@ -215,7 +228,9 @@ const Dashboard = () => {
 
       {/* ── My daily check-in ── */}
       <div className="px-5 mb-5 animate-fade-in-up" style={{ animationDelay: "80ms" }}>
-        <h2 className="text-lg font-bold text-foreground mb-3">Meu check-in diário</h2>
+        <h2 className="text-lg font-bold text-foreground mb-3">
+          {isSelectedToday ? "Meu check-in diário" : `Check-in de ${selectedDate.toLocaleDateString("pt-BR", { day: "numeric", month: "short" })}`}
+        </h2>
         <div className="grid grid-cols-3 gap-3">
           {[
             {
@@ -270,7 +285,7 @@ const Dashboard = () => {
 
       {/* ── Side Effect History ── */}
       <div className="px-5 mb-4 animate-fade-in-up" style={{ animationDelay: "240ms" }}>
-        <SideEffectHistoryCard />
+        <SideEffectHistoryCard selectedDate={selectedDateStr} />
       </div>
 
       {/* ── Insight ── */}
@@ -292,10 +307,12 @@ const Dashboard = () => {
       <SymptomCheckinDrawer
         open={symptomDrawerOpen}
         onOpenChange={setSymptomDrawerOpen}
+        date={selectedDate}
       />
       <PhotoDrawer
         open={photoDrawerOpen}
         onOpenChange={setPhotoDrawerOpen}
+        date={selectedDate}
       />
       <CalendarDrawer
         open={calendarDrawerOpen}
