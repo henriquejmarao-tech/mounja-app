@@ -226,41 +226,41 @@ const Dashboard = () => {
                     onClick={() => navigate("/plano-tratamento")}
                     className="mt-5 bg-primary text-primary-foreground px-8 py-3 rounded-full text-sm font-bold shadow-elevated active:scale-95 transition-transform"
                   >
-                    Edit Treatment
+                    Editar Tratamento
                   </button>
                 </>
               ) : selectedIsInPast ? (
                 /* ── STATE 2: Past day without injection (muted) ── */
                 <>
                   <p className="text-foreground/60 text-base font-semibold tracking-wide">
-                    {selectedDate.toLocaleDateString("en-US", { month: "long", day: "numeric" })}
+                    {selectedDate.toLocaleDateString("pt-BR", { day: "numeric", month: "long" })}
                   </p>
                   <p className="text-foreground/80 text-2xl font-extrabold mt-2 leading-tight">
-                    No treatment logged
+                    Sem aplicação registrada
                   </p>
                   <button
                     onClick={() => navigate("/registrar-aplicacao")}
                     className="mt-5 bg-primary text-primary-foreground px-8 py-3 rounded-full text-sm font-bold shadow-elevated active:scale-95 transition-transform"
                   >
-                    Log Treatment
+                    Registrar aplicação
                   </button>
                 </>
               ) : (
                 /* ── STATE 3: Present/future without injection (muted) ── */
                 <>
-                  <p className="text-foreground/60 text-base font-semibold tracking-wide">Next treatment</p>
+                  <p className="text-foreground/60 text-base font-semibold tracking-wide">Próxima aplicação</p>
                   <p className="text-foreground/90 text-5xl font-extrabold mt-1 tracking-tight">
                     {daysUntilNextFromSelected !== null
                       ? daysUntilNextFromSelected === 0
-                        ? "Today"
-                        : `${daysUntilNextFromSelected} days`
+                        ? "Hoje"
+                        : `${daysUntilNextFromSelected} dias`
                       : "—"}
                   </p>
                   <button
                     onClick={() => navigate("/registrar-aplicacao")}
                     className="mt-5 bg-primary text-primary-foreground px-8 py-3 rounded-full text-sm font-bold shadow-elevated active:scale-95 transition-transform"
                   >
-                    Log Treatment
+                    Registrar aplicação
                   </button>
                 </>
               )
@@ -281,7 +281,7 @@ const Dashboard = () => {
               onClick={() => navigate("/progress")}
               className="mt-2 text-foreground/40 text-xs font-medium"
             >
-              View all
+              Ver tudo
             </button>
           </div>
         </div>
