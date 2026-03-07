@@ -186,7 +186,7 @@ const ProgressPage = () => {
           <style>{`.progress-scroll::-webkit-scrollbar{display:none}`}</style>
 
           {/* Card 1: Summary with latest photo */}
-          <div className="bg-card rounded-[20px] p-5 shadow-card border border-border/50 min-w-[calc(100vw-40px)] max-w-[calc(100vw-40px)] snap-center">
+          <div onClick={() => navigate("/progress-detail")} className="bg-card rounded-[20px] p-5 shadow-card border border-border/50 min-w-[calc(100vw-40px)] max-w-[calc(100vw-40px)] snap-center cursor-pointer active:scale-[0.98] transition-transform">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <span className="text-lg font-bold text-foreground">📊</span>
