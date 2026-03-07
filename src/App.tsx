@@ -32,6 +32,7 @@ import NotFound from "./pages/NotFound";
 import Tutorial from "./pages/Tutorial";
 import TreatmentPlan from "./pages/TreatmentPlan";
 import ProgressDetail from "./pages/ProgressDetail";
+import PhotoGallery from "./pages/PhotoGallery";
 
 const queryClient = new QueryClient();
 
@@ -103,6 +104,7 @@ const AppRoutes = () => {
         <Route path="/tutorial" element={<ProtectedRoute><Tutorial /></ProtectedRoute>} />
         <Route path="/plano-tratamento" element={<ProtectedRoute><TriageGuard><TreatmentPlan /></TriageGuard></ProtectedRoute>} />
         <Route path="/progress-detail" element={<ProtectedRoute><TriageGuard><ProgressDetail /></TriageGuard></ProtectedRoute>} />
+        <Route path="/fotos" element={<ProtectedRoute><TriageGuard><PhotoGallery /></TriageGuard></ProtectedRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>
