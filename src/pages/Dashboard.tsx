@@ -116,9 +116,26 @@ const Dashboard = () => {
 
   const hasTreatment = !!dose.currentDose;
   const selectedDayHasInjection = weekInjections.has(selectedDateStr);
+  const selectedIsInPast = selectedDateStr < localDateStr(new Date());
   const initialWeight = profile?.current_weight;
   const goalWeight = profile?.goal ? parseFloat(profile.goal) : null;
   const currentWeight = latestWeight || (weightHistory.length > 0 ? weightHistory[weightHistory.length - 1].peso : null);
+
+  // Calculate days until next injection from selected date perspective
+  const daysUntilNextFromSelected = useMemo(() => {
+    if (!dose.nextApplicationAt) return null;
+    const nextDate = new Date(dose.nextApplicationAt);
+    const diffMs = nextDate.getTime() - selectedDate.getTime();
+    return Math.max(0, Math.ceil(diffMs / 86400000));
+  }, [dose.nextApplicationAt, selectedDate]);
+
+  // Hero card state: 3 modes
+  // 1. Injection day (vibrant) — selected day has injection record
+  // 2. Past without injection (muted) — can log a past injection
+  // 3. Present/future without injection (muted) — shows countdown
+  const heroGradient = selectedDayHasInjection
+    ? "linear-gradient(160deg, hsl(250, 60%, 58%) 0%, hsl(240, 55%, 62%) 40%, hsl(220, 50%, 72%) 100%)"
+    : "linear-gradient(160deg, hsl(250, 40%, 78%) 0%, hsl(240, 35%, 82%) 40%, hsl(220, 40%, 88%) 100%)";
 
   if (loading) {
     return (
