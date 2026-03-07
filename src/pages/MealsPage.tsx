@@ -97,31 +97,45 @@ const MealsPage = () => {
     fetchData();
   }, [fetchData]);
 
-  const updateWater = async (delta: number) => {
+  // Debounced water save — optimistic UI, single DB write
+  const waterRef = useRef(waterGlasses);
+  const waterDebounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const savingWaterRef = useRef(false);
+
+  const updateWater = (delta: number) => {
     if (!user) return;
     const newGlasses = Math.max(0, waterGlasses + delta);
     setWaterGlasses(newGlasses);
-    setSaving(true);
+    waterRef.current = newGlasses;
 
-    try {
-      const ml = newGlasses * ML_PER_GLASS;
-      if (todayLog) {
-        await supabase
-          .from("daily_logs")
-          .update({ water_ml: ml })
-          .eq("id", todayLog.id);
-      } else {
-        await supabase.from("daily_logs").insert({
-          user_id: user.id,
-          date: dateStr,
-          water_ml: ml,
-        });
+    // Clear any pending save
+    clearTimeout(waterDebounceRef.current);
+
+    // Debounce: save after 500ms of no clicks
+    waterDebounceRef.current = setTimeout(async () => {
+      if (savingWaterRef.current) return;
+      savingWaterRef.current = true;
+      const ml = waterRef.current * ML_PER_GLASS;
+      try {
+        if (todayLog) {
+          await supabase
+            .from("daily_logs")
+            .update({ water_ml: ml })
+            .eq("id", todayLog.id);
+          setTodayLog((prev: any) => prev ? { ...prev, water_ml: ml } : prev);
+        } else {
+          const { data } = await supabase
+            .from("daily_logs")
+            .insert({ user_id: user.id, date: dateStr, water_ml: ml })
+            .select()
+            .single();
+          if (data) setTodayLog(data);
+        }
+      } catch {
+        toast.error("Erro ao salvar água");
       }
-      await fetchData();
-    } catch {
-      toast.error("Erro ao salvar água");
-    }
-    setSaving(false);
+      savingWaterRef.current = false;
+    }, 500);
   };
 
   const dayHasLog = (dayIndex: number) => {
