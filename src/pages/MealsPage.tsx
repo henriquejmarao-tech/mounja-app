@@ -39,8 +39,8 @@ const MealsPage = () => {
   const fiberCurrent = todayLog?.fiber || 0;
 
   const dateLabel = isToday
-    ? "Today"
-    : currentDate.toLocaleDateString("en-US", { weekday: "short", day: "numeric", month: "short" });
+    ? "Hoje"
+    : currentDate.toLocaleDateString("pt-BR", { weekday: "short", day: "numeric", month: "short" });
 
   const navigateDate = (dir: number) => {
     const d = new Date(currentDate);
