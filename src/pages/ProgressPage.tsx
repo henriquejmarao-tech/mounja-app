@@ -164,7 +164,7 @@ const ProgressPage = () => {
         </div>
 
         {/* Current dose pill - navigates to treatment plan */}
-        <div className="px-5 -mb-5 relative z-20">
+        <div className="px-5 -mb-5 relative z-10">
           <button
             onClick={() => navigate("/plano-tratamento")}
             className="w-full bg-card rounded-2xl py-3.5 px-5 text-center shadow-elevated border border-border/30 active:scale-[0.98] transition-transform"
@@ -177,7 +177,7 @@ const ProgressPage = () => {
       </div>
 
       {/* Swipeable cards */}
-      <div className="mt-8 px-5 relative z-0">
+      <div className="mt-8 px-5">
         <div
           ref={scrollRef}
           onScroll={handleScroll}
