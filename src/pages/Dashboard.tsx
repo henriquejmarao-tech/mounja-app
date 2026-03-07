@@ -52,9 +52,6 @@ const Dashboard = () => {
     if (logs) setWeightHistory((logs as any[]).map((l) => ({ date: l.date, peso: l.weight })));
   }, [user]);
 
-  const daysUntilNext = dose.nextApplicationAt
-    ? Math.max(0, Math.ceil((new Date(dose.nextApplicationAt).getTime() - Date.now()) / 86400000))
-    : null;
 
   // Week strip data
   const weekDays = useMemo(() => {
