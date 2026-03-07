@@ -132,8 +132,11 @@ const ProgressDetail = () => {
           )}
         </div>
 
-        {/* Photo - full width */}
-        <div className="rounded-2xl overflow-hidden bg-muted relative mb-4">
+        {/* Photo - full width, clickable */}
+        <div
+          onClick={() => navigate("/fotos")}
+          className="rounded-2xl overflow-hidden bg-muted relative mb-4 cursor-pointer active:scale-[0.98] transition-transform"
+        >
           {latestPhoto?.url ? (
             <>
               <img src={latestPhoto.url} alt="Progresso" className="w-full object-cover aspect-[4/5]" />
