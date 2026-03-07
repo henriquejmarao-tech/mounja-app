@@ -1,10 +1,8 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
 import { ArrowLeft, Check, CheckCircle2, ThumbsUp } from "lucide-react";
-import { toast } from "sonner";
-import { cn, localDateStr } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { saveTriageData } from "@/hooks/useTriageStorage";
 
 import welcomeImg from "@/assets/onboarding-welcome.png";
 import privacyImg from "@/assets/onboarding-privacy.png";
@@ -194,7 +192,6 @@ const TOTAL_STEPS = 24;
 
 const Triage = () => {
   const navigate = useNavigate();
-  const { user, refreshProfile } = useAuth();
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
@@ -284,53 +281,32 @@ const Triage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step]);
 
-  const handleSave = async () => {
-    if (!user || saving) return;
+  const handleSave = () => {
+    if (saving) return;
     setSaving(true);
     try {
-      const currentDose = doseValue ? `${doseValue} mg` : null;
-      const age = new Date().getFullYear() - birthYear;
-      const { error } = await supabase
-        .from("profiles")
-        .update({
-          name,
-          sex: sex || null,
-          age,
-          height_cm: heightCm,
-          current_weight: currentWeight,
-          goal: deriveGoal(),
-          current_dose: currentDose,
-          application_interval_days: deriveIntervalDays(),
-          application_day: weekDays[applicationDay]?.full || null,
-          application_frequency: frequency,
-          triage_completed: true,
-        } as any)
-        .eq("id", user.id);
-
-      if (error) throw error;
-
-      if (currentDose && lastApplicationDate) {
-        await supabase.from("injections").insert({
-          user_id: user.id,
-          date: lastApplicationDate,
-          dose: currentDose,
-          site: injectionSite || null,
-          notes: "Registrado via triagem inicial",
-        });
-      }
-
-      await supabase.from("daily_logs").insert({
-        user_id: user.id,
-        date: localDateStr(),
-        weight: currentWeight,
+      saveTriageData({
+        experience,
+        motivations,
+        helpNeeds,
+        doseValue,
+        injectionSite,
+        alternatesSites,
+        frequency,
+        applicationDay,
+        customIntervalDays,
+        lastApplicationDate,
+        name,
+        sex,
+        heightCm,
+        birthYear,
+        weightKg,
+        weightDecimal,
+        goalKg,
+        goalDecimal,
       });
-
-      await refreshProfile();
-      toast.success("Tudo pronto! 🎉");
-      navigate("/");
-    } catch (error: any) {
-      toast.error(error.message || "Erro ao salvar.");
-    } finally {
+      navigate("/auth?mode=signup");
+    } catch {
       setSaving(false);
     }
   };
@@ -692,7 +668,7 @@ const Triage = () => {
             <h1 className="text-2xl font-bold text-foreground text-center mb-2 mt-4">Quando foi sua última aplicação?</h1>
             <p className="text-sm text-muted-foreground text-center mb-8">Isso nos ajuda a calcular seu próximo tratamento</p>
             <div className="flex-1 flex items-center justify-center">
-              <input type="date" value={lastApplicationDate} max={localDateStr()}
+              <input type="date" value={lastApplicationDate} max={new Date().toISOString().split("T")[0]}
                 onChange={(e) => setLastApplicationDate(e.target.value)}
                 className="w-full max-w-xs px-5 py-4 rounded-2xl border-2 border-primary/30 bg-card text-lg text-center font-semibold text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none" />
             </div>
