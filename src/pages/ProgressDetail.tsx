@@ -132,50 +132,47 @@ const ProgressDetail = () => {
           )}
         </div>
 
-        {/* Photo + Stats */}
-        <div className="flex gap-3 mb-5">
-          {/* Photo */}
-          <div className="flex-1 rounded-2xl overflow-hidden bg-muted relative">
-            {latestPhoto?.url ? (
-              <>
-                <img src={latestPhoto.url} alt="Progresso" className="w-full h-full object-cover aspect-[3/4]" />
-                {latestPhoto.weight && (
-                  <div className="absolute bottom-3 left-3 right-3">
-                    <div className="bg-primary text-primary-foreground text-sm font-bold py-2 px-4 rounded-full text-center">
-                      {latestPhoto.weight.toFixed(1)} kg
-                    </div>
+        {/* Photo - full width */}
+        <div className="rounded-2xl overflow-hidden bg-muted relative mb-4">
+          {latestPhoto?.url ? (
+            <>
+              <img src={latestPhoto.url} alt="Progresso" className="w-full object-cover aspect-[4/5]" />
+              {latestPhoto.weight && (
+                <div className="absolute bottom-3 left-3 right-3">
+                  <div className="bg-primary text-primary-foreground text-sm font-bold py-2 px-4 rounded-full text-center w-fit mx-auto">
+                    {latestPhoto.weight.toFixed(1)} kg
                   </div>
-                )}
-              </>
-            ) : (
-              <div className="w-full aspect-[3/4] flex items-center justify-center text-muted-foreground text-xs">
-                Sem foto
-              </div>
-            )}
-          </div>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="w-full aspect-[4/5] flex items-center justify-center text-muted-foreground text-xs">
+              Sem foto
+            </div>
+          )}
+        </div>
 
-          {/* Stats */}
-          <div className="flex flex-col gap-2 w-[140px]">
-            <div className="bg-card rounded-2xl p-3 text-center border border-border/40">
-              <p className="text-[10px] text-muted-foreground font-medium">Data</p>
-              <p className="text-xl font-extrabold text-foreground">
-                {new Date().toLocaleDateString("pt-BR", { day: "numeric", month: "numeric", year: "2-digit" })}
-              </p>
-            </div>
-            <div className="bg-card rounded-2xl p-3 text-center border border-border/40">
-              <p className="text-[10px] text-muted-foreground font-medium">Aplicações</p>
-              <p className="text-xl font-extrabold text-foreground">{injections.length}</p>
-            </div>
-            <div className="bg-card rounded-2xl p-3 text-center border border-border/40">
-              <p className="text-[10px] text-muted-foreground font-medium">Perda de peso</p>
-              <p className="text-xl font-extrabold text-foreground">
-                {totalLost && totalLost > 0 ? `-${totalLost.toFixed(1)}` : "—"}
-              </p>
-            </div>
-            <div className="bg-card rounded-2xl p-3 text-center border border-border/40">
-              <p className="text-[10px] text-muted-foreground font-medium">IMC</p>
-              <p className="text-xl font-extrabold text-foreground">{bmi ?? "—"}</p>
-            </div>
+        {/* Stats grid */}
+        <div className="grid grid-cols-4 gap-2 mb-2">
+          <div className="bg-card rounded-2xl p-3 text-center border border-border/40">
+            <p className="text-[10px] text-muted-foreground font-medium">Data</p>
+            <p className="text-base font-extrabold text-foreground">
+              {new Date().toLocaleDateString("pt-BR", { day: "numeric", month: "numeric", year: "2-digit" })}
+            </p>
+          </div>
+          <div className="bg-card rounded-2xl p-3 text-center border border-border/40">
+            <p className="text-[10px] text-muted-foreground font-medium">Aplicações</p>
+            <p className="text-base font-extrabold text-foreground">{injections.length}</p>
+          </div>
+          <div className="bg-card rounded-2xl p-3 text-center border border-border/40">
+            <p className="text-[10px] text-muted-foreground font-medium">Perda</p>
+            <p className="text-base font-extrabold text-foreground">
+              {totalLost && totalLost > 0 ? `-${totalLost.toFixed(1)}` : "—"}
+            </p>
+          </div>
+          <div className="bg-card rounded-2xl p-3 text-center border border-border/40">
+            <p className="text-[10px] text-muted-foreground font-medium">IMC</p>
+            <p className="text-base font-extrabold text-foreground">{bmi ?? "—"}</p>
           </div>
         </div>
 
