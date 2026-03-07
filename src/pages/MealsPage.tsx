@@ -7,7 +7,7 @@ import { localDateStr, cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
-const DAYS = ["M", "T", "W", "T", "F", "S", "S"];
+const DAYS = ["S", "T", "Q", "Q", "S", "S", "D"];
 const GLASSES_GOAL = 11;
 const ML_PER_GLASS = 250;
 
@@ -36,7 +36,7 @@ const MealsPage = () => {
   const fiberCurrent = todayLog?.fiber || 0;
 
   const dateLabel = isToday
-    ? "Today"
+    ? "Hoje"
     : currentDate.toLocaleDateString("pt-BR", { weekday: "short", day: "numeric", month: "short" });
 
   const navigateDate = (dir: number) => {
@@ -178,19 +178,19 @@ const MealsPage = () => {
               <div className="bg-white/20 backdrop-blur-sm rounded-2xl px-4 py-3 inline-block">
                 <p className="text-2xl font-extrabold text-white">{caloriesCurrent}</p>
                 <p className="text-[11px] text-white/80 font-medium">
-                  of {caloriesGoal.toLocaleString()} calories
+                  de {caloriesGoal.toLocaleString()} calorias
                 </p>
               </div>
             </div>
             {/* Protein */}
             <div className="flex-1 text-center pt-2">
               <p className="text-2xl font-extrabold text-white">{proteinCurrent}g</p>
-              <p className="text-[11px] text-white/80 font-medium">of {proteinGoal}g protein</p>
+              <p className="text-[11px] text-white/80 font-medium">de {proteinGoal}g proteína</p>
             </div>
             {/* Fiber */}
             <div className="flex-1 text-center pt-2">
               <p className="text-2xl font-extrabold text-white">{fiberCurrent}g</p>
-              <p className="text-[11px] text-white/80 font-medium">of {fiberGoal}g fiber</p>
+              <p className="text-[11px] text-white/80 font-medium">de {fiberGoal}g fibra</p>
             </div>
           </div>
 
@@ -200,9 +200,9 @@ const MealsPage = () => {
               <Droplets className="w-5 h-5 text-white/80" />
               <div>
                 <p className="text-base font-bold text-white">
-                  {waterGlasses} of {GLASSES_GOAL} glasses
+                  {waterGlasses} de {GLASSES_GOAL} copos
                 </p>
-                <p className="text-[11px] text-white/65 font-medium">water intake</p>
+                <p className="text-[11px] text-white/65 font-medium">consumo de água</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -226,9 +226,9 @@ const MealsPage = () => {
           {/* This Week section */}
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4">
             <div className="flex items-center justify-between mb-4">
-              <p className="text-sm font-bold text-white">This Week</p>
+              <p className="text-sm font-bold text-white">Esta Semana</p>
               <button className="text-xs font-semibold text-white/80 flex items-center gap-1 active:scale-95 transition-transform">
-                Edit goals <ChevronRight className="w-3 h-3" />
+                Editar metas <ChevronRight className="w-3 h-3" />
               </button>
             </div>
 
@@ -281,11 +281,11 @@ const MealsPage = () => {
 
       {/* Today's Meals section */}
       <div className="px-5 mt-6">
-        <h2 className="text-lg font-bold text-foreground mb-3">Today's Meals</h2>
+        <h2 className="text-lg font-bold text-foreground mb-3">Refeições de Hoje</h2>
 
         <div className="bg-card rounded-[20px] p-6 border border-border/50 shadow-card text-center">
-          <p className="text-base font-bold text-foreground mb-1">Start your streak!</p>
-          <p className="text-sm text-muted-foreground mb-4">Log meals daily to build momentum</p>
+          <p className="text-base font-bold text-foreground mb-1">Comece sua sequência!</p>
+          <p className="text-sm text-muted-foreground mb-4">Registre refeições diariamente para criar o hábito</p>
 
           {/* Week streak dots */}
           <div className="flex items-center justify-center gap-2">
