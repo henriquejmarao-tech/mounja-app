@@ -304,7 +304,10 @@ const MealsPage = () => {
 
       {/* Today's Meals */}
       <div className="px-5 mt-6">
-        <h2 className="text-lg font-bold text-foreground mb-3">Refeições de Hoje</h2>
+        <div className="flex items-center gap-2 mb-3">
+          <h2 className="text-lg font-bold text-foreground">Refeições de Hoje</h2>
+          <span className="text-[11px] font-semibold text-muted-foreground bg-muted px-2 py-0.5 rounded-full">Em breve</span>
+        </div>
 
         <div className="bg-card rounded-[20px] p-6 border border-border/50 shadow-card text-center">
           <p className="text-base font-bold text-foreground mb-1">Comece sua sequência!</p>
