@@ -31,6 +31,7 @@ const Dashboard = () => {
   const [calendarDrawerOpen, setCalendarDrawerOpen] = useState(false);
   const [whatsNewOpen, setWhatsNewOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [weekInjections, setWeekInjections] = useState<Set<string>>(new Set());
 
   const selectedDateStr = localDateStr(selectedDate);
   const isSelectedToday = selectedDateStr === localDateStr(new Date());
