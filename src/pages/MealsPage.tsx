@@ -154,9 +154,9 @@ const MealsPage = () => {
   };
 
   const macros = [
-    { key: "calories", value: caloriesCurrent, goal: caloriesGoal, label: `of ${caloriesGoal.toLocaleString()} calories`, suffix: "" },
-    { key: "protein", value: proteinCurrent, goal: proteinGoal, label: `of ${proteinGoal}g protein`, suffix: "g" },
-    { key: "fiber", value: fiberCurrent, goal: fiberGoal, label: `of ${fiberGoal}g fiber`, suffix: "g" },
+    { key: "calories", value: caloriesCurrent, goal: caloriesGoal, label: `de ${caloriesGoal.toLocaleString()} calorias`, suffix: "" },
+    { key: "protein", value: proteinCurrent, goal: proteinGoal, label: `de ${proteinGoal}g proteína`, suffix: "g" },
+    { key: "fiber", value: fiberCurrent, goal: fiberGoal, label: `de ${fiberGoal}g fibra`, suffix: "g" },
   ];
 
   return (
