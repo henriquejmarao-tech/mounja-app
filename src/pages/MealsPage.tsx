@@ -20,7 +20,7 @@ const MealsPage = () => {
   const [waterGlasses, setWaterGlasses] = useState(0);
   const [todayLog, setTodayLog] = useState<any>(null);
   const [weekLogs, setWeekLogs] = useState<any[]>([]);
-  const [saving, setSaving] = useState(false);
+  const [saving] = useState(false);
   const [selectedMacro, setSelectedMacro] = useState<string | null>(null);
   const [goalsOpen, setGoalsOpen] = useState(false);
 
