@@ -107,7 +107,7 @@ const CalendarDrawer = ({ open, onOpenChange }: CalendarDrawerProps) => {
         <DrawerContent className="max-h-[92vh]">
           <div className="flex items-center justify-between px-6 pt-4 pb-2">
             <div />
-            <h2 className="text-base font-bold text-foreground">Calendar</h2>
+            <h2 className="text-base font-bold text-foreground">Calendário</h2>
             <button
               onClick={() => onOpenChange(false)}
               className="w-8 h-8 rounded-full flex items-center justify-center active:scale-90 transition-transform"
