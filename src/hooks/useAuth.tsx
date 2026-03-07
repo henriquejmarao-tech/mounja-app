@@ -127,13 +127,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     );
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchProfile(session.user.id);
+    supabase.auth.getUser().then(({ data: { user }, error }) => {
+      if (error || !user) {
+        // Token invalid or account deleted — clear local session
+        supabase.auth.signOut();
+        setUser(null);
+        setSession(null);
+        setProfile(null);
+        setLoading(false);
+        return;
       }
-      setLoading(false);
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        if (session?.user) {
+          fetchProfile(session.user.id);
+        }
+        setLoading(false);
+      });
     });
 
     return () => subscription.unsubscribe();
