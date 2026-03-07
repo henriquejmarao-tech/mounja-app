@@ -164,7 +164,7 @@ const MealsPage = () => {
       water_glasses_goal: goals.water,
     } as any).eq("id", user.id);
     await refreshProfile();
-    toast.success("Metas atualizadas!");
+    
   };
 
   const macros = [
