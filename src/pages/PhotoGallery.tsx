@@ -125,7 +125,7 @@ const PhotoGallery = () => {
   return (
     <div className="min-h-screen bg-background pb-nav flex flex-col">
       {/* Drag handle */}
-      <div className="flex justify-center pt-3 pb-1">
+      <div className="flex justify-center pt-safe pb-1">
         <div className="w-10 h-1 rounded-full bg-muted-foreground/20" />
       </div>
 

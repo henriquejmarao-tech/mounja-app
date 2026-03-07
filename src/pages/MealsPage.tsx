@@ -177,8 +177,7 @@ const MealsPage = () => {
     <div className="min-h-screen pb-nav bg-background">
       {/* Header */}
       <div
-        className="flex items-center justify-between px-6"
-        style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 0.75rem)" }}
+        className="flex items-center justify-between px-6 pt-safe"
       >
         <button onClick={() => navigateDate(-1)} className="p-2 -ml-2 active:scale-90 transition-transform">
           <ChevronLeft className="w-5 h-5 text-foreground" />

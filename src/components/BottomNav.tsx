@@ -4,10 +4,10 @@ import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 
 const navItems = [
-  { icon: Home, label: "Today", path: "/" },
+  { icon: Home, label: "Início", path: "/" },
   { icon: UtensilsCrossed, label: "Refeições", path: "/meals" },
-  { icon: TrendingUp, label: "Progress", path: "/progress" },
-  { icon: Settings, label: "Settings", path: "/settings" },
+  { icon: TrendingUp, label: "Progresso", path: "/progress" },
+  { icon: Settings, label: "Ajustes", path: "/settings" },
 ];
 
 const BottomNav = () => {
