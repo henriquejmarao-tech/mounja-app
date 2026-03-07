@@ -301,6 +301,10 @@ const Dashboard = () => {
         open={calendarDrawerOpen}
         onOpenChange={setCalendarDrawerOpen}
       />
+      <WhatsNewDrawer
+        open={whatsNewOpen}
+        onOpenChange={setWhatsNewOpen}
+      />
     </div>
   );
 };
