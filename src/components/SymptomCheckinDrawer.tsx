@@ -199,6 +199,7 @@ const SymptomCheckinDrawer = ({ open, onOpenChange, date }: SymptomCheckinDrawer
                           isActive ? cat.activeColor : cat.color
                         )}
                       >
+                        {isActive && <Check className="w-3.5 h-3.5" />}
                         <span className="text-base">{item.emoji}</span>
                         {item.label}
                       </button>
