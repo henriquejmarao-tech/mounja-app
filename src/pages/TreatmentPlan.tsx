@@ -43,6 +43,7 @@ const TreatmentPlan = () => {
       toast.error("Erro ao salvar");
       return;
     }
+    await refreshProfile();
     toast.success(weightDrawer === "start" ? "Peso inicial atualizado" : "Peso meta atualizado");
     setWeightDrawer(null);
   };
