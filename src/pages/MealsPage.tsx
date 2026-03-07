@@ -239,8 +239,7 @@ const MealsPage = () => {
               </button>
               <button
                 onClick={() => updateWater(1)}
-                disabled={false}
-                className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center active:scale-90 transition-transform disabled:opacity-40"
+                className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center active:scale-90 transition-transform"
               >
                 <Plus className="w-4 h-4 text-white" />
               </button>
