@@ -57,6 +57,7 @@ const BottomNav = () => {
           );
         })}
       </div>
+      <div style={{ height: "env(safe-area-inset-bottom, 0px)" }} />
     </nav>
   );
 };
