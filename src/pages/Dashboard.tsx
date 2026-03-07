@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
-import { Scale, Camera, ClipboardList, Lightbulb, CalendarDays, ListTodo } from "lucide-react";
+import { Scale, Camera, ClipboardList, Lightbulb, CalendarDays, Newspaper } from "lucide-react";
 import { cn, localDateStr } from "@/lib/utils";
 import { toast } from "sonner";
 import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
@@ -14,6 +14,7 @@ import WeightPickerDrawer from "@/components/WeightPickerDrawer";
 import SymptomCheckinDrawer from "@/components/SymptomCheckinDrawer";
 import PhotoDrawer from "@/components/PhotoDrawer";
 import CalendarDrawer from "@/components/dashboard/CalendarDrawer";
+import WhatsNewDrawer from "@/components/dashboard/WhatsNewDrawer";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ const Dashboard = () => {
   const [weightPickerOpen, setWeightPickerOpen] = useState(false);
   const [symptomDrawerOpen, setSymptomDrawerOpen] = useState(false);
   const [calendarDrawerOpen, setCalendarDrawerOpen] = useState(false);
+  const [whatsNewOpen, setWhatsNewOpen] = useState(false);
 
   const handleWeightSave = useCallback(async (weight: number) => {
     if (!user) return;
@@ -111,20 +113,20 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen pb-nav bg-background">
-      {/* ── Header with buttons + month ── */}
+      {/* ── Header with icons + month ── */}
       <div className="pt-safe px-5 pb-1 flex items-center justify-between">
         <button
-          onClick={() => navigate("/log")}
-          className="w-10 h-10 rounded-xl bg-card border border-border/50 shadow-card flex items-center justify-center active:scale-90 transition-transform"
+          onClick={() => setWhatsNewOpen(true)}
+          className="p-2 -ml-2 active:scale-90 transition-transform"
         >
-          <ListTodo className="w-5 h-5 text-primary" />
+          <Newspaper className="w-[22px] h-[22px] text-primary" />
         </button>
         <p className="text-base font-bold text-foreground">{monthLabel}</p>
         <button
           onClick={() => setCalendarDrawerOpen(true)}
-          className="w-10 h-10 rounded-xl bg-card border border-border/50 shadow-card flex items-center justify-center active:scale-90 transition-transform"
+          className="p-2 -mr-2 active:scale-90 transition-transform"
         >
-          <CalendarDays className="w-5 h-5 text-primary" />
+          <CalendarDays className="w-[22px] h-[22px] text-primary" />
         </button>
       </div>
 
