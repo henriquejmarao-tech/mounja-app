@@ -29,34 +29,31 @@ const BottomNav = () => {
 
   return (
     <nav
-      className="fixed z-50 left-0 right-0"
+      className="fixed z-50 left-0 right-0 bottom-0 bg-card border-t border-border/60"
       style={{
-        bottom: 0,
-        paddingBottom: "env(safe-area-inset-bottom, 0px)",
-        background: "hsl(var(--card))",
-        borderTop: "1px solid hsl(var(--border))",
+        paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 4px)",
       }}
     >
-      <div className="max-w-lg mx-auto flex items-center justify-around px-4 py-2">
+      <div className="max-w-lg mx-auto flex items-center justify-around px-2 pt-2 pb-1">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (
             <button
               key={item.path}
               onClick={() => navigate(item.path)}
-              className="flex flex-col items-center gap-0.5 px-4 py-1.5 transition-all duration-200 active:scale-90"
+              className="flex flex-col items-center gap-1 min-w-[64px] py-1 transition-all duration-200 active:scale-90"
             >
               <item.icon
                 className={cn(
-                  "w-[22px] h-[22px] transition-all duration-200",
-                  isActive ? "text-primary" : "text-muted-foreground/60"
+                  "w-6 h-6 transition-all duration-200",
+                  isActive ? "text-primary" : "text-muted-foreground/50"
                 )}
-                strokeWidth={isActive ? 2.5 : 1.5}
+                strokeWidth={isActive ? 2.4 : 1.6}
               />
               <span
                 className={cn(
-                  "text-[10px] transition-all",
-                  isActive ? "text-primary font-bold" : "text-muted-foreground/60 font-medium"
+                  "text-[11px] leading-tight transition-all",
+                  isActive ? "text-primary font-bold" : "text-muted-foreground/50 font-medium"
                 )}
               >
                 {item.label}
