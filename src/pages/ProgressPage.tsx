@@ -109,13 +109,13 @@ const ProgressPage = () => {
     <div className="min-h-screen pb-nav bg-background">
       {/* Purple gradient hero */}
       <div
-        className="relative overflow-hidden"
+        className="relative"
         style={{
           background: "linear-gradient(180deg, hsl(250, 58%, 55%) 0%, hsl(250, 50%, 62%) 60%, hsl(250, 45%, 68%) 100%)",
           paddingTop: "env(safe-area-inset-top, 0px)",
         }}
       >
-        <div className="px-6 pt-6 pb-12">
+        <div className="px-6 pt-6 pb-16">
           {/* Weight display */}
           <div className="flex items-center justify-between">
             {/* Start */}
@@ -160,24 +160,23 @@ const ProgressPage = () => {
               </p>
             </div>
           </div>
-
-        </div>
-
-        {/* Current dose pill - navigates to treatment plan */}
-        <div className="px-5 pb-6 -mb-10 relative z-10">
-          <button
-            onClick={() => navigate("/plano-tratamento")}
-            className="w-full bg-card rounded-2xl py-3.5 px-5 text-center shadow-elevated border border-border/30 active:scale-[0.98] transition-transform"
-          >
-            <p className="text-sm font-bold text-foreground">
-              {dose.currentDose ? `${dose.currentDose} de Mounjaro®` : "Nenhum tratamento registrado"}
-            </p>
-          </button>
         </div>
       </div>
 
+      {/* Current dose pill - overlaps gradient */}
+      <div className="px-5 -mt-6 relative z-10">
+        <button
+          onClick={() => navigate("/plano-tratamento")}
+          className="w-full bg-card rounded-2xl py-3.5 px-5 text-center shadow-elevated border border-border/30 active:scale-[0.98] transition-transform"
+        >
+          <p className="text-sm font-bold text-foreground">
+            {dose.currentDose ? `${dose.currentDose} de Mounjaro®` : "Nenhum tratamento registrado"}
+          </p>
+        </button>
+      </div>
+
       {/* Swipeable cards */}
-      <div className="mt-8 px-5">
+      <div className="mt-4 px-5">
         <div
           ref={scrollRef}
           onScroll={handleScroll}
