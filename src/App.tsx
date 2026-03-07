@@ -33,6 +33,10 @@ import Tutorial from "./pages/Tutorial";
 import TreatmentPlan from "./pages/TreatmentPlan";
 import ProgressDetail from "./pages/ProgressDetail";
 import PhotoGallery from "./pages/PhotoGallery";
+import MedicationSelect from "./pages/treatment/MedicationSelect";
+import DosageInput from "./pages/treatment/DosageInput";
+import TreatmentSite from "./pages/treatment/TreatmentSite";
+import SchedulePage from "./pages/treatment/SchedulePage";
 
 const queryClient = new QueryClient();
 
@@ -105,6 +109,10 @@ const AppRoutes = () => {
         <Route path="/plano-tratamento" element={<ProtectedRoute><TriageGuard><TreatmentPlan /></TriageGuard></ProtectedRoute>} />
         <Route path="/progress-detail" element={<ProtectedRoute><TriageGuard><ProgressDetail /></TriageGuard></ProtectedRoute>} />
         <Route path="/fotos" element={<ProtectedRoute><TriageGuard><PhotoGallery /></TriageGuard></ProtectedRoute>} />
+        <Route path="/tratamento/medicamento" element={<ProtectedRoute><TriageGuard><MedicationSelect /></TriageGuard></ProtectedRoute>} />
+        <Route path="/tratamento/dosagem" element={<ProtectedRoute><TriageGuard><DosageInput /></TriageGuard></ProtectedRoute>} />
+        <Route path="/tratamento/local" element={<ProtectedRoute><TriageGuard><TreatmentSite /></TriageGuard></ProtectedRoute>} />
+        <Route path="/tratamento/agenda" element={<ProtectedRoute><TriageGuard><SchedulePage /></TriageGuard></ProtectedRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>
