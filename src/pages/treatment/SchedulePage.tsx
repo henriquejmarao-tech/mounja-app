@@ -20,6 +20,9 @@ const SchedulePage = () => {
       : "weekly"
   );
   const [intervalDays, setIntervalDays] = useState(profile?.application_interval_days || 7);
+  const [hour, setHour] = useState(9);
+  const [minute, setMinute] = useState(30);
+  const [ampm, setAmpm] = useState<"AM" | "PM">("AM");
 
   const handleSave = async () => {
     if (!user) return;
@@ -78,27 +81,88 @@ const SchedulePage = () => {
               <p className="text-sm font-bold text-foreground mb-3">Frequência do tratamento</p>
               <div className="flex items-center justify-center gap-4">
                 <span className="text-base font-medium text-foreground">A cada</span>
-                <div className="flex flex-col items-center">
-                  <button
-                    onClick={() => setIntervalDays((d) => Math.min(14, d + 1))}
-                    className="text-muted-foreground text-sm"
-                  >
+                <div className="flex flex-col items-center gap-1">
+                  <button onClick={() => setIntervalDays((d) => Math.min(14, d + 1))} className="text-sm text-muted-foreground/50 h-5">
+                    {intervalDays + 2 <= 14 ? intervalDays + 2 : ""}
+                  </button>
+                  <button onClick={() => setIntervalDays((d) => Math.min(14, d + 1))} className="text-base text-muted-foreground h-6">
                     {intervalDays + 1 <= 14 ? intervalDays + 1 : ""}
                   </button>
                   <div className="bg-muted rounded-xl px-6 py-3 my-1">
                     <span className="text-xl font-bold text-foreground">{intervalDays}</span>
                   </div>
-                  <button
-                    onClick={() => setIntervalDays((d) => Math.max(1, d - 1))}
-                    className="text-muted-foreground text-sm"
-                  >
+                  <button onClick={() => setIntervalDays((d) => Math.max(1, d - 1))} className="text-base text-muted-foreground h-6">
                     {intervalDays - 1 >= 1 ? intervalDays - 1 : ""}
+                  </button>
+                  <button onClick={() => setIntervalDays((d) => Math.max(1, d - 1))} className="text-sm text-muted-foreground/50 h-5">
+                    {intervalDays - 2 >= 1 ? intervalDays - 2 : ""}
                   </button>
                 </div>
                 <span className="text-base font-medium text-foreground">dias</span>
               </div>
             </>
           )}
+
+          {/* Delivery time */}
+          <div className="border-t border-border/30 my-4" />
+          <p className="text-sm font-bold text-foreground mb-4">Horário de aplicação</p>
+          <div className="flex items-center justify-center gap-2">
+            {/* Hour */}
+            <div className="flex flex-col items-center gap-1">
+              <button onClick={() => setHour((h) => (h % 12) + 1)} className="text-sm text-muted-foreground/50 h-5">
+                {((hour % 12) + 2) > 12 ? ((hour % 12) + 2) - 12 : (hour % 12) + 2}
+              </button>
+              <button onClick={() => setHour((h) => (h % 12) + 1)} className="text-base text-muted-foreground h-6">
+                {(hour % 12) + 1 > 12 ? 1 : (hour % 12) + 1}
+              </button>
+              <div className="bg-muted rounded-xl px-5 py-3 my-1">
+                <span className="text-xl font-bold text-foreground">{hour}</span>
+              </div>
+              <button onClick={() => setHour((h) => h <= 1 ? 12 : h - 1)} className="text-base text-muted-foreground h-6">
+                {hour <= 1 ? 12 : hour - 1}
+              </button>
+              <button onClick={() => setHour((h) => h <= 1 ? 12 : h - 1)} className="text-sm text-muted-foreground/50 h-5">
+                {hour <= 2 ? (hour <= 1 ? 11 : 12) : hour - 2}
+              </button>
+            </div>
+
+            <span className="text-xl font-bold text-foreground">:</span>
+
+            {/* Minute */}
+            <div className="flex flex-col items-center gap-1">
+              <button onClick={() => setMinute((m) => (m + 10) % 60)} className="text-sm text-muted-foreground/50 h-5">
+                {String((minute + 10) % 60).padStart(2, "0")}
+              </button>
+              <button onClick={() => setMinute((m) => (m + 5) % 60)} className="text-base text-muted-foreground h-6">
+                {String((minute + 5) % 60).padStart(2, "0")}
+              </button>
+              <div className="bg-muted rounded-xl px-5 py-3 my-1">
+                <span className="text-xl font-bold text-foreground">{String(minute).padStart(2, "0")}</span>
+              </div>
+              <button onClick={() => setMinute((m) => (m - 5 + 60) % 60)} className="text-base text-muted-foreground h-6">
+                {String((minute - 5 + 60) % 60).padStart(2, "0")}
+              </button>
+              <button onClick={() => setMinute((m) => (m - 10 + 60) % 60)} className="text-sm text-muted-foreground/50 h-5">
+                {String((minute - 10 + 60) % 60).padStart(2, "0")}
+              </button>
+            </div>
+
+            {/* AM/PM */}
+            <div className="flex flex-col items-center gap-1 ml-2">
+              <div className="h-5" />
+              <div className="h-6" />
+              <div className="bg-muted rounded-xl px-4 py-3 my-1">
+                <span className="text-xl font-bold text-foreground">{ampm}</span>
+              </div>
+              <button
+                onClick={() => setAmpm((v) => (v === "AM" ? "PM" : "AM"))}
+                className="text-base text-muted-foreground h-6"
+              >
+                {ampm === "AM" ? "PM" : "AM"}
+              </button>
+              <div className="h-5" />
+            </div>
+          </div>
         </div>
 
         {/* Save */}
