@@ -10,7 +10,7 @@ type WeightDrawer = "start" | "goal" | null;
 
 const TreatmentPlan = () => {
   const navigate = useNavigate();
-  const { user, profile } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
   const [weightDrawer, setWeightDrawer] = useState<WeightDrawer>(null);
   const [weightInt, setWeightInt] = useState(70);
   const [weightDec, setWeightDec] = useState(0);
