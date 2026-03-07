@@ -30,9 +30,12 @@ const BottomNav = () => {
   return (
     <nav
       className="fixed z-50 left-0 right-0 bottom-0 bg-card border-t border-border/40"
-      style={{ paddingBottom: "max(env(safe-area-inset-bottom, 0px), 8px)" }}
+      style={{
+        paddingBottom: "env(safe-area-inset-bottom, 0px)",
+        height: "calc(70px + env(safe-area-inset-bottom, 0px))",
+      }}
     >
-      <div className="max-w-lg mx-auto flex items-center justify-around px-4 h-14">
+      <div className="max-w-lg mx-auto flex items-center justify-around px-4" style={{ height: "70px" }}>
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (
