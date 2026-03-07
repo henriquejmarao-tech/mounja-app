@@ -9,6 +9,7 @@ export interface TriageData {
   alternatesSites: boolean | null;
   frequency: "daily" | "weekly" | "custom";
   applicationDay: number;
+  applicationTime: string;
   customIntervalDays: number;
   lastApplicationDate: string;
   name: string;
