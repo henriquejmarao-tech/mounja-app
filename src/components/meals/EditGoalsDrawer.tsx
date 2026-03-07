@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { Sparkles } from "lucide-react";
 
@@ -21,6 +21,16 @@ const EditGoalsDrawer = ({ open, onOpenChange, goals, onSave }: EditGoalsDrawerP
   const [protein, setProtein] = useState(String(goals.protein));
   const [fiber, setFiber] = useState(String(goals.fiber));
   const [water, setWater] = useState(String(goals.water));
+
+  // Sync state when goals prop changes or drawer opens
+  useEffect(() => {
+    if (open) {
+      setCalories(String(goals.calories));
+      setProtein(String(goals.protein));
+      setFiber(String(goals.fiber));
+      setWater(String(goals.water));
+    }
+  }, [open, goals.calories, goals.protein, goals.fiber, goals.water]);
 
   const handleSave = () => {
     onSave({
