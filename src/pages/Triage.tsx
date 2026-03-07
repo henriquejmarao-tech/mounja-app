@@ -207,6 +207,7 @@ const Triage = () => {
   const [alternatesSites, setAlternatesSites] = useState<boolean | null>(null);
   const [frequency, setFrequency] = useState<"daily" | "weekly" | "custom">("weekly");
   const [applicationDay, setApplicationDay] = useState(0);
+  const [applicationTime, setApplicationTime] = useState("08:00");
   const [customIntervalDays, setCustomIntervalDays] = useState(7);
   const [lastApplicationDate, setLastApplicationDate] = useState("");
 
@@ -293,6 +294,7 @@ const Triage = () => {
         alternatesSites,
         frequency,
         applicationDay,
+        applicationTime,
         customIntervalDays,
         lastApplicationDate,
         name,
@@ -642,6 +644,23 @@ const Triage = () => {
                 </div>
               </div>
             )}
+            <div className="border-t border-border/50 mb-5" />
+            <div className="mb-5">
+              <p className="text-sm font-semibold text-foreground mb-3">Horário da aplicação</p>
+              <div className="flex items-center justify-center gap-2">
+                <ScrollPicker
+                  items={Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"))}
+                  value={applicationTime.split(":")[0]}
+                  onChange={(v) => setApplicationTime(`${v}:${applicationTime.split(":")[1]}`)}
+                />
+                <span className="text-2xl font-bold text-muted-foreground">:</span>
+                <ScrollPicker
+                  items={["00", "15", "30", "45"]}
+                  value={applicationTime.split(":")[1]}
+                  onChange={(v) => setApplicationTime(`${applicationTime.split(":")[0]}:${v}`)}
+                />
+              </div>
+            </div>
           </div>
         );
 
