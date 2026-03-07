@@ -40,7 +40,7 @@ const CalendarDrawer = ({ open, onOpenChange }: CalendarDrawerProps) => {
   const isToday = dateStr === localDateStr(new Date());
   const isFuture = selectedDate > new Date() && !isToday;
 
-  const dateLabel = selectedDate.toLocaleDateString("en-US", {
+  const dateLabel = selectedDate.toLocaleDateString("pt-BR", {
     weekday: "long",
     month: "long",
     day: "numeric",
@@ -147,7 +147,7 @@ const CalendarDrawer = ({ open, onOpenChange }: CalendarDrawerProps) => {
                 </div>
                 <div>
                   <p className="text-sm font-bold text-foreground">
-                    {dayData.injection.dose} of Mounjaro®
+                    {dayData.injection.dose} de Mounjaro®
                   </p>
                   {dayData.injection.site && (
                     <p className="text-xs text-muted-foreground">{dayData.injection.site}</p>
@@ -163,7 +163,7 @@ const CalendarDrawer = ({ open, onOpenChange }: CalendarDrawerProps) => {
                 <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
                   <Plus className="w-5 h-5 text-primary" />
                 </div>
-                <span className="text-sm font-medium text-muted-foreground">Add treatment</span>
+                <span className="text-sm font-medium text-muted-foreground">Adicionar tratamento</span>
               </button>
             )}
 
@@ -171,17 +171,17 @@ const CalendarDrawer = ({ open, onOpenChange }: CalendarDrawerProps) => {
             <div className="grid grid-cols-3 gap-3 mb-2">
               {[
                 {
-                  label: "Log side\neffects",
+                  label: "Registrar\nsintomas",
                   emoji: "📋",
                   action: () => setSymptomDrawerOpen(true),
                 },
                 {
-                  label: "Update\nweight",
+                  label: "Atualizar\npeso",
                   emoji: "⚖️",
                   action: () => setWeightPickerOpen(true),
                 },
                 {
-                  label: "Progress\nphoto",
+                  label: "Foto de\nprogresso",
                   emoji: "📸",
                   action: () => setPhotoDrawerOpen(true),
                 },
