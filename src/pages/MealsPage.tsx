@@ -58,6 +58,7 @@ const MealsPage = () => {
   };
 
   const weekStart = getWeekStart(currentDate);
+  const weekStartStr = localDateStr(weekStart);
   const todayDayIndex = (() => {
     const now = new Date();
     const ws = getWeekStart(now);
