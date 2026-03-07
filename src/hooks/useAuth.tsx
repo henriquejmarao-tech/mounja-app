@@ -1,5 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { getTriageData, clearTriageData, hasTriageData } from "@/hooks/useTriageStorage";
+import { localDateStr } from "@/lib/utils";
 import type { User, Session } from "@supabase/supabase-js";
 
 interface Profile {
@@ -64,14 +66,60 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setProfile(null);
   };
 
+  const savePendingTriage = async (userId: string) => {
+    const data = getTriageData();
+    if (!data) return;
+    try {
+      const weekDays = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
+      const currentWeight = data.weightKg + data.weightDecimal / 10;
+      const currentDose = data.doseValue ? `${data.doseValue} mg` : null;
+      const age = new Date().getFullYear() - data.birthYear;
+      const deriveGoal = () => {
+        if (data.motivations.includes("health_control")) return "weight_loss";
+        if (data.motivations.includes("food_relationship")) return "glycemic_control";
+        return "weight_loss";
+      };
+      const deriveInterval = () => {
+        if (data.frequency === "daily") return 1;
+        if (data.frequency === "weekly") return 7;
+        return data.customIntervalDays;
+      };
+      await supabase.from("profiles").update({
+        name: data.name, sex: data.sex || null, age, height_cm: data.heightCm,
+        current_weight: currentWeight, goal: deriveGoal(), current_dose: currentDose,
+        application_interval_days: deriveInterval(),
+        application_day: weekDays[data.applicationDay] || null,
+        application_frequency: data.frequency, triage_completed: true,
+      } as any).eq("id", userId);
+      if (currentDose && data.lastApplicationDate) {
+        await supabase.from("injections").insert({
+          user_id: userId, date: data.lastApplicationDate, dose: currentDose,
+          site: data.injectionSite || null, notes: "Registrado via triagem inicial",
+        });
+      }
+      await supabase.from("daily_logs").insert({
+        user_id: userId, date: localDateStr(), weight: currentWeight,
+      });
+      clearTriageData();
+    } catch (err) {
+      console.error("Error saving triage:", err);
+    }
+  };
+
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         if (session?.user) {
-          // Use setTimeout to avoid potential deadlock with Supabase auth
-          setTimeout(() => fetchProfile(session.user.id), 0);
+          setTimeout(async () => {
+            await fetchProfile(session.user.id);
+            // Save triage data if pending (e.g. after OAuth signup)
+            if (hasTriageData()) {
+              await savePendingTriage(session.user.id);
+              await fetchProfile(session.user.id);
+            }
+          }, 0);
         } else {
           setProfile(null);
         }
