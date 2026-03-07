@@ -20,7 +20,7 @@ interface DayData {
   symptoms: Record<string, number>;
 }
 
-const SideEffectHistoryCard = () => {
+const SideEffectHistoryCard = ({ selectedDate }: { selectedDate?: string }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [days, setDays] = useState<DayData[]>([]);
@@ -117,11 +117,8 @@ const SideEffectHistoryCard = () => {
                       <div
                         className={cn(
                           "w-2.5 h-2.5 rounded-full transition-all",
-                          hasSymptom && hasInj
-                            ? symptom.color // both
-                            : hasSymptom
-                            ? symptom.color
-                            : "bg-muted/50"
+                          hasSymptom ? symptom.color : "bg-muted/50",
+                          selectedDate === day.date && "ring-2 ring-primary ring-offset-1 ring-offset-card"
                         )}
                         style={hasSymptom ? { opacity: Math.min(1, 0.4 + value * 0.15) } : {}}
                       />

@@ -63,9 +63,10 @@ const symptomCategories = [
 interface SymptomCheckinDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  date?: Date;
 }
 
-const SymptomCheckinDrawer = ({ open, onOpenChange }: SymptomCheckinDrawerProps) => {
+const SymptomCheckinDrawer = ({ open, onOpenChange, date }: SymptomCheckinDrawerProps) => {
   const { user } = useAuth();
   const [selected, setSelected] = useState<Record<string, boolean>>({});
   const [saving, setSaving] = useState(false);
@@ -78,7 +79,7 @@ const SymptomCheckinDrawer = ({ open, onOpenChange }: SymptomCheckinDrawerProps)
     if (!user) return;
     setSaving(true);
     try {
-      const dateStr = localDateStr(new Date());
+      const dateStr = localDateStr(date || new Date());
       // Build payload with known DB columns
       const dbFields: Record<string, number> = {};
       const knownColumns = ["symptom_nausea", "symptom_constipation", "symptom_diarrhea", "symptom_headache", "symptom_fatigue", "symptom_injection_pain"];
