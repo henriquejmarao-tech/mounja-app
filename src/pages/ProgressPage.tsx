@@ -164,7 +164,7 @@ const ProgressPage = () => {
         </div>
 
         {/* Current dose pill - navigates to treatment plan */}
-        <div className="px-5 -mb-5 relative z-10">
+        <div className="px-5 pb-6 -mb-10 relative z-10">
           <button
             onClick={() => navigate("/plano-tratamento")}
             className="w-full bg-card rounded-2xl py-3.5 px-5 text-center shadow-elevated border border-border/30 active:scale-[0.98] transition-transform"
