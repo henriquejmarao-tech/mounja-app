@@ -164,31 +164,30 @@ const weightDecimalValues = Array.from({ length: 10 }, (_, i) => i); // 0-9
 /*
   Steps:
   0  Welcome
-  1  Social proof
-  2  Privacy
-  3  Experience
-  4  Motivation
-  5  App preview
-  6  Help needs
-  7  Confirmation
-  8  Treatment intro
-  9  Dose input
-  10 Injection site
-  11 Alternate sites
-  12 Frequency & schedule
-  13 Last application date
-  14 Results motivation chart
-  15 Personal intro
-  16 Sex
-  17 Height
-  18 Birth year
-  19 Current weight (picker)
-  20 Weight goal (picker)
-  21 Motivational calculation
-  22 Health motivation (family)
-  23 Creating plan (loading → save)
+  1  Privacy
+  2  Experience
+  3  Motivation
+  4  App preview
+  5  Help needs
+  6  Confirmation
+  7  Treatment intro
+  8  Dose input
+  9  Injection site
+  10 Alternate sites
+  11 Frequency & schedule
+  12 Last application date
+  13 Results motivation chart
+  14 Personal intro
+  15 Sex
+  16 Height
+  17 Birth year
+  18 Current weight (picker)
+  19 Weight goal (picker)
+  20 Motivational calculation
+  21 Health motivation (family)
+  22 Creating plan (loading → save)
 */
-const TOTAL_STEPS = 24;
+const TOTAL_STEPS = 23;
 
 const Triage = () => {
   const navigate = useNavigate();
@@ -232,15 +231,15 @@ const Triage = () => {
 
   const canAdvance = () => {
     switch (step) {
-      case 2: return privacyAccepted;
-      case 3: return !!experience;
-      case 4: return motivations.length > 0;
-      case 6: return helpNeeds.length > 0;
-      case 9: return !!doseValue;
-      case 10: return !!injectionSite;
-      case 11: return alternatesSites !== null;
-      case 13: return !!lastApplicationDate;
-      case 15: return !!name;
+      case 1: return privacyAccepted;
+      case 2: return !!experience;
+      case 3: return motivations.length > 0;
+      case 5: return helpNeeds.length > 0;
+      case 8: return !!doseValue;
+      case 9: return !!injectionSite;
+      case 10: return alternatesSites !== null;
+      case 12: return !!lastApplicationDate;
+      case 14: return !!name;
       default: return true;
     }
   };
@@ -264,7 +263,7 @@ const Triage = () => {
 
   // Loading screen triggers save
   useEffect(() => {
-    if (step === 23) {
+    if (step === 22) {
       setLoadingProgress(0);
       const interval = setInterval(() => {
         setLoadingProgress((prev) => {
@@ -312,16 +311,16 @@ const Triage = () => {
   };
 
   // Progress bar
-  const questionSteps = step >= 3 && step <= 22;
-  const progressPct = questionSteps ? ((step - 2) / 20) * 100 : 0;
-  const stepsWithBack = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22];
+  const questionSteps = step >= 2 && step <= 21;
+  const progressPct = questionSteps ? ((step - 1) / 20) * 100 : 0;
+  const stepsWithBack = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21];
   const showBackInProgress = stepsWithBack.includes(step);
   // Auto-advance steps (no button)
-  const autoAdvanceSteps = [3, 16];
-  const noButtonSteps = [23, ...autoAdvanceSteps];
+  const autoAdvanceSteps = [2, 15];
+  const noButtonSteps = [22, ...autoAdvanceSteps];
   const showNextBtn = !noButtonSteps.includes(step);
 
-  const buttonLabel = step === 22 ? "Criar meu plano" : step === 0 ? "Próximo" : "Continuar";
+  const buttonLabel = step === 21 ? "Criar meu plano" : step === 0 ? "Próximo" : "Continuar";
 
   const renderStep = () => {
     switch (step) {
@@ -338,23 +337,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 1: Social proof =====
+      // ===== 1: Privacy =====
       case 1:
-        return (
-          <div className="flex-1 flex flex-col items-center justify-center px-8 text-center"
-            style={{ background: "linear-gradient(180deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.85) 100%)" }}>
-            <button onClick={back} className="absolute top-14 left-5 text-primary-foreground/80"><ArrowLeft className="w-6 h-6" /></button>
-            <h1 className="text-3xl font-bold text-primary-foreground mb-6 leading-tight">Apoio em cada etapa do caminho</h1>
-            <div className="text-6xl mb-8">🌍</div>
-            <p className="text-primary-foreground/80 text-lg mt-auto mb-4">
-              Junte-se a uma comunidade crescente de{" "}
-              <span className="font-bold text-primary-foreground">milhares de pessoas</span> em todo o Brasil
-            </p>
-          </div>
-        );
-
-      // ===== 2: Privacy =====
-      case 2:
         return (
           <div className="flex-1 flex flex-col px-8">
             <button onClick={back} className="mt-2 mb-4 self-start text-muted-foreground"><ArrowLeft className="w-6 h-6" /></button>
@@ -383,15 +367,15 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 3: Experience (auto-advance) =====
-      case 3:
+      // ===== 2: Experience (auto-advance) =====
+      case 2:
         return (
           <div className="flex-1 flex flex-col px-6">
             <h1 className="text-2xl font-bold text-foreground text-center mb-8 mt-4">Há quanto tempo você usa Mounjaro?</h1>
             <div className="space-y-3">
               {experienceOptions.map((opt) => (
                 <button key={opt.value}
-                  onClick={() => { setExperience(opt.value); setTimeout(() => setStep(4), 300); }}
+                  onClick={() => { setExperience(opt.value); setTimeout(() => setStep(3), 300); }}
                   className={cn("w-full py-4 px-5 rounded-2xl text-base font-medium transition-all text-left",
                     experience === opt.value ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground")}>
                   {opt.label}
@@ -401,8 +385,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 4: Motivation =====
-      case 4:
+      // ===== 3: Motivation =====
+      case 3:
         return (
           <div className="flex-1 flex flex-col px-6">
             <h1 className="text-2xl font-bold text-foreground text-center mb-2 mt-4">Por que você começou o tratamento?</h1>
@@ -429,8 +413,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 5: App Preview =====
-      case 5:
+      // ===== 4: App Preview =====
+      case 4:
         return (
           <div className="flex-1 flex flex-col items-center px-8">
             <button onClick={back} className="self-start mt-2 mb-4 text-muted-foreground"><ArrowLeft className="w-6 h-6" /></button>
@@ -467,8 +451,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 6: Help needs =====
-      case 6:
+      // ===== 5: Help needs =====
+      case 5:
         return (
           <div className="flex-1 flex flex-col px-6">
             <h1 className="text-2xl font-bold text-foreground text-center mb-2 mt-4">Como podemos te ajudar?</h1>
@@ -489,8 +473,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 7: Confirmation =====
-      case 7:
+      // ===== 6: Confirmation =====
+      case 6:
         return (
           <div className="flex-1 flex flex-col items-center px-8">
             <button onClick={back} className="self-start mt-2 mb-4 text-muted-foreground"><ArrowLeft className="w-6 h-6" /></button>
@@ -510,8 +494,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 8: Treatment intro =====
-      case 8:
+      // ===== 7: Treatment intro =====
+      case 7:
         return (
           <div className="flex-1 flex flex-col items-center px-8">
             <button onClick={back} className="self-start mt-2 mb-4 text-muted-foreground"><ArrowLeft className="w-6 h-6" /></button>
@@ -524,8 +508,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 9: Dose input =====
-      case 9:
+      // ===== 8: Dose input =====
+      case 8:
         return (
           <div className="flex-1 flex flex-col px-6">
             <h1 className="text-2xl font-bold text-foreground text-center mb-12 mt-4">Qual sua dose atual de Mounjaro®?</h1>
@@ -540,8 +524,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 10: Injection site =====
-      case 10:
+      // ===== 9: Injection site =====
+      case 9:
         return (
           <div className="flex-1 flex flex-col px-6">
             <h1 className="text-2xl font-bold text-foreground text-center mb-6 mt-4">Qual seu local habitual de aplicação?</h1>
@@ -576,8 +560,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 11: Alternate sites =====
-      case 11:
+      // ===== 10: Alternate sites =====
+      case 10:
         return (
           <div className="flex-1 flex flex-col px-6">
             <h1 className="text-2xl font-bold text-foreground text-center mb-6 mt-4">Você alterna o local de aplicação entre as doses?</h1>
@@ -615,8 +599,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 12: Frequency =====
-      case 12:
+      // ===== 11: Frequency =====
+      case 11:
         return (
           <div className="flex-1 flex flex-col px-6 overflow-y-auto">
             <h1 className="text-2xl font-bold text-foreground text-center mb-6 mt-4">Quando você aplica Mounjaro®?</h1>
@@ -661,8 +645,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 13: Last application date =====
-      case 13:
+      // ===== 12: Last application date =====
+      case 12:
         return (
           <div className="flex-1 flex flex-col px-6">
             <h1 className="text-2xl font-bold text-foreground text-center mb-2 mt-4">Quando foi sua última aplicação?</h1>
@@ -675,8 +659,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 14: Results motivation =====
-      case 14:
+      // ===== 13: Results motivation =====
+      case 13:
         return (
           <div className="flex-1 flex flex-col items-center px-8">
             <button onClick={back} className="self-start mt-2 mb-4 text-muted-foreground"><ArrowLeft className="w-6 h-6" /></button>
@@ -703,8 +687,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 15: Personal intro =====
-      case 15:
+      // ===== 14: Personal intro =====
+      case 14:
         return (
           <div className="flex-1 flex flex-col items-center px-8">
             <button onClick={back} className="self-start mt-2 mb-4 text-muted-foreground"><ArrowLeft className="w-6 h-6" /></button>
@@ -725,8 +709,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 16: Sex (auto-advance) =====
-      case 16:
+      // ===== 15: Sex (auto-advance) =====
+      case 15:
         return (
           <div className="flex-1 flex flex-col px-6">
             <h1 className="text-2xl font-bold text-foreground text-center mb-8 mt-4">Qual seu sexo biológico?</h1>
@@ -737,7 +721,7 @@ const Triage = () => {
                 { value: "other", label: "Outro" },
               ].map((opt) => (
                 <button key={opt.value}
-                  onClick={() => { setSex(opt.value); setTimeout(() => setStep(17), 300); }}
+                  onClick={() => { setSex(opt.value); setTimeout(() => setStep(16), 300); }}
                   className={cn("w-full py-4 px-5 rounded-2xl text-base font-medium transition-all text-center",
                     sex === opt.value ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground")}>
                   {opt.label}
@@ -747,8 +731,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 17: Height =====
-      case 17:
+      // ===== 16: Height =====
+      case 16:
         return (
           <div className="flex-1 flex flex-col px-6">
             <h1 className="text-2xl font-bold text-foreground text-center mb-4 mt-4">Qual sua altura?</h1>
@@ -759,8 +743,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 18: Birth year =====
-      case 18:
+      // ===== 17: Birth year =====
+      case 17:
         return (
           <div className="flex-1 flex flex-col px-6">
             <h1 className="text-2xl font-bold text-foreground text-center mb-4 mt-4">Qual seu ano de nascimento?</h1>
@@ -771,8 +755,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 19: Current weight =====
-      case 19:
+      // ===== 18: Current weight =====
+      case 18:
         return (
           <div className="flex-1 flex flex-col px-6">
             <h1 className="text-2xl font-bold text-foreground text-center mb-4 mt-4">Quanto você pesa?</h1>
@@ -789,8 +773,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 20: Weight goal =====
-      case 20:
+      // ===== 19: Weight goal =====
+      case 19:
         return (
           <div className="flex-1 flex flex-col px-6">
             <h1 className="text-2xl font-bold text-foreground text-center mb-4 mt-4">Qual seu peso meta?</h1>
@@ -807,8 +791,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 21: Motivational calculation =====
-      case 21:
+      // ===== 20: Motivational calculation =====
+      case 20:
         return (
           <div className="flex-1 flex flex-col items-center justify-center px-8">
             <button onClick={back} className="absolute top-14 left-5 text-muted-foreground"><ArrowLeft className="w-6 h-6" /></button>
@@ -820,8 +804,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 22: Health motivation =====
-      case 22:
+      // ===== 21: Health motivation =====
+      case 21:
         return (
           <div className="flex-1 flex flex-col items-center px-8">
             <button onClick={back} className="self-start mt-2 mb-4 text-muted-foreground"><ArrowLeft className="w-6 h-6" /></button>
@@ -837,8 +821,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 23: Creating plan (loading) =====
-      case 23:
+      // ===== 22: Creating plan (loading) =====
+      case 22:
         return (
           <div className="flex-1 flex flex-col items-center justify-center px-8"
             style={{ background: "linear-gradient(180deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.9) 100%)" }}>
