@@ -1,10 +1,8 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
 import { ArrowLeft, Check, CheckCircle2, ThumbsUp } from "lucide-react";
-import { toast } from "sonner";
-import { cn, localDateStr } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { saveTriageData } from "@/hooks/useTriageStorage";
 
 import welcomeImg from "@/assets/onboarding-welcome.png";
 import privacyImg from "@/assets/onboarding-privacy.png";
