@@ -1,18 +1,28 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useApplicationData } from "@/hooks/useApplicationData";
 import { cn, localDateStr } from "@/lib/utils";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import { TrendingDown, Calendar, Target } from "lucide-react";
+import { ChevronDown, ChevronRight, ChevronLeft, Pill, Pen, Syringe, Bell, Scale, Flag } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
+import { useNavigate } from "react-router-dom";
+import { Drawer, DrawerContent } from "@/components/ui/drawer";
 
 type Period = "30d" | "90d" | "180d" | "all";
 
 const ProgressPage = () => {
   const { user, profile } = useAuth();
+  const { dose } = useApplicationData();
+  const navigate = useNavigate();
+
   const [period, setPeriod] = useState<Period>("30d");
   const [weightData, setWeightData] = useState<{ date: string; peso: number; label: string }[]>([]);
   const [injections, setInjections] = useState<any[]>([]);
+  const [photos, setPhotos] = useState<{ id: string; url: string; date: string }[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeSlide, setActiveSlide] = useState(0);
+  const [showTreatmentPlan, setShowTreatmentPlan] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const periodDays: Record<Period, number | null> = { "30d": 30, "90d": 90, "180d": 180, all: null };
 
@@ -23,155 +33,367 @@ const ProgressPage = () => {
     const since = days ? localDateStr(new Date(Date.now() - days * 86400000)) : undefined;
 
     let logsQ = supabase.from("daily_logs").select("date, weight").eq("user_id", user.id).not("weight", "is", null).order("date", { ascending: true });
-    let injQ = supabase.from("injections").select("date, dose").eq("user_id", user.id).order("date", { ascending: false });
+    let injQ = supabase.from("injections").select("date, dose, site").eq("user_id", user.id).order("date", { ascending: false });
 
     if (since) {
       logsQ = logsQ.gte("date", since);
       injQ = injQ.gte("date", since);
     }
 
-    const [logsRes, injRes] = await Promise.all([logsQ, injQ]);
-    const logs = (logsRes.data as any[]) || [];
-    const inj = (injRes.data as any[]) || [];
+    const [logsRes, injRes, photosRes] = await Promise.all([
+      logsQ,
+      injQ,
+      supabase.from("progress_photos").select("id, photo_url, date").eq("user_id", user.id).order("date", { ascending: false }).limit(20),
+    ]);
 
     setWeightData(
-      logs.map((l) => ({
+      ((logsRes.data as any[]) || []).map((l) => ({
         date: l.date,
         peso: Number(l.weight),
         label: new Date(l.date + "T12:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
       }))
     );
-    setInjections(inj);
+    setInjections((injRes.data as any[]) || []);
+
+    // Get signed URLs for photos
+    const rawPhotos = (photosRes.data as any[]) || [];
+    const photosWithUrls = await Promise.all(
+      rawPhotos.map(async (p) => {
+        const { data } = await supabase.storage.from("progress-photos").createSignedUrl(p.photo_url, 3600);
+        return { id: p.id, url: data?.signedUrl || "", date: p.date };
+      })
+    );
+    setPhotos(photosWithUrls.filter((p) => p.url));
     setLoading(false);
   }, [user, period]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
   const initialWeight = profile?.current_weight;
-  const currentWeight = weightData.length > 0 ? weightData[weightData.length - 1].peso : null;
+  const currentWeight = weightData.length > 0 ? weightData[weightData.length - 1].peso : (initialWeight ? Number(initialWeight) : null);
   const goalWeight = profile?.goal ? parseFloat(profile.goal) : null;
-  const totalLost = initialWeight && currentWeight ? initialWeight - Number(currentWeight) : null;
+  const totalLost = initialWeight && currentWeight ? Number(initialWeight) - currentWeight : null;
 
   const startDate = profile?.mounjaro_start_date ? new Date(profile.mounjaro_start_date + "T12:00:00") : null;
-  const daysOnTreatment = startDate ? Math.floor((Date.now() - startDate.getTime()) / 86400000) : null;
+  const daysOnTreatment = startDate ? Math.max(1, Math.floor((Date.now() - startDate.getTime()) / 86400000)) : null;
+
+  const heightCm = profile?.height_cm ? Number(profile.height_cm) : null;
+  const bmi = currentWeight && heightCm ? (currentWeight / ((heightCm / 100) ** 2)).toFixed(1) : null;
+
+  // Weight ring progress (0 to 1)
+  const weightProgress = initialWeight && goalWeight && currentWeight
+    ? Math.min(1, Math.max(0, (Number(initialWeight) - currentWeight) / (Number(initialWeight) - goalWeight)))
+    : 0;
+
+  const ringCircumference = 2 * Math.PI * 70;
+  const ringOffset = ringCircumference * (1 - weightProgress);
 
   const periods: { value: Period; label: string }[] = [
-    { value: "30d", label: "30 dias" },
-    { value: "90d", label: "90 dias" },
-    { value: "180d", label: "180 dias" },
+    { value: "30d", label: "30d" },
+    { value: "90d", label: "90d" },
+    { value: "180d", label: "180d" },
     { value: "all", label: "Tudo" },
   ];
 
+  // Handle scroll for slide indicators
+  const handleScroll = () => {
+    if (!scrollRef.current) return;
+    const scrollLeft = scrollRef.current.scrollLeft;
+    const width = scrollRef.current.clientWidth;
+    setActiveSlide(Math.round(scrollLeft / width));
+  };
+
+  const SLIDES = 3;
+
   return (
     <div className="min-h-screen pb-nav bg-background">
-      <div className="px-6 pt-safe pb-2">
-        <h1 className="text-2xl font-bold text-foreground">Progresso</h1>
-        <p className="text-sm text-muted-foreground">Acompanhe sua evolução</p>
+      {/* Purple gradient hero */}
+      <div
+        className="relative overflow-hidden"
+        style={{
+          background: "linear-gradient(180deg, hsl(250, 58%, 55%) 0%, hsl(250, 50%, 62%) 60%, hsl(250, 45%, 68%) 100%)",
+          paddingTop: "env(safe-area-inset-top, 0px)",
+        }}
+      >
+        <div className="px-6 pt-6 pb-12">
+          {/* Weight display */}
+          <div className="flex items-center justify-between">
+            {/* Start */}
+            <div className="text-center">
+              <p className="text-xs font-semibold text-white/70">início</p>
+              <p className="text-lg font-extrabold text-white">
+                {initialWeight ? Number(initialWeight).toFixed(1) : "—"}
+                <span className="text-xs font-medium text-white/70 ml-0.5">kg</span>
+              </p>
+            </div>
+
+            {/* Ring */}
+            <div className="relative w-36 h-36">
+              <svg className="w-full h-full -rotate-90" viewBox="0 0 160 160">
+                <circle cx="80" cy="80" r="70" fill="none" stroke="hsla(0,0%,100%,0.15)" strokeWidth="8" />
+                <circle
+                  cx="80" cy="80" r="70"
+                  fill="none"
+                  stroke="hsla(0,0%,100%,0.6)"
+                  strokeWidth="8"
+                  strokeLinecap="round"
+                  strokeDasharray={ringCircumference}
+                  strokeDashoffset={ringOffset}
+                  className="transition-all duration-1000"
+                />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <p className="text-xs font-semibold text-white/70">atual</p>
+                <p className="text-2xl font-extrabold text-white">
+                  {currentWeight?.toFixed(1) ?? "—"}
+                  <span className="text-xs font-medium text-white/70 ml-0.5">kg</span>
+                </p>
+              </div>
+            </div>
+
+            {/* Goal */}
+            <div className="text-center">
+              <p className="text-xs font-semibold text-white/70">meta</p>
+              <p className="text-lg font-extrabold text-white">
+                {goalWeight?.toFixed(1) ?? "—"}
+                <span className="text-xs font-medium text-white/70 ml-0.5">kg</span>
+              </p>
+            </div>
+          </div>
+
+          {/* Treatment Plan toggle */}
+          <button
+            onClick={() => setShowTreatmentPlan(true)}
+            className="mx-auto mt-4 flex items-center gap-1 active:scale-95 transition-transform"
+          >
+            <span className="text-[11px] font-bold uppercase tracking-widest text-white/70">
+              PLANO DE TRATAMENTO
+            </span>
+            <ChevronDown className="w-3.5 h-3.5 text-white/70" />
+          </button>
+        </div>
+
+        {/* Current dose pill */}
+        <div className="px-5 -mb-5 relative z-10">
+          <div className="bg-card rounded-2xl py-3.5 px-5 text-center shadow-elevated border border-border/30">
+            <p className="text-sm font-bold text-foreground">
+              {dose.currentDose ? `${dose.currentDose} de Mounjaro®` : "Nenhum tratamento registrado"}
+            </p>
+          </div>
+        </div>
       </div>
 
-      <div className="px-5 space-y-4 mt-2">
-        {/* Stats */}
-        <div className="grid grid-cols-2 gap-3 animate-fade-in-up">
-          <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50 text-center">
-            <p className="text-[11px] text-muted-foreground">Peso inicial</p>
-            <p className="text-xl font-bold text-foreground">{initialWeight ?? "—"}<span className="text-xs text-muted-foreground ml-0.5">kg</span></p>
+      {/* Swipeable cards */}
+      <div className="mt-8 px-5">
+        <div
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
+          <style>{`.progress-scroll::-webkit-scrollbar{display:none}`}</style>
+
+          {/* Card 1: Summary with latest photo */}
+          <div className="bg-card rounded-[20px] p-5 shadow-card border border-border/50 min-w-[calc(100vw-40px)] max-w-[calc(100vw-40px)] snap-center">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <span className="text-lg font-bold text-foreground">📊</span>
+                <span className="text-base font-bold text-foreground">Mounja</span>
+              </div>
+              {daysOnTreatment && (
+                <span className="bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-full">
+                  Dia {daysOnTreatment}
+                </span>
+              )}
+            </div>
+
+            <div className="flex gap-3">
+              {/* Photo */}
+              <div className="flex-1 rounded-2xl overflow-hidden bg-muted aspect-[3/4]">
+                {photos[0] ? (
+                  <img src={photos[0].url} alt="Progresso" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">
+                    Sem foto
+                  </div>
+                )}
+              </div>
+
+              {/* Stats */}
+              <div className="flex flex-col gap-2 w-28">
+                <div className="bg-muted/50 rounded-xl p-3 text-center border border-border/30">
+                  <p className="text-[10px] text-muted-foreground font-medium">Data</p>
+                  <p className="text-lg font-bold text-foreground">
+                    {new Date().toLocaleDateString("pt-BR", { day: "numeric", month: "numeric", year: "2-digit" })}
+                  </p>
+                </div>
+                <div className="bg-muted/50 rounded-xl p-3 text-center border border-border/30">
+                  <p className="text-[10px] text-muted-foreground font-medium">Aplicações</p>
+                  <p className="text-lg font-bold text-foreground">{injections.length}</p>
+                </div>
+                <div className="bg-muted/50 rounded-xl p-3 text-center border border-border/30">
+                  <p className="text-[10px] text-muted-foreground font-medium">Perda de peso</p>
+                  <p className="text-lg font-bold text-foreground">
+                    {totalLost && totalLost > 0 ? `-${totalLost.toFixed(1)}` : "—"}
+                  </p>
+                </div>
+                <div className="bg-muted/50 rounded-xl p-3 text-center border border-border/30">
+                  <p className="text-[10px] text-muted-foreground font-medium">IMC</p>
+                  <p className="text-lg font-bold text-foreground">{bmi ?? "—"}</p>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50 text-center">
-            <p className="text-[11px] text-muted-foreground">Peso atual</p>
-            <p className="text-xl font-bold text-primary">{currentWeight?.toFixed(1) ?? "—"}<span className="text-xs text-muted-foreground ml-0.5">kg</span></p>
+
+          {/* Card 2: Weight Trends */}
+          <div className="bg-card rounded-[20px] p-5 shadow-card border border-border/50 min-w-[calc(100vw-40px)] max-w-[calc(100vw-40px)] snap-center">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-base font-bold text-foreground">Tendência de Peso</h3>
+              <button
+                onClick={() => navigate("/progress")}
+                className="text-xs font-semibold text-muted-foreground flex items-center gap-0.5"
+              >
+                Ver mais <ChevronRight className="w-3 h-3" />
+              </button>
+            </div>
+
+            {/* Period filter */}
+            <div className="flex gap-1 mb-4">
+              {periods.map((p) => (
+                <button
+                  key={p.value}
+                  onClick={() => setPeriod(p.value)}
+                  className={cn(
+                    "flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all",
+                    period === p.value
+                      ? "border-b-2 border-primary text-primary"
+                      : "text-muted-foreground"
+                  )}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
+
+            {loading ? (
+              <div className="h-48 flex items-center justify-center">
+                <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+              </div>
+            ) : weightData.length >= 2 ? (
+              <div className="h-48">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={weightData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 13%, 91%)" />
+                    <XAxis dataKey="label" tick={{ fontSize: 10, fill: "hsl(220, 10%, 50%)" }} tickLine={false} axisLine={false} />
+                    <YAxis domain={["dataMin - 1", "dataMax + 1"]} tick={{ fontSize: 10, fill: "hsl(220, 10%, 50%)" }} tickLine={false} axisLine={false} width={40} tickFormatter={(v) => `${v} kg`} />
+                    <Line type="monotone" dataKey="peso" stroke="hsl(250, 58%, 58%)" strokeWidth={2.5} dot={{ r: 3, fill: "hsl(250, 58%, 58%)" }} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <div className="h-48 flex items-center justify-center text-sm text-muted-foreground">
+                Registre seu peso para ver o gráfico
+              </div>
+            )}
           </div>
-          <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50 text-center">
-            <p className="text-[11px] text-muted-foreground">Objetivo</p>
-            <p className="text-xl font-bold text-foreground">{goalWeight ?? "—"}<span className="text-xs text-muted-foreground ml-0.5">kg</span></p>
-          </div>
-          <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50 text-center">
-            <p className="text-[11px] text-muted-foreground">Dias no tratamento</p>
-            <p className="text-xl font-bold text-foreground">{daysOnTreatment ?? "—"}</p>
+
+          {/* Card 3: Progress Photos */}
+          <div className="bg-card rounded-[20px] p-5 shadow-card border border-border/50 min-w-[calc(100vw-40px)] max-w-[calc(100vw-40px)] snap-center">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-base font-bold text-foreground">Fotos de Progresso</h3>
+              <button className="text-xs font-semibold text-muted-foreground flex items-center gap-0.5">
+                Ver todas <ChevronRight className="w-3 h-3" />
+              </button>
+            </div>
+
+            {photos.length > 0 ? (
+              <div className="grid grid-cols-2 gap-3">
+                {photos.slice(0, 4).map((photo) => (
+                  <div key={photo.id} className="flex flex-col gap-1">
+                    <div className="rounded-2xl overflow-hidden aspect-[3/4] bg-muted">
+                      <img src={photo.url} alt="Progresso" className="w-full h-full object-cover" />
+                    </div>
+                    <p className="text-[10px] text-muted-foreground text-center font-medium">
+                      {new Date(photo.date + "T12:00:00").toLocaleDateString("pt-BR", { day: "numeric", month: "short", year: "numeric" })}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="h-48 flex items-center justify-center text-sm text-muted-foreground">
+                Nenhuma foto registrada ainda
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Total lost banner */}
-        {totalLost !== null && totalLost > 0 && (
-          <div className="bg-primary/10 rounded-2xl p-4 flex items-center gap-3 animate-fade-in-up border border-primary/20">
-            <TrendingDown className="w-6 h-6 text-primary" />
-            <div>
-              <p className="text-sm font-bold text-primary">-{totalLost.toFixed(1)} kg perdidos</p>
-              <p className="text-xs text-primary/70">Desde o início do tratamento</p>
-            </div>
-          </div>
-        )}
-
-        {/* Period filter */}
-        <div className="flex gap-2">
-          {periods.map((p) => (
-            <button
-              key={p.value}
-              onClick={() => setPeriod(p.value)}
+        {/* Slide indicators */}
+        <div className="flex items-center justify-center gap-1.5 mt-1">
+          {Array.from({ length: SLIDES }).map((_, i) => (
+            <div
+              key={i}
               className={cn(
-                "flex-1 py-2 rounded-xl text-xs font-semibold transition-all",
-                period === p.value
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-secondary text-muted-foreground"
+                "w-2 h-2 rounded-full transition-all",
+                i === activeSlide ? "bg-primary" : "bg-muted-foreground/20"
               )}
-            >
-              {p.label}
-            </button>
+            />
           ))}
         </div>
+      </div>
 
-        {/* Weight chart */}
-        <div className="bg-card rounded-2xl p-5 shadow-card border border-border/50 animate-fade-in-up">
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-4">Evolução do peso</p>
-          {loading ? (
-            <div className="h-48 flex items-center justify-center">
-              <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
-            </div>
-          ) : weightData.length >= 2 ? (
-            <div className="h-48">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={weightData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 13%, 91%)" />
-                  <XAxis dataKey="label" tick={{ fontSize: 10, fill: "hsl(220, 10%, 50%)" }} tickLine={false} axisLine={false} />
-                  <YAxis domain={["dataMin - 1", "dataMax + 1"]} tick={{ fontSize: 10, fill: "hsl(220, 10%, 50%)" }} tickLine={false} axisLine={false} width={35} />
-                  <Tooltip
-                    contentStyle={{
-                      background: "hsl(0, 0%, 100%)",
-                      border: "1px solid hsl(220, 13%, 91%)",
-                      borderRadius: "12px",
-                      fontSize: "12px",
-                    }}
-                  />
-                  <Line type="monotone" dataKey="peso" stroke="hsl(168, 56%, 42%)" strokeWidth={2.5} dot={{ r: 3, fill: "hsl(168, 56%, 42%)" }} activeDot={{ r: 5 }} />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          ) : (
-            <div className="h-48 flex items-center justify-center text-sm text-muted-foreground">
-              <p>Registre seu peso para ver o gráfico</p>
-            </div>
-          )}
-        </div>
+      {/* Treatment Plan Drawer */}
+      <Drawer open={showTreatmentPlan} onOpenChange={setShowTreatmentPlan}>
+        <DrawerContent className="pb-safe">
+          <div className="px-6 pt-4 pb-6">
+            <button
+              onClick={() => setShowTreatmentPlan(false)}
+              className="w-10 h-10 rounded-full bg-muted flex items-center justify-center mb-4 active:scale-90 transition-transform"
+            >
+              <ChevronLeft className="w-5 h-5 text-foreground" />
+            </button>
+            <h2 className="text-2xl font-extrabold text-foreground mb-6">Plano de Tratamento</h2>
 
-        {/* Injection timeline */}
-        {injections.length > 0 && (
-          <div className="bg-card rounded-2xl p-5 shadow-card border border-border/50 animate-fade-in-up">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-4">Histórico de aplicações</p>
-            <div className="space-y-3">
-              {injections.slice(0, 10).map((inj, i) => (
-                <div key={i} className="flex items-center gap-3">
-                  <div className="w-2 h-2 rounded-full bg-primary shrink-0" />
-                  <div className="flex-1 flex items-center justify-between">
-                    <span className="text-sm text-foreground font-medium">{inj.dose}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {new Date(inj.date + "T12:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })}
-                    </span>
+            <div className="bg-card rounded-2xl border border-border/50 divide-y divide-border/50">
+              {[
+                { icon: Pill, label: "Medicamento", action: () => navigate("/registrar-aplicacao") },
+                { icon: Pen, label: "Dosagem", action: () => navigate("/registrar-aplicacao") },
+                { icon: Syringe, label: "Local de aplicação", action: () => navigate("/registrar-aplicacao") },
+                { icon: Bell, label: "Agenda", action: () => navigate("/aplicacao") },
+              ].map((item, i) => (
+                <button
+                  key={i}
+                  onClick={item.action}
+                  className="w-full flex items-center justify-between px-5 py-4 active:bg-muted/50 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <item.icon className="w-5 h-5 text-muted-foreground" />
+                    <span className="text-base font-medium text-foreground">{item.label}</span>
                   </div>
-                </div>
+                  <ChevronRight className="w-4 h-4 text-muted-foreground/50" />
+                </button>
+              ))}
+            </div>
+
+            <div className="bg-card rounded-2xl border border-border/50 divide-y divide-border/50 mt-4">
+              {[
+                { icon: Scale, label: "Alterar peso inicial" },
+                { icon: Flag, label: "Alterar peso meta" },
+              ].map((item, i) => (
+                <button
+                  key={i}
+                  className="w-full flex items-center justify-between px-5 py-4 active:bg-muted/50 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <item.icon className="w-5 h-5 text-muted-foreground" />
+                    <span className="text-base font-medium text-foreground">{item.label}</span>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-muted-foreground/50" />
+                </button>
               ))}
             </div>
           </div>
-        )}
-      </div>
+        </DrawerContent>
+      </Drawer>
     </div>
   );
 };
