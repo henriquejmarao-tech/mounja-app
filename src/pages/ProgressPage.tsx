@@ -3,10 +3,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { cn, localDateStr } from "@/lib/utils";
-import { ChevronDown, ChevronRight, ChevronLeft, Pill, Pen, Syringe, Bell, Scale, Flag } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
 import { useNavigate } from "react-router-dom";
-import { Drawer, DrawerContent } from "@/components/ui/drawer";
+
 
 type Period = "30d" | "90d" | "180d" | "all";
 
@@ -21,7 +21,7 @@ const ProgressPage = () => {
   const [photos, setPhotos] = useState<{ id: string; url: string; date: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeSlide, setActiveSlide] = useState(0);
-  const [showTreatmentPlan, setShowTreatmentPlan] = useState(false);
+  
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const periodDays: Record<Period, number | null> = { "30d": 30, "90d": 90, "180d": 180, all: null };
@@ -161,25 +161,18 @@ const ProgressPage = () => {
             </div>
           </div>
 
-          {/* Treatment Plan toggle */}
-          <button
-            onClick={() => setShowTreatmentPlan(true)}
-            className="mx-auto mt-4 flex items-center gap-1 active:scale-95 transition-transform"
-          >
-            <span className="text-[11px] font-bold uppercase tracking-widest text-white/70">
-              PLANO DE TRATAMENTO
-            </span>
-            <ChevronDown className="w-3.5 h-3.5 text-white/70" />
-          </button>
         </div>
 
-        {/* Current dose pill */}
+        {/* Current dose pill - navigates to treatment plan */}
         <div className="px-5 -mb-5 relative z-10">
-          <div className="bg-card rounded-2xl py-3.5 px-5 text-center shadow-elevated border border-border/30">
+          <button
+            onClick={() => navigate("/plano-tratamento")}
+            className="w-full bg-card rounded-2xl py-3.5 px-5 text-center shadow-elevated border border-border/30 active:scale-[0.98] transition-transform"
+          >
             <p className="text-sm font-bold text-foreground">
               {dose.currentDose ? `${dose.currentDose} de Mounjaro®` : "Nenhum tratamento registrado"}
             </p>
-          </div>
+          </button>
         </div>
       </div>
 
@@ -341,59 +334,6 @@ const ProgressPage = () => {
         </div>
       </div>
 
-      {/* Treatment Plan Drawer */}
-      <Drawer open={showTreatmentPlan} onOpenChange={setShowTreatmentPlan}>
-        <DrawerContent className="pb-safe">
-          <div className="px-6 pt-4 pb-6">
-            <button
-              onClick={() => setShowTreatmentPlan(false)}
-              className="w-10 h-10 rounded-full bg-muted flex items-center justify-center mb-4 active:scale-90 transition-transform"
-            >
-              <ChevronLeft className="w-5 h-5 text-foreground" />
-            </button>
-            <h2 className="text-2xl font-extrabold text-foreground mb-6">Plano de Tratamento</h2>
-
-            <div className="bg-card rounded-2xl border border-border/50 divide-y divide-border/50">
-              {[
-                { icon: Pill, label: "Medicamento", action: () => navigate("/registrar-aplicacao") },
-                { icon: Pen, label: "Dosagem", action: () => navigate("/registrar-aplicacao") },
-                { icon: Syringe, label: "Local de aplicação", action: () => navigate("/registrar-aplicacao") },
-                { icon: Bell, label: "Agenda", action: () => navigate("/aplicacao") },
-              ].map((item, i) => (
-                <button
-                  key={i}
-                  onClick={item.action}
-                  className="w-full flex items-center justify-between px-5 py-4 active:bg-muted/50 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <item.icon className="w-5 h-5 text-muted-foreground" />
-                    <span className="text-base font-medium text-foreground">{item.label}</span>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-muted-foreground/50" />
-                </button>
-              ))}
-            </div>
-
-            <div className="bg-card rounded-2xl border border-border/50 divide-y divide-border/50 mt-4">
-              {[
-                { icon: Scale, label: "Alterar peso inicial" },
-                { icon: Flag, label: "Alterar peso meta" },
-              ].map((item, i) => (
-                <button
-                  key={i}
-                  className="w-full flex items-center justify-between px-5 py-4 active:bg-muted/50 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <item.icon className="w-5 h-5 text-muted-foreground" />
-                    <span className="text-base font-medium text-foreground">{item.label}</span>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-muted-foreground/50" />
-                </button>
-              ))}
-            </div>
-          </div>
-        </DrawerContent>
-      </Drawer>
     </div>
   );
 };

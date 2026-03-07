@@ -30,6 +30,7 @@ import HealthInfo from "./pages/HealthInfo";
 import RoutinePreferences from "./pages/RoutinePreferences";
 import NotFound from "./pages/NotFound";
 import Tutorial from "./pages/Tutorial";
+import TreatmentPlan from "./pages/TreatmentPlan";
 
 const queryClient = new QueryClient();
 
@@ -99,6 +100,7 @@ const AppRoutes = () => {
         <Route path="/saude" element={<ProtectedRoute><TriageGuard><HealthInfo /></TriageGuard></ProtectedRoute>} />
         <Route path="/rotina" element={<ProtectedRoute><TriageGuard><RoutinePreferences /></TriageGuard></ProtectedRoute>} />
         <Route path="/tutorial" element={<ProtectedRoute><Tutorial /></ProtectedRoute>} />
+        <Route path="/plano-tratamento" element={<ProtectedRoute><TriageGuard><TreatmentPlan /></TriageGuard></ProtectedRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>
