@@ -106,7 +106,7 @@ const SideEffectHistoryCard = ({ selectedDate }: { selectedDate?: string }) => {
           {activeSymptoms.slice(0, 4).map((symptom) => (
             <div key={symptom.key}>
               <p className="text-sm font-semibold text-foreground mb-2">{symptom.label}</p>
-              <div className="flex gap-[3px] items-center">
+              <div className="flex gap-[2px] items-center overflow-hidden">
                 {days.map((day) => {
                   const value = day.symptoms[symptom.key] || 0;
                   const hasSymptom = value > 0;
