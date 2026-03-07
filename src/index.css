@@ -110,7 +110,7 @@
 
 /* Mobile-first: consistent bottom padding for pages with BottomNav */
 .pb-nav {
-  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 96px);
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 90px);
 }
 
 /* Safe-area top padding utility */
