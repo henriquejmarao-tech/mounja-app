@@ -232,14 +232,14 @@ const MealsPage = () => {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => updateWater(-1)}
-                disabled={saving || waterGlasses <= 0}
+                disabled={waterGlasses <= 0}
                 className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center active:scale-90 transition-transform disabled:opacity-40"
               >
                 <Minus className="w-4 h-4 text-white" />
               </button>
               <button
                 onClick={() => updateWater(1)}
-                disabled={saving}
+                disabled={false}
                 className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center active:scale-90 transition-transform disabled:opacity-40"
               >
                 <Plus className="w-4 h-4 text-white" />
