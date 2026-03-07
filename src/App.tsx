@@ -10,6 +10,7 @@ import BottomNav from "./components/BottomNav";
 import PwaUpdater from "./components/pwa/PwaUpdater";
 
 // Pages
+import Welcome from "./pages/Welcome";
 import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
 import Triage from "./pages/Triage";
@@ -49,7 +50,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
       </div>
     );
   }
-  if (!user) return <Navigate to="/auth" replace />;
+  if (!user) return <Navigate to="/welcome" replace />;
   return <>{children}</>;
 };
 
@@ -80,10 +81,13 @@ const AppRoutes = () => {
   return (
     <>
       <Routes>
+        {/* Public routes */}
+        <Route path="/welcome" element={user ? <Navigate to="/" replace /> : <Welcome />} />
         <Route path="/auth" element={user ? <Navigate to="/" replace /> : <Auth />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/triagem" element={<ProtectedRoute><Triage /></ProtectedRoute>} />
+        <Route path="/triagem" element={<Triage />} />
 
+        {/* Protected routes */}
         <Route path="/" element={<ProtectedRoute><TriageGuard><Dashboard /></TriageGuard></ProtectedRoute>} />
         <Route path="/log" element={<ProtectedRoute><TriageGuard><LogPage /></TriageGuard></ProtectedRoute>} />
         <Route path="/meals" element={<ProtectedRoute><TriageGuard><MealsPage /></TriageGuard></ProtectedRoute>} />
@@ -91,7 +95,7 @@ const AppRoutes = () => {
         <Route path="/progress" element={<ProtectedRoute><TriageGuard><ProgressPage /></TriageGuard></ProtectedRoute>} />
         <Route path="/settings" element={<ProtectedRoute><TriageGuard><Settings /></TriageGuard></ProtectedRoute>} />
 
-        {/* Legacy routes redirect to new structure */}
+        {/* Legacy routes */}
         <Route path="/registrar" element={<Navigate to="/log" replace />} />
         <Route path="/historico" element={<Navigate to="/progress" replace />} />
         <Route path="/configuracoes" element={<Navigate to="/settings" replace />} />

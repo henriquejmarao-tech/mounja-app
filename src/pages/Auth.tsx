@@ -1,19 +1,92 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { Mail, Lock, User, ArrowRight, Eye, EyeOff, Leaf } from "lucide-react";
 import { toast } from "sonner";
+import { getTriageData, clearTriageData, hasTriageData } from "@/hooks/useTriageStorage";
+import { localDateStr } from "@/lib/utils";
 import logoMounja from "@/assets/logo-mounja.png";
 
+const weekDays = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
+
+const savePendingTriageData = async (userId: string) => {
+  const data = getTriageData();
+  if (!data) return;
+
+  try {
+    const currentWeight = data.weightKg + data.weightDecimal / 10;
+    const currentDose = data.doseValue ? `${data.doseValue} mg` : null;
+    const age = new Date().getFullYear() - data.birthYear;
+
+    const deriveGoal = () => {
+      if (data.motivations.includes("health_control")) return "weight_loss";
+      if (data.motivations.includes("food_relationship")) return "glycemic_control";
+      return "weight_loss";
+    };
+
+    const deriveIntervalDays = () => {
+      if (data.frequency === "daily") return 1;
+      if (data.frequency === "weekly") return 7;
+      return data.customIntervalDays;
+    };
+
+    await supabase
+      .from("profiles")
+      .update({
+        name: data.name,
+        sex: data.sex || null,
+        age,
+        height_cm: data.heightCm,
+        current_weight: currentWeight,
+        goal: deriveGoal(),
+        current_dose: currentDose,
+        application_interval_days: deriveIntervalDays(),
+        application_day: weekDays[data.applicationDay] || null,
+        application_frequency: data.frequency,
+        triage_completed: true,
+      } as any)
+      .eq("id", userId);
+
+    if (currentDose && data.lastApplicationDate) {
+      await supabase.from("injections").insert({
+        user_id: userId,
+        date: data.lastApplicationDate,
+        dose: currentDose,
+        site: data.injectionSite || null,
+        notes: "Registrado via triagem inicial",
+      });
+    }
+
+    await supabase.from("daily_logs").insert({
+      user_id: userId,
+      date: localDateStr(),
+      weight: currentWeight,
+    });
+
+    clearTriageData();
+  } catch (err) {
+    console.error("Error saving triage data:", err);
+  }
+};
+
 const Auth = () => {
-  const [isLogin, setIsLogin] = useState(true);
+  const [searchParams] = useSearchParams();
+  const initialMode = searchParams.get("mode");
+  const [isLogin, setIsLogin] = useState(initialMode !== "signup");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const hasTriage = hasTriageData();
+
+  // Pre-fill name from triage data
+  useEffect(() => {
+    const data = getTriageData();
+    if (data?.name) setName(data.name);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,13 +98,20 @@ const Auth = () => {
         if (error) throw error;
         toast.success("Que bom ter você de volta! 🌿");
       } else {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: { emailRedirectTo: window.location.origin },
         });
         if (error) throw error;
-        toast.success("Conta criada! Verifique seu e-mail para confirmar.");
+
+        // If user was auto-confirmed and we have triage data, save it
+        if (data.user && hasTriage) {
+          await savePendingTriageData(data.user.id);
+          toast.success("Conta criada e plano salvo! 🎉");
+        } else {
+          toast.success("Conta criada! Verifique seu e-mail para confirmar.");
+        }
       }
     } catch (error: any) {
       toast.error(error.message || "Algo deu errado. Tente novamente.");
@@ -63,12 +143,10 @@ const Auth = () => {
     <div className="min-h-screen bg-background flex flex-col">
       {/* Hero brand area */}
       <div className="relative overflow-hidden flex flex-col items-center justify-center pt-16 pb-10 px-8">
-        {/* Layered organic background */}
         <div className="absolute inset-0 bg-gradient-to-b from-primary/15 via-accent/25 to-background" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-primary/8 blur-3xl" />
         <div className="absolute bottom-0 right-0 w-64 h-64 rounded-full bg-secondary/10 blur-2xl" />
-        
-        {/* Decorative leaves */}
+
         <div className="absolute top-8 left-6 opacity-15">
           <Leaf className="w-8 h-8 text-primary rotate-[-30deg]" />
         </div>
@@ -80,11 +158,7 @@ const Auth = () => {
         </div>
 
         <div className="relative flex flex-col items-center">
-          <img 
-            src={logoMounja} 
-            alt="Mounjá" 
-            className="h-40 w-auto mb-3 object-contain drop-shadow-lg" 
-          />
+          <img src={logoMounja} alt="Mounjá" className="h-40 w-auto mb-3 object-contain drop-shadow-lg" />
           <p className="text-base text-muted-foreground italic font-medium tracking-wide">
             Aqui para caminhar com você.
           </p>
@@ -94,7 +168,7 @@ const Auth = () => {
       {/* Form area */}
       <div className="flex-1 px-6 pb-8">
         <p className="text-center text-sm text-muted-foreground mb-5 font-medium">
-          {isLogin ? "Acesse sua conta" : "Crie sua conta gratuita"}
+          {isLogin ? "Acesse sua conta" : hasTriage ? "Crie sua conta para salvar seu plano" : "Crie sua conta gratuita"}
         </p>
 
         {/* Google Login */}
