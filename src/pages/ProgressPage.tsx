@@ -293,7 +293,7 @@ const ProgressPage = () => {
           <div className="bg-card rounded-[20px] p-5 shadow-card border border-border/50 min-w-[calc(100vw-40px)] max-w-[calc(100vw-40px)] snap-center">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-base font-bold text-foreground">Fotos de Progresso</h3>
-              <button className="text-xs font-semibold text-muted-foreground flex items-center gap-0.5">
+              <button onClick={() => navigate("/fotos")} className="text-xs font-semibold text-muted-foreground flex items-center gap-0.5">
                 Ver todas <ChevronRight className="w-3 h-3" />
               </button>
             </div>
