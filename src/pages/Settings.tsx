@@ -1,11 +1,14 @@
 import { useState } from "react";
-import { User, Bell, Shield, HelpCircle, ChevronRight, LogOut, MessageSquare, Star, Send, Bug, Lightbulb, X, BookOpen, Syringe } from "lucide-react";
+import {
+  ChevronRight, LogOut, MessageSquare, Star, Send, Bug, Lightbulb, X,
+  Pill, Ruler, Info, Mail, LightbulbIcon, ShieldCheck, FileText, Share2, Star as StarOutline,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { useApplicationData } from "@/hooks/useApplicationData";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 
 type FeedbackType = "rating" | "suggestion" | "bug";
 
@@ -17,121 +20,133 @@ const feedbackTypes = [
 
 const Settings = () => {
   const navigate = useNavigate();
-  const { profile, signOut, user, refreshProfile } = useAuth();
-  const { refresh, dose } = useApplicationData();
+  const { profile, signOut, user } = useAuth();
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedbackType, setFeedbackType] = useState<FeedbackType>("rating");
   const [rating, setRating] = useState(0);
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
-  const [intervalDays, setIntervalDays] = useState<string>(String(dose.applicationIntervalDays || (profile as any)?.application_interval_days || 7));
-  const [savingInterval, setSavingInterval] = useState(false);
+  const [showHeight, setShowHeight] = useState(false);
+  const [heightInt, setHeightInt] = useState(170);
+  const [heightDec, setHeightDec] = useState(0);
 
-  const handleSaveInterval = async () => {
-    if (!user) return;
-    const val = parseInt(intervalDays);
-    if (!val || val < 1) { toast.error("Intervalo deve ser positivo."); return; }
-    setSavingInterval(true);
-    const { error } = await supabase.from("profiles").update({ application_interval_days: val } as any).eq("id", user.id);
-    if (error) { toast.error("Erro ao salvar."); }
-    else { await refreshProfile(); await refresh(); toast.success("Intervalo atualizado ✓"); }
-    setSavingInterval(false);
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/auth");
   };
-
-  const handleLogout = async () => { await signOut(); navigate("/auth"); };
 
   const handleSendFeedback = async () => {
     if (!user) return;
     if (!message.trim()) { toast.error("Escreva sua mensagem."); return; }
     if (feedbackType === "rating" && rating === 0) { toast.error("Selecione uma avaliação."); return; }
     setSending(true);
-    const { error } = await supabase.from("feedback").insert({ user_id: user.id, type: feedbackType, rating: feedbackType === "rating" ? rating : null, message: message.trim() } as any);
-    if (error) { toast.error("Erro ao enviar."); }
+    const { error } = await supabase.from("feedback").insert({
+      user_id: user.id, type: feedbackType,
+      rating: feedbackType === "rating" ? rating : null,
+      message: message.trim(),
+    } as any);
+    if (error) toast.error("Erro ao enviar.");
     else { toast.success("Obrigado pelo feedback! 💚"); setShowFeedback(false); setMessage(""); setRating(0); }
     setSending(false);
   };
 
-  const menuItems = [
-    { icon: User, label: "Meus dados", route: "/minha-triagem", desc: "Peso, objetivo e dados pessoais" },
-    { icon: Syringe, label: "Aplicações", route: "/aplicacao", desc: "Histórico e rodízio" },
-    { icon: BookOpen, label: "Tutorial", route: "/tutorial", desc: "Reveja como usar o app" },
-    { icon: Bell, label: "Notificações", desc: "Lembretes e alertas" },
-    { icon: Shield, label: "Privacidade", desc: "Dados e segurança" },
-    { icon: HelpCircle, label: "Ajuda", desc: "Dúvidas frequentes" },
-  ];
+  const openHeight = () => {
+    const h = profile?.height_cm ? Number(profile.height_cm) : 170;
+    setHeightInt(Math.floor(h));
+    setHeightDec(Math.round((h % 1) * 10));
+    setShowHeight(true);
+  };
+
+  const saveHeight = async () => {
+    if (!user) return;
+    const value = heightInt + heightDec / 10;
+    const { error } = await supabase.from("profiles").update({ height_cm: value }).eq("id", user.id);
+    if (error) { toast.error("Erro ao salvar"); return; }
+    toast.success("Altura atualizada");
+    setShowHeight(false);
+  };
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      await navigator.share({ title: "Mounja", text: "Acompanhe sua jornada com Mounjaro®", url: window.location.origin });
+    } else {
+      await navigator.clipboard.writeText(window.location.origin);
+      toast.success("Link copiado!");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background pb-nav">
       <div className="px-6 pt-safe pb-2">
-        <h1 className="text-2xl font-bold text-foreground">Settings</h1>
+        <h1 className="text-2xl font-extrabold text-foreground mt-4">Configurações</h1>
       </div>
 
-      <div className="px-5 space-y-4 mt-2">
-        {/* Profile header */}
-        <div className="bg-card rounded-2xl p-5 shadow-card border border-border/50 flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary text-xl font-bold">
-            {profile?.name?.[0]?.toUpperCase() || "U"}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-base font-bold text-foreground truncate">{profile?.name || "Usuário"}</p>
-            <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
-            {profile?.current_dose && <p className="text-xs text-primary font-medium mt-0.5">Dose {profile.current_dose}</p>}
-          </div>
+      <div className="px-5 space-y-4 mt-4">
+        {/* Treatment section */}
+        <div className="bg-card rounded-2xl border border-border/50 divide-y divide-border/50">
+          <MenuItem icon={Pill} label="Plano de tratamento" onClick={() => navigate("/plano-tratamento")} />
+          <MenuItem icon={Ruler} label="Atualizar altura" onClick={openHeight} />
         </div>
 
-        {/* Interval config */}
-        <div className="bg-card rounded-2xl p-5 shadow-card border border-border/50 space-y-3">
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Intervalo entre aplicações</p>
-          <div className="flex gap-2">
-            <input type="number" min="1" value={intervalDays} onChange={(e) => setIntervalDays(e.target.value)}
-              className="flex-1 px-4 py-3 rounded-xl border border-border bg-secondary/30 text-sm outline-none focus:ring-2 focus:ring-primary/20"
-            />
-            <button onClick={handleSaveInterval} disabled={savingInterval}
-              className="px-5 py-3 rounded-xl bg-primary text-primary-foreground text-xs font-bold disabled:opacity-50">
-              {savingInterval ? "..." : "Salvar"}
-            </button>
-          </div>
+        {/* Support section */}
+        <div className="bg-card rounded-2xl border border-border/50 divide-y divide-border/50">
+          <MenuItem icon={Info} label="Sobre nós" onClick={() => toast.info("Mounja · Aqui para caminhar com você")} />
+          <MenuItem icon={Mail} label="Contato" onClick={() => toast.info("contato@mounja.app")} />
+          <MenuItem icon={LightbulbIcon} label="Sugerir funcionalidade" onClick={() => { setFeedbackType("suggestion"); setShowFeedback(true); }} />
+          <div className="border-t border-border/30" />
+          <MenuItem icon={ShieldCheck} label="Política de privacidade" onClick={() => {}} />
+          <MenuItem icon={FileText} label="Termos e condições" onClick={() => {}} />
         </div>
 
-        {/* Menu */}
-        <div className="bg-card rounded-2xl shadow-card border border-border/50 overflow-hidden">
-          {menuItems.map((item, i) => (
-            <button key={i} onClick={() => item.route && navigate(item.route)}
-              className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-secondary/40 transition-colors border-b border-border/30 last:border-0"
-            >
-              <div className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center">
-                <item.icon className="w-4 h-4 text-muted-foreground" />
-              </div>
-              <div className="flex-1 text-left">
-                <span className="text-sm font-medium block">{item.label}</span>
-                {item.desc && <span className="text-[11px] text-muted-foreground">{item.desc}</span>}
-              </div>
-              <ChevronRight className="w-4 h-4 text-muted-foreground/40" />
-            </button>
-          ))}
+        {/* Share section */}
+        <div className="bg-card rounded-2xl border border-border/50 divide-y divide-border/50">
+          <MenuItem icon={Share2} label="Compartilhar Mounja" onClick={handleShare} />
+          <MenuItem icon={StarOutline} label="Avaliar o app" onClick={() => { setFeedbackType("rating"); setShowFeedback(true); }} />
         </div>
 
-        {/* Feedback */}
-        <button onClick={() => setShowFeedback(true)}
-          className="w-full flex items-center gap-3 bg-card rounded-2xl p-4 shadow-card border border-primary/10 active:scale-[0.98] transition-transform"
-        >
-          <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
-            <MessageSquare className="w-4 h-4 text-primary" />
-          </div>
-          <div className="flex-1 text-left">
-            <span className="text-sm font-semibold">Dar opinião</span>
-            <span className="text-[11px] text-muted-foreground block">Avalie, sugira ou reporte</span>
-          </div>
-        </button>
+        {/* User ID */}
+        <p className="text-xs text-muted-foreground/50 text-center pt-2 select-all">
+          User Id: {user?.id}
+        </p>
 
         {/* Logout */}
-        <button onClick={handleLogout}
+        <button
+          onClick={handleLogout}
           className="w-full flex items-center justify-center gap-2 py-3.5 text-destructive text-sm font-semibold rounded-2xl hover:bg-destructive/5 transition-colors"
         >
           <LogOut className="w-4 h-4" />
           Sair da conta
         </button>
       </div>
+
+      {/* Height Drawer */}
+      <Drawer open={showHeight} onOpenChange={setShowHeight}>
+        <DrawerContent className="pb-safe">
+          <div className="mx-auto w-full max-w-md px-6 pb-6">
+            <DrawerHeader className="px-0 pt-2 pb-4">
+              <DrawerTitle className="text-lg font-bold text-center">Atualizar altura</DrawerTitle>
+            </DrawerHeader>
+
+            <div className="flex items-center justify-center gap-2 mb-8">
+              <div className="flex flex-col items-center gap-1">
+                <button onClick={() => setHeightInt((v) => v + 1)} className="text-sm text-muted-foreground/50 h-5">{heightInt + 2}</button>
+                <button onClick={() => setHeightInt((v) => v + 1)} className="text-base text-muted-foreground h-6">{heightInt + 1}</button>
+                <div className="bg-muted rounded-xl px-8 py-3 my-1">
+                  <span className="text-2xl font-bold text-foreground">{heightInt}</span>
+                </div>
+                <button onClick={() => setHeightInt((v) => Math.max(100, v - 1))} className="text-base text-muted-foreground h-6">{heightInt - 1}</button>
+                <button onClick={() => setHeightInt((v) => Math.max(100, v - 1))} className="text-sm text-muted-foreground/50 h-5">{heightInt - 2}</button>
+              </div>
+
+              <span className="text-lg font-semibold text-muted-foreground ml-1">cm</span>
+            </div>
+
+            <button onClick={saveHeight} className="w-full py-4 rounded-full bg-primary text-primary-foreground text-base font-bold active:scale-[0.98] transition-transform">
+              Salvar
+            </button>
+          </div>
+        </DrawerContent>
+      </Drawer>
 
       {/* Feedback modal */}
       {showFeedback && (
@@ -178,5 +193,15 @@ const Settings = () => {
     </div>
   );
 };
+
+const MenuItem = ({ icon: Icon, label, onClick }: { icon: any; label: string; onClick: () => void }) => (
+  <button onClick={onClick} className="w-full flex items-center justify-between px-5 py-4 active:bg-muted/50 transition-colors">
+    <div className="flex items-center gap-3">
+      <Icon className="w-5 h-5 text-muted-foreground" />
+      <span className="text-base font-medium text-foreground">{label}</span>
+    </div>
+    <ChevronRight className="w-4 h-4 text-muted-foreground/50" />
+  </button>
+);
 
 export default Settings;
