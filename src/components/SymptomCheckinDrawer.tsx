@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,7 +11,7 @@ const symptomCategories = [
   {
     title: "Sintomas",
     color: "bg-blue-100 text-blue-700",
-    activeColor: "bg-blue-200 text-blue-800 ring-2 ring-blue-400/50",
+    activeColor: "bg-blue-500 text-white ring-2 ring-blue-500/30 shadow-sm",
     items: [
       { key: "symptom_nausea", label: "Náusea", emoji: "🤢" },
       { key: "symptom_constipation", label: "Constipação", emoji: "😣" },
@@ -26,7 +26,7 @@ const symptomCategories = [
   {
     title: "Apetite",
     color: "bg-orange-100 text-orange-700",
-    activeColor: "bg-orange-200 text-orange-800 ring-2 ring-orange-400/50",
+    activeColor: "bg-orange-500 text-white ring-2 ring-orange-500/30 shadow-sm",
     items: [
       { key: "appetite_suppressed", label: "Sem apetite", emoji: "🚫" },
       { key: "appetite_cravings", label: "Compulsão", emoji: "🍫" },
@@ -37,7 +37,7 @@ const symptomCategories = [
   {
     title: "Reação na aplicação",
     color: "bg-red-100 text-red-700",
-    activeColor: "bg-red-200 text-red-800 ring-2 ring-red-400/50",
+    activeColor: "bg-red-500 text-white ring-2 ring-red-500/30 shadow-sm",
     items: [
       { key: "symptom_injection_pain", label: "Dor", emoji: "💉" },
       { key: "injection_swelling", label: "Inchaço", emoji: "🔺" },
@@ -48,7 +48,7 @@ const symptomCategories = [
   {
     title: "Humor",
     color: "bg-yellow-100 text-yellow-700",
-    activeColor: "bg-yellow-200 text-yellow-800 ring-2 ring-yellow-400/50",
+    activeColor: "bg-yellow-500 text-white ring-2 ring-yellow-500/30 shadow-sm",
     items: [
       { key: "mood_calm", label: "Calmo", emoji: "😌" },
       { key: "mood_happy", label: "Feliz", emoji: "😊" },
@@ -70,6 +70,52 @@ const SymptomCheckinDrawer = ({ open, onOpenChange, date }: SymptomCheckinDrawer
   const { user } = useAuth();
   const [selected, setSelected] = useState<Record<string, boolean>>({});
   const [saving, setSaving] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+
+  // Load existing data when drawer opens
+  useEffect(() => {
+    if (!open || !user) {
+      setLoaded(false);
+      return;
+    }
+    const loadExisting = async () => {
+      const dateStr = localDateStr(date || new Date());
+      const { data } = await supabase
+        .from("daily_logs")
+        .select("symptom_nausea, symptom_constipation, symptom_diarrhea, symptom_headache, symptom_fatigue, symptom_injection_pain, notes")
+        .eq("user_id", user.id)
+        .eq("date", dateStr)
+        .limit(1);
+      
+      const existing = (data as any[])?.[0];
+      if (existing) {
+        const restored: Record<string, boolean> = {};
+        const dbKeys = ["symptom_nausea", "symptom_constipation", "symptom_diarrhea", "symptom_headache", "symptom_fatigue", "symptom_injection_pain"];
+        dbKeys.forEach((key) => {
+          if (existing[key] && existing[key] > 0) restored[key] = true;
+        });
+        // Restore extra symptoms from notes
+        if (existing.notes) {
+          const checkinMatch = existing.notes.match(/Checkin: (.+)/);
+          if (checkinMatch) {
+            const labels = checkinMatch[1].split(", ");
+            for (const cat of symptomCategories) {
+              for (const item of cat.items) {
+                if (labels.some((l: string) => l.includes(item.label))) {
+                  restored[item.key] = true;
+                }
+              }
+            }
+          }
+        }
+        setSelected(restored);
+      } else {
+        setSelected({});
+      }
+      setLoaded(true);
+    };
+    loadExisting();
+  }, [open, user, date]);
 
   const toggle = (key: string) => {
     setSelected((prev) => ({ ...prev, [key]: !prev[key] }));
