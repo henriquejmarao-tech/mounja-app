@@ -115,6 +115,7 @@ const Dashboard = () => {
   }, [user]);
 
   const hasTreatment = !!dose.currentDose;
+  const selectedDayHasInjection = weekInjections.has(selectedDateStr);
   const initialWeight = profile?.current_weight;
   const goalWeight = profile?.goal ? parseFloat(profile.goal) : null;
   const currentWeight = latestWeight || (weightHistory.length > 0 ? weightHistory[weightHistory.length - 1].peso : null);
