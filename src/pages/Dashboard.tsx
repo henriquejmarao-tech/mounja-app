@@ -143,14 +143,12 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen pb-nav bg-background">
-      {/* ── Expanded gradient background covering header + week + hero ── */}
+    <div
+      className="min-h-screen pb-nav transition-all duration-500"
+      style={{ background: heroGradient }}
+    >
+      {/* ── Full-page gradient with decorative shapes ── */}
       <div
-        className="relative transition-all duration-500"
-        style={{ background: heroGradient }}
-      >
-        {/* Decorative wave shapes */}
-        <div
           className="absolute inset-0 opacity-30 pointer-events-none"
           style={{
             background: `
