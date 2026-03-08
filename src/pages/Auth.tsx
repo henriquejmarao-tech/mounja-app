@@ -140,9 +140,9 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="bg-background flex flex-col overflow-y-auto" style={{ minHeight: "100dvh" }}>
       {/* Hero brand area */}
-      <div className="relative overflow-hidden flex flex-col items-center justify-center pt-16 pb-10 px-8">
+      <div className="relative overflow-hidden flex flex-col items-center justify-center pt-12 pb-6 px-8 shrink-0">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/15 via-accent/25 to-background" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-primary/8 blur-3xl" />
         <div className="absolute bottom-0 right-0 w-64 h-64 rounded-full bg-secondary/10 blur-2xl" />
@@ -158,7 +158,7 @@ const Auth = () => {
         </div>
 
         <div className="relative flex flex-col items-center">
-          <img src={logoMounja} alt="Mounjá" className="h-40 w-auto mb-3 object-contain drop-shadow-lg" />
+          <img src={logoMounja} alt="Mounjá" className="h-28 w-auto mb-2 object-contain drop-shadow-lg" />
           <p className="text-base text-muted-foreground italic font-medium tracking-wide">
             Aqui para caminhar com você.
           </p>
@@ -166,7 +166,7 @@ const Auth = () => {
       </div>
 
       {/* Form area */}
-      <div className="flex-1 px-6 pb-8">
+      <div className="flex-1 px-6 pb-10">
         <p className="text-center text-sm text-muted-foreground mb-5 font-medium">
           {isLogin ? "Acesse sua conta" : hasTriage ? "Crie sua conta para salvar seu plano" : "Crie sua conta gratuita"}
         </p>
