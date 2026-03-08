@@ -255,6 +255,7 @@ const Triage = () => {
   const [applicationTime, setApplicationTime] = useState("08:00");
   const [customIntervalDays, setCustomIntervalDays] = useState(7);
   const [lastApplicationDate, setLastApplicationDate] = useState("");
+  const [doseIntervalDays, setDoseIntervalDays] = useState(7);
 
   // Personal
   const [name, setName] = useState("");
