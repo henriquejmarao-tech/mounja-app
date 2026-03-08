@@ -126,7 +126,7 @@ const ScrollPicker = ({
                   "flex items-center justify-center transition-all duration-150 relative z-[1]",
                   isSelected ? "text-foreground text-xl font-bold" : "text-muted-foreground/50 text-base"
                 )}
-                style={{ height: itemHeight, scrollSnapAlign: "start" }}
+                style={{ height: itemHeight }}
                 onClick={() => {
                   onChange(item);
                   containerRef.current?.scrollTo({ top: i * itemHeight, behavior: "smooth" });
