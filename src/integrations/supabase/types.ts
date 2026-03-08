@@ -326,6 +326,48 @@ export type Database = {
         }
         Relationships: []
       }
+      meal_logs: {
+        Row: {
+          ai_analysis: Json | null
+          calories: number | null
+          created_at: string
+          date: string
+          description: string | null
+          fiber: number | null
+          id: string
+          meal_time: string
+          photo_url: string | null
+          protein: number | null
+          user_id: string
+        }
+        Insert: {
+          ai_analysis?: Json | null
+          calories?: number | null
+          created_at?: string
+          date?: string
+          description?: string | null
+          fiber?: number | null
+          id?: string
+          meal_time?: string
+          photo_url?: string | null
+          protein?: number | null
+          user_id: string
+        }
+        Update: {
+          ai_analysis?: Json | null
+          calories?: number | null
+          created_at?: string
+          date?: string
+          description?: string | null
+          fiber?: number | null
+          id?: string
+          meal_time?: string
+          photo_url?: string | null
+          protein?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           activity_level: string | null
