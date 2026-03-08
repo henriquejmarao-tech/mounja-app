@@ -7,6 +7,8 @@ import { localDateStr, cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import EditGoalsDrawer from "@/components/meals/EditGoalsDrawer";
+import AddMealDrawer from "@/components/meals/AddMealDrawer";
+import MealCard from "@/components/meals/MealCard";
 
 const DAYS = ["M", "T", "W", "T", "F", "S", "S"];
 const ML_PER_GLASS = 250;
