@@ -314,55 +314,84 @@ const MealsPage = () => {
 
       {/* Today's Meals */}
       <div className="px-5 mt-6">
-        <div className="flex items-center gap-2 mb-3">
-          <h2 className="text-lg font-bold text-foreground">Refeições de Hoje</h2>
-          <span className="text-[11px] font-semibold text-muted-foreground bg-muted px-2 py-0.5 rounded-full">Em breve</span>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-lg font-bold text-foreground">
+            {isToday ? "Refeições de Hoje" : `Refeições de ${currentDate.toLocaleDateString("pt-BR", { day: "numeric", month: "short" })}`}
+          </h2>
+          <span className="text-xs font-semibold text-muted-foreground">
+            {meals.length} {meals.length === 1 ? "refeição" : "refeições"}
+          </span>
         </div>
 
-        <div className="bg-card rounded-[20px] p-6 border border-border/50 shadow-card text-center">
-          <p className="text-base font-bold text-foreground mb-1">Comece sua sequência!</p>
-          <p className="text-sm text-muted-foreground mb-4">Registre refeições diariamente para criar o hábito</p>
-
-          <div className="flex items-center justify-center gap-2">
-            {DAYS.map((day, i) => {
-              const hasLog = dayHasLog(i);
-              const isCurrent = i === todayDayIndex;
-              return (
-                <div
-                  key={i}
-                  className={cn(
-                    "w-10 h-10 rounded-full flex items-center justify-center text-xs font-semibold transition-all",
-                    isCurrent
-                      ? "border-2 border-primary text-primary"
-                      : hasLog
-                        ? "bg-primary/10 text-primary"
-                        : "bg-muted text-muted-foreground"
-                  )}
-                >
-                  {day}
-                </div>
-              );
-            })}
+        {meals.length > 0 ? (
+          <div className="space-y-3">
+            {meals.map((meal) => (
+              <MealCard
+                key={meal.id}
+                meal={meal}
+                onDelete={async (id) => {
+                  await supabase.from("meal_logs").delete().eq("id", id);
+                  toast.success("Refeição removida");
+                  fetchData();
+                }}
+              />
+            ))}
           </div>
-        </div>
+        ) : (
+          <div className="bg-card rounded-[20px] p-6 border border-border/50 shadow-card text-center">
+            <p className="text-base font-bold text-foreground mb-1">Comece sua sequência!</p>
+            <p className="text-sm text-muted-foreground mb-4">Registre refeições diariamente para criar o hábito</p>
+
+            <div className="flex items-center justify-center gap-2">
+              {DAYS.map((day, i) => {
+                const hasLog = dayHasLog(i);
+                const isCurrent = i === todayDayIndex;
+                return (
+                  <div
+                    key={i}
+                    className={cn(
+                      "w-10 h-10 rounded-full flex items-center justify-center text-xs font-semibold transition-all",
+                      isCurrent
+                        ? "border-2 border-primary text-primary"
+                        : hasLog
+                          ? "bg-primary/10 text-primary"
+                          : "bg-muted text-muted-foreground"
+                    )}
+                  >
+                    {day}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* FAB */}
       <button
-        onClick={() => navigate("/nutrition")}
+        onClick={() => setAddMealOpen(true)}
         className="fixed right-5 z-40 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-elevated flex items-center justify-center active:scale-90 transition-transform"
         style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 80px)" }}
       >
         <Plus className="w-6 h-6" />
       </button>
 
-      {/* Edit Goals Drawer */}
+      {/* Drawers */}
       <EditGoalsDrawer
         open={goalsOpen}
         onOpenChange={setGoalsOpen}
         goals={{ calories: caloriesGoal, protein: proteinGoal, fiber: fiberGoal, water: glassesGoal }}
         onSave={handleSaveGoals}
       />
+      {user && (
+        <AddMealDrawer
+          open={addMealOpen}
+          onOpenChange={setAddMealOpen}
+          userId={user.id}
+          date={dateStr}
+          onMealAdded={fetchData}
+        />
+      )}
     </div>
   );
 };
