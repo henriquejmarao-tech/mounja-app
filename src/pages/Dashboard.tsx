@@ -235,7 +235,7 @@ const Dashboard = () => {
                   <p className="text-secondary text-base font-semibold tracking-wide">
                     {selectedDate.toLocaleDateString("pt-BR", { day: "numeric", month: "long" })}
                   </p>
-                  <p className="text-secondary text-2xl font-extrabold mt-2 leading-tight">
+                  <p className="text-foreground text-2xl font-extrabold mt-2 leading-tight">
                     Sem aplicação registrada
                   </p>
                   <button
