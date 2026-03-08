@@ -522,8 +522,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 5: Help needs =====
-      case 5:
+      // ===== 6: Help needs =====
+      case 6:
         return (
           <div className="flex-1 flex flex-col px-6">
             <h1 className="text-2xl font-bold text-foreground text-center mb-2 mt-4">Como podemos te ajudar?</h1>
