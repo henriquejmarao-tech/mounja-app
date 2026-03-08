@@ -149,29 +149,39 @@ const Dashboard = () => {
     >
       {/* ── Animated floating blobs ── */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {/* Blob 1 - large, slow drift top-left */}
+        {/* Top-center glow - dominant, visible immediately */}
         <div
-          className="absolute -top-20 -left-20 w-[340px] h-[340px] rounded-full opacity-20 animate-[blob-drift_18s_ease-in-out_infinite]"
+          className="absolute -top-32 left-1/2 -translate-x-1/2 w-[420px] h-[420px] rounded-full opacity-30 animate-[blob-breathe_12s_ease-in-out_infinite]"
           style={{
             background: selectedDayHasInjection
-              ? "radial-gradient(circle, hsl(11, 60%, 65%) 0%, transparent 70%)"
-              : "radial-gradient(circle, hsl(280, 30%, 78%) 0%, transparent 70%)",
-            filter: "blur(40px)",
+              ? "radial-gradient(circle, hsl(11, 55%, 60%) 0%, hsl(314, 20%, 50%) 40%, transparent 70%)"
+              : "radial-gradient(circle, hsl(280, 35%, 75%) 0%, hsl(320, 22%, 80%) 40%, transparent 70%)",
+            filter: "blur(30px)",
           }}
         />
-        {/* Blob 2 - medium, orbit top-right */}
+        {/* Top-left aurora streak */}
         <div
-          className="absolute top-16 -right-12 w-[250px] h-[250px] rounded-full opacity-15 animate-[blob-orbit_22s_ease-in-out_infinite_reverse]"
+          className="absolute -top-10 -left-16 w-[300px] h-[200px] rounded-full opacity-25 animate-[blob-drift_18s_ease-in-out_infinite]"
           style={{
             background: selectedDayHasInjection
-              ? "radial-gradient(circle, hsl(314, 25%, 55%) 0%, transparent 70%)"
-              : "radial-gradient(circle, hsl(320, 20%, 80%) 0%, transparent 70%)",
-            filter: "blur(35px)",
+              ? "radial-gradient(ellipse 70% 50%, hsl(340, 30%, 55%) 0%, transparent 70%)"
+              : "radial-gradient(ellipse 70% 50%, hsl(260, 30%, 78%) 0%, transparent 70%)",
+            filter: "blur(25px)",
           }}
         />
-        {/* Blob 3 - warm accent, center-left */}
+        {/* Top-right warm accent */}
         <div
-          className="absolute top-[40%] -left-8 w-[200px] h-[200px] rounded-full opacity-12 animate-[blob-float_15s_ease-in-out_infinite_2s]"
+          className="absolute -top-6 -right-10 w-[260px] h-[220px] rounded-full opacity-20 animate-[blob-orbit_22s_ease-in-out_infinite_reverse]"
+          style={{
+            background: selectedDayHasInjection
+              ? "radial-gradient(ellipse 60% 70%, hsl(25, 50%, 58%) 0%, transparent 70%)"
+              : "radial-gradient(ellipse 60% 70%, hsl(11, 30%, 82%) 0%, transparent 70%)",
+            filter: "blur(28px)",
+          }}
+        />
+        {/* Mid-left floating blob */}
+        <div
+          className="absolute top-[35%] -left-8 w-[200px] h-[200px] rounded-full opacity-12 animate-[blob-float_15s_ease-in-out_infinite_2s]"
           style={{
             background: selectedDayHasInjection
               ? "radial-gradient(circle, hsl(25, 55%, 60%) 0%, transparent 70%)"
@@ -179,9 +189,9 @@ const Dashboard = () => {
             filter: "blur(30px)",
           }}
         />
-        {/* Blob 4 - cool accent, bottom-right */}
+        {/* Bottom-right cool accent */}
         <div
-          className="absolute top-[60%] -right-16 w-[280px] h-[280px] rounded-full opacity-10 animate-[blob-drift_20s_ease-in-out_infinite_4s]"
+          className="absolute top-[55%] -right-16 w-[280px] h-[280px] rounded-full opacity-10 animate-[blob-drift_20s_ease-in-out_infinite_4s]"
           style={{
             background: selectedDayHasInjection
               ? "radial-gradient(circle, hsl(340, 20%, 50%) 0%, transparent 70%)"
@@ -189,7 +199,7 @@ const Dashboard = () => {
             filter: "blur(45px)",
           }}
         />
-        {/* Blob 5 - subtle shimmer, bottom */}
+        {/* Bottom shimmer */}
         <div
           className="absolute bottom-[10%] left-[20%] w-[180px] h-[180px] rounded-full opacity-8 animate-[blob-orbit_25s_ease-in-out_infinite_6s]"
           style={{
