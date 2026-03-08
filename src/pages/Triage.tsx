@@ -68,15 +68,27 @@ const ScrollPicker = ({
         <div
           ref={containerRef}
           onScroll={handleScroll}
-          onTouchStart={(e) => e.stopPropagation()}
+          onTouchStart={(e) => {
+            e.stopPropagation();
+            // Force iOS to recognise this as a scrollable region
+            const el = containerRef.current;
+            if (el && el.scrollHeight > el.clientHeight) {
+              if (el.scrollTop <= 0) el.scrollTop = 1;
+              if (el.scrollTop + el.clientHeight >= el.scrollHeight)
+                el.scrollTop = el.scrollHeight - el.clientHeight - 1;
+            }
+          }}
           onTouchMove={(e) => e.stopPropagation()}
-          className="overflow-y-auto scrollbar-hide w-32"
+          className="overflow-y-auto scrollbar-hide"
           style={{
             height: containerHeight,
+            width: 128,
             scrollSnapType: "y mandatory",
             WebkitOverflowScrolling: "touch",
             overscrollBehavior: "contain",
             touchAction: "pan-y",
+            position: "relative",
+            zIndex: 5,
           }}
         >
           {/* Top padding */}
@@ -781,9 +793,9 @@ const Triage = () => {
       // ===== 18: Current weight =====
       case 18:
         return (
-          <div className="flex-1 flex flex-col px-6">
+          <div className="flex-1 flex flex-col px-6" style={{ touchAction: "pan-y" }}>
             <h1 className="text-2xl font-bold text-foreground text-center mb-4 mt-4">Quanto você pesa?</h1>
-            <div className="flex-1 flex items-center justify-center">
+            <div className="flex-1 flex items-center justify-center" style={{ overflow: "visible" }}>
               <div className="flex items-center gap-1">
                 <ScrollPicker items={weightKgValues} value={weightKg}
                   onChange={(v) => setWeightKg(v as number)} />
@@ -799,9 +811,9 @@ const Triage = () => {
       // ===== 19: Weight goal =====
       case 19:
         return (
-          <div className="flex-1 flex flex-col px-6">
+          <div className="flex-1 flex flex-col px-6" style={{ touchAction: "pan-y" }}>
             <h1 className="text-2xl font-bold text-foreground text-center mb-4 mt-4">Qual seu peso meta?</h1>
-            <div className="flex-1 flex items-center justify-center">
+            <div className="flex-1 flex items-center justify-center" style={{ overflow: "visible" }}>
               <div className="flex items-center gap-1">
                 <ScrollPicker items={weightKgValues} value={goalKg}
                   onChange={(v) => setGoalKg(v as number)} />
