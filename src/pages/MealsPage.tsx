@@ -37,10 +37,10 @@ const MealsPage = () => {
   const fiberGoal = profile?.fiber_goal || 25;
   const glassesGoal = profile?.water_glasses_goal || 11;
 
-  // Current values from today's log
-  const caloriesCurrent = todayLog?.calories || 0;
-  const proteinCurrent = todayLog?.protein || 0;
-  const fiberCurrent = todayLog?.fiber || 0;
+  // Current values computed from meal_logs
+  const caloriesCurrent = meals.reduce((sum, m) => sum + (m.calories || 0), 0);
+  const proteinCurrent = meals.reduce((sum, m) => sum + (Number(m.protein) || 0), 0);
+  const fiberCurrent = meals.reduce((sum, m) => sum + (Number(m.fiber) || 0), 0);
 
   const dateLabel = isToday
     ? "Hoje"
