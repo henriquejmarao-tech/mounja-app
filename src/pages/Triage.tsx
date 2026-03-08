@@ -219,18 +219,19 @@ const medications = [
   11 Alternate sites
   12 Frequency & schedule
   13 Last application date
-  14 Results motivation chart
-  15 Personal intro
-  16 Sex
-  17 Height
-  18 Birth year
-  19 Current weight (picker)
-  20 Weight goal (picker)
-  21 Motivational calculation
-  22 Health motivation (family)
-  23 Creating plan (loading → save)
+  14 Dose interval
+  15 Results motivation chart
+  16 Personal intro
+  17 Sex
+  18 Height
+  19 Birth year
+  20 Current weight (picker)
+  21 Weight goal (picker)
+  22 Motivational calculation
+  23 Health motivation (family)
+  24 Creating plan (loading → save)
 */
-const TOTAL_STEPS = 24;
+const TOTAL_STEPS = 25;
 
 const Triage = () => {
   const navigate = useNavigate();
