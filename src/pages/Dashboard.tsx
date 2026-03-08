@@ -144,7 +144,7 @@ const Dashboard = () => {
 
   return (
     <div
-      className="min-h-screen pb-nav transition-all duration-500"
+      className="min-h-screen pb-nav relative transition-all duration-500"
       style={{ background: heroGradient }}
     >
       {/* Decorative shapes - top area only */}
