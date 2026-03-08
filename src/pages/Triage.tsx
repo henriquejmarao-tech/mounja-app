@@ -306,7 +306,7 @@ const Triage = () => {
 
   // Loading screen triggers save
   useEffect(() => {
-    if (step === 22) {
+    if (step === 23) {
       setLoadingProgress(0);
       const interval = setInterval(() => {
         setLoadingProgress((prev) => {
