@@ -27,8 +27,7 @@ const ScrollPicker = ({
   itemHeight?: number;
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const isScrolling = useRef(false);
-  const isTouchingRef = useRef(false);
+  const isProgrammaticScrollRef = useRef(false);
   const snapTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
   const visibleItems = 5;
@@ -37,16 +36,26 @@ const ScrollPicker = ({
 
   const snapToNearest = useCallback(() => {
     if (!containerRef.current) return;
+
     const idx = Math.round(containerRef.current.scrollTop / itemHeight);
     const clamped = Math.max(0, Math.min(items.length - 1, idx));
-    containerRef.current.scrollTo({ top: clamped * itemHeight, behavior: "smooth" });
+
+    isProgrammaticScrollRef.current = true;
+    containerRef.current.scrollTo({ top: clamped * itemHeight, behavior: "auto" });
     onChange(items[clamped]);
+
+    requestAnimationFrame(() => {
+      isProgrammaticScrollRef.current = false;
+    });
   }, [items, itemHeight, onChange]);
 
   useEffect(() => {
     const idx = items.indexOf(value);
-    if (idx >= 0 && containerRef.current && !isScrolling.current) {
-      containerRef.current.scrollTop = idx * itemHeight;
+    if (idx < 0 || !containerRef.current || isProgrammaticScrollRef.current) return;
+
+    const targetTop = idx * itemHeight;
+    if (Math.abs(containerRef.current.scrollTop - targetTop) > 1) {
+      containerRef.current.scrollTop = targetTop;
     }
   }, [value, items, itemHeight]);
 
@@ -57,19 +66,17 @@ const ScrollPicker = ({
   }, []);
 
   const handleScroll = useCallback(() => {
-    if (!containerRef.current) return;
-    isScrolling.current = true;
+    if (!containerRef.current || isProgrammaticScrollRef.current) return;
 
     const idx = Math.round(containerRef.current.scrollTop / itemHeight);
     const clamped = Math.max(0, Math.min(items.length - 1, idx));
-    onChange(items[clamped]);
+    const nextValue = items[clamped];
+
+    if (nextValue !== value) onChange(nextValue);
 
     if (snapTimerRef.current) clearTimeout(snapTimerRef.current);
-    snapTimerRef.current = setTimeout(() => {
-      if (!isTouchingRef.current) snapToNearest();
-      isScrolling.current = false;
-    }, 120);
-  }, [items, itemHeight, onChange, snapToNearest]);
+    snapTimerRef.current = setTimeout(snapToNearest, 140);
+  }, [items, itemHeight, onChange, snapToNearest, value]);
 
   return (
     <div className="relative flex items-center justify-center gap-2">
@@ -85,24 +92,13 @@ const ScrollPicker = ({
         <div
           ref={containerRef}
           onScroll={handleScroll}
-          onTouchStart={() => {
-            isTouchingRef.current = true;
-          }}
-          onTouchEnd={() => {
-            isTouchingRef.current = false;
-            snapToNearest();
-          }}
-          onTouchCancel={() => {
-            isTouchingRef.current = false;
-            snapToNearest();
-          }}
           className="overflow-y-auto scrollbar-hide"
           style={{
             height: containerHeight,
             width: 128,
             scrollSnapType: "y mandatory",
             WebkitOverflowScrolling: "touch",
-            overscrollBehavior: "contain",
+            overscrollBehaviorY: "contain",
             touchAction: "pan-y",
             position: "relative",
             zIndex: 5,
