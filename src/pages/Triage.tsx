@@ -797,8 +797,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 15: Sex (auto-advance) =====
-      case 15:
+      // ===== 16: Sex (auto-advance) =====
+      case 16:
         return (
           <div className="flex-1 flex flex-col px-6">
             <h1 className="text-2xl font-bold text-foreground text-center mb-8 mt-4">Qual seu sexo biológico?</h1>
@@ -809,7 +809,7 @@ const Triage = () => {
                 { value: "other", label: "Outro" },
               ].map((opt) => (
                 <button key={opt.value}
-                  onClick={() => { setSex(opt.value); setTimeout(() => setStep(16), 300); }}
+                  onClick={() => { setSex(opt.value); setTimeout(() => setStep(17), 300); }}
                   className={cn("w-full py-4 px-5 rounded-2xl text-base font-medium transition-all text-center",
                     sex === opt.value ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground")}>
                   {opt.label}
