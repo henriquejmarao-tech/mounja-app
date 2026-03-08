@@ -235,7 +235,7 @@ const Dashboard = () => {
                   <p className="text-secondary text-base font-semibold tracking-wide">
                     {selectedDate.toLocaleDateString("pt-BR", { day: "numeric", month: "long" })}
                   </p>
-                  <p className="text-secondary text-2xl font-extrabold mt-2 leading-tight">
+                  <p className="text-foreground text-2xl font-extrabold mt-2 leading-tight">
                     Sem aplicação registrada
                   </p>
                   <button
@@ -249,7 +249,7 @@ const Dashboard = () => {
                 /* ── STATE 3: Present/future without injection (muted) ── */
                 <>
                   <p className="text-secondary text-base font-semibold tracking-wide">Próxima aplicação</p>
-                  <p className="text-secondary text-5xl font-extrabold mt-1 tracking-tight">
+                  <p className="text-foreground text-5xl font-extrabold mt-1 tracking-tight">
                     {daysUntilNextFromSelected !== null
                       ? daysUntilNextFromSelected === 0
                         ? "Hoje"
@@ -266,7 +266,7 @@ const Dashboard = () => {
               )
             ) : (
               <>
-                <p className="text-secondary text-2xl font-extrabold leading-tight">
+                <p className="text-foreground text-2xl font-extrabold leading-tight">
                   Registre seu{"\n"}primeiro tratamento
                 </p>
                 <button
