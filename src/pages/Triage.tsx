@@ -85,17 +85,17 @@ const ScrollPicker = ({
         <div
           ref={containerRef}
           onScroll={handleScroll}
-          onTouchStart={(e) => {
-            e.stopPropagation();
-            // Force iOS to recognise this as a scrollable region
-            const el = containerRef.current;
-            if (el && el.scrollHeight > el.clientHeight) {
-              if (el.scrollTop <= 0) el.scrollTop = 1;
-              if (el.scrollTop + el.clientHeight >= el.scrollHeight)
-                el.scrollTop = el.scrollHeight - el.clientHeight - 1;
-            }
+          onTouchStart={() => {
+            isTouchingRef.current = true;
           }}
-          onTouchMove={(e) => e.stopPropagation()}
+          onTouchEnd={() => {
+            isTouchingRef.current = false;
+            snapToNearest();
+          }}
+          onTouchCancel={() => {
+            isTouchingRef.current = false;
+            snapToNearest();
+          }}
           className="overflow-y-auto scrollbar-hide"
           style={{
             height: containerHeight,
