@@ -279,14 +279,7 @@ const Dashboard = () => {
             </button>
           </div>
         </div>
-        {/* Gradient fade-out into background */}
-        <div
-          className="h-16 pointer-events-none"
-          style={{
-            background: `linear-gradient(to bottom, transparent 0%, hsl(var(--background)) 100%)`,
-          }}
-        />
-      </div>
+        </div>
 
       {/* ── My daily check-in ── */}
       <div className="px-5 mb-5 animate-fade-in-up" style={{ animationDelay: "80ms" }}>
