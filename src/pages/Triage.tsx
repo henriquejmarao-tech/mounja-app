@@ -843,8 +843,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 18: Current weight =====
-      case 18:
+      // ===== 19: Current weight =====
+      case 19:
         return (
           <div className="flex-1 flex flex-col px-6" style={{ touchAction: "pan-y" }}>
             <h1 className="text-2xl font-bold text-foreground text-center mb-4 mt-4">Quanto você pesa?</h1>
