@@ -13,7 +13,7 @@ const Welcome = () => {
         <img 
           src="/favicon.png" 
           alt="Mounjá Logo" 
-          className="w-28 h-28 object-contain rounded-full shadow-sm" 
+          className="w-28 h-28 object-contain rounded-3xl shadow-md" 
         />
         
         <h1 className="text-5xl font-bold text-primary tracking-tight font-display lowercase">
