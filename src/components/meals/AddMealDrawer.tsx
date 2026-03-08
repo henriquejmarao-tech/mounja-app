@@ -79,7 +79,7 @@ const AddMealDrawer = ({ open, onOpenChange, userId, date, onMealAdded }: AddMea
         .getPublicUrl(filePath);
 
       // 2. Analyze with AI
-      const base64 = await fileToBase64(photo);
+      const base64 = await resizeAndConvertToBase64(photo);
       const { data: analysis, error: fnErr } = await supabase.functions.invoke("analyze-meal", {
         body: { imageBase64: base64, description },
       });
