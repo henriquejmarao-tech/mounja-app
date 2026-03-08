@@ -287,7 +287,7 @@ const Triage = () => {
       case 10: return !!injectionSite;
       case 11: return alternatesSites !== null;
       case 13: return !!lastApplicationDate;
-      case 15: return !!name;
+      case 16: return !!name;
       default: return true;
     }
   };
