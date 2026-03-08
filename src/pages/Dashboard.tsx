@@ -249,7 +249,7 @@ const Dashboard = () => {
                 /* ── STATE 3: Present/future without injection (muted) ── */
                 <>
                   <p className="text-secondary text-base font-semibold tracking-wide">Próxima aplicação</p>
-                  <p className="text-secondary text-5xl font-extrabold mt-1 tracking-tight">
+                  <p className="text-foreground text-5xl font-extrabold mt-1 tracking-tight">
                     {daysUntilNextFromSelected !== null
                       ? daysUntilNextFromSelected === 0
                         ? "Hoje"
