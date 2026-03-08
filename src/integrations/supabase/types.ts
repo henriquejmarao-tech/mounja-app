@@ -355,6 +355,7 @@ export type Database = {
           height_cm: number | null
           id: string
           medical_specialty: string | null
+          medication: string | null
           medications: string | null
           mounjaro_start_date: string | null
           name: string | null
@@ -403,6 +404,7 @@ export type Database = {
           height_cm?: number | null
           id: string
           medical_specialty?: string | null
+          medication?: string | null
           medications?: string | null
           mounjaro_start_date?: string | null
           name?: string | null
@@ -451,6 +453,7 @@ export type Database = {
           height_cm?: number | null
           id?: string
           medical_specialty?: string | null
+          medication?: string | null
           medications?: string | null
           mounjaro_start_date?: string | null
           name?: string | null
