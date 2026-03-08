@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Check, CheckCircle2, ThumbsUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { saveTriageData } from "@/hooks/useTriageStorage";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 import welcomeImg from "@/assets/onboarding-welcome.png";
 import privacyImg from "@/assets/onboarding-privacy.png";
@@ -216,18 +219,19 @@ const medications = [
   11 Alternate sites
   12 Frequency & schedule
   13 Last application date
-  14 Results motivation chart
-  15 Personal intro
-  16 Sex
-  17 Height
-  18 Birth year
-  19 Current weight (picker)
-  20 Weight goal (picker)
-  21 Motivational calculation
-  22 Health motivation (family)
-  23 Creating plan (loading → save)
+  14 Dose interval
+  15 Results motivation chart
+  16 Personal intro
+  17 Sex
+  18 Height
+  19 Birth year
+  20 Current weight (picker)
+  21 Weight goal (picker)
+  22 Motivational calculation
+  23 Health motivation (family)
+  24 Creating plan (loading → save)
 */
-const TOTAL_STEPS = 24;
+const TOTAL_STEPS = 25;
 
 const Triage = () => {
   const navigate = useNavigate();
@@ -251,6 +255,7 @@ const Triage = () => {
   const [applicationTime, setApplicationTime] = useState("08:00");
   const [customIntervalDays, setCustomIntervalDays] = useState(7);
   const [lastApplicationDate, setLastApplicationDate] = useState("");
+  const [doseIntervalDays, setDoseIntervalDays] = useState(7);
 
   // Personal
   const [name, setName] = useState("");
@@ -282,7 +287,7 @@ const Triage = () => {
       case 10: return !!injectionSite;
       case 11: return alternatesSites !== null;
       case 13: return !!lastApplicationDate;
-      case 15: return !!name;
+      case 16: return !!name;
       default: return true;
     }
   };
@@ -306,7 +311,7 @@ const Triage = () => {
 
   // Loading screen triggers save
   useEffect(() => {
-    if (step === 23) {
+    if (step === 24) {
       setLoadingProgress(0);
       const interval = setInterval(() => {
         setLoadingProgress((prev) => {
@@ -339,6 +344,7 @@ const Triage = () => {
         applicationDay,
         applicationTime,
         customIntervalDays,
+        doseIntervalDays,
         lastApplicationDate,
         name,
         sex,
@@ -356,16 +362,16 @@ const Triage = () => {
   };
 
   // Progress bar
-  const questionSteps = step >= 2 && step <= 22;
-  const progressPct = questionSteps ? ((step - 1) / 21) * 100 : 0;
-  const stepsWithBack = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22];
+  const questionSteps = step >= 2 && step <= 23;
+  const progressPct = questionSteps ? ((step - 1) / 22) * 100 : 0;
+  const stepsWithBack = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23];
   const showBackInProgress = stepsWithBack.includes(step);
   // Auto-advance steps (no button)
-  const autoAdvanceSteps = [2, 3, 16];
-  const noButtonSteps = [23, ...autoAdvanceSteps];
+  const autoAdvanceSteps = [2, 3, 17];
+  const noButtonSteps = [24, ...autoAdvanceSteps];
   const showNextBtn = !noButtonSteps.includes(step);
 
-  const buttonLabel = step === 22 ? "Criar meu plano" : step === 0 ? "Próximo" : "Continuar";
+  const buttonLabel = step === 23 ? "Criar meu plano" : step === 0 ? "Próximo" : "Continuar";
 
   const renderStep = () => {
     switch (step) {
@@ -739,17 +745,51 @@ const Triage = () => {
         return (
           <div className="flex-1 flex flex-col px-6">
             <h1 className="text-2xl font-bold text-foreground text-center mb-2 mt-4">Quando foi sua última aplicação?</h1>
-            <p className="text-sm text-muted-foreground text-center mb-8">Isso nos ajuda a calcular seu próximo tratamento</p>
+            <p className="text-sm text-muted-foreground text-center mb-4">Isso nos ajuda a calcular seu próximo tratamento</p>
             <div className="flex-1 flex items-center justify-center">
-              <input type="date" value={lastApplicationDate} max={new Date().toISOString().split("T")[0]}
-                onChange={(e) => setLastApplicationDate(e.target.value)}
-                className="w-full max-w-xs px-5 py-4 rounded-2xl border-2 border-primary/30 bg-card text-lg text-center font-semibold text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none" />
+              <Calendar
+                mode="single"
+                selected={lastApplicationDate ? new Date(lastApplicationDate + "T12:00:00") : undefined}
+                onSelect={(date) => {
+                  if (date) {
+                    const yyyy = date.getFullYear();
+                    const mm = String(date.getMonth() + 1).padStart(2, "0");
+                    const dd = String(date.getDate()).padStart(2, "0");
+                    setLastApplicationDate(`${yyyy}-${mm}-${dd}`);
+                  }
+                }}
+                disabled={(date) => date > new Date() || date < new Date("2020-01-01")}
+                locale={ptBR}
+                className={cn("p-3 pointer-events-auto rounded-2xl border-2 border-primary/30 bg-card shadow-card")}
+              />
+            </div>
+            {lastApplicationDate && (
+              <p className="text-center text-sm font-semibold text-primary mt-2">
+                {format(new Date(lastApplicationDate + "T12:00:00"), "d 'de' MMMM 'de' yyyy", { locale: ptBR })}
+              </p>
+            )}
+          </div>
+        );
+
+      // ===== 14: Dose interval =====
+      case 14:
+        return (
+          <div className="flex-1 flex flex-col px-6">
+            <h1 className="text-2xl font-bold text-foreground text-center mb-2 mt-4">De quantos em quantos dias você aplica?</h1>
+            <p className="text-sm text-muted-foreground text-center mb-8">Qual o intervalo entre suas doses?</p>
+            <div className="flex-1 flex items-center justify-center">
+              <div className="flex items-center gap-4">
+                <span className="text-lg font-medium text-foreground">A cada</span>
+                <ScrollPicker items={Array.from({ length: 26 }, (_, i) => i + 3)} value={doseIntervalDays}
+                  onChange={(v) => setDoseIntervalDays(v as number)} />
+                <span className="text-lg font-medium text-foreground">dias</span>
+              </div>
             </div>
           </div>
         );
 
-      // ===== 14: Results motivation =====
-      case 14:
+      // ===== 15: Results motivation =====
+      case 15:
         return (
           <div className="flex-1 flex flex-col items-center px-8">
             <button onClick={back} className="self-start mt-2 mb-4 text-muted-foreground"><ArrowLeft className="w-6 h-6" /></button>
@@ -776,8 +816,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 15: Personal intro =====
-      case 15:
+      // ===== 16: Personal intro =====
+      case 16:
         return (
           <div className="flex-1 flex flex-col items-center px-8">
             <button onClick={back} className="self-start mt-2 mb-4 text-muted-foreground"><ArrowLeft className="w-6 h-6" /></button>
@@ -790,7 +830,7 @@ const Triage = () => {
             <div className="w-full mb-6">
               <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Seu nome</label>
               <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Como quer ser chamado?"
-                className="w-full px-4 py-3.5 rounded-2xl border border-border bg-card text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
+                className="w-full px-4 py-3.5 rounded-2xl border border-border bg-card text-base focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
             </div>
             <div className="flex-1 flex items-center justify-center">
               <img src={personalImg} alt="Personalizar" className="w-56 h-56 object-contain" />
@@ -798,8 +838,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 16: Sex (auto-advance) =====
-      case 16:
+      // ===== 17: Sex (auto-advance) =====
+      case 17:
         return (
           <div className="flex-1 flex flex-col px-6">
             <h1 className="text-2xl font-bold text-foreground text-center mb-8 mt-4">Qual seu sexo biológico?</h1>
@@ -810,7 +850,7 @@ const Triage = () => {
                 { value: "other", label: "Outro" },
               ].map((opt) => (
                 <button key={opt.value}
-                  onClick={() => { setSex(opt.value); setTimeout(() => setStep(17), 300); }}
+                  onClick={() => { setSex(opt.value); setTimeout(() => setStep(18), 300); }}
                   className={cn("w-full py-4 px-5 rounded-2xl text-base font-medium transition-all text-center",
                     sex === opt.value ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground")}>
                   {opt.label}
@@ -820,8 +860,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 17: Height =====
-      case 17:
+      // ===== 18: Height =====
+      case 18:
         return (
           <div className="flex-1 flex flex-col px-6">
             <h1 className="text-2xl font-bold text-foreground text-center mb-4 mt-4">Qual sua altura?</h1>
@@ -832,8 +872,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 18: Birth year =====
-      case 18:
+      // ===== 19: Birth year =====
+      case 19:
         return (
           <div className="flex-1 flex flex-col px-6">
             <h1 className="text-2xl font-bold text-foreground text-center mb-4 mt-4">Qual seu ano de nascimento?</h1>
@@ -844,8 +884,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 19: Current weight =====
-      case 19:
+      // ===== 20: Current weight =====
+      case 20:
         return (
           <div className="flex-1 flex flex-col px-6" style={{ touchAction: "pan-y" }}>
             <h1 className="text-2xl font-bold text-foreground text-center mb-4 mt-4">Quanto você pesa?</h1>
@@ -862,8 +902,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 20: Weight goal =====
-      case 20:
+      // ===== 21: Weight goal =====
+      case 21:
         return (
           <div className="flex-1 flex flex-col px-6" style={{ touchAction: "pan-y" }}>
             <h1 className="text-2xl font-bold text-foreground text-center mb-4 mt-4">Qual seu peso meta?</h1>
@@ -880,8 +920,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 21: Motivational calculation =====
-      case 21:
+      // ===== 22: Motivational calculation =====
+      case 22:
         return (
           <div className="flex-1 flex flex-col items-center justify-center px-8">
             <button onClick={back} className="absolute top-14 left-5 text-muted-foreground"><ArrowLeft className="w-6 h-6" /></button>
@@ -893,8 +933,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 22: Health motivation =====
-      case 22:
+      // ===== 23: Health motivation =====
+      case 23:
         return (
           <div className="flex-1 flex flex-col items-center px-8">
             <button onClick={back} className="self-start mt-2 mb-4 text-muted-foreground"><ArrowLeft className="w-6 h-6" /></button>
@@ -910,8 +950,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 23: Creating plan (loading) =====
-      case 23:
+      // ===== 24: Creating plan (loading) =====
+      case 24:
         return (
           <div className="flex-1 flex flex-col items-center justify-center px-8"
             style={{ background: "linear-gradient(180deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.9) 100%)" }}>

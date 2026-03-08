@@ -80,6 +80,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return "weight_loss";
       };
       const deriveInterval = () => {
+        if (data.doseIntervalDays) return data.doseIntervalDays;
         if (data.frequency === "daily") return 1;
         if (data.frequency === "weekly") return 7;
         return data.customIntervalDays;
