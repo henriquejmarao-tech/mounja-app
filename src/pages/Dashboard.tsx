@@ -144,27 +144,43 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen pb-nav bg-background">
-      {/* ── Header with icons + month ── */}
-      <div className="pt-safe px-5 pb-1 flex items-center justify-between">
-        <button
-          onClick={() => setWhatsNewOpen(true)}
-          className="p-2 -ml-2 active:scale-90 transition-transform"
-        >
-          <Newspaper className="w-[22px] h-[22px] text-primary" />
-        </button>
-        <p className="text-base font-bold text-foreground">{monthLabel}</p>
-        <button
-          onClick={() => setCalendarDrawerOpen(true)}
-          className="p-2 -mr-2 active:scale-90 transition-transform"
-        >
-          <CalendarDays className="w-[22px] h-[22px] text-primary" />
-        </button>
-      </div>
+      {/* ── Expanded gradient background covering header + week + hero ── */}
+      <div
+        className="relative transition-all duration-500"
+        style={{ background: heroGradient }}
+      >
+        {/* Decorative wave shapes */}
+        <div
+          className="absolute inset-0 opacity-30 pointer-events-none"
+          style={{
+            background: `
+              radial-gradient(ellipse 80% 50% at 20% 80%, hsla(0,0%,100%,0.15) 0%, transparent 60%),
+              radial-gradient(ellipse 60% 40% at 80% 20%, hsla(0,0%,100%,0.1) 0%, transparent 50%)
+            `,
+          }}
+        />
 
-      {/* Week strip */}
-      <div className="px-5 mt-2 mb-4">
-        <div className="flex items-center justify-between">
-      {weekDays.map((d, i) => {
+        {/* ── Header with icons + month ── */}
+        <div className="relative pt-safe px-5 pb-1 flex items-center justify-between">
+          <button
+            onClick={() => setWhatsNewOpen(true)}
+            className="p-2 -ml-2 active:scale-90 transition-transform"
+          >
+            <Newspaper className="w-[22px] h-[22px] text-primary" />
+          </button>
+          <p className="text-base font-bold text-foreground">{monthLabel}</p>
+          <button
+            onClick={() => setCalendarDrawerOpen(true)}
+            className="p-2 -mr-2 active:scale-90 transition-transform"
+          >
+            <CalendarDays className="w-[22px] h-[22px] text-primary" />
+          </button>
+        </div>
+
+        {/* Week strip */}
+        <div className="relative px-5 mt-2 mb-4">
+          <div className="flex items-center justify-between">
+            {weekDays.map((d, i) => {
               const isSelected = localDateStr(d.full) === selectedDateStr;
               const hasInjection = weekInjections.has(localDateStr(d.full));
               return (
@@ -191,32 +207,14 @@ const Dashboard = () => {
                 </button>
               );
             })}
+          </div>
         </div>
-      </div>
 
-      <div className="px-5 mb-5 animate-fade-in-up">
-        <div
-          className="rounded-3xl overflow-hidden relative transition-all duration-500"
-          style={{
-            background: heroGradient,
-            minHeight: "220px",
-          }}
-        >
-          {/* Decorative wave shapes */}
-          <div
-            className="absolute inset-0 opacity-30"
-            style={{
-              background: `
-                radial-gradient(ellipse 80% 50% at 20% 80%, hsla(0,0%,100%,0.15) 0%, transparent 60%),
-                radial-gradient(ellipse 60% 40% at 80% 20%, hsla(0,0%,100%,0.1) 0%, transparent 50%)
-              `,
-            }}
-          />
-
-          <div className="relative flex flex-col items-center justify-center text-center px-6 py-10">
+        {/* Hero content */}
+        <div className="relative animate-fade-in-up pb-8">
+          <div className="flex flex-col items-center justify-center text-center px-6 py-10">
             {hasTreatment ? (
               selectedDayHasInjection ? (
-                /* ── STATE 1: Injection day (vibrant) ── */
                 <>
                   <p className="text-primary-foreground/90 text-base font-semibold tracking-wide">Mounjaro®</p>
                   <p className="text-primary-foreground text-5xl font-extrabold mt-1 tracking-tight">
@@ -230,9 +228,8 @@ const Dashboard = () => {
                   </button>
                 </>
               ) : selectedIsInPast ? (
-                /* ── STATE 2: Past day without injection (muted) ── */
                 <>
-                  <p className="text-secondary text-base font-semibold tracking-wide">
+                  <p className="text-foreground/40 text-base font-semibold tracking-wide">
                     {selectedDate.toLocaleDateString("pt-BR", { day: "numeric", month: "long" })}
                   </p>
                   <p className="text-foreground text-2xl font-extrabold mt-2 leading-tight">
@@ -246,7 +243,6 @@ const Dashboard = () => {
                   </button>
                 </>
               ) : (
-                /* ── STATE 3: Present/future without injection (muted) ── */
                 <>
                   <p className="text-foreground/40 text-base font-semibold tracking-wide">Próxima aplicação</p>
                   <p className="text-foreground text-5xl font-extrabold mt-1 tracking-tight">
