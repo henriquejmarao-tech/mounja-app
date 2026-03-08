@@ -412,15 +412,41 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 2: Experience (auto-advance) =====
+      // ===== 2: Medication (auto-advance) =====
       case 2:
         return (
           <div className="flex-1 flex flex-col px-6">
-            <h1 className="text-2xl font-bold text-foreground text-center mb-8 mt-4">Há quanto tempo você usa Mounjaro?</h1>
+            <h1 className="text-2xl font-extrabold text-foreground text-center mt-6 mb-8">
+              Qual medicamento você usa?
+            </h1>
+            <div className="space-y-3">
+              {medications.map((med) => (
+                <button
+                  key={med}
+                  onClick={() => { setMedication(med); setTimeout(() => setStep(3), 300); }}
+                  className={cn(
+                    "w-full py-4 px-6 rounded-full text-base font-semibold text-center active:scale-[0.98] transition-all",
+                    medication === med ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"
+                  )}
+                >
+                  {med}
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+
+      // ===== 3: Experience (auto-advance) =====
+      case 3:
+        return (
+          <div className="flex-1 flex flex-col px-6">
+            <h1 className="text-2xl font-bold text-foreground text-center mb-8 mt-4">
+              Há quanto tempo você usa {medication || "seu medicamento"}?
+            </h1>
             <div className="space-y-3">
               {experienceOptions.map((opt) => (
                 <button key={opt.value}
-                  onClick={() => { setExperience(opt.value); setTimeout(() => setStep(3), 300); }}
+                  onClick={() => { setExperience(opt.value); setTimeout(() => setStep(4), 300); }}
                   className={cn("w-full py-4 px-5 rounded-2xl text-base font-medium transition-all text-left",
                     experience === opt.value ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground")}>
                   {opt.label}
