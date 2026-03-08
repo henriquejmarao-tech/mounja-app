@@ -54,12 +54,19 @@ const ScrollPicker = ({
 
   useEffect(() => {
     const idx = items.indexOf(value);
-    if (idx < 0 || !containerRef.current || isProgrammaticScrollRef.current) return;
+    if (idx < 0 || !containerRef.current) return;
 
     const targetTop = idx * itemHeight;
-    if (Math.abs(containerRef.current.scrollTop - targetTop) > 1) {
-      containerRef.current.scrollTop = targetTop;
-    }
+    // Force scroll position on mount and value changes
+    isProgrammaticScrollRef.current = true;
+    containerRef.current.scrollTop = targetTop;
+    // Also schedule a rAF to ensure it sticks after layout
+    requestAnimationFrame(() => {
+      if (containerRef.current) {
+        containerRef.current.scrollTop = targetTop;
+      }
+      isProgrammaticScrollRef.current = false;
+    });
   }, [value, items, itemHeight]);
 
   useEffect(() => {
