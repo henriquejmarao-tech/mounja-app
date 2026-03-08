@@ -166,7 +166,7 @@ const Auth = () => {
       </div>
 
       {/* Form area */}
-      <div className="flex-1 px-6 pb-8">
+      <div className="flex-1 px-6 pb-10">
         <p className="text-center text-sm text-muted-foreground mb-5 font-medium">
           {isLogin ? "Acesse sua conta" : hasTriage ? "Crie sua conta para salvar seu plano" : "Crie sua conta gratuita"}
         </p>
