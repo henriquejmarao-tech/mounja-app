@@ -126,11 +126,17 @@ const Dashboard = () => {
     return Math.max(0, Math.ceil(diffMs / 86400000));
   }, [dose.nextApplicationAt, selectedDate]);
 
-  // Hero card state: 3 modes
-  // 1. Injection day (vibrant) — selected day has injection record
-  // 2. Past without injection (muted) — can log a past injection
-  // 3. Present/future without injection (muted) — shows countdown
-  const heroGradient = selectedDayHasInjection
+  // Check if selected future/today date IS the scheduled injection day
+  const isScheduledInjectionDay = useMemo(() => {
+    if (!dose.nextApplicationAt) return false;
+    const nextDateStr = localDateStr(new Date(dose.nextApplicationAt));
+    return selectedDateStr === nextDateStr;
+  }, [dose.nextApplicationAt, selectedDateStr]);
+
+  // Vibrant state: recorded injection OR scheduled injection day
+  const isInjectionDayVisual = selectedDayHasInjection || isScheduledInjectionDay;
+
+  const heroGradient = isInjectionDayVisual
     ? "linear-gradient(160deg, hsl(314, 16%, 42%) 0%, hsl(11, 40%, 62%) 50%, hsl(11, 55%, 70%) 100%)"
     : "linear-gradient(180deg, hsl(36, 30%, 96%) 0%, hsl(36, 25%, 97%) 40%, hsl(36, 33%, 95%) 100%)";
 
@@ -148,7 +154,7 @@ const Dashboard = () => {
       style={{ background: heroGradient }}
     >
       {/* ── Animated floating blobs — only on injection days ── */}
-      {selectedDayHasInjection && (
+      {isInjectionDayVisual && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           {/* Top-center glow */}
           <div
@@ -263,17 +269,17 @@ const Dashboard = () => {
         <div className="relative animate-fade-in-up pb-8">
           <div className="flex flex-col items-center justify-center text-center px-6 py-10">
             {hasTreatment ? (
-              selectedDayHasInjection ? (
+              isInjectionDayVisual ? (
                 <>
                   <p className="text-primary-foreground/90 text-base font-semibold tracking-wide">Mounjaro®</p>
                   <p className="text-primary-foreground text-5xl font-extrabold mt-1 tracking-tight">
                     {dose.currentDose}
                   </p>
                   <button
-                    onClick={() => navigate("/plano-tratamento")}
+                    onClick={() => selectedDayHasInjection ? navigate("/plano-tratamento") : navigate("/registrar-aplicacao")}
                     className="mt-5 bg-primary text-primary-foreground px-8 py-3 rounded-full text-sm font-bold shadow-elevated active:scale-95 transition-transform"
                   >
-                    Editar Tratamento
+                    {selectedDayHasInjection ? "Editar Tratamento" : "Registrar aplicação"}
                   </button>
                 </>
               ) : selectedIsInPast ? (
@@ -296,9 +302,7 @@ const Dashboard = () => {
                   <p className="text-foreground/40 text-base font-semibold tracking-wide">Próxima aplicação</p>
                   <p className="text-foreground text-5xl font-extrabold mt-1 tracking-tight">
                     {daysUntilNextFromSelected !== null
-                      ? daysUntilNextFromSelected === 0
-                        ? "Hoje"
-                        : `${daysUntilNextFromSelected} dias`
+                      ? `${daysUntilNextFromSelected} dias`
                       : "—"}
                   </p>
                   <button
