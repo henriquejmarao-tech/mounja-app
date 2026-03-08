@@ -269,17 +269,17 @@ const Dashboard = () => {
         <div className="relative animate-fade-in-up pb-8">
           <div className="flex flex-col items-center justify-center text-center px-6 py-10">
             {hasTreatment ? (
-              selectedDayHasInjection ? (
+              isInjectionDayVisual ? (
                 <>
                   <p className="text-primary-foreground/90 text-base font-semibold tracking-wide">Mounjaro®</p>
                   <p className="text-primary-foreground text-5xl font-extrabold mt-1 tracking-tight">
                     {dose.currentDose}
                   </p>
                   <button
-                    onClick={() => navigate("/plano-tratamento")}
+                    onClick={() => selectedDayHasInjection ? navigate("/plano-tratamento") : navigate("/registrar-aplicacao")}
                     className="mt-5 bg-primary text-primary-foreground px-8 py-3 rounded-full text-sm font-bold shadow-elevated active:scale-95 transition-transform"
                   >
-                    Editar Tratamento
+                    {selectedDayHasInjection ? "Editar Tratamento" : "Registrar aplicação"}
                   </button>
                 </>
               ) : selectedIsInPast ? (
@@ -302,9 +302,7 @@ const Dashboard = () => {
                   <p className="text-foreground/40 text-base font-semibold tracking-wide">Próxima aplicação</p>
                   <p className="text-foreground text-5xl font-extrabold mt-1 tracking-tight">
                     {daysUntilNextFromSelected !== null
-                      ? daysUntilNextFromSelected === 0
-                        ? "Hoje"
-                        : `${daysUntilNextFromSelected} dias`
+                      ? `${daysUntilNextFromSelected} dias`
                       : "—"}
                   </p>
                   <button
