@@ -344,6 +344,7 @@ const Triage = () => {
         applicationDay,
         applicationTime,
         customIntervalDays,
+        doseIntervalDays,
         lastApplicationDate,
         name,
         sex,
