@@ -132,7 +132,7 @@ const Dashboard = () => {
   // 3. Present/future without injection (muted) — shows countdown
   const heroGradient = selectedDayHasInjection
     ? "linear-gradient(160deg, hsl(314, 16%, 42%) 0%, hsl(11, 40%, 62%) 50%, hsl(11, 55%, 70%) 100%)"
-    : "linear-gradient(160deg, hsl(314, 16%, 82%) 0%, hsl(280, 18%, 85%) 50%, hsl(250, 20%, 88%) 100%)";
+    : "linear-gradient(160deg, hsl(290, 20%, 88%) 0%, hsl(320, 15%, 85%) 30%, hsl(11, 30%, 87%) 60%, hsl(260, 18%, 90%) 100%)";
 
   if (loading) {
     return (
@@ -144,19 +144,71 @@ const Dashboard = () => {
 
   return (
     <div
-      className="min-h-screen pb-nav relative transition-all duration-500"
+      className="min-h-screen pb-nav relative transition-all duration-500 overflow-hidden"
       style={{ background: heroGradient }}
     >
-      {/* Decorative shapes - top area only */}
-      <div
-        className="absolute top-0 left-0 right-0 h-[500px] opacity-30 pointer-events-none"
-        style={{
-          background: `
-            radial-gradient(ellipse 80% 50% at 20% 80%, hsla(0,0%,100%,0.15) 0%, transparent 60%),
-            radial-gradient(ellipse 60% 40% at 80% 20%, hsla(0,0%,100%,0.1) 0%, transparent 50%)
-          `,
-        }}
-      />
+      {/* ── Animated floating blobs ── */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* Blob 1 - large, slow drift top-left */}
+        <div
+          className="absolute -top-20 -left-20 w-[340px] h-[340px] rounded-full opacity-20 animate-[blob-drift_18s_ease-in-out_infinite]"
+          style={{
+            background: selectedDayHasInjection
+              ? "radial-gradient(circle, hsl(11, 60%, 65%) 0%, transparent 70%)"
+              : "radial-gradient(circle, hsl(280, 30%, 78%) 0%, transparent 70%)",
+            filter: "blur(40px)",
+          }}
+        />
+        {/* Blob 2 - medium, orbit top-right */}
+        <div
+          className="absolute top-16 -right-12 w-[250px] h-[250px] rounded-full opacity-15 animate-[blob-orbit_22s_ease-in-out_infinite_reverse]"
+          style={{
+            background: selectedDayHasInjection
+              ? "radial-gradient(circle, hsl(314, 25%, 55%) 0%, transparent 70%)"
+              : "radial-gradient(circle, hsl(320, 20%, 80%) 0%, transparent 70%)",
+            filter: "blur(35px)",
+          }}
+        />
+        {/* Blob 3 - warm accent, center-left */}
+        <div
+          className="absolute top-[40%] -left-8 w-[200px] h-[200px] rounded-full opacity-12 animate-[blob-float_15s_ease-in-out_infinite_2s]"
+          style={{
+            background: selectedDayHasInjection
+              ? "radial-gradient(circle, hsl(25, 55%, 60%) 0%, transparent 70%)"
+              : "radial-gradient(circle, hsl(11, 35%, 82%) 0%, transparent 70%)",
+            filter: "blur(30px)",
+          }}
+        />
+        {/* Blob 4 - cool accent, bottom-right */}
+        <div
+          className="absolute top-[60%] -right-16 w-[280px] h-[280px] rounded-full opacity-10 animate-[blob-drift_20s_ease-in-out_infinite_4s]"
+          style={{
+            background: selectedDayHasInjection
+              ? "radial-gradient(circle, hsl(340, 20%, 50%) 0%, transparent 70%)"
+              : "radial-gradient(circle, hsl(250, 25%, 85%) 0%, transparent 70%)",
+            filter: "blur(45px)",
+          }}
+        />
+        {/* Blob 5 - subtle shimmer, bottom */}
+        <div
+          className="absolute bottom-[10%] left-[20%] w-[180px] h-[180px] rounded-full opacity-8 animate-[blob-orbit_25s_ease-in-out_infinite_6s]"
+          style={{
+            background: selectedDayHasInjection
+              ? "radial-gradient(circle, hsl(11, 45%, 70%) 0%, transparent 70%)"
+              : "radial-gradient(circle, hsl(290, 18%, 82%) 0%, transparent 70%)",
+            filter: "blur(35px)",
+          }}
+        />
+
+        {/* Subtle noise texture overlay */}
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+            backgroundSize: "128px 128px",
+          }}
+        />
+      </div>
 
         {/* ── Header with icons + month ── */}
         <div className="relative pt-safe px-5 pb-1 flex items-center justify-between">
