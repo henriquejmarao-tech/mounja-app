@@ -106,7 +106,6 @@ const ScrollPicker = ({
           style={{
             height: containerHeight,
             width: 128,
-            scrollSnapType: "y mandatory",
             WebkitOverflowScrolling: "touch",
             overscrollBehaviorY: "contain",
             touchAction: "pan-y",
