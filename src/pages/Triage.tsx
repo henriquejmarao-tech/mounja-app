@@ -579,11 +579,11 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 8: Dose input =====
-      case 8:
+      // ===== 9: Dose input =====
+      case 9:
         return (
           <div className="flex-1 flex flex-col px-6">
-            <h1 className="text-2xl font-bold text-foreground text-center mb-12 mt-4">Qual sua dose atual de Mounjaro®?</h1>
+            <h1 className="text-2xl font-bold text-foreground text-center mb-12 mt-4">Qual sua dose atual de {medication || "seu medicamento"}?</h1>
             <div className="flex-1 flex items-center justify-center">
               <div className="flex items-center gap-3">
                 <input type="number" step="0.5" inputMode="decimal" value={doseValue}
