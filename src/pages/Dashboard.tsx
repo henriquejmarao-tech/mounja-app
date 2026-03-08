@@ -131,8 +131,8 @@ const Dashboard = () => {
   // 2. Past without injection (muted) — can log a past injection
   // 3. Present/future without injection (muted) — shows countdown
   const heroGradient = selectedDayHasInjection
-    ? "linear-gradient(160deg, hsl(250, 60%, 58%) 0%, hsl(240, 55%, 62%) 40%, hsl(220, 50%, 72%) 100%)"
-    : "linear-gradient(160deg, hsl(250, 40%, 78%) 0%, hsl(240, 35%, 82%) 40%, hsl(220, 40%, 88%) 100%)";
+    ? "linear-gradient(160deg, hsl(314, 16%, 42%) 0%, hsl(11, 40%, 62%) 50%, hsl(11, 55%, 70%) 100%)"
+    : "linear-gradient(160deg, hsl(314, 16%, 82%) 0%, hsl(280, 18%, 85%) 50%, hsl(250, 20%, 88%) 100%)";
 
   if (loading) {
     return (
