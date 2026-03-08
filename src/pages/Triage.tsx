@@ -393,8 +393,11 @@ const Triage = () => {
               <p className="text-muted-foreground text-sm leading-relaxed mb-4">
                 O Mounjá existe para te ajudar a acompanhar e entender seu progresso, não para fornecer aconselhamento médico.
               </p>
+              <p className="text-muted-foreground text-sm leading-relaxed mb-4">
+                Seus dados são tratados com total segurança, seguindo todas as normas da <span className="font-semibold text-foreground">LGPD (Lei Geral de Proteção de Dados)</span>. Não vendemos seus dados e você pode solicitar a exclusão a qualquer momento.
+              </p>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                Ao usar o Mounjá, você consente com a coleta e uso das suas informações de saúde. Não vendemos seus dados e você pode excluí-los a qualquer momento.
+                Ao usar o Mounjá, você consente com a coleta e uso das suas informações de saúde exclusivamente para melhorar sua experiência no aplicativo.
               </p>
             </div>
             <label className="flex items-start gap-3 mb-4 cursor-pointer select-none">
@@ -404,9 +407,7 @@ const Triage = () => {
                 {privacyAccepted && <Check className="w-4 h-4 text-primary-foreground" />}
               </button>
               <span className="text-xs text-muted-foreground leading-relaxed">
-                Concordo com a coleta das minhas informações de saúde e com a{" "}
-                <span className="text-primary underline">Política de Privacidade</span> e{" "}
-                <span className="text-primary underline">Termos de Uso</span>.
+                Concordo com a coleta das minhas informações de saúde conforme as normas da LGPD.
               </span>
             </label>
           </div>
