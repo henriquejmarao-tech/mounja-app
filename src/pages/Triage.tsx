@@ -190,33 +190,44 @@ const yearValues = Array.from({ length: 80 }, (_, i) => 2010 - i);  // 2010-1931
 const weightKgValues = Array.from({ length: 161 }, (_, i) => 40 + i); // 40-200 kg
 const weightDecimalValues = Array.from({ length: 10 }, (_, i) => i); // 0-9
 
+const medications = [
+  "Zepbound®",
+  "Mounjaro®",
+  "Tirzepatida",
+  "Wegovy®",
+  "Ozempic®",
+  "Semaglutida",
+  "Retatrutida",
+];
+
 /*
   Steps:
   0  Welcome
   1  Privacy
-  2  Experience
-  3  Motivation
-  4  App preview
-  5  Help needs
-  6  Confirmation
-  7  Treatment intro
-  8  Dose input
-  9  Injection site
-  10 Alternate sites
-  11 Frequency & schedule
-  12 Last application date
-  13 Results motivation chart
-  14 Personal intro
-  15 Sex
-  16 Height
-  17 Birth year
-  18 Current weight (picker)
-  19 Weight goal (picker)
-  20 Motivational calculation
-  21 Health motivation (family)
-  22 Creating plan (loading → save)
+  2  Medication (auto-advance)
+  3  Experience
+  4  Motivation
+  5  App preview
+  6  Help needs
+  7  Confirmation
+  8  Treatment intro
+  9  Dose input
+  10 Injection site
+  11 Alternate sites
+  12 Frequency & schedule
+  13 Last application date
+  14 Results motivation chart
+  15 Personal intro
+  16 Sex
+  17 Height
+  18 Birth year
+  19 Current weight (picker)
+  20 Weight goal (picker)
+  21 Motivational calculation
+  22 Health motivation (family)
+  23 Creating plan (loading → save)
 */
-const TOTAL_STEPS = 23;
+const TOTAL_STEPS = 24;
 
 const Triage = () => {
   const navigate = useNavigate();
