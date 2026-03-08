@@ -25,6 +25,8 @@ const MealsPage = () => {
   
   const [selectedMacro, setSelectedMacro] = useState<string | null>(null);
   const [goalsOpen, setGoalsOpen] = useState(false);
+  const [addMealOpen, setAddMealOpen] = useState(false);
+  const [meals, setMeals] = useState<any[]>([]);
 
   const dateStr = localDateStr(currentDate);
   const isToday = dateStr === localDateStr(new Date());
