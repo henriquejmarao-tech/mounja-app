@@ -484,8 +484,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 4: App Preview =====
-      case 4:
+      // ===== 5: App Preview =====
+      case 5:
         return (
           <div className="flex-1 flex flex-col items-center px-8">
             <button onClick={back} className="self-start mt-2 mb-4 text-muted-foreground"><ArrowLeft className="w-6 h-6" /></button>
