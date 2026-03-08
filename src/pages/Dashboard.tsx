@@ -147,16 +147,16 @@ const Dashboard = () => {
       className="min-h-screen pb-nav transition-all duration-500"
       style={{ background: heroGradient }}
     >
-      {/* ── Full-page gradient with decorative shapes ── */}
+      {/* Decorative shapes - top area only */}
       <div
-          className="absolute inset-0 opacity-30 pointer-events-none"
-          style={{
-            background: `
-              radial-gradient(ellipse 80% 50% at 20% 80%, hsla(0,0%,100%,0.15) 0%, transparent 60%),
-              radial-gradient(ellipse 60% 40% at 80% 20%, hsla(0,0%,100%,0.1) 0%, transparent 50%)
-            `,
-          }}
-        />
+        className="absolute top-0 left-0 right-0 h-[500px] opacity-30 pointer-events-none"
+        style={{
+          background: `
+            radial-gradient(ellipse 80% 50% at 20% 80%, hsla(0,0%,100%,0.15) 0%, transparent 60%),
+            radial-gradient(ellipse 60% 40% at 80% 20%, hsla(0,0%,100%,0.1) 0%, transparent 50%)
+          `,
+        }}
+      />
 
         {/* ── Header with icons + month ── */}
         <div className="relative pt-safe px-5 pb-1 flex items-center justify-between">
