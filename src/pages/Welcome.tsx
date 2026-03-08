@@ -11,9 +11,9 @@ const Welcome = () => {
       {/* Main Content */}
       <div className="flex flex-col items-center justify-center flex-[2] space-y-5">
         <img 
-          src="/favicon.png" 
+          src={logoWelcome} 
           alt="Mounjá Logo" 
-          className="w-28 h-28 object-contain rounded-3xl shadow-md" 
+          className="w-36 h-36 object-contain drop-shadow-lg" 
         />
         
         <h1 className="text-5xl font-bold text-primary tracking-tight font-display lowercase">
