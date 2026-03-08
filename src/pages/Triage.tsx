@@ -631,8 +631,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 10: Alternate sites =====
-      case 10:
+      // ===== 11: Alternate sites =====
+      case 11:
         return (
           <div className="flex-1 flex flex-col px-6">
             <h1 className="text-2xl font-bold text-foreground text-center mb-6 mt-4">Você alterna o local de aplicação entre as doses?</h1>
