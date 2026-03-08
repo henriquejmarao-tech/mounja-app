@@ -158,7 +158,7 @@ const Auth = () => {
         </div>
 
         <div className="relative flex flex-col items-center">
-          <img src={logoMounja} alt="Mounjá" className="h-40 w-auto mb-3 object-contain drop-shadow-lg" />
+          <img src={logoMounja} alt="Mounjá" className="h-28 w-auto mb-2 object-contain drop-shadow-lg" />
           <p className="text-base text-muted-foreground italic font-medium tracking-wide">
             Aqui para caminhar com você.
           </p>
