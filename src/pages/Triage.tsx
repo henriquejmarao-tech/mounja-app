@@ -456,8 +456,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 3: Motivation =====
-      case 3:
+      // ===== 4: Motivation =====
+      case 4:
         return (
           <div className="flex-1 flex flex-col px-6">
             <h1 className="text-2xl font-bold text-foreground text-center mb-2 mt-4">Por que você começou o tratamento?</h1>
