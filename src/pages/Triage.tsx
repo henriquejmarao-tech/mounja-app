@@ -376,7 +376,7 @@ const Triage = () => {
             style={{ background: "linear-gradient(180deg, hsl(var(--primary) / 0.15) 0%, hsl(var(--primary) / 0.05) 50%, hsl(var(--background)) 100%)" }}>
             <img src={logoImg} alt="Mounjá" className="h-14 mb-3" />
             <h1 className="text-xl font-bold text-foreground mb-2">
-              Tudo que você precisa para o seu tratamento com Mounjaro
+              Tudo que você precisa para o seu tratamento
             </h1>
             <img src={welcomeImg} alt="Bem-vindo" className="w-64 h-64 object-contain my-8" />
           </div>
