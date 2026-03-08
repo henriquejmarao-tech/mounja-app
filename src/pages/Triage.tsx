@@ -670,11 +670,11 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 11: Frequency =====
-      case 11:
+      // ===== 12: Frequency =====
+      case 12:
         return (
           <div className="flex-1 flex flex-col px-6 overflow-y-auto">
-            <h1 className="text-2xl font-bold text-foreground text-center mb-6 mt-4">Quando você aplica Mounjaro®?</h1>
+            <h1 className="text-2xl font-bold text-foreground text-center mb-6 mt-4">Quando você aplica {medication || "seu medicamento"}?</h1>
             <div className="mb-5">
               <p className="text-sm font-semibold text-foreground mb-2">Frequência</p>
               <div className="flex bg-secondary rounded-xl p-1">
