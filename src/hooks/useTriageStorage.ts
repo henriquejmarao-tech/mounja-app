@@ -12,6 +12,7 @@ export interface TriageData {
   applicationDay: number;
   applicationTime: string;
   customIntervalDays: number;
+  doseIntervalDays: number;
   lastApplicationDate: string;
   name: string;
   sex: string;
