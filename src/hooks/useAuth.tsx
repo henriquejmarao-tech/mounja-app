@@ -87,6 +87,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       await supabase.from("profiles").update({
         name: data.name, sex: data.sex || null, age, height_cm: data.heightCm,
         current_weight: currentWeight, goal: deriveGoal(), current_dose: currentDose,
+        medication: data.medication || null,
         application_interval_days: deriveInterval(),
         application_day: weekDays[data.applicationDay] || null,
         application_frequency: data.frequency, triage_completed: true,

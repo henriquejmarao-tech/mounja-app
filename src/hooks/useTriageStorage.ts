@@ -1,6 +1,7 @@
 const TRIAGE_KEY = "mounja_triage_data";
 
 export interface TriageData {
+  medication: string;
   experience: string;
   motivations: string[];
   helpNeeds: string[];
