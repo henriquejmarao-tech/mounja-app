@@ -218,8 +218,8 @@ const Dashboard = () => {
               selectedDayHasInjection ? (
                 /* ── STATE 1: Injection day (vibrant) ── */
                 <>
-                  <p className="text-white/80 text-base font-semibold tracking-wide">Mounjaro®</p>
-                  <p className="text-white text-5xl font-extrabold mt-1 tracking-tight">
+                  <p className="text-primary-foreground/90 text-base font-semibold tracking-wide">Mounjaro®</p>
+                  <p className="text-primary-foreground text-5xl font-extrabold mt-1 tracking-tight">
                     {dose.currentDose}
                   </p>
                   <button
@@ -232,10 +232,10 @@ const Dashboard = () => {
               ) : selectedIsInPast ? (
                 /* ── STATE 2: Past day without injection (muted) ── */
                 <>
-                  <p className="text-foreground/60 text-base font-semibold tracking-wide">
+                  <p className="text-secondary text-base font-semibold tracking-wide">
                     {selectedDate.toLocaleDateString("pt-BR", { day: "numeric", month: "long" })}
                   </p>
-                  <p className="text-foreground/80 text-2xl font-extrabold mt-2 leading-tight">
+                  <p className="text-secondary text-2xl font-extrabold mt-2 leading-tight">
                     Sem aplicação registrada
                   </p>
                   <button
@@ -248,8 +248,8 @@ const Dashboard = () => {
               ) : (
                 /* ── STATE 3: Present/future without injection (muted) ── */
                 <>
-                  <p className="text-foreground/60 text-base font-semibold tracking-wide">Próxima aplicação</p>
-                  <p className="text-foreground/90 text-5xl font-extrabold mt-1 tracking-tight">
+                  <p className="text-secondary text-base font-semibold tracking-wide">Próxima aplicação</p>
+                  <p className="text-secondary text-5xl font-extrabold mt-1 tracking-tight">
                     {daysUntilNextFromSelected !== null
                       ? daysUntilNextFromSelected === 0
                         ? "Hoje"
@@ -266,7 +266,7 @@ const Dashboard = () => {
               )
             ) : (
               <>
-                <p className="text-foreground/80 text-2xl font-extrabold leading-tight">
+                <p className="text-secondary text-2xl font-extrabold leading-tight">
                   Registre seu{"\n"}primeiro tratamento
                 </p>
                 <button
