@@ -733,8 +733,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 12: Last application date =====
-      case 12:
+      // ===== 13: Last application date =====
+      case 13:
         return (
           <div className="flex-1 flex flex-col px-6">
             <h1 className="text-2xl font-bold text-foreground text-center mb-2 mt-4">Quando foi sua última aplicação?</h1>
