@@ -811,9 +811,9 @@ const Triage = () => {
       // ===== 19: Weight goal =====
       case 19:
         return (
-          <div className="flex-1 flex flex-col px-6">
+          <div className="flex-1 flex flex-col px-6" style={{ touchAction: "pan-y" }}>
             <h1 className="text-2xl font-bold text-foreground text-center mb-4 mt-4">Qual seu peso meta?</h1>
-            <div className="flex-1 flex items-center justify-center">
+            <div className="flex-1 flex items-center justify-center" style={{ overflow: "visible" }}>
               <div className="flex items-center gap-1">
                 <ScrollPicker items={weightKgValues} value={goalKg}
                   onChange={(v) => setGoalKg(v as number)} />
