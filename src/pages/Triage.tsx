@@ -831,8 +831,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 17: Birth year =====
-      case 17:
+      // ===== 18: Birth year =====
+      case 18:
         return (
           <div className="flex-1 flex flex-col px-6">
             <h1 className="text-2xl font-bold text-foreground text-center mb-4 mt-4">Qual seu ano de nascimento?</h1>
