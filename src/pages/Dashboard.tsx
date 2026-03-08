@@ -126,11 +126,17 @@ const Dashboard = () => {
     return Math.max(0, Math.ceil(diffMs / 86400000));
   }, [dose.nextApplicationAt, selectedDate]);
 
-  // Hero card state: 3 modes
-  // 1. Injection day (vibrant) — selected day has injection record
-  // 2. Past without injection (muted) — can log a past injection
-  // 3. Present/future without injection (muted) — shows countdown
-  const heroGradient = selectedDayHasInjection
+  // Check if selected future/today date IS the scheduled injection day
+  const isScheduledInjectionDay = useMemo(() => {
+    if (!dose.nextApplicationAt) return false;
+    const nextDateStr = localDateStr(new Date(dose.nextApplicationAt));
+    return selectedDateStr === nextDateStr;
+  }, [dose.nextApplicationAt, selectedDateStr]);
+
+  // Vibrant state: recorded injection OR scheduled injection day
+  const isInjectionDayVisual = selectedDayHasInjection || isScheduledInjectionDay;
+
+  const heroGradient = isInjectionDayVisual
     ? "linear-gradient(160deg, hsl(314, 16%, 42%) 0%, hsl(11, 40%, 62%) 50%, hsl(11, 55%, 70%) 100%)"
     : "linear-gradient(180deg, hsl(36, 30%, 96%) 0%, hsl(36, 25%, 97%) 40%, hsl(36, 33%, 95%) 100%)";
 
