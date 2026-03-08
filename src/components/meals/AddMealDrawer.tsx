@@ -129,11 +129,11 @@ const AddMealDrawer = ({ open, onOpenChange, userId, date, onMealAdded }: AddMea
         <div className="px-5 pb-8 space-y-5">
           {/* Photo area */}
           {photoPreview ? (
-            <div className="relative rounded-2xl overflow-hidden">
-              <img src={photoPreview} alt="Meal" className="w-full h-56 object-cover" />
+            <div className="relative rounded-2xl overflow-hidden shadow-lg">
+              <img src={photoPreview} alt="Pré-visualização" className="w-full h-56 object-cover" />
               <button
                 onClick={() => { setPhoto(null); setPhotoPreview(null); }}
-                className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/50 flex items-center justify-center"
+                className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center active:scale-90 transition-transform"
               >
                 <X className="w-4 h-4 text-white" />
               </button>
@@ -187,11 +187,15 @@ const AddMealDrawer = ({ open, onOpenChange, userId, date, onMealAdded }: AddMea
             />
           </div>
 
-          {/* Submit button */}
+          {/* Submit button — highlighted when photo is attached */}
           <button
             onClick={handleSubmit}
             disabled={!photo || analyzing}
-            className="w-full py-3.5 rounded-2xl bg-primary text-primary-foreground font-bold text-sm shadow-elevated active:scale-[0.98] transition-transform disabled:opacity-50 flex items-center justify-center gap-2"
+            className={`w-full py-3.5 rounded-2xl font-bold text-sm active:scale-[0.98] transition-all flex items-center justify-center gap-2 ${
+              photo
+                ? "bg-primary text-primary-foreground shadow-[0_4px_20px_hsl(var(--primary)/0.4)] scale-[1.01]"
+                : "bg-muted text-muted-foreground"
+            } disabled:opacity-50`}
           >
             {analyzing ? (
               <>
@@ -199,7 +203,7 @@ const AddMealDrawer = ({ open, onOpenChange, userId, date, onMealAdded }: AddMea
                 Analisando com IA...
               </>
             ) : (
-              "Registrar refeição"
+              photo ? "📸 Registrar refeição" : "Registrar refeição"
             )}
           </button>
         </div>
