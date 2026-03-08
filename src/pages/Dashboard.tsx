@@ -281,6 +281,13 @@ const Dashboard = () => {
             </button>
           </div>
         </div>
+        {/* Gradient fade-out into background */}
+        <div
+          className="h-16 pointer-events-none"
+          style={{
+            background: `linear-gradient(to bottom, transparent 0%, hsl(var(--background)) 100%)`,
+          }}
+        />
       </div>
 
       {/* ── My daily check-in ── */}
