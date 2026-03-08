@@ -595,8 +595,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 9: Injection site =====
-      case 9:
+      // ===== 10: Injection site =====
+      case 10:
         return (
           <div className="flex-1 flex flex-col px-6">
             <h1 className="text-2xl font-bold text-foreground text-center mb-6 mt-4">Qual seu local habitual de aplicação?</h1>
