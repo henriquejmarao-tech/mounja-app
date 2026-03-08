@@ -236,6 +236,7 @@ const Triage = () => {
   const [loadingProgress, setLoadingProgress] = useState(0);
 
   // Engagement
+  const [medication, setMedication] = useState("");
   const [experience, setExperience] = useState("");
   const [motivations, setMotivations] = useState<string[]>([]);
   const [helpNeeds, setHelpNeeds] = useState<string[]>([]);
