@@ -274,14 +274,15 @@ const Triage = () => {
   const canAdvance = () => {
     switch (step) {
       case 1: return privacyAccepted;
-      case 2: return !!experience;
-      case 3: return motivations.length > 0;
-      case 5: return helpNeeds.length > 0;
-      case 8: return !!doseValue;
-      case 9: return !!injectionSite;
-      case 10: return alternatesSites !== null;
-      case 12: return !!lastApplicationDate;
-      case 14: return !!name;
+      case 2: return !!medication;
+      case 3: return !!experience;
+      case 4: return motivations.length > 0;
+      case 6: return helpNeeds.length > 0;
+      case 9: return !!doseValue;
+      case 10: return !!injectionSite;
+      case 11: return alternatesSites !== null;
+      case 13: return !!lastApplicationDate;
+      case 15: return !!name;
       default: return true;
     }
   };
