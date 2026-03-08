@@ -909,8 +909,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 22: Creating plan (loading) =====
-      case 22:
+      // ===== 23: Creating plan (loading) =====
+      case 23:
         return (
           <div className="flex-1 flex flex-col items-center justify-center px-8"
             style={{ background: "linear-gradient(180deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.9) 100%)" }}>
