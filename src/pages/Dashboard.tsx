@@ -266,7 +266,7 @@ const Dashboard = () => {
               )
             ) : (
               <>
-                <p className="text-secondary text-2xl font-extrabold leading-tight">
+                <p className="text-foreground text-2xl font-extrabold leading-tight">
                   Registre seu{"\n"}primeiro tratamento
                 </p>
                 <button
