@@ -107,30 +107,36 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const handleAuthUser = async (userId: string) => {
+    // Save pending triage data BEFORE fetching profile so triage_completed is true
+    if (hasTriageData()) {
+      await savePendingTriage(userId);
+    }
+    await fetchProfile(userId);
+  };
+
   useEffect(() => {
+    let initialLoad = true;
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         if (session?.user) {
+          // Use setTimeout to avoid Supabase auth deadlock
           setTimeout(async () => {
-            await fetchProfile(session.user.id);
-            // Save triage data if pending (e.g. after OAuth signup)
-            if (hasTriageData()) {
-              await savePendingTriage(session.user.id);
-              await fetchProfile(session.user.id);
-            }
+            await handleAuthUser(session.user.id);
+            setLoading(false);
           }, 0);
         } else {
           setProfile(null);
+          setLoading(false);
         }
-        setLoading(false);
       }
     );
 
     supabase.auth.getUser().then(({ data: { user }, error }) => {
       if (error || !user) {
-        // Token invalid or account deleted — clear local session
         supabase.auth.signOut();
         setUser(null);
         setSession(null);
@@ -138,11 +144,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setLoading(false);
         return;
       }
-      supabase.auth.getSession().then(({ data: { session } }) => {
+      supabase.auth.getSession().then(async ({ data: { session } }) => {
         setSession(session);
         setUser(session?.user ?? null);
         if (session?.user) {
-          fetchProfile(session.user.id);
+          await handleAuthUser(session.user.id);
         }
         setLoading(false);
       });
