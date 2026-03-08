@@ -328,6 +328,7 @@ const Triage = () => {
     setSaving(true);
     try {
       saveTriageData({
+        medication,
         experience,
         motivations,
         helpNeeds,
@@ -355,16 +356,16 @@ const Triage = () => {
   };
 
   // Progress bar
-  const questionSteps = step >= 2 && step <= 21;
-  const progressPct = questionSteps ? ((step - 1) / 20) * 100 : 0;
-  const stepsWithBack = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21];
+  const questionSteps = step >= 2 && step <= 22;
+  const progressPct = questionSteps ? ((step - 1) / 21) * 100 : 0;
+  const stepsWithBack = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22];
   const showBackInProgress = stepsWithBack.includes(step);
   // Auto-advance steps (no button)
-  const autoAdvanceSteps = [2, 15];
-  const noButtonSteps = [22, ...autoAdvanceSteps];
+  const autoAdvanceSteps = [2, 3, 16];
+  const noButtonSteps = [23, ...autoAdvanceSteps];
   const showNextBtn = !noButtonSteps.includes(step);
 
-  const buttonLabel = step === 21 ? "Criar meu plano" : step === 0 ? "Próximo" : "Continuar";
+  const buttonLabel = step === 22 ? "Criar meu plano" : step === 0 ? "Próximo" : "Continuar";
 
   const renderStep = () => {
     switch (step) {
