@@ -819,8 +819,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 16: Height =====
-      case 16:
+      // ===== 17: Height =====
+      case 17:
         return (
           <div className="flex-1 flex flex-col px-6">
             <h1 className="text-2xl font-bold text-foreground text-center mb-4 mt-4">Qual sua altura?</h1>
