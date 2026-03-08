@@ -76,7 +76,7 @@ const MealsPage = () => {
     weekEnd.setDate(weekEnd.getDate() + 6);
     const weekEndStr = localDateStr(weekEnd);
 
-    const [logRes, weekRes] = await Promise.all([
+    const [logRes, weekRes, mealsRes] = await Promise.all([
       supabase
         .from("daily_logs")
         .select("*")
@@ -89,12 +89,19 @@ const MealsPage = () => {
         .eq("user_id", user.id)
         .gte("date", weekStartStr)
         .lte("date", weekEndStr),
+      supabase
+        .from("meal_logs")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("date", dateStr)
+        .order("meal_time", { ascending: true }),
     ]);
 
     const log = (logRes.data as any[])?.[0] || null;
     setTodayLog(log);
     setWaterGlasses(log?.water_ml ? Math.round(log.water_ml / ML_PER_GLASS) : 0);
     setWeekLogs((weekRes.data as any[]) || []);
+    setMeals((mealsRes.data as any[]) || []);
   }, [user, dateStr, weekStartStr]);
 
   useEffect(() => {
