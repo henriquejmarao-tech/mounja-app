@@ -879,8 +879,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 20: Motivational calculation =====
-      case 20:
+      // ===== 21: Motivational calculation =====
+      case 21:
         return (
           <div className="flex-1 flex flex-col items-center justify-center px-8">
             <button onClick={back} className="absolute top-14 left-5 text-muted-foreground"><ArrowLeft className="w-6 h-6" /></button>
