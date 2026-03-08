@@ -279,7 +279,6 @@ const Dashboard = () => {
             </button>
           </div>
         </div>
-        </div>
 
       {/* ── My daily check-in ── */}
       <div className="px-5 mb-5 animate-fade-in-up" style={{ animationDelay: "80ms" }}>
