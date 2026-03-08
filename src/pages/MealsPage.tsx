@@ -13,6 +13,66 @@ import MealCard from "@/components/meals/MealCard";
 const DAYS = ["M", "T", "W", "T", "F", "S", "S"];
 const ML_PER_GLASS = 250;
 
+/* ── Circular Progress Ring ─────────────────────────────── */
+interface RingProps {
+  value: number;
+  goal: number;
+  size?: number;
+  stroke?: number;
+  color: string;       // HSL track color e.g. "25, 85%, 55%"
+  trackColor?: string;
+  label: string;
+  unit: string;
+}
+
+const ProgressRing = ({ value, goal, size = 110, stroke = 8, color, trackColor, label, unit }: RingProps) => {
+  const radius = (size - stroke) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const pct = Math.min(value / (goal || 1), 1);
+  const offset = circumference * (1 - pct);
+
+  return (
+    <div className="flex flex-col items-center gap-1.5">
+      <div className="relative" style={{ width: size, height: size }}>
+        <svg width={size} height={size} className="-rotate-90">
+          {/* Track */}
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="none"
+            stroke={trackColor || `hsla(${color}, 0.12)`}
+            strokeWidth={stroke}
+          />
+          {/* Progress */}
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="none"
+            stroke={`hsl(${color})`}
+            strokeWidth={stroke}
+            strokeLinecap="round"
+            strokeDasharray={circumference}
+            strokeDashoffset={offset}
+            className="transition-all duration-700 ease-out"
+          />
+        </svg>
+        {/* Center text */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <span className="text-lg font-extrabold text-foreground leading-none">
+            {value}{unit}
+          </span>
+          <span className="text-[9px] font-medium text-muted-foreground mt-0.5">
+            de {goal}{unit}
+          </span>
+        </div>
+      </div>
+      <span className="text-[11px] font-semibold text-muted-foreground">{label}</span>
+    </div>
+  );
+};
+
 const MealsPage = () => {
   const { user, profile, refreshProfile } = useAuth();
   const { latestWeight } = useApplicationData();
@@ -23,7 +83,6 @@ const MealsPage = () => {
   const [todayLog, setTodayLog] = useState<any>(null);
   const [weekLogs, setWeekLogs] = useState<any[]>([]);
   
-  const [selectedMacro, setSelectedMacro] = useState<string | null>(null);
   const [goalsOpen, setGoalsOpen] = useState(false);
   const [addMealOpen, setAddMealOpen] = useState(false);
   const [meals, setMeals] = useState<any[]>([]);
@@ -119,10 +178,8 @@ const MealsPage = () => {
     setWaterGlasses(newGlasses);
     waterRef.current = newGlasses;
 
-    // Clear any pending save
     clearTimeout(waterDebounceRef.current);
 
-    // Debounce: save after 500ms of no clicks
     waterDebounceRef.current = setTimeout(async () => {
       if (savingWaterRef.current) return;
       savingWaterRef.current = true;
@@ -156,16 +213,6 @@ const MealsPage = () => {
     return weekLogs.some((l) => l.date === ds && l.food_quality);
   };
 
-  const dayBarHeight = (dayIndex: number) => {
-    const d = new Date(weekStart);
-    d.setDate(d.getDate() + dayIndex);
-    const ds = localDateStr(d);
-    const log = weekLogs.find((l) => l.date === ds);
-    if (!log?.food_quality) return 0;
-    const map: Record<string, number> = { great: 100, good: 75, regular: 50, poor: 25 };
-    return map[log.food_quality] || 0;
-  };
-
   const handleSaveGoals = async (goals: { calories: number; protein: number; fiber: number; water: number }) => {
     if (!user) return;
     await supabase.from("profiles").update({
@@ -175,21 +222,14 @@ const MealsPage = () => {
       water_glasses_goal: goals.water,
     } as any).eq("id", user.id);
     await refreshProfile();
-    
   };
 
-  const macros = [
-    { key: "calories", value: caloriesCurrent, goal: caloriesGoal, label: `de ${caloriesGoal.toLocaleString()} calorias`, suffix: "" },
-    { key: "protein", value: proteinCurrent, goal: proteinGoal, label: `de ${proteinGoal}g proteína`, suffix: "g" },
-    { key: "fiber", value: fiberCurrent, goal: fiberGoal, label: `de ${fiberGoal}g fibra`, suffix: "g" },
-  ];
+  const waterPct = Math.min(waterGlasses / (glassesGoal || 1), 1);
 
   return (
     <div className="min-h-screen pb-nav bg-background">
       {/* Header */}
-      <div
-        className="flex items-center justify-between px-6 pt-safe"
-      >
+      <div className="flex items-center justify-between px-6 pt-safe">
         <button onClick={() => navigateDate(-1)} className="p-2 -ml-2 active:scale-90 transition-transform">
           <ChevronLeft className="w-5 h-5 text-foreground" />
         </button>
@@ -199,115 +239,80 @@ const MealsPage = () => {
         </button>
       </div>
 
-      {/* Hero card */}
+      {/* ── Macro Rings ─────────────────────────────── */}
+      <div className="px-5 mt-4">
+        <div className="bg-card rounded-[20px] border border-border/50 shadow-card p-5">
+          <div className="flex items-center justify-around">
+            <ProgressRing
+              value={caloriesCurrent}
+              goal={caloriesGoal}
+              color="25, 85%, 55%"
+              label="Calorias"
+              unit=""
+              size={105}
+              stroke={9}
+            />
+            <ProgressRing
+              value={proteinCurrent}
+              goal={proteinGoal}
+              color="350, 50%, 42%"
+              label="Proteína"
+              unit="g"
+              size={90}
+              stroke={7}
+            />
+            <ProgressRing
+              value={fiberCurrent}
+              goal={fiberGoal}
+              color="145, 55%, 42%"
+              label="Fibra"
+              unit="g"
+              size={90}
+              stroke={7}
+            />
+          </div>
+          <button
+            onClick={() => setGoalsOpen(true)}
+            className="mt-4 w-full text-center text-xs font-semibold text-muted-foreground active:scale-95 transition-transform"
+          >
+            Editar metas →
+          </button>
+        </div>
+      </div>
+
+      {/* ── Water Card ──────────────────────────────── */}
       <div className="px-5 mt-3">
-        <div
-          className="rounded-[24px] p-5 space-y-4"
-          style={{
-            background: "linear-gradient(145deg, hsl(25, 85%, 55%) 0%, hsl(30, 90%, 50%) 50%, hsl(20, 80%, 45%) 100%)",
-          }}
-        >
-          {/* Macros row */}
-          <div className="flex items-start">
-            {macros.map((m) => (
-              <button
-                key={m.key}
-                onClick={() => setSelectedMacro(selectedMacro === m.key ? null : m.key)}
-                className={cn(
-                  "flex-1 text-center pt-2 transition-all duration-200 rounded-2xl",
-                  selectedMacro === m.key
-                    ? "bg-white/20 backdrop-blur-sm px-4 py-3"
-                    : ""
-                )}
-              >
-                <p className="text-2xl font-extrabold text-white">
-                  {m.value}{m.suffix}
-                </p>
-                <p className="text-[11px] text-white/80 font-medium">{m.label}</p>
-              </button>
-            ))}
-          </div>
-
-          {/* Water intake */}
-          <div className="bg-white/15 backdrop-blur-sm rounded-2xl px-4 py-3 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Droplets className="w-5 h-5 text-white/80" />
-              <div>
-                <p className="text-base font-bold text-white">
-                  {waterGlasses} de {glassesGoal} copos
-                </p>
-                <p className="text-[11px] text-white/65 font-medium">consumo de água</p>
+        <div className="bg-card rounded-[20px] border border-border/50 shadow-card px-5 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div
+              className="w-10 h-10 rounded-full flex items-center justify-center"
+              style={{ background: `conic-gradient(hsl(200, 70%, 55%) ${waterPct * 360}deg, hsl(200, 30%, 92%) 0deg)` }}
+            >
+              <div className="w-7 h-7 rounded-full bg-card flex items-center justify-center">
+                <Droplets className="w-3.5 h-3.5 text-sky-500" />
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => updateWater(-1)}
-                disabled={waterGlasses <= 0}
-                className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center active:scale-90 transition-transform disabled:opacity-40"
-              >
-                <Minus className="w-4 h-4 text-white" />
-              </button>
-              <button
-                onClick={() => updateWater(1)}
-                className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center active:scale-90 transition-transform"
-              >
-                <Plus className="w-4 h-4 text-white" />
-              </button>
+            <div>
+              <p className="text-sm font-bold text-foreground">
+                {waterGlasses} de {glassesGoal} copos
+              </p>
+              <p className="text-[10px] text-muted-foreground font-medium">consumo de água</p>
             </div>
           </div>
-
-          {/* This Week */}
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4">
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-sm font-bold text-white">Esta Semana</p>
-              <button
-                onClick={() => setGoalsOpen(true)}
-                className="text-xs font-semibold text-white/80 flex items-center gap-1 active:scale-95 transition-transform"
-              >
-                Editar metas <ChevronRight className="w-3 h-3" />
-              </button>
-            </div>
-
-            <div className="relative h-16 mb-2">
-              <div
-                className="absolute left-0 right-0 border-t-2 border-dashed border-white/25"
-                style={{ top: "20%" }}
-              />
-              <div className="flex items-end justify-between h-full px-1">
-                {DAYS.map((_, i) => {
-                  const height = dayBarHeight(i);
-                  return (
-                    <div key={i} className="flex-1 flex justify-center relative">
-                      {i === todayDayIndex && (
-                        <div className="absolute -top-2 w-1.5 h-1.5 rounded-full bg-white" />
-                      )}
-                      <div
-                        className={cn(
-                          "w-8 rounded-lg transition-all duration-300",
-                          height > 0 ? "bg-white/30" : "bg-white/10"
-                        )}
-                        style={{ height: `${Math.max(height * 0.6, 8)}%` }}
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="flex justify-between px-1">
-              {DAYS.map((day, i) => (
-                <div key={i} className="flex-1 text-center">
-                  <span
-                    className={cn(
-                      "text-[11px] font-semibold",
-                      i === todayDayIndex ? "text-white" : "text-white/50"
-                    )}
-                  >
-                    {day}
-                  </span>
-                </div>
-              ))}
-            </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => updateWater(-1)}
+              disabled={waterGlasses <= 0}
+              className="w-9 h-9 rounded-xl bg-muted flex items-center justify-center active:scale-90 transition-transform disabled:opacity-40"
+            >
+              <Minus className="w-4 h-4 text-muted-foreground" />
+            </button>
+            <button
+              onClick={() => updateWater(1)}
+              className="w-9 h-9 rounded-xl bg-sky-100 flex items-center justify-center active:scale-90 transition-transform"
+            >
+              <Plus className="w-4 h-4 text-sky-600" />
+            </button>
           </div>
         </div>
       </div>
