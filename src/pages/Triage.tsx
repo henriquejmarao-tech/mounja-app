@@ -861,8 +861,8 @@ const Triage = () => {
           </div>
         );
 
-      // ===== 19: Weight goal =====
-      case 19:
+      // ===== 20: Weight goal =====
+      case 20:
         return (
           <div className="flex-1 flex flex-col px-6" style={{ touchAction: "pan-y" }}>
             <h1 className="text-2xl font-bold text-foreground text-center mb-4 mt-4">Qual seu peso meta?</h1>
