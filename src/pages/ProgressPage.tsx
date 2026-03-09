@@ -207,7 +207,7 @@ const ProgressPage = () => {
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <span className="text-lg font-bold text-foreground">📊</span>
-                <span className="text-base font-bold text-foreground">Mounja</span>
+                <span className="text-base font-bold text-foreground">Resumo</span>
               </div>
               {daysOnTreatment && (
                 <span className="bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-full">
