@@ -71,7 +71,7 @@ const ProgressPage = () => {
 
   const initialWeight = profile?.current_weight;
   const currentWeight = weightData.length > 0 ? weightData[weightData.length - 1].peso : (initialWeight ? Number(initialWeight) : null);
-  const goalWeightRaw = profile?.goal ? parseFloat(String(profile.goal).replace(",", ".")) : NaN;
+  const goalWeightRaw = (profile as any)?.weight_goal ? parseFloat(String((profile as any).weight_goal).replace(",", ".")) : NaN;
   const goalWeight = isNaN(goalWeightRaw) ? null : goalWeightRaw;
   const totalLost = initialWeight && currentWeight ? Number(initialWeight) - currentWeight : null;
 
