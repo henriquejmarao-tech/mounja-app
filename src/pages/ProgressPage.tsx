@@ -127,11 +127,6 @@ const ProgressPage = () => {
               {currentWeight?.toFixed(1) ?? "—"}
               <span className="text-base font-semibold text-white/60 ml-1">kg</span>
             </p>
-            {totalLost && totalLost > 0 ? (
-              <p className="text-sm font-bold text-white/80 mt-1">
-                −{totalLost.toFixed(1)} kg perdidos
-              </p>
-            ) : null}
           </div>
 
           {/* Progress line */}
