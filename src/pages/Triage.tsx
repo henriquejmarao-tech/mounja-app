@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Check, CheckCircle2, ThumbsUp } from "lucide-react";
+import { ArrowLeft, Check, CheckCircle2, ThumbsUp, CalendarCheck, TrendingDown, Brain, ShieldCheck, Utensils, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { saveTriageData } from "@/hooks/useTriageStorage";
 import { Calendar } from "@/components/ui/calendar";
@@ -166,12 +166,12 @@ const motivationOptions = [
 ];
 
 const helpOptions = [
-  { value: "consistency", label: "Manter a constância no tratamento", emoji: "✅✅✅" },
-  { value: "weight_tracking", label: "Acompanhar minha perda de peso", emoji: "📉" },
-  { value: "appetite", label: "Monitorar apetite e compulsão", emoji: "🍕" },
-  { value: "side_effects", label: "Gerenciar efeitos colaterais", emoji: "🧘‍♀️" },
-  { value: "nutrition", label: "Registrar refeições e nutrição", emoji: "🥗" },
-  { value: "motivation", label: "Manter a motivação em alta", emoji: "🏆" },
+  { value: "consistency", label: "Constância no tratamento", icon: CalendarCheck },
+  { value: "weight_tracking", label: "Acompanhar perda de peso", icon: TrendingDown },
+  { value: "appetite", label: "Monitorar apetite e compulsão", icon: Brain },
+  { value: "side_effects", label: "Gerenciar efeitos colaterais", icon: ShieldCheck },
+  { value: "nutrition", label: "Refeições e nutrição", icon: Utensils },
+  { value: "motivation", label: "Manter a motivação", icon: Trophy },
 ];
 
 const injectionSites = [
@@ -543,8 +543,8 @@ const Triage = () => {
                   <button key={opt.value} onClick={() => toggleHelp(opt.value)}
                     className={cn("flex flex-col items-center justify-center gap-3 p-5 rounded-2xl border-2 transition-all text-center",
                       selected ? "border-triage-action bg-triage-action/10" : "border-border bg-card")}>
-                    <span className="text-3xl">{opt.emoji}</span>
-                    <span className="text-xs font-medium text-foreground leading-tight">{opt.label}</span>
+                    <opt.icon className={cn("w-7 h-7", selected ? "text-triage-action" : "text-muted-foreground")} />
+                    <span className="text-sm font-semibold text-foreground leading-tight">{opt.label}</span>
                   </button>
                 );
               })}
