@@ -417,6 +417,7 @@ export type Database = {
           water_glasses_goal: number | null
           weekly_workout_goal: number | null
           weekly_workouts: number | null
+          weight_goal: number | null
         }
         Insert: {
           activity_level?: string | null
@@ -466,6 +467,7 @@ export type Database = {
           water_glasses_goal?: number | null
           weekly_workout_goal?: number | null
           weekly_workouts?: number | null
+          weight_goal?: number | null
         }
         Update: {
           activity_level?: string | null
@@ -515,6 +517,7 @@ export type Database = {
           water_glasses_goal?: number | null
           weekly_workout_goal?: number | null
           weekly_workouts?: number | null
+          weight_goal?: number | null
         }
         Relationships: []
       }
