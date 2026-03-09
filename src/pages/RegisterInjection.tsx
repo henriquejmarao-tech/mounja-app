@@ -80,9 +80,8 @@ function ScrollColumn({ items, selected, onChange }: { items: (string | number)[
 
 import React from "react";
 
-const hours = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0"));
+const hours = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
 const minutes = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, "0"));
-const periods = ["AM", "PM"];
 
 const RegisterInjection = () => {
   const navigate = useNavigate();
