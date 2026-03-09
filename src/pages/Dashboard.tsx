@@ -221,20 +221,26 @@ const Dashboard = () => {
         </div>
       )}
 
-        {/* ── Header with icons + month ── */}
+        {/* ── Header with avatar + month + notifications ── */}
         <div className="relative pt-safe px-5 pb-1 flex items-center justify-between">
           <button
-            onClick={() => setWhatsNewOpen(true)}
-            className="p-2 -ml-2 active:scale-90 transition-transform"
+            onClick={() => navigate("/profile")}
+            className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white active:scale-90 transition-transform"
+            style={{ backgroundColor: "hsl(25, 70%, 55%)" }}
           >
-            <Newspaper className="w-[22px] h-[22px] text-primary" />
+            {(profile?.username?.[0] || profile?.name?.[0] || "U").toUpperCase()}
           </button>
-          <p className="text-base font-bold text-foreground">{monthLabel}</p>
           <button
             onClick={() => setCalendarDrawerOpen(true)}
+            className="active:scale-95 transition-transform"
+          >
+            <p className="text-base font-bold text-foreground">{monthLabel}</p>
+          </button>
+          <button
+            onClick={() => setWhatsNewOpen(true)}
             className="p-2 -mr-2 active:scale-90 transition-transform"
           >
-            <CalendarDays className="w-[22px] h-[22px] text-primary" />
+            <Bell className="w-[22px] h-[22px] text-primary" />
           </button>
         </div>
 
