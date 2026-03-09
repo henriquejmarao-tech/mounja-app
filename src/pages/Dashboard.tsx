@@ -305,9 +305,19 @@ const Dashboard = () => {
                 </>
               ) : (
                 <>
-                  <p className="text-foreground/40 text-base font-semibold tracking-wide">Próxima aplicação</p>
+                  <p className="text-foreground/40 text-base font-semibold tracking-wide">
+                    {isAfterNextApplication ? "Última aplicação" : "Próxima aplicação"}
+                  </p>
                   <p className="text-foreground text-5xl font-extrabold mt-1 tracking-tight">
-                    {daysUntilNextFromSelected !== null
+                    {isAfterNextApplication
+                      ? daysSinceLastApplication !== null
+                        ? daysSinceLastApplication === 0
+                          ? "Hoje"
+                          : daysSinceLastApplication === 1
+                          ? "Ontem"
+                          : `${daysSinceLastApplication} dias atrás`
+                        : "—"
+                      : daysUntilNextFromSelected !== null
                       ? daysUntilNextFromSelected === 0
                         ? "Hoje"
                         : daysUntilNextFromSelected === 1
