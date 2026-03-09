@@ -224,7 +224,7 @@ const Dashboard = () => {
         {/* ── Header with avatar + month + notifications ── */}
         <div className="relative pt-safe px-5 pb-1 flex items-center justify-between">
           <button
-            onClick={() => navigate("/profile")}
+            onClick={() => navigate("/perfil")}
             className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white active:scale-90 transition-transform"
             style={{ backgroundColor: "hsl(25, 70%, 55%)" }}
           >
