@@ -107,7 +107,7 @@ const Profile = () => {
   const nextBadge = badges.find((b) => streak < b.threshold);
   const progressToNext = nextBadge ? Math.min((streak / nextBadge.threshold) * 100, 100) : 100;
 
-  const currentUsername = (profile as any)?.username;
+  
 
   if (loading) {
     return (
