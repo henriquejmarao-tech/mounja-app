@@ -14,7 +14,6 @@ import treatmentImg from "@/assets/onboarding-treatment.png";
 import personalImg from "@/assets/onboarding-personal.png";
 import familyImg from "@/assets/onboarding-family.png";
 import logoImg from "@/assets/logo-mounja.png";
-import logoCircleImg from "@/assets/logo-circle.png";
 
 /* ─── Scroll Picker Component ─── */
 const ScrollPicker = ({
@@ -399,7 +398,7 @@ const Triage = () => {
           <div className="flex-1 flex flex-col px-8">
             <button onClick={back} className="mt-2 mb-4 self-start text-muted-foreground"><ArrowLeft className="w-6 h-6" /></button>
             <div className="flex-1 flex flex-col items-center">
-              <img src={logoCircleImg} alt="Mounjá" className="w-24 h-24 object-contain mb-6" />
+              <img src={privacyImg} alt="Privacidade" className="w-48 h-48 object-contain mb-6" />
               <h1 className="text-2xl font-bold text-foreground text-left w-full mb-4">Saúde com privacidade</h1>
               <p className="text-muted-foreground text-sm leading-relaxed mb-4">
                 O Mounjá existe para te ajudar a acompanhar e entender seu progresso, não para fornecer aconselhamento médico.
