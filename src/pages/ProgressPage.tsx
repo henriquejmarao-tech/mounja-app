@@ -144,15 +144,6 @@ const ProgressPage = () => {
               />
             </div>
 
-            {/* Current weight marker */}
-            {weightProgress > 0 && weightProgress < 1 && (
-              <div
-                className="absolute -top-1.5 transition-all duration-1000 ease-out"
-                style={{ left: `${Math.max(4, Math.min(96, weightProgress * 100))}%`, transform: "translateX(-50%)" }}
-              >
-                <div className="w-5 h-5 rounded-full bg-white shadow-lg border-2 border-white/40" />
-              </div>
-            )}
 
             {/* Labels */}
             <div className="flex justify-between mt-3">
