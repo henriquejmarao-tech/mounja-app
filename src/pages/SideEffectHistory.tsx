@@ -106,27 +106,30 @@ const SideEffectHistory = () => {
             {displaySymptoms.map((symptom) => (
               <div key={symptom.key} className="px-5 py-4">
                 <p className="text-base font-semibold text-foreground mb-3">{symptom.label}</p>
-                <div className="flex gap-[3px] items-center">
+                <div className="flex items-center" style={{ gap: "3px" }}>
                   {days.map((day) => {
                     const value = day.symptoms[symptom.key] || 0;
                     const hasSymptom = value > 0;
                     const hasInj = day.hasInjection;
 
+                    // Grey dot + purple lines = only treatment
+                    // Red dot + purple lines = treatment + symptom
+                    // Red dot only = symptom only
+                    // Grey dot only = nothing
+
                     return (
-                      <div key={day.date} className="relative flex flex-col items-center" style={{ flex: 1 }}>
+                      <div key={day.date} className="relative flex flex-col items-center" style={{ flex: "1 1 0", minWidth: 0 }}>
                         <div
                           className={cn(
-                            "w-2.5 h-2.5 rounded-full",
-                            hasSymptom && hasInj
-                              ? symptom.color
-                              : hasSymptom
+                            "w-[9px] h-[9px] rounded-full",
+                            hasSymptom
                               ? symptom.color
                               : "bg-muted-foreground/20"
                           )}
-                          style={hasSymptom ? { opacity: Math.min(1, 0.4 + value * 0.2) } : {}}
+                          style={hasSymptom ? { opacity: Math.min(1, 0.5 + value * 0.17) } : {}}
                         />
                         {hasInj && (
-                          <div className="absolute -top-2 w-[3px] h-2 bg-primary/70 rounded-full" />
+                          <div className="absolute -top-[7px] w-[2.5px] h-[7px] bg-primary/70 rounded-full" />
                         )}
                       </div>
                     );
