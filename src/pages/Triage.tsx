@@ -385,7 +385,6 @@ const Triage = () => {
       case 0:
         return (
             <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
-            <img src={logoImg} alt="Mounjá" className="h-14 mb-6" />
             <h1 className="text-3xl font-extrabold text-foreground leading-tight">
               Tudo que você precisa para o seu tratamento
             </h1>
