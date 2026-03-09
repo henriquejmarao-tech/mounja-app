@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Flame, Beef, Leaf, Sparkles, ScanLine, Check } from "lucide-react";
+import { Flame, Beef, Leaf, Sparkles, Check } from "lucide-react";
 
 interface AnalysisResult {
   description?: string;
@@ -75,13 +75,12 @@ const MealAnalysisOverlay = ({ photoPreview, analyzing, result, onClose }: MealA
     const steps = 40;
     let step = 0;
 
-    // Small delay before showing result
     setTimeout(() => setShowResult(true), 300);
 
     intervalRef.current = setInterval(() => {
       step++;
       const progress = Math.min(step / steps, 1);
-      const ease = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+      const ease = 1 - Math.pow(1 - progress, 3);
       setCounters({
         cal: Math.round(targetCal * ease),
         prot: Math.round(targetProt * ease),
@@ -94,9 +93,9 @@ const MealAnalysisOverlay = ({ photoPreview, analyzing, result, onClose }: MealA
   }, [result]);
 
   return (
-    <div className="fixed inset-0 z-[60] bg-black flex flex-col">
-      {/* Photo with overlay effects */}
-      <div className="relative flex-1 overflow-hidden">
+    <div className="fixed inset-0 z-[60] bg-black overflow-y-auto overscroll-contain">
+      {/* Photo section - fixed height on top */}
+      <div className="relative w-full" style={{ height: "45vh", minHeight: "280px" }}>
         <img
           src={photoPreview}
           alt="Meal"
@@ -109,7 +108,6 @@ const MealAnalysisOverlay = ({ photoPreview, analyzing, result, onClose }: MealA
         {/* Scanning effect */}
         {analyzing && (
           <>
-            {/* Scan line */}
             <div
               className="absolute left-0 right-0 h-[2px] z-10 transition-none"
               style={{
@@ -121,13 +119,9 @@ const MealAnalysisOverlay = ({ photoPreview, analyzing, result, onClose }: MealA
 
             {/* Corner brackets */}
             <div className="absolute inset-6 z-10 pointer-events-none">
-              {/* Top-left */}
               <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-primary/70 rounded-tl-lg" />
-              {/* Top-right */}
               <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-primary/70 rounded-tr-lg" />
-              {/* Bottom-left */}
               <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-primary/70 rounded-bl-lg" />
-              {/* Bottom-right */}
               <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-primary/70 rounded-br-lg" />
             </div>
 
@@ -149,9 +143,7 @@ const MealAnalysisOverlay = ({ photoPreview, analyzing, result, onClose }: MealA
             <div className="flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-black/60 backdrop-blur-xl border border-primary/30">
               <div className="relative w-5 h-5">
                 <div className="absolute inset-0 rounded-full border-2 border-primary/30" />
-                <div
-                  className="absolute inset-0 rounded-full border-2 border-primary border-t-transparent animate-spin"
-                />
+                <div className="absolute inset-0 rounded-full border-2 border-primary border-t-transparent animate-spin" />
               </div>
               <span className="text-sm font-semibold text-white/90 transition-all duration-300">
                 {STATUS_MESSAGES[statusIdx]}
@@ -189,17 +181,12 @@ const MealAnalysisOverlay = ({ photoPreview, analyzing, result, onClose }: MealA
         )}
       </div>
 
-      {/* Bottom panel */}
-      <div
-        className={`relative z-30 transition-all duration-500 ease-out ${
-          result && showResult ? "max-h-[55vh]" : "max-h-[140px]"
-        }`}
-      >
-        <div className="bg-gradient-to-t from-card via-card to-card/95 rounded-t-[28px] -mt-8 pt-6 px-5 pb-safe">
+      {/* Bottom content panel - scrollable */}
+      <div className="relative z-30 bg-card rounded-t-[28px] -mt-6 min-h-[55vh]">
+        <div className="px-5 pt-6" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 24px)" }}>
           {/* Analyzing state */}
           {analyzing && !result && (
-            <div className="space-y-4 animate-fade-in pb-6">
-              {/* Animated macro placeholders */}
+            <div className="space-y-4 animate-fade-in">
               <div className="flex gap-3">
                 {[
                   { icon: Flame, label: "Calorias", color: "hsl(25, 85%, 55%)" },
@@ -226,7 +213,7 @@ const MealAnalysisOverlay = ({ photoPreview, analyzing, result, onClose }: MealA
 
           {/* Result state */}
           {result && showResult && (
-            <div className="space-y-4 animate-fade-in overflow-y-auto max-h-[45vh] pb-6">
+            <div className="space-y-4 animate-fade-in">
               {/* Description */}
               {result.description && (
                 <div className="flex items-start gap-2.5">

@@ -1,6 +1,6 @@
 import { useState, useRef, forwardRef, useCallback } from "react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
-import { Camera, ImagePlus, X } from "lucide-react";
+import { Camera, ImagePlus, X, AlertCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import MealAnalysisOverlay from "./MealAnalysisOverlay";
@@ -40,10 +40,39 @@ const resizeAndConvertToBase64 = (file: File, maxSize = 800): Promise<string> =>
   });
 };
 
+/** Convert file to a displayable JPEG data URL via canvas (handles .dng, .heic, etc.) */
+const fileToDisplayablePreview = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const maxSize = 1200;
+      let { width, height } = img;
+      if (width > maxSize || height > maxSize) {
+        if (width > height) {
+          height = Math.round((height * maxSize) / width);
+          width = maxSize;
+        } else {
+          width = Math.round((width * maxSize) / height);
+          height = maxSize;
+        }
+      }
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d")!;
+      ctx.drawImage(img, 0, 0, width, height);
+      resolve(canvas.toDataURL("image/jpeg", 0.85));
+    };
+    img.onerror = reject;
+    img.src = URL.createObjectURL(file);
+  });
+};
+
 const AddMealDrawer = forwardRef<HTMLDivElement, AddMealDrawerProps>(
   ({ open, onOpenChange, userId, date, onMealAdded }, ref) => {
     const [photo, setPhoto] = useState<File | null>(null);
     const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+    const [imageReady, setImageReady] = useState(false);
     const [description, setDescription] = useState("");
     const [analyzing, setAnalyzing] = useState(false);
     const [analysisResult, setAnalysisResult] = useState<any>(null);
@@ -52,18 +81,39 @@ const AddMealDrawer = forwardRef<HTMLDivElement, AddMealDrawerProps>(
     const fileInputRef = useRef<HTMLInputElement>(null);
     const cameraInputRef = useRef<HTMLInputElement>(null);
 
-    const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (!file) return;
       setPhoto(file);
-      const reader = new FileReader();
-      reader.onload = () => setPhotoPreview(reader.result as string);
-      reader.readAsDataURL(file);
+      setImageReady(false);
+
+      try {
+        // Convert to displayable JPEG via canvas (handles .dng, .heic, raw formats)
+        const preview = await fileToDisplayablePreview(file);
+        setPhotoPreview(preview);
+        setImageReady(true);
+      } catch {
+        // Fallback: try raw FileReader
+        const reader = new FileReader();
+        reader.onload = () => {
+          setPhotoPreview(reader.result as string);
+          // Check if the image actually renders
+          const testImg = new Image();
+          testImg.onload = () => setImageReady(true);
+          testImg.onerror = () => {
+            setImageReady(false);
+            toast.error("Formato de imagem não suportado. Use JPG ou PNG.");
+          };
+          testImg.src = reader.result as string;
+        };
+        reader.readAsDataURL(file);
+      }
     }, []);
 
     const resetAll = useCallback(() => {
       setPhoto(null);
       setPhotoPreview(null);
+      setImageReady(false);
       setDescription("");
       setAnalyzing(false);
       setAnalysisResult(null);
@@ -77,8 +127,8 @@ const AddMealDrawer = forwardRef<HTMLDivElement, AddMealDrawerProps>(
     }, [onOpenChange, resetAll]);
 
     const handleSubmit = useCallback(async () => {
-      if (!photo || !photoPreview) {
-        toast.error("Adicione uma foto da refeição");
+      if (!photo || !photoPreview || !imageReady) {
+        toast.error("Aguarde a imagem carregar antes de analisar");
         return;
       }
 
@@ -107,7 +157,6 @@ const AddMealDrawer = forwardRef<HTMLDivElement, AddMealDrawerProps>(
 
         if (fnErr) throw fnErr;
 
-        // Show result in overlay with animations
         setAnalysisResult(analysis);
         setAnalyzing(false);
       } catch (err: any) {
@@ -116,7 +165,7 @@ const AddMealDrawer = forwardRef<HTMLDivElement, AddMealDrawerProps>(
         setShowOverlay(false);
         setAnalyzing(false);
       }
-    }, [photo, photoPreview, userId, description]);
+    }, [photo, photoPreview, imageReady, userId, description]);
 
     const handleSaveFromOverlay = useCallback(async () => {
       if (!analysisResult || !uploadedUrl) return;
@@ -158,8 +207,16 @@ const AddMealDrawer = forwardRef<HTMLDivElement, AddMealDrawerProps>(
               {photoPreview ? (
                 <div className="relative rounded-2xl overflow-hidden shadow-lg">
                   <img src={photoPreview} alt="Pré-visualização" className="w-full h-56 object-cover" />
+                  {!imageReady && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-muted/80">
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <AlertCircle className="w-5 h-5" />
+                        <span className="text-sm font-medium">Carregando imagem...</span>
+                      </div>
+                    </div>
+                  )}
                   <button
-                    onClick={() => { setPhoto(null); setPhotoPreview(null); }}
+                    onClick={() => { setPhoto(null); setPhotoPreview(null); setImageReady(false); }}
                     className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center active:scale-90 transition-transform touch-manipulation"
                   >
                     <X className="w-4 h-4 text-white" />
@@ -204,14 +261,14 @@ const AddMealDrawer = forwardRef<HTMLDivElement, AddMealDrawerProps>(
               {/* Submit button */}
               <button
                 onClick={handleSubmit}
-                disabled={!photo || analyzing}
+                disabled={!photo || !imageReady || analyzing}
                 className={`w-full py-3.5 rounded-2xl font-bold text-sm active:scale-[0.98] transition-all flex items-center justify-center gap-2 touch-manipulation ${
-                  photo
+                  photo && imageReady
                     ? "gradient-hero text-primary-foreground shadow-elevated scale-[1.01]"
                     : "bg-muted text-muted-foreground"
                 } disabled:opacity-50`}
               >
-                {photo ? "📸 Analisar refeição" : "Registrar refeição"}
+                {photo && imageReady ? "📸 Analisar refeição" : "Registrar refeição"}
               </button>
             </div>
           </DrawerContent>
