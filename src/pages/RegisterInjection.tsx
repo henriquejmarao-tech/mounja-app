@@ -243,7 +243,6 @@ const RegisterInjection = () => {
             <div className="flex items-center justify-center gap-4 py-4">
               <ScrollColumn items={hours} selected={hour} onChange={(v) => setHour(v as string)} />
               <ScrollColumn items={minutes} selected={minute} onChange={(v) => setMinute(v as string)} />
-              <ScrollColumn items={periods} selected={period} onChange={(v) => setPeriod(v as string)} />
             </div>
             <button
               onClick={() => setShowTimePicker(false)}
