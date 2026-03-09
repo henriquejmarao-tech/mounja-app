@@ -20,8 +20,8 @@ const TreatmentPlan = () => {
       const w = Number(profile.current_weight);
       setWeightInt(Math.floor(w));
       setWeightDec(Math.round((w % 1) * 10));
-    } else if (type === "goal" && profile?.goal) {
-      const g = parseFloat(profile.goal);
+    } else if (type === "goal" && (profile as any)?.weight_goal) {
+      const g = parseFloat((profile as any).weight_goal);
       if (!isNaN(g)) {
         setWeightInt(Math.floor(g));
         setWeightDec(Math.round((g % 1) * 10));
