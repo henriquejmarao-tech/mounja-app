@@ -968,10 +968,7 @@ const Triage = () => {
               right: 0,
               bottom: 0,
               width: "100vw",
-              height: "100vh",
-              /* Cover safe areas on iOS */
-              paddingTop: "env(safe-area-inset-top, 0px)",
-              paddingBottom: "env(safe-area-inset-bottom, 0px)",
+              height: "100dvh",
               background: "linear-gradient(160deg, hsl(15, 75%, 75%) 0%, hsl(340, 65%, 62%) 40%, hsl(255, 50%, 48%) 100%)",
             }}>
             {/* Animated background blobs */}
