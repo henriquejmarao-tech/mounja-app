@@ -433,7 +433,7 @@ const Triage = () => {
               {medications.map((med) => (
                 <button
                   key={med}
-                  onClick={() => { setMedication(med); setTimeout(() => setStep(3), 300); }}
+                  onClick={() => { setMedication(med); }}
                   className={cn(
                     "w-full py-4 px-6 rounded-full text-base font-semibold text-center active:scale-[0.98] transition-all",
                     medication === med ? "bg-triage-action text-white" : "bg-muted text-foreground"
@@ -456,7 +456,7 @@ const Triage = () => {
             <div className="space-y-3">
               {experienceOptions.map((opt) => (
                 <button key={opt.value}
-                  onClick={() => { setExperience(opt.value); setTimeout(() => setStep(4), 300); }}
+                  onClick={() => { setExperience(opt.value); }}
                   className={cn("w-full py-4 px-5 rounded-2xl text-base font-medium transition-all text-left",
                     experience === opt.value ? "bg-triage-action text-white" : "bg-muted text-foreground")}>
                   {opt.label}
@@ -853,7 +853,7 @@ const Triage = () => {
                 { value: "other", label: "Outro" },
               ].map((opt) => (
                 <button key={opt.value}
-                  onClick={() => { setSex(opt.value); setTimeout(() => setStep(18), 300); }}
+                  onClick={() => { setSex(opt.value); }}
                   className={cn("w-full py-4 px-5 rounded-2xl text-base font-medium transition-all text-center",
                     sex === opt.value ? "bg-triage-action text-white" : "bg-muted text-foreground")}>
                   {opt.label}
