@@ -28,14 +28,15 @@ const Welcome = () => {
       <div className="w-full space-y-3 pb-8 mt-auto">
         <button
           onClick={() => navigate("/triagem")}
-          className="w-full bg-primary text-primary-foreground font-semibold py-4 rounded-full shadow-md hover:bg-primary/90 transition-all duration-300 active:scale-[0.98] text-lg"
+          className="w-full gradient-hero text-primary-foreground font-semibold py-4 rounded-full shadow-elevated hover:opacity-90 transition-all duration-300 active:scale-[0.98] text-lg"
         >
           Primeiro uso
         </button>
 
         <button
           onClick={() => navigate("/auth")}
-          className="w-full py-4 bg-transparent text-primary font-semibold text-lg hover:bg-primary/5 transition-all duration-300 active:scale-[0.98] rounded-full"
+          className="w-full py-4 rounded-full font-semibold text-lg transition-all duration-300 active:scale-[0.98] border-2 border-primary/30 text-secondary hover:border-primary/50"
+          style={{ background: "linear-gradient(135deg, hsl(var(--primary) / 0.08), hsl(var(--secondary) / 0.10))" }}
         >
           Já tenho conta
         </button>
