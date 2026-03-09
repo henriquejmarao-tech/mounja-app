@@ -93,7 +93,7 @@ const ScrollPicker = ({
       <div className="relative" style={{ height: containerHeight }}>
         {/* Selection highlight */}
         <div
-          className="absolute left-0 right-0 bg-secondary rounded-xl z-0 pointer-events-none"
+          className="absolute left-0 right-0 bg-muted rounded-xl z-0 pointer-events-none"
           style={{ top: padCount * itemHeight, height: itemHeight }}
         />
         {/* Gradient masks */}
@@ -458,7 +458,7 @@ const Triage = () => {
                 <button key={opt.value}
                   onClick={() => { setExperience(opt.value); setTimeout(() => setStep(4), 300); }}
                   className={cn("w-full py-4 px-5 rounded-2xl text-base font-medium transition-all text-left",
-                    experience === opt.value ? "bg-foreground text-background" : "bg-secondary text-foreground")}>
+                    experience === opt.value ? "bg-foreground text-background" : "bg-muted text-foreground")}>
                   {opt.label}
                 </button>
               ))}
@@ -478,7 +478,7 @@ const Triage = () => {
                 return (
                   <button key={opt.value} onClick={() => toggleMotivation(opt.value)}
                     className={cn("w-full py-4 px-5 rounded-2xl text-left transition-all border-2",
-                      selected ? "bg-foreground/5 border-foreground" : "bg-secondary border-transparent")}>
+                      selected ? "bg-foreground/5 border-foreground" : "bg-muted border-transparent")}>
                     <div className="flex items-center justify-between">
                       <span className={cn("font-medium", selected && "text-foreground")}>{opt.label}</span>
                       <div className={cn("w-6 h-6 rounded-full border-2 flex items-center justify-center",
@@ -687,7 +687,7 @@ const Triage = () => {
             <h1 className="text-2xl font-bold text-foreground text-center mb-6 mt-4">Quando você aplica {medication || "seu medicamento"}?</h1>
             <div className="mb-5">
               <p className="text-sm font-semibold text-foreground mb-2">Frequência</p>
-              <div className="flex bg-secondary rounded-xl p-1">
+              <div className="flex bg-muted rounded-xl p-1">
                 {(["daily", "weekly", "custom"] as const).map((f) => (
                   <button key={f} onClick={() => setFrequency(f)}
                     className={cn("flex-1 py-2.5 rounded-lg text-sm font-medium transition-all",
@@ -855,7 +855,7 @@ const Triage = () => {
                 <button key={opt.value}
                   onClick={() => { setSex(opt.value); setTimeout(() => setStep(18), 300); }}
                   className={cn("w-full py-4 px-5 rounded-2xl text-base font-medium transition-all text-center",
-                    sex === opt.value ? "bg-foreground text-background" : "bg-secondary text-foreground")}>
+                    sex === opt.value ? "bg-foreground text-background" : "bg-muted text-foreground")}>
                   {opt.label}
                 </button>
               ))}
@@ -930,7 +930,7 @@ const Triage = () => {
             <button onClick={back} className="absolute top-14 left-5 text-muted-foreground"><ArrowLeft className="w-6 h-6" /></button>
             <h1 className="text-3xl font-bold text-foreground text-center leading-tight">
               Boa notícia! Perder{" "}
-              <span className="text-secondary">{weightDiff.toFixed(1)} kg</span>{" "}
+              <span className="text-primary">{weightDiff.toFixed(1)} kg</span>{" "}
               é totalmente possível.
             </h1>
           </div>
@@ -994,7 +994,7 @@ const Triage = () => {
             <button onClick={back} className="text-muted-foreground"><ArrowLeft className="w-5 h-5" /></button>
           )}
           <div className="flex-1 h-1.5 bg-foreground/20 rounded-full overflow-hidden">
-            <div className="h-full bg-secondary rounded-full transition-all duration-500"
+            <div className="h-full bg-primary rounded-full transition-all duration-500"
               style={{ width: `${progressPct}%` }} />
           </div>
         </div>
