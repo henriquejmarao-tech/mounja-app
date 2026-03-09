@@ -42,10 +42,10 @@ const sectionTheme: Record<string, { bg: string; icon: string; border: string; i
     iconBg: "bg-teal-600/15 dark:bg-teal-400/15",
   },
   movement: {
-    bg: "bg-orange-600/10 dark:bg-orange-400/10",
-    icon: "text-orange-700 dark:text-orange-300",
-    border: "border-orange-600/20 dark:border-orange-400/20",
-    iconBg: "bg-orange-600/15 dark:bg-orange-400/15",
+    bg: "bg-secondary/10 dark:bg-secondary/10",
+    icon: "text-secondary dark:text-secondary",
+    border: "border-secondary/20 dark:border-secondary/20",
+    iconBg: "bg-secondary/15 dark:bg-secondary/15",
   },
 };
 
