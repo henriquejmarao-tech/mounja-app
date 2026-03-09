@@ -106,7 +106,7 @@ const SideEffectHistory = () => {
             {displaySymptoms.map((symptom) => (
               <div key={symptom.key} className="px-5 py-4">
                 <p className="text-base font-semibold text-foreground mb-3">{symptom.label}</p>
-                <div className="flex gap-[3px] items-center overflow-hidden pr-1">
+                <div className="flex items-center" style={{ gap: "3px" }}>
                   {days.map((day) => {
                     const value = day.symptoms[symptom.key] || 0;
                     const hasSymptom = value > 0;
