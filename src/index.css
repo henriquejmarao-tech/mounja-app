@@ -53,7 +53,7 @@
     --shadow-elevated: 0 8px 28px -6px hsl(11 55% 66% / 0.10), 0 4px 16px -4px hsl(36 10% 50% / 0.06);
 
     --tab-bar-height: 56px;
-    --safe-area-bottom: max(env(safe-area-inset-bottom, 0px), 12px);
+    --safe-area-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   .dark {
@@ -173,13 +173,13 @@
 /* iOS legacy fallback for safe area */
 @supports (padding-bottom: constant(safe-area-inset-bottom)) {
   :root {
-    --safe-area-bottom: max(constant(safe-area-inset-bottom), 12px);
+    --safe-area-bottom: constant(safe-area-inset-bottom);
   }
 }
 
 /* Mobile-first: consistent bottom padding for pages with BottomNav */
 .pb-nav {
-  padding-bottom: calc(var(--tab-bar-height) + var(--safe-area-bottom) + 24px);
+  padding-bottom: calc(var(--tab-bar-height) + var(--safe-area-bottom) + 16px);
 }
 
 /* Safe-area top padding utility */
