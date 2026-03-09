@@ -15,7 +15,7 @@ const NextInjectionCard = ({ daysUntilNext, currentDose }: NextInjectionCardProp
   const timeLabel = isToday
     ? "Hoje"
     : isTomorrow
-    ? "Amanhã"
+    ? "Próxima aplicação amanhã"
     : `Em ${daysUntilNext} dias`;
 
   return (
