@@ -433,7 +433,7 @@ const Triage = () => {
               {medications.map((med) => (
                 <button
                   key={med}
-                  onClick={() => { setMedication(med); setTimeout(() => setStep(3), 300); }}
+                  onClick={() => { setMedication(med); }}
                   className={cn(
                     "w-full py-4 px-6 rounded-full text-base font-semibold text-center active:scale-[0.98] transition-all",
                     medication === med ? "bg-triage-action text-white" : "bg-muted text-foreground"
