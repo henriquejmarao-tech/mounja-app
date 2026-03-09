@@ -177,97 +177,49 @@ const ProgressDetail = () => {
           </div>
         </div>
 
-        {/* Weight chart with dose reference lines */}
-        {weightData.length >= 2 && (
-          <div className="mt-2">
-            <div className="h-48">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={weightData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  <XAxis dataKey="label" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} tickLine={false} axisLine={false} />
-                  <YAxis
-                    domain={["dataMin - 2", "dataMax + 2"]}
-                    tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
-                    tickLine={false}
-                    axisLine={false}
-                    width={45}
-                    tickFormatter={(v) => `${v} kg`}
-                  />
-                  {/* Dose change reference lines */}
-                  {doseChanges.map((dc) => {
-                    const matchLabel = weightData.find((w) => w.date === dc.date)?.label;
-                    if (!matchLabel) return null;
-                    return (
-                      <ReferenceLine
-                        key={dc.date}
-                        x={matchLabel}
-                        stroke="hsl(var(--primary))"
-                        strokeDasharray="4 4"
-                        label={{ value: dc.dose, position: "top", fill: "hsl(var(--primary))", fontSize: 10, fontWeight: 600 }}
-                      />
-                    );
-                  })}
-                  <Line
-                    type="monotone"
-                    dataKey="peso"
-                    stroke="hsl(var(--muted-foreground))"
-                    strokeWidth={1.5}
-                    dot={{ r: 3, fill: "hsl(var(--primary))", stroke: "hsl(var(--primary))" }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        )}
       </div>
 
-      {/* Timeline slider */}
-      <div className="mx-4 mt-5 bg-card rounded-3xl p-5 shadow-card border border-border/30">
-        {weightData.length > 0 ? (
-          <>
-            {/* Selected day info */}
-            <div className="flex justify-between items-center mb-3">
-              <span className="text-xs text-muted-foreground font-medium">
-                {new Date(weightData[Math.min(selectedIdx, weightData.length - 1)]?.date + "T12:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })}
-              </span>
-              <span className="text-sm font-extrabold text-foreground">
-                {weightData[Math.min(selectedIdx, weightData.length - 1)]?.peso.toFixed(1)} kg
-              </span>
-            </div>
-            {/* Slider track */}
-            <div className="relative">
-              <input
-                type="range"
-                min={0}
-                max={weightData.length - 1}
-                value={Math.min(selectedIdx, weightData.length - 1)}
-                onChange={(e) => setSelectedIdx(Number(e.target.value))}
-                className="w-full h-2 appearance-none rounded-full bg-muted outline-none touch-manipulation
-                  [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 
-                  [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary [&::-webkit-slider-thumb]:shadow-md
-                  [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-card
-                  [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full 
-                  [&::-moz-range-thumb]:bg-primary [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-card"
-              />
-              {/* Fill track */}
-              <div
-                className="absolute top-0 left-0 h-2 bg-primary/30 rounded-full pointer-events-none"
-                style={{ width: weightData.length > 1 ? `${(Math.min(selectedIdx, weightData.length - 1) / (weightData.length - 1)) * 100}%` : "100%" }}
-              />
-            </div>
-            {/* Range labels */}
-            <div className="flex justify-between mt-1.5 text-[9px] text-muted-foreground">
-              <span>{weightData[0]?.label}</span>
-              <span>{weightData[weightData.length - 1]?.label}</span>
-            </div>
-          </>
-        ) : (
-          <div className="flex justify-between px-1 text-[10px] text-muted-foreground font-medium">
-            <span>{initialWeight ? `${Number(initialWeight).toFixed(1)} kg` : "—"}</span>
-            <span>{goalWeight && !isNaN(goalWeight) ? `Meta: ${goalWeight.toFixed(1)} kg` : "Sem meta"}</span>
+      {/* Weight chart card */}
+      {weightData.length >= 2 && (
+        <div className="mx-4 mt-4 bg-card rounded-3xl p-4 shadow-card border border-border/30">
+          <div className="h-48">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={weightData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis dataKey="label" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} tickLine={false} axisLine={false} />
+                <YAxis
+                  domain={["dataMin - 2", "dataMax + 2"]}
+                  tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
+                  tickLine={false}
+                  axisLine={false}
+                  width={45}
+                  tickFormatter={(v) => `${v} kg`}
+                />
+                {doseChanges.map((dc) => {
+                  const matchLabel = weightData.find((w) => w.date === dc.date)?.label;
+                  if (!matchLabel) return null;
+                  return (
+                    <ReferenceLine
+                      key={dc.date}
+                      x={matchLabel}
+                      stroke="hsl(var(--primary))"
+                      strokeDasharray="4 4"
+                      label={{ value: dc.dose, position: "top", fill: "hsl(var(--primary))", fontSize: 10, fontWeight: 600 }}
+                    />
+                  );
+                })}
+                <Line
+                  type="monotone"
+                  dataKey="peso"
+                  stroke="hsl(var(--muted-foreground))"
+                  strokeWidth={1.5}
+                  dot={{ r: 3, fill: "hsl(var(--primary))", stroke: "hsl(var(--primary))" }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
