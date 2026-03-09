@@ -13,12 +13,8 @@ const Welcome = () => {
         <img 
           src={logoWelcome} 
           alt="Mounjá Logo" 
-          className="w-36 h-36 object-contain drop-shadow-lg" 
+          className="w-72 h-72 object-contain drop-shadow-xl" 
         />
-        
-        <h1 className="text-5xl font-bold text-primary tracking-tight font-display lowercase">
-          mounjá
-        </h1>
         
         <p className="text-center text-muted-foreground text-[17px] px-2 font-medium leading-relaxed max-w-[320px]">
           Apoio a sua jornada de emagrecimento de um jeito único, assim como você.
