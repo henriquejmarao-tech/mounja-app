@@ -625,7 +625,7 @@ const Triage = () => {
                   return (
                     <button key={site.value} onClick={() => setInjectionSite(site.value)}
                       className={cn("absolute w-6 h-6 rounded-full border-2 transition-all -translate-x-1/2 -translate-y-1/2",
-                        selected ? "bg-foreground border-foreground scale-125" : "bg-card border-muted-foreground/30 hover:border-foreground/50")}
+                        selected ? "bg-triage-action border-triage-action scale-125" : "bg-card border-muted-foreground/30 hover:border-triage-action/50")}
                       style={{ left: `${site.x}%`, top: `${site.y}%` }}>
                       {selected && <div className="w-2 h-2 bg-background rounded-full mx-auto" />}
                     </button>
