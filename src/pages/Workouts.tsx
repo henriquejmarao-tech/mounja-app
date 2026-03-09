@@ -298,7 +298,7 @@ const Workouts = () => {
                 <button
                   onClick={saveSuggestion}
                   disabled={saving}
-                  className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl gradient-workout text-white text-sm font-semibold shadow-sm active:scale-[hero text-primary-foreground     >
+                  className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl gradient-hero text-primary-foreground text-sm font-semibold shadow-sm active:scale-[0.97]"
                   {saving ? (
                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   ) : (
