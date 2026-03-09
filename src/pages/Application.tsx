@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { cn, localDateStr } from "@/lib/utils";
+import { cn, localDateStr, diffCalendarDays } from "@/lib/utils";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { toast } from "sonner";
 import DoseTimeline from "@/components/history/DoseTimeline";

@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { Scale, Camera, ClipboardList, Lightbulb, CalendarDays, Newspaper } from "lucide-react";
-import { cn, localDateStr } from "@/lib/utils";
+import { cn, localDateStr, diffCalendarDays } from "@/lib/utils";
 import { toast } from "sonner";
 import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
 import WeightTrendsCard from "@/components/dashboard/WeightTrendsCard";

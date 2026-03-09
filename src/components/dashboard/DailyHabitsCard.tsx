@@ -2,7 +2,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { Lightbulb, Droplets, Moon, Apple, Footprints, Wind, ChevronDown } from "lucide-react";
 import { useMemo, useState } from "react";
-import { cn } from "@/lib/utils";
+import { cn, diffCalendarDays } from "@/lib/utils";
 
 interface HabitTip {
   icon: typeof Lightbulb;
