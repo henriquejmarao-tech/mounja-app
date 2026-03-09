@@ -574,13 +574,10 @@ const Triage = () => {
       // ===== 8: Treatment intro =====
       case 8:
         return (
-          <div className="flex-1 flex flex-col items-center px-8">
-            <h1 className="text-2xl font-bold text-foreground text-center mt-4 mb-4">
+          <div className="flex-1 flex flex-col items-center justify-center px-8">
+            <h1 className="text-3xl font-bold text-foreground text-center leading-tight">
               Agora vamos conhecer melhor o seu tratamento
             </h1>
-            <div className="flex-1 flex items-center justify-center">
-              <img src={treatmentImg} alt="Tratamento" className="w-72 h-72 object-contain" />
-            </div>
           </div>
         );
 
