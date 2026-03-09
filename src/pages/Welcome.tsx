@@ -13,7 +13,7 @@ const Welcome = () => {
         <img 
           src={logoWelcome} 
           alt="Mounjá Logo" 
-          className="w-72 h-72 object-contain drop-shadow-xl" 
+          className="w-96 h-96 object-contain drop-shadow-xl" 
         />
         
         <p className="text-center text-muted-foreground text-[17px] px-2 font-medium leading-relaxed max-w-[320px]">
