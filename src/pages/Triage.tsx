@@ -921,7 +921,7 @@ const Triage = () => {
       case 22:
         return (
           <div className="flex-1 flex flex-col items-center justify-center px-8">
-            <button onClick={back} className="absolute top-14 left-5 text-muted-foreground"><ArrowLeft className="w-6 h-6" /></button>
+            
             <h1 className="text-3xl font-bold text-foreground text-center leading-tight">
               Boa notícia! Perder{" "}
               <span className="text-primary">{weightDiff.toFixed(1)} kg</span>{" "}
