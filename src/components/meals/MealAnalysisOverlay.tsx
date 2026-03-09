@@ -93,13 +93,14 @@ const MealAnalysisOverlay = ({ photoPreview, analyzing, result, onClose }: MealA
   }, [result]);
 
   return (
-    <div className="fixed inset-0 z-[60] bg-black overflow-y-auto overscroll-contain">
+    <div className="fixed inset-0 z-[60] bg-black flex flex-col">
       {/* Photo section - fixed height on top */}
-      <div className="relative w-full" style={{ height: "45vh", minHeight: "280px" }}>
+      <div className="relative w-full shrink-0" style={{ height: "40vh", minHeight: "240px" }}>
         <img
           src={photoPreview}
           alt="Meal"
           className="absolute inset-0 w-full h-full object-cover"
+          crossOrigin="anonymous"
         />
 
         {/* Dark gradient overlay */}
