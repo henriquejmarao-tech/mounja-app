@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {
   ChevronRight, LogOut, MessageSquare, Star, Send, Bug, Lightbulb, X,
-  Pill, Ruler, Info, Mail, LightbulbIcon, ShieldCheck, FileText, Share2, Star as StarOutline,
+  Pill, Ruler, Share2, Star as StarOutline,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -67,10 +67,11 @@ const Settings = () => {
   };
 
   const handleShare = async () => {
+    const shareUrl = "https://mounja-app.lovable.app";
     if (navigator.share) {
-      await navigator.share({ title: "Mounja", text: "Acompanhe sua jornada com Mounjaro®", url: window.location.origin });
+      await navigator.share({ title: "Mounja", text: "Acompanhe sua jornada com Mounjaro®", url: shareUrl });
     } else {
-      await navigator.clipboard.writeText(window.location.origin);
+      await navigator.clipboard.writeText(shareUrl);
       toast.success("Link copiado!");
     }
   };
@@ -90,12 +91,7 @@ const Settings = () => {
 
         {/* Support section */}
         <div className="bg-card rounded-2xl border border-border/50 divide-y divide-border/50">
-          <MenuItem icon={Info} label="Sobre nós" onClick={() => toast.info("Mounja · Aqui para caminhar com você")} />
-          <MenuItem icon={Mail} label="Contato" onClick={() => toast.info("contato@mounja.app")} />
-          <MenuItem icon={LightbulbIcon} label="Sugerir funcionalidade" onClick={() => { setFeedbackType("suggestion"); setShowFeedback(true); }} />
-          <div className="border-t border-border/30" />
-          <MenuItem icon={ShieldCheck} label="Política de privacidade" onClick={() => {}} />
-          <MenuItem icon={FileText} label="Termos e condições" onClick={() => {}} />
+          <MenuItem icon={Lightbulb} label="Sugerir funcionalidade" onClick={() => { setFeedbackType("suggestion"); setShowFeedback(true); }} />
         </div>
 
         {/* Share section */}
