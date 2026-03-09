@@ -100,7 +100,11 @@ const Dashboard = () => {
         supabase.from("progress_photos").select("id").eq("user_id", user.id).eq("date", today).limit(1),
       ]);
       setTodayLog((logRes.data as any[])?.[0] || null);
-      const wData = ((weightRes.data as any[]) || []).map((l) => ({ date: l.date, peso: Number(l.weight) }));
+      // Deduplicate by date — keep last entry per day
+      const wRaw = ((weightRes.data as any[]) || []).map((l) => ({ date: l.date, peso: Number(l.weight) }));
+      const byDate = new Map<string, number>();
+      for (const w of wRaw) byDate.set(w.date, w.peso);
+      const wData = Array.from(byDate, ([date, peso]) => ({ date, peso })).sort((a, b) => a.date.localeCompare(b.date));
       setWeightHistory(wData);
       setWeekInjections(new Set(((injRes.data as any[]) || []).map((i) => i.date)));
       setHasPhotoToday(((photoRes.data as any[]) || []).length > 0);
