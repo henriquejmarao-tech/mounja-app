@@ -225,7 +225,7 @@ const Dashboard = () => {
         <div className="relative pt-safe px-5 pb-1 flex items-center justify-between">
           <button
             onClick={() => navigate("/perfil")}
-            className="text-base font-bold text-foreground/80 active:scale-90 transition-transform"
+            className="text-base font-bold text-foreground/60 active:scale-90 transition-transform"
           >
             {(profile?.username?.[0] || profile?.name?.[0] || "U").toUpperCase()}
           </button>
