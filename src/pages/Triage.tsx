@@ -412,7 +412,7 @@ const Triage = () => {
             <label className="flex items-start gap-3 mb-4 cursor-pointer select-none">
               <button onClick={() => setPrivacyAccepted(!privacyAccepted)}
                 className={cn("w-6 h-6 min-w-6 rounded-md border-2 flex items-center justify-center transition-all mt-0.5",
-                  privacyAccepted ? "bg-foreground border-foreground" : "border-border")}>
+                  privacyAccepted ? "bg-triage-action border-triage-action" : "border-border")}>
                 {privacyAccepted && <Check className="w-4 h-4 text-background" />}
               </button>
               <span className="text-xs text-muted-foreground leading-relaxed">
