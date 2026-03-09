@@ -121,49 +121,62 @@ const ProgressPage = () => {
           className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
           style={{ background: "linear-gradient(to bottom, transparent 0%, hsl(var(--background) / 0.3) 40%, hsl(var(--background) / 0.7) 70%, hsl(var(--background)) 100%)" }}
         />
-        <div className="px-6 pt-6 pb-16">
-          {/* Weight display */}
-          <div className="flex items-center justify-between">
-            {/* Start */}
-            <div className="text-center">
-              <p className="text-xs font-semibold text-white/70">início</p>
-              <p className="text-lg font-extrabold text-white">
-                {initialWeight ? Number(initialWeight).toFixed(1) : "—"}
-                <span className="text-xs font-medium text-white/70 ml-0.5">kg</span>
+        <div className="px-6 pt-8 pb-20">
+          {/* Current weight — hero */}
+          <div className="text-center mb-6">
+            <p className="text-xs font-semibold text-white/60 uppercase tracking-wider mb-1">peso atual</p>
+            <p className="text-4xl font-extrabold text-white leading-none">
+              {currentWeight?.toFixed(1) ?? "—"}
+              <span className="text-base font-semibold text-white/60 ml-1">kg</span>
+            </p>
+            {totalLost && totalLost > 0 ? (
+              <p className="text-sm font-bold text-white/80 mt-1">
+                −{totalLost.toFixed(1)} kg perdidos
               </p>
+            ) : null}
+          </div>
+
+          {/* Progress line */}
+          <div className="relative px-1">
+            {/* Track */}
+            <div className="h-2 rounded-full bg-white/15 relative overflow-hidden">
+              <div
+                className="h-full rounded-full bg-white/70 transition-all duration-1000 ease-out"
+                style={{ width: `${Math.max(2, weightProgress * 100)}%` }}
+              />
             </div>
 
-            {/* Ring */}
-            <div className="relative w-36 h-36">
-              <svg className="w-full h-full -rotate-90" viewBox="0 0 160 160">
-                <circle cx="80" cy="80" r="70" fill="none" stroke="hsla(0,0%,100%,0.15)" strokeWidth="8" />
-                <circle
-                  cx="80" cy="80" r="70"
-                  fill="none"
-                  stroke="hsla(0,0%,100%,0.6)"
-                  strokeWidth="8"
-                  strokeLinecap="round"
-                  strokeDasharray={ringCircumference}
-                  strokeDashoffset={ringOffset}
-                  className="transition-all duration-1000"
-                />
-              </svg>
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <p className="text-xs font-semibold text-white/70">atual</p>
-                <p className="text-2xl font-extrabold text-white">
-                  {currentWeight?.toFixed(1) ?? "—"}
-                  <span className="text-xs font-medium text-white/70 ml-0.5">kg</span>
+            {/* Current weight marker */}
+            {weightProgress > 0 && weightProgress < 1 && (
+              <div
+                className="absolute -top-1.5 transition-all duration-1000 ease-out"
+                style={{ left: `${Math.max(4, Math.min(96, weightProgress * 100))}%`, transform: "translateX(-50%)" }}
+              >
+                <div className="w-5 h-5 rounded-full bg-white shadow-lg border-2 border-white/40" />
+              </div>
+            )}
+
+            {/* Labels */}
+            <div className="flex justify-between mt-3">
+              <div className="text-left">
+                <p className="text-[10px] font-medium text-white/50">início</p>
+                <p className="text-sm font-bold text-white/90">
+                  {initialWeight ? Number(initialWeight).toFixed(1) : "—"}
+                  <span className="text-[10px] font-medium text-white/50 ml-0.5">kg</span>
                 </p>
               </div>
-            </div>
-
-            {/* Goal */}
-            <div className="text-center">
-              <p className="text-xs font-semibold text-white/70">meta</p>
-              <p className="text-lg font-extrabold text-white">
-                {goalWeight?.toFixed(1) ?? "—"}
-                <span className="text-xs font-medium text-white/70 ml-0.5">kg</span>
-              </p>
+              <div className="text-center">
+                <p className="text-[10px] font-medium text-white/50">
+                  {Math.round(weightProgress * 100)}%
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-[10px] font-medium text-white/50">meta</p>
+                <p className="text-sm font-bold text-white/90">
+                  {goalWeight?.toFixed(1) ?? "—"}
+                  <span className="text-[10px] font-medium text-white/50 ml-0.5">kg</span>
+                </p>
+              </div>
             </div>
           </div>
         </div>
