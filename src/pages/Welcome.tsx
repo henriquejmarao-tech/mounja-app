@@ -35,8 +35,8 @@ const Welcome = () => {
 
         <button
           onClick={() => navigate("/auth")}
-          className="w-full py-4 rounded-full font-semibold text-lg transition-all duration-300 active:scale-[0.98] border-2 border-primary/30 text-secondary hover:border-primary/50"
-          style={{ background: "linear-gradient(135deg, hsl(var(--primary) / 0.08), hsl(var(--secondary) / 0.10))" }}
+          className="w-full py-4 rounded-full font-semibold text-lg transition-all duration-300 active:scale-[0.98] border-2 border-pink-300/30 text-secondary hover:border-pink-300/50"
+          style={{ background: "linear-gradient(180deg, hsl(340 60% 68% / 0.1), hsl(280 45% 35% / 0.12))" }}
         >
           Já tenho conta
         </button>
