@@ -38,6 +38,7 @@ import MedicationSelect from "./pages/treatment/MedicationSelect";
 import DosageInput from "./pages/treatment/DosageInput";
 import TreatmentSite from "./pages/treatment/TreatmentSite";
 import SchedulePage from "./pages/treatment/SchedulePage";
+import MedicationAnalysis from "./pages/MedicationAnalysis";
 
 const queryClient = new QueryClient();
 
