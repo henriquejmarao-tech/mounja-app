@@ -953,7 +953,7 @@ const Triage = () => {
       // ===== 24: Creating plan (loading) =====
       case 24:
         return (
-          <div className="flex-1 flex flex-col items-center justify-center px-8 relative overflow-hidden"
+          <div className="fixed inset-0 z-50 flex flex-col items-center justify-center px-8 overflow-hidden"
             style={{ background: "linear-gradient(160deg, hsl(15, 75%, 75%) 0%, hsl(340, 65%, 62%) 40%, hsl(255, 50%, 48%) 100%)" }}>
             {/* Animated background blobs */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
