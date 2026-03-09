@@ -152,7 +152,11 @@ const Workouts = () => {
           className="px-5 pb-14"
           style={{
             paddingTop: "calc(env(safe-area-inset-top, 0px) + 1.25rem)",
-            background: "linear-gradient(180deg, hsl(340, 60%, 68%) 0%, hsl(280, 45%, 35%)rowLeft className="w-5 h-5" />
+            background: "linear-gradient(180deg, hsl(340 60% 68%) 0%, hsl(280 45% 35%) 100%)",
+          }}
+        >
+          <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-white/80 mb-4">
+            <ArrowLeft className="w-5 h-5" />
             <span className="text-sm font-medium">Voltar</span>
           </button>
           <div className="flex items-center gap-2">
