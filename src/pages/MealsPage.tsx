@@ -375,7 +375,7 @@ const MealsPage = () => {
       {/* FAB */}
       <button
         onClick={() => setAddMealOpen(true)}
-        className="fixed right-5 z-40 w-14 h-14 rounded-full gradient-hero text-primary-foreground shadow-elevated flex items-center justify-center active:scale-90 transition-transform"
+        className="fixed right-5 z-40 w-14 h-14 rounded-full gradient-hero text-primary-foreground shadow-elevated flex items-center justify-center active:scale-90 transition-transform touch-manipulation"
         style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 80px)" }}
       >
         <Plus className="w-6 h-6" />
