@@ -375,32 +375,47 @@ const Dashboard = () => {
               emoji: "📋",
               bg: "bg-card",
               action: () => setSymptomDrawerOpen(true),
+              done: !!(todayLog?.symptom_nausea || todayLog?.symptom_fatigue || todayLog?.symptom_headache || todayLog?.symptom_constipation || todayLog?.symptom_diarrhea || todayLog?.symptom_injection_pain),
             },
             {
               label: "Atualizar\npeso",
               emoji: "⚖️",
               bg: "bg-card",
               action: () => setWeightPickerOpen(true),
+              done: !!todayLog?.weight,
             },
             {
               label: "Fotos de\nprogresso",
               emoji: "📸",
               bg: "bg-card",
               action: () => setPhotoDrawerOpen(true),
+              done: hasPhotoToday,
             },
           ].map((item, i) => (
             <button
               key={i}
               onClick={item.action}
               className={cn(
-                "rounded-2xl p-4 shadow-card flex flex-col items-center gap-3 active:scale-95 transition-transform border border-border/50",
+                "rounded-2xl p-4 shadow-card flex flex-col items-center gap-2 active:scale-95 transition-transform border border-border/50 relative",
                 item.bg
               )}
             >
               <span className="text-sm font-semibold text-foreground text-center whitespace-pre-line leading-tight">
                 {item.label}
               </span>
-              <span className="text-3xl">{item.emoji}</span>
+              <span className="text-xl">{item.emoji}</span>
+              {/* Checkbox */}
+              <div
+                className={cn(
+                  "w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all",
+                  item.done
+                    ? "border-transparent"
+                    : "border-border/60 bg-transparent"
+                )}
+                style={item.done ? { background: "hsl(15, 75%, 75%)" } : undefined}
+              >
+                {item.done && <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />}
+              </div>
             </button>
           ))}
         </div>
