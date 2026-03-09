@@ -994,7 +994,7 @@ const Triage = () => {
             <button onClick={back} className="text-muted-foreground"><ArrowLeft className="w-5 h-5" /></button>
           )}
           <div className="flex-1 h-1.5 bg-foreground/20 rounded-full overflow-hidden">
-            <div className="h-full bg-secondary rounded-full transition-all duration-500"
+            <div className="h-full bg-primary rounded-full transition-all duration-500"
               style={{ width: `${progressPct}%` }} />
           </div>
         </div>
