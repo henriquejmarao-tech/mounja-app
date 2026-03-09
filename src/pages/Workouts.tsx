@@ -152,7 +152,7 @@ const Workouts = () => {
           className="px-5 pb-14"
           style={{
             paddingTop: "calc(env(safe-area-inset-top, 0px) + 1.25rem)",
-            background: "linear-gradient(180deg, hsl(340 60% 68%) 0%, hsl(280 45% 35%) 100%)",
+            background: "linear-gradient(180deg, hsl(14, 75%, 55%) 0%, hsl(14, 75%, 55%) 50%, hsla(14, 75%, 55%, 0.65) 70%, hsla(14, 75%, 55%, 0.15) 85%, transparent 100%)",
           }}
         >
           <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-white/80 mb-4">
@@ -180,7 +180,7 @@ const Workouts = () => {
               data-tutorial="workout-ai-btn"
               onClick={generateSuggestion}
               disabled={generating}
-              className="w-full py-3.5 rounded-xl gradient-workout text-white text-sm font-bold shadow-sm active:scale-[0.97] transitihero text-primary-foregrounditems-center justify-center gap-2 animate-fade-hero text-primary-foregroundcity-60"
+              className="w-full py-3.5 rounded-xl gradient-workout text-white text-sm font-bold shadow-sm active:scale-[0.97] transition-transform flex items-center justify-center gap-2 animate-fade-in-up disabled:opacity-60"
             >
               {generating ? (
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -298,10 +298,10 @@ const Workouts = () => {
                 <button
                   onClick={saveSuggestion}
                   disabled={saving}
-                  className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl gradient-hero text-primary-foreground text-sm font-semibold shadow-sm active:scale-[0.97]"
+                  className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl gradient-workout text-white text-sm font-semibold shadow-sm active:scale-[0.97]"
                 >
                   {saving ? (
-                    <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   ) : (
                     <><Save className="w-4 h-4" /> Salvar</>
                   )}

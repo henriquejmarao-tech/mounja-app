@@ -71,8 +71,8 @@ const WorkoutSuggestion = ({
   if (todayWorkout) {
     return (
       <div className="flex items-center gap-3 rounded-[16px] px-3.5 py-3.5" style={{ background: "rgba(17,24,39,0.03)", boxShadow: "0 4px 12px rgba(17,24,39,0.06)" }}>
-        <div className="w-8 h-8 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: "hsl(340 60% 68% / 0.1)" }}>
-          <Check className="w-[18px] h-[18px]" style={{ color: "hsl(340 60% 68%)" }} />
+        <div className="w-8 h-8 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: "hsl(25 80% 52% / 0.1)" }}>
+          <Check className="w-[18px] h-[18px]" style={{ color: "hsl(25 80% 52%)" }} />
         </div>
         <div>
           <p className="text-[11px] font-bold uppercase tracking-wider mb-0.5" style={{ color: "rgba(17,24,39,0.55)" }}>Treino concluído</p>
@@ -87,8 +87,8 @@ const WorkoutSuggestion = ({
   if (restDayDismissed) {
     return (
       <div className="flex items-center gap-3 rounded-[16px] px-3.5 py-3.5" style={{ background: "rgba(17,24,39,0.03)", boxShadow: "0 4px 12px rgba(17,24,39,0.06)" }}>
-        <div className="w-8 h-8 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: "hsl(340 60% 68% / 0.1)" }}>
-          <Moon className="w-[18px] h-[18px]" style={{ color: "hsl(340 60% 68%)" }} />
+        <div className="w-8 h-8 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: "hsl(25 80% 52% / 0.1)" }}>
+          <Moon className="w-[18px] h-[18px]" style={{ color: "hsl(25 80% 52%)" }} />
         </div>
         <p className="text-sm text-foreground/70">Dia de descanso registrado. Descanse bem.</p>
       </div>
@@ -101,8 +101,8 @@ const WorkoutSuggestion = ({
   return (
     <button onClick={onOpen} className="w-full text-left group">
       <div className="flex items-center gap-3 rounded-[16px] px-3.5 py-3.5 group-active:scale-[0.98] transition-all duration-200" style={{ background: "rgba(17,24,39,0.03)", boxShadow: "0 4px 12px rgba(17,24,39,0.06)" }}>
-        <div className="w-8 h-8 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: "hsl(340 60% 68% / 0.1)" }}>
-          <Dumbbell className="w-5 h-5" style={{ color: "hsl(340 60% 68%)" }} />
+        <div className="w-8 h-8 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: "hsl(25 80% 52% / 0.1)" }}>
+          <Dumbbell className="w-5 h-5" style={{ color: "hsl(25 80% 52%)" }} />
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm text-foreground/80">{workoutType}</p>
