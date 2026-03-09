@@ -93,7 +93,7 @@ const ScrollPicker = ({
       <div className="relative" style={{ height: containerHeight }}>
         {/* Selection highlight */}
         <div
-          className="absolute left-0 right-0 bg-muted rounded-xl z-0 pointer-events-none"
+          className="absolute left-0 right-0 bg-triage-action/15 rounded-xl z-0 pointer-events-none"
           style={{ top: padCount * itemHeight, height: itemHeight }}
         />
         {/* Gradient masks */}
