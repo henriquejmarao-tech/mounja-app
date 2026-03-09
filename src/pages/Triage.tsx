@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Check, CheckCircle2, ThumbsUp } from "lucide-react";
+import { ArrowLeft, Check, CheckCircle2, ThumbsUp, CalendarCheck, TrendingDown, Brain, ShieldCheck, Utensils, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { saveTriageData } from "@/hooks/useTriageStorage";
 import { Calendar } from "@/components/ui/calendar";
