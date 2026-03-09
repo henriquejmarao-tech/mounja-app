@@ -220,22 +220,38 @@ const ProgressDetail = () => {
         )}
       </div>
 
-      {/* Progress bar */}
-      <div className="mx-5 mt-5 bg-card rounded-3xl p-5 shadow-card border border-border/30">
-        <div className="flex items-center gap-3">
-          <div
-            className="w-5 h-5 rounded-full bg-primary flex-shrink-0"
-          />
-          <div className="flex-1 relative h-2 bg-muted rounded-full overflow-hidden">
-            <div
-              className="absolute inset-y-0 left-0 bg-primary rounded-full transition-all duration-700"
-              style={{ width: `${weightProgress * 100}%` }}
-            />
-          </div>
-        </div>
-        <div className="flex justify-between mt-2 text-[10px] text-muted-foreground font-medium">
+      {/* Timeline horizontal */}
+      <div className="mx-4 mt-5 bg-card rounded-3xl py-4 shadow-card border border-border/30">
+        <div className="flex justify-between px-5 mb-2 text-[10px] text-muted-foreground font-medium">
           <span>{initialWeight ? `${Number(initialWeight).toFixed(1)} kg` : "—"}</span>
           <span>{goalWeight && !isNaN(goalWeight) ? `Meta: ${goalWeight.toFixed(1)} kg` : "Sem meta"}</span>
+        </div>
+        <div className="overflow-x-auto scrollbar-hide">
+          <div className="flex items-end gap-0 px-5 min-w-max">
+            {weightData.length > 0 ? weightData.map((entry, idx) => {
+              const isFirst = idx === 0;
+              const isLast = idx === weightData.length - 1;
+              const minW = weightData.reduce((m, e) => Math.min(m, e.peso), Infinity);
+              const maxW = weightData.reduce((m, e) => Math.max(m, e.peso), -Infinity);
+              const range = maxW - minW || 1;
+              const barH = 16 + ((entry.peso - minW) / range) * 32;
+
+              return (
+                <div key={entry.date} className="flex flex-col items-center" style={{ minWidth: 48 }}>
+                  <span className="text-[9px] font-bold text-foreground mb-0.5">
+                    {entry.peso.toFixed(1)}
+                  </span>
+                  <div
+                    className={`w-3 rounded-full transition-all ${isLast ? "bg-primary" : "bg-primary/30"}`}
+                    style={{ height: barH }}
+                  />
+                  <span className="text-[8px] text-muted-foreground mt-1">{entry.label}</span>
+                </div>
+              );
+            }) : (
+              <div className="text-xs text-muted-foreground py-4 w-full text-center">Sem registros</div>
+            )}
+          </div>
         </div>
       </div>
     </div>
