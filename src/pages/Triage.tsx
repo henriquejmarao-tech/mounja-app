@@ -700,7 +700,7 @@ const Triage = () => {
                 {(["daily", "weekly", "custom"] as const).map((f) => (
                   <button key={f} onClick={() => setFrequency(f)}
                     className={cn("flex-1 py-2.5 rounded-lg text-sm font-medium transition-all",
-                      frequency === f ? "bg-card text-foreground shadow-sm" : "text-muted-foreground")}>
+                      frequency === f ? "bg-card text-triage-action shadow-sm font-bold" : "text-muted-foreground")}>
                     {f === "daily" ? "Diário" : f === "weekly" ? "Semanal" : "Personalizado"}
                   </button>
                 ))}
