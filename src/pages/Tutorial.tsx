@@ -29,8 +29,8 @@ const slides = [
   },
   {
     icon: Pill,
-    color: "hsl(25 80% 52%)",
-    bg: "hsl(25 80% 52% / 0.08)",
+    color: "hsl(340 60% 68%)",
+    bg: "hsl(340 60% 68% / 0.08)",
     title: "Controle de aplicações",
     subtitle: "Nunca mais esqueça sua dose",
     description: "Registre cada aplicação com dose, local e data. O app calcula automaticamente quando é a próxima e sugere rodízio dos locais.",
