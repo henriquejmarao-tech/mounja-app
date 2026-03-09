@@ -300,7 +300,11 @@ const Dashboard = () => {
                   <p className="text-foreground/40 text-base font-semibold tracking-wide">Próxima aplicação</p>
                   <p className="text-foreground text-5xl font-extrabold mt-1 tracking-tight">
                     {daysUntilNextFromSelected !== null
-                      ? `${daysUntilNextFromSelected} dias`
+                      ? daysUntilNextFromSelected === 0
+                        ? "Hoje"
+                        : daysUntilNextFromSelected === 1
+                        ? "Amanhã"
+                        : `${daysUntilNextFromSelected} dias`
                       : "—"}
                   </p>
                   <button
