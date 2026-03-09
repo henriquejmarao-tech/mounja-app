@@ -50,7 +50,11 @@ const Dashboard = () => {
     toast.success("Peso atualizado ✓");
     // Refresh weight history
     const { data: logs } = await supabase.from("daily_logs").select("date, weight").eq("user_id", user.id).not("weight", "is", null).order("date", { ascending: true });
-    if (logs) setWeightHistory((logs as any[]).map((l) => ({ date: l.date, peso: l.weight })));
+    if (logs) {
+      const byDate = new Map<string, number>();
+      for (const l of logs as any[]) byDate.set(l.date, Number(l.weight));
+      setWeightHistory(Array.from(byDate, ([date, peso]) => ({ date, peso })).sort((a, b) => a.date.localeCompare(b.date)));
+    }
   }, [user]);
 
 
