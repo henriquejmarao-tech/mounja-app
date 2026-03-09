@@ -33,10 +33,10 @@ const TreatmentPlan = () => {
   const saveWeight = async () => {
     if (!user || !weightDrawer) return;
     const value = weightInt + weightDec / 10;
-    const field = weightDrawer === "start" ? "current_weight" : "goal";
+    const field = weightDrawer === "start" ? "current_weight" : "weight_goal";
     const updateData = weightDrawer === "start"
       ? { current_weight: value }
-      : { goal: String(value) };
+      : { weight_goal: value };
 
     const { error } = await supabase.from("profiles").update(updateData).eq("id", user.id);
     if (error) {
