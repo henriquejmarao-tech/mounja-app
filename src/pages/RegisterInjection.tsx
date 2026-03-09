@@ -95,9 +95,8 @@ const RegisterInjection = () => {
 
   // Time state
   const now = new Date();
-  const [hour, setHour] = useState(String(now.getHours() % 12 || 12).padStart(2, "0"));
+  const [hour, setHour] = useState(String(now.getHours()).padStart(2, "0"));
   const [minute, setMinute] = useState(String(now.getMinutes()).padStart(2, "0"));
-  const [period, setPeriod] = useState(now.getHours() >= 12 ? "PM" : "AM");
 
   // Drawers
   const [showTimePicker, setShowTimePicker] = useState(false);
