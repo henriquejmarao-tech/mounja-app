@@ -960,13 +960,23 @@ const Triage = () => {
       // ===== 24: Creating plan (loading) =====
       case 24:
         return (
-          <div className="fixed inset-0 z-50 flex flex-col items-center justify-center px-8 overflow-hidden"
-            style={{ background: "linear-gradient(160deg, hsl(15, 75%, 75%) 0%, hsl(340, 65%, 62%) 40%, hsl(255, 50%, 48%) 100%)" }}>
+           <div className="z-50 flex flex-col items-center justify-center px-8 overflow-hidden"
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              width: "100vw",
+              height: "100dvh",
+              background: "linear-gradient(160deg, hsl(15, 75%, 75%) 0%, hsl(340, 65%, 62%) 40%, hsl(255, 50%, 48%) 100%)",
+            }}>
             {/* Animated background blobs */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="overflow-hidden pointer-events-none" style={{ position: "absolute", top: "-50px", left: "-50px", right: "-50px", bottom: "-50px" }}>
               <div className="absolute w-64 h-64 rounded-full bg-white/10 -top-20 -left-20" style={{ animation: "blob-drift 8s ease-in-out infinite" }} />
               <div className="absolute w-48 h-48 rounded-full bg-white/8 top-1/3 -right-16" style={{ animation: "blob-orbit 10s ease-in-out infinite" }} />
               <div className="absolute w-56 h-56 rounded-full bg-white/5 -bottom-24 left-1/4" style={{ animation: "blob-float 6s ease-in-out infinite" }} />
+              <div className="absolute w-72 h-72 rounded-full bg-white/5 bottom-0 right-0" style={{ animation: "blob-drift 12s ease-in-out infinite reverse" }} />
             </div>
             <div className="relative z-10 flex flex-col items-center">
               <div className="w-28 h-28 rounded-full bg-white/15 flex items-center justify-center mb-6 backdrop-blur-sm animate-scale-in">
