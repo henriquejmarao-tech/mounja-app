@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Flame, Trophy, Target, Calendar, Syringe, TrendingDown, AtSign, Check, Pencil } from "lucide-react";
+import { ArrowLeft, Flame, Trophy, Target, Calendar, Syringe, TrendingDown, Check, Pencil } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { supabase } from "@/integrations/supabase/client";
