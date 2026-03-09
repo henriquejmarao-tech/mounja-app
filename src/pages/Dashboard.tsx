@@ -232,9 +232,9 @@ const Dashboard = () => {
           </button>
           <button
             onClick={() => setCalendarDrawerOpen(true)}
-            className="active:scale-95 transition-transform"
+            className="bg-muted/60 px-4 py-1.5 rounded-full active:scale-95 transition-all shadow-sm"
           >
-            <p className="text-base font-bold text-foreground">{monthLabel}</p>
+            <p className="text-sm font-bold text-foreground">{monthLabel}</p>
           </button>
           <button
             onClick={() => setWhatsNewOpen(true)}
