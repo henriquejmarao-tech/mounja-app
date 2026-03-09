@@ -17,6 +17,7 @@ const ProgressDetail = () => {
   const [injections, setInjections] = useState<any[]>([]);
   const [latestPhoto, setLatestPhoto] = useState<{ url: string; weight?: number } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedIdx, setSelectedIdx] = useState<number>(0);
 
   const fetchData = useCallback(async () => {
     if (!user) return;
@@ -42,13 +43,13 @@ const ProgressDetail = () => {
         .limit(1),
     ]);
 
-    setWeightData(
-      ((logsRes.data as any[]) || []).map((l) => ({
-        date: l.date,
-        peso: Number(l.weight),
-        label: new Date(l.date + "T12:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
-      }))
-    );
+    const mapped = ((logsRes.data as any[]) || []).map((l) => ({
+      date: l.date,
+      peso: Number(l.weight),
+      label: new Date(l.date + "T12:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
+    }));
+    setWeightData(mapped);
+    setSelectedIdx(Math.max(0, mapped.length - 1));
     setInjections((injRes.data as any[]) || []);
 
     const rawPhotos = (photosRes.data as any[]) || [];
@@ -220,39 +221,52 @@ const ProgressDetail = () => {
         )}
       </div>
 
-      {/* Timeline horizontal */}
-      <div className="mx-4 mt-5 bg-card rounded-3xl py-4 shadow-card border border-border/30">
-        <div className="flex justify-between px-5 mb-2 text-[10px] text-muted-foreground font-medium">
-          <span>{initialWeight ? `${Number(initialWeight).toFixed(1)} kg` : "—"}</span>
-          <span>{goalWeight && !isNaN(goalWeight) ? `Meta: ${goalWeight.toFixed(1)} kg` : "Sem meta"}</span>
-        </div>
-        <div className="overflow-x-auto scrollbar-hide">
-          <div className="flex items-end gap-0 px-5 min-w-max">
-            {weightData.length > 0 ? weightData.map((entry, idx) => {
-              const isFirst = idx === 0;
-              const isLast = idx === weightData.length - 1;
-              const minW = weightData.reduce((m, e) => Math.min(m, e.peso), Infinity);
-              const maxW = weightData.reduce((m, e) => Math.max(m, e.peso), -Infinity);
-              const range = maxW - minW || 1;
-              const barH = 16 + ((entry.peso - minW) / range) * 32;
-
-              return (
-                <div key={entry.date} className="flex flex-col items-center" style={{ minWidth: 48 }}>
-                  <span className="text-[9px] font-bold text-foreground mb-0.5">
-                    {entry.peso.toFixed(1)}
-                  </span>
-                  <div
-                    className={`w-3 rounded-full transition-all ${isLast ? "bg-primary" : "bg-primary/30"}`}
-                    style={{ height: barH }}
-                  />
-                  <span className="text-[8px] text-muted-foreground mt-1">{entry.label}</span>
-                </div>
-              );
-            }) : (
-              <div className="text-xs text-muted-foreground py-4 w-full text-center">Sem registros</div>
-            )}
+      {/* Timeline slider */}
+      <div className="mx-4 mt-5 bg-card rounded-3xl p-5 shadow-card border border-border/30">
+        {weightData.length > 0 ? (
+          <>
+            {/* Selected day info */}
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-xs text-muted-foreground font-medium">
+                {new Date(weightData[Math.min(selectedIdx, weightData.length - 1)]?.date + "T12:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })}
+              </span>
+              <span className="text-sm font-extrabold text-foreground">
+                {weightData[Math.min(selectedIdx, weightData.length - 1)]?.peso.toFixed(1)} kg
+              </span>
+            </div>
+            {/* Slider track */}
+            <div className="relative">
+              <input
+                type="range"
+                min={0}
+                max={weightData.length - 1}
+                value={Math.min(selectedIdx, weightData.length - 1)}
+                onChange={(e) => setSelectedIdx(Number(e.target.value))}
+                className="w-full h-2 appearance-none rounded-full bg-muted outline-none touch-manipulation
+                  [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 
+                  [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary [&::-webkit-slider-thumb]:shadow-md
+                  [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-card
+                  [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full 
+                  [&::-moz-range-thumb]:bg-primary [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-card"
+              />
+              {/* Fill track */}
+              <div
+                className="absolute top-0 left-0 h-2 bg-primary/30 rounded-full pointer-events-none"
+                style={{ width: weightData.length > 1 ? `${(Math.min(selectedIdx, weightData.length - 1) / (weightData.length - 1)) * 100}%` : "100%" }}
+              />
+            </div>
+            {/* Range labels */}
+            <div className="flex justify-between mt-1.5 text-[9px] text-muted-foreground">
+              <span>{weightData[0]?.label}</span>
+              <span>{weightData[weightData.length - 1]?.label}</span>
+            </div>
+          </>
+        ) : (
+          <div className="flex justify-between px-1 text-[10px] text-muted-foreground font-medium">
+            <span>{initialWeight ? `${Number(initialWeight).toFixed(1)} kg` : "—"}</span>
+            <span>{goalWeight && !isNaN(goalWeight) ? `Meta: ${goalWeight.toFixed(1)} kg` : "Sem meta"}</span>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
