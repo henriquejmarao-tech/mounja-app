@@ -185,8 +185,8 @@ const FeaturedForYou = ({ context }: FeaturedForYouProps) => {
   if (mode === "A" && activeTips.length === 0) return null;
 
   const isNutrition = context === "nutrition";
-  const gradientClass = isNutrition ? "gradient-nutrition" : "gradient-workout";
-  const activeColor = isNutrition ? "hsl(174, 42%, 48%)" : "hsl(var(--urgent))";
+  const gradientClass = isNutrition ? "gradient-nutrition" : "gradient-hero";
+  const activeColor = isNutrition ? "hsl(174, 42%, 48%)" : "hsl(var(--secondary))";
   const activeFg = "hsl(0, 0%, 100%)";
 
   return (

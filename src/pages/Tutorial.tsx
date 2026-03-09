@@ -56,8 +56,8 @@ const slides = [
   },
   {
     icon: Dumbbell,
-    color: "hsl(25 80% 52%)",
-    bg: "hsl(25 80% 52% / 0.08)",
+    color: "hsl(340 60% 68%)",
+    bg: "hsl(340 60% 68% / 0.08)",
     title: "Treinos no seu ritmo",
     subtitle: "Intensidade adaptada ao tratamento",
     description: "O Mounjá considera seus sintomas e dias pós-aplicação para sugerir treinos na intensidade ideal. Defina sua meta semanal.",
