@@ -152,10 +152,7 @@ const Workouts = () => {
           className="px-5 pb-14"
           style={{
             paddingTop: "calc(env(safe-area-inset-top, 0px) + 1.25rem)",
-            background: "linear-gradient(180deg, hsl(340, 60%, 68%) 0%, hsl(280, 45%, 35%) 100%)",
-          }}
-        >
-          <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-white/80 mb-4">
+            background: "linear-gradient(180deg, hsl(340, 60%, 68%) 0%, hsl(280, 45%, 35%)1)} className="flex items-center gap-2 text-white/80 mb-4">
             <ArrowLeft className="w-5 h-5" />
             <span className="text-sm font-medium">Voltar</span>
           </button>
@@ -180,7 +177,7 @@ const Workouts = () => {
               data-tutorial="workout-ai-btn"
               onClick={generateSuggestion}
               disabled={generating}
-              className="w-full py-3.5 rounded-xl gradient-workout text-white text-sm font-bold shadow-sm active:scale-[0.97] transition-transform flex items-center justify-center gap-2 animate-fade-in-up disabled:opacity-60"
+              className="w-full py-3.5 rounded-xl gradient-workout text-white text-sm font-bold shadow-sm active:scale-[0.97] transitihero text-primary-foregrounditems-center justify-center gap-2 animate-fade-in-up disabled:opacity-60"
             >
               {generating ? (
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
