@@ -858,7 +858,7 @@ const Triage = () => {
                 <button key={opt.value}
                   onClick={() => { setSex(opt.value); setTimeout(() => setStep(18), 300); }}
                   className={cn("w-full py-4 px-5 rounded-2xl text-base font-medium transition-all text-center",
-                    sex === opt.value ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground")}>
+                    sex === opt.value ? "bg-foreground text-background" : "bg-secondary text-foreground")}>
                   {opt.label}
                 </button>
               ))}
