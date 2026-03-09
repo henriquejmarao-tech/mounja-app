@@ -439,7 +439,7 @@ const Triage = () => {
                   onClick={() => { setMedication(med); setTimeout(() => setStep(3), 300); }}
                   className={cn(
                     "w-full py-4 px-6 rounded-full text-base font-semibold text-center active:scale-[0.98] transition-all",
-                    medication === med ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"
+                    medication === med ? "bg-foreground text-background" : "bg-muted text-foreground"
                   )}
                 >
                   {med}
@@ -461,7 +461,7 @@ const Triage = () => {
                 <button key={opt.value}
                   onClick={() => { setExperience(opt.value); setTimeout(() => setStep(4), 300); }}
                   className={cn("w-full py-4 px-5 rounded-2xl text-base font-medium transition-all text-left",
-                    experience === opt.value ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground")}>
+                    experience === opt.value ? "bg-foreground text-background" : "bg-secondary text-foreground")}>
                   {opt.label}
                 </button>
               ))}
@@ -858,7 +858,7 @@ const Triage = () => {
                 <button key={opt.value}
                   onClick={() => { setSex(opt.value); setTimeout(() => setStep(18), 300); }}
                   className={cn("w-full py-4 px-5 rounded-2xl text-base font-medium transition-all text-center",
-                    sex === opt.value ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground")}>
+                    sex === opt.value ? "bg-foreground text-background" : "bg-secondary text-foreground")}>
                   {opt.label}
                 </button>
               ))}
