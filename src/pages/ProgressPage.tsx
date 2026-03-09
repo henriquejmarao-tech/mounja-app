@@ -116,6 +116,11 @@ const ProgressPage = () => {
           paddingTop: "env(safe-area-inset-top, 0px)",
         }}
       >
+        {/* Fade-out overlay at the bottom */}
+        <div
+          className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none"
+          style={{ background: "linear-gradient(to bottom, transparent, hsl(var(--background)))" }}
+        />
         <div className="px-6 pt-6 pb-16">
           {/* Weight display */}
           <div className="flex items-center justify-between">
