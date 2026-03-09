@@ -598,7 +598,7 @@ const Triage = () => {
               <div className="flex items-center gap-3">
                 <input type="number" step="0.5" inputMode="decimal" value={doseValue}
                   onChange={(e) => setDoseValue(e.target.value)} placeholder="5.0"
-                  className="w-24 h-16 text-center text-2xl font-bold border-2 border-foreground/30 rounded-xl bg-card text-foreground focus:border-foreground focus:ring-2 focus:ring-foreground/20 outline-none" />
+                  className="w-24 h-16 text-center text-2xl font-bold border-2 border-triage-action/30 rounded-xl bg-card text-foreground focus:border-triage-action focus:ring-2 focus:ring-triage-action/20 outline-none" />
                 <span className="text-xl font-semibold text-muted-foreground">mg</span>
               </div>
             </div>
