@@ -583,16 +583,33 @@ const Triage = () => {
 
       // ===== 9: Dose input =====
       case 9:
+        const commonDoses = medication === "Ozempic®" 
+          ? ["0.25", "0.5", "1.0", "2.0"] 
+          : medication === "Mounjaro®" 
+          ? ["2.5", "5.0", "7.5", "10.0", "12.5", "15.0"] 
+          : medication === "Wegovy®"
+          ? ["0.25", "0.5", "1.0", "1.7", "2.4"]
+          : medication === "Zepbound®"
+          ? ["2.5", "5.0", "7.5", "10.0", "12.5", "15.0"]
+          : ["0.25", "0.5", "1.0", "2.5", "5.0", "7.5", "10.0"];
         return (
           <div className="flex-1 flex flex-col px-6">
-            <h1 className="text-2xl font-bold text-foreground text-center mb-12 mt-4">Qual sua dose atual de {medication || "seu medicamento"}?</h1>
-            <div className="flex-1 flex items-center justify-center">
-              <div className="flex items-center gap-3">
-                <input type="number" step="0.5" inputMode="decimal" value={doseValue}
-                  onChange={(e) => setDoseValue(e.target.value)} placeholder="5.0"
-                  className="w-24 h-16 text-center text-2xl font-bold border-2 border-triage-action/30 rounded-xl bg-card text-foreground focus:border-triage-action focus:ring-2 focus:ring-triage-action/20 outline-none" />
-                <span className="text-xl font-semibold text-muted-foreground">mg</span>
-              </div>
+            <h1 className="text-2xl font-bold text-foreground text-center mb-8 mt-4">Qual sua dose atual de {medication || "seu medicamento"}?</h1>
+            <div className="flex flex-wrap justify-center gap-2 mb-8">
+              {commonDoses.map((dose) => (
+                <button key={dose} onClick={() => setDoseValue(dose)}
+                  className={cn("px-5 py-3 rounded-2xl text-base font-semibold transition-all",
+                    doseValue === dose ? "bg-triage-action text-white" : "bg-muted text-foreground")}>
+                  {dose} mg
+                </button>
+              ))}
+            </div>
+            <div className="flex items-center justify-center gap-3">
+              <span className="text-sm text-muted-foreground">Ou digite:</span>
+              <input type="number" step="0.5" inputMode="decimal" value={doseValue}
+                onChange={(e) => setDoseValue(e.target.value)} placeholder="0.0"
+                className="w-24 h-14 text-center text-xl font-bold border-2 border-triage-action/30 rounded-xl bg-card text-foreground focus:border-triage-action focus:ring-2 focus:ring-triage-action/20 outline-none" />
+              <span className="text-lg font-semibold text-muted-foreground">mg</span>
             </div>
           </div>
         );
