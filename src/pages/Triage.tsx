@@ -666,10 +666,10 @@ const Triage = () => {
               </button>
               <button onClick={() => setAlternatesSites(false)}
                 className={cn("w-full p-5 rounded-2xl border-2 text-left transition-all",
-                  alternatesSites === false ? "border-foreground bg-foreground/5" : "border-border bg-card")}>
+                  alternatesSites === false ? "border-triage-action bg-triage-action/10" : "border-border bg-card")}>
                 <div className="flex items-center gap-3 mb-2">
                   <div className={cn("w-6 h-6 rounded-full border-2 flex items-center justify-center",
-                    alternatesSites === false ? "bg-foreground border-foreground" : "border-muted-foreground/30")}>
+                    alternatesSites === false ? "bg-triage-action border-triage-action" : "border-muted-foreground/30")}>
                     {alternatesSites === false && <Check className="w-3.5 h-3.5 text-background" />}
                   </div>
                   <span className="font-bold text-foreground">Não, mantenho o mesmo</span>
