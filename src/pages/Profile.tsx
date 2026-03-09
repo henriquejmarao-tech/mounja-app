@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Flame, Trophy, Target, Calendar, Syringe, TrendingDown, AtSign, Check, Pencil } from "lucide-react";
+import { ArrowLeft, Flame, Trophy, Target, Calendar, Syringe, TrendingDown, Check, Pencil } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { supabase } from "@/integrations/supabase/client";
@@ -28,13 +28,13 @@ const Profile = () => {
   const [weightLost, setWeightLost] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const [editingUsername, setEditingUsername] = useState(false);
-  const [usernameInput, setUsernameInput] = useState("");
-  const [savingUsername, setSavingUsername] = useState(false);
+  const [editingName, setEditingName] = useState(false);
+  const [nameInput, setNameInput] = useState("");
+  const [savingName, setSavingName] = useState(false);
 
   useEffect(() => {
     if (profile) {
-      setUsernameInput((profile as any).username || "");
+      setNameInput(profile.name || "");
     }
   }, [profile]);
 
@@ -79,32 +79,24 @@ const Profile = () => {
     fetch();
   }, [user]);
 
-  const handleSaveUsername = async () => {
+  const handleSaveName = async () => {
     if (!user) return;
-    const cleaned = usernameInput.trim().toLowerCase().replace(/[^a-z0-9._]/g, "");
-    if (!cleaned || cleaned.length < 3) {
-      toast.error("Username deve ter pelo menos 3 caracteres.");
+    const cleaned = nameInput.trim();
+    if (!cleaned || cleaned.length < 2) {
+      toast.error("Nome deve ter pelo menos 2 caracteres.");
       return;
     }
-    if (cleaned.length > 30) {
-      toast.error("Username deve ter no máximo 30 caracteres.");
-      return;
-    }
-    setSavingUsername(true);
-    const { error } = await supabase.from("profiles").update({ username: cleaned } as any).eq("id", user.id);
+    setSavingName(true);
+    const { error } = await supabase.from("profiles").update({ name: cleaned }).eq("id", user.id);
     if (error) {
-      if (error.code === "23505") {
-        toast.error("Esse username já está em uso. Tente outro.");
-      } else {
-        toast.error("Erro ao salvar username.");
-      }
+      toast.error("Erro ao salvar nome.");
     } else {
-      toast.success("Username atualizado! ✨");
-      setUsernameInput(cleaned);
-      setEditingUsername(false);
+      toast.success("Nome atualizado! ✨");
+      setNameInput(cleaned);
+      setEditingName(false);
       await refreshProfile();
     }
-    setSavingUsername(false);
+    setSavingName(false);
   };
 
   const startDate = profile?.mounjaro_start_date;
@@ -115,7 +107,7 @@ const Profile = () => {
   const nextBadge = badges.find((b) => streak < b.threshold);
   const progressToNext = nextBadge ? Math.min((streak / nextBadge.threshold) * 100, 100) : 100;
 
-  const currentUsername = (profile as any)?.username;
+  
 
   if (loading) {
     return (
@@ -139,29 +131,24 @@ const Profile = () => {
             <div className="w-20 h-20 rounded-full bg-primary-foreground/20 backdrop-blur-sm flex items-center justify-center text-primary-foreground text-3xl font-bold border-2 border-primary-foreground/15 mb-3">
               {profile?.name?.[0]?.toUpperCase() || "U"}
             </div>
-            <h1 className="text-xl font-bold text-primary-foreground">{profile?.name || "Usuário"}</h1>
-            
-            {/* Username display/edit */}
-            {editingUsername ? (
+            {/* Name display/edit */}
+            {editingName ? (
               <div className="flex items-center gap-2 mt-2">
-                <div className="flex items-center bg-primary-foreground/15 backdrop-blur-sm rounded-xl px-3 py-2 border border-primary-foreground/10">
-                  <span className="text-primary-foreground/60 text-sm font-medium">@</span>
-                  <input
-                    type="text"
-                    value={usernameInput}
-                    onChange={(e) => setUsernameInput(e.target.value.toLowerCase().replace(/[^a-z0-9._]/g, ""))}
-                    placeholder="seuusuario"
-                    maxLength={30}
-                    autoFocus
-                    className="bg-transparent text-primary-foreground text-sm font-medium outline-none w-32 placeholder:text-primary-foreground/30"
-                  />
-                </div>
+                <input
+                  type="text"
+                  value={nameInput}
+                  onChange={(e) => setNameInput(e.target.value)}
+                  placeholder="Seu nome"
+                  maxLength={40}
+                  autoFocus
+                  className="bg-primary-foreground/15 backdrop-blur-sm text-primary-foreground text-lg font-bold outline-none rounded-xl px-4 py-2 border border-primary-foreground/10 text-center w-48 placeholder:text-primary-foreground/30"
+                />
                 <button
-                  onClick={handleSaveUsername}
-                  disabled={savingUsername}
+                  onClick={handleSaveName}
+                  disabled={savingName}
                   className="w-9 h-9 rounded-xl bg-primary-foreground/20 backdrop-blur-sm flex items-center justify-center border border-primary-foreground/10 disabled:opacity-50"
                 >
-                  {savingUsername ? (
+                  {savingName ? (
                     <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
                   ) : (
                     <Check className="w-4 h-4 text-primary-foreground" />
@@ -170,15 +157,11 @@ const Profile = () => {
               </div>
             ) : (
               <button
-                onClick={() => setEditingUsername(true)}
-                className="flex items-center gap-1.5 mt-1.5 group"
+                onClick={() => setEditingName(true)}
+                className="flex items-center gap-1.5 group"
               >
-                {currentUsername ? (
-                  <span className="text-sm text-primary-foreground/70 font-medium">@{currentUsername}</span>
-                ) : (
-                  <span className="text-sm text-primary-foreground/50 font-medium italic">Definir @username</span>
-                )}
-                <Pencil className="w-3 h-3 text-primary-foreground/40 group-hover:text-primary-foreground/70 transition-colors" />
+                <h1 className="text-xl font-bold text-primary-foreground">{profile?.name || "Seu nome"}</h1>
+                <Pencil className="w-3.5 h-3.5 text-primary-foreground/40 group-hover:text-primary-foreground/70 transition-colors" />
               </button>
             )}
 
