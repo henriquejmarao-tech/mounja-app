@@ -166,12 +166,12 @@ const motivationOptions = [
 ];
 
 const helpOptions = [
-  { value: "consistency", label: "Manter a constância no tratamento", emoji: "✅✅✅" },
-  { value: "weight_tracking", label: "Acompanhar minha perda de peso", emoji: "📉" },
-  { value: "appetite", label: "Monitorar apetite e compulsão", emoji: "🍕" },
-  { value: "side_effects", label: "Gerenciar efeitos colaterais", emoji: "🧘‍♀️" },
-  { value: "nutrition", label: "Registrar refeições e nutrição", emoji: "🥗" },
-  { value: "motivation", label: "Manter a motivação em alta", emoji: "🏆" },
+  { value: "consistency", label: "Constância no tratamento", icon: CalendarCheck },
+  { value: "weight_tracking", label: "Acompanhar perda de peso", icon: TrendingDown },
+  { value: "appetite", label: "Monitorar apetite e compulsão", icon: Brain },
+  { value: "side_effects", label: "Gerenciar efeitos colaterais", icon: ShieldCheck },
+  { value: "nutrition", label: "Refeições e nutrição", icon: Utensils },
+  { value: "motivation", label: "Manter a motivação", icon: Trophy },
 ];
 
 const injectionSites = [
