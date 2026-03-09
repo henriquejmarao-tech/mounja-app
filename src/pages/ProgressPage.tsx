@@ -86,8 +86,6 @@ const ProgressPage = () => {
     ? Math.min(1, Math.max(0, (Number(initialWeight) - currentWeight) / (Number(initialWeight) - goalWeight)))
     : 0;
 
-  const ringCircumference = 2 * Math.PI * 70;
-  const ringOffset = ringCircumference * (1 - weightProgress);
 
   const periods: { value: Period; label: string }[] = [
     { value: "30d", label: "30d" },
