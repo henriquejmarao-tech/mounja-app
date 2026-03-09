@@ -791,7 +791,6 @@ const Triage = () => {
       case 15:
         return (
           <div className="flex-1 flex flex-col items-center px-8">
-            <button onClick={back} className="self-start mt-2 mb-4 text-muted-foreground"><ArrowLeft className="w-6 h-6" /></button>
             <h1 className="text-3xl font-bold text-foreground text-center mb-8">O Mounjá gera resultados duradouros</h1>
             <div className="bg-card rounded-2xl shadow-card p-6 w-full">
               <p className="font-semibold text-foreground mb-4">Seu peso</p>
