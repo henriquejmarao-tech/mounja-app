@@ -43,13 +43,13 @@ const ProgressDetail = () => {
         .limit(1),
     ]);
 
-    setWeightData(
-      ((logsRes.data as any[]) || []).map((l) => ({
-        date: l.date,
-        peso: Number(l.weight),
-        label: new Date(l.date + "T12:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
-      }))
-    );
+    const mapped = ((logsRes.data as any[]) || []).map((l) => ({
+      date: l.date,
+      peso: Number(l.weight),
+      label: new Date(l.date + "T12:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
+    }));
+    setWeightData(mapped);
+    setSelectedIdx(Math.max(0, mapped.length - 1));
     setInjections((injRes.data as any[]) || []);
 
     const rawPhotos = (photosRes.data as any[]) || [];
