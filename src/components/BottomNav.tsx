@@ -1,13 +1,13 @@
-import { CalendarDays, UtensilsCrossed, BarChart3, Settings } from "lucide-react";
+import { House, Apple, TrendingUp, SlidersHorizontal } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 
 const navItems = [
-  { icon: CalendarDays, label: "Today", path: "/" },
-  { icon: UtensilsCrossed, label: "Meals", path: "/meals" },
-  { icon: BarChart3, label: "Progress", path: "/progress" },
-  { icon: Settings, label: "Settings", path: "/settings" },
+  { icon: House, label: "Hoje", path: "/" },
+  { icon: Apple, label: "Refeições", path: "/meals" },
+  { icon: TrendingUp, label: "Progresso", path: "/progress" },
+  { icon: SlidersHorizontal, label: "Ajustes", path: "/settings" },
 ];
 
 const BottomNav = () => {
