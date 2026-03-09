@@ -118,8 +118,8 @@ const ProgressPage = () => {
       >
         {/* Fade-out overlay at the bottom */}
         <div
-          className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none"
-          style={{ background: "linear-gradient(to bottom, transparent, hsl(var(--background)))" }}
+          className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
+          style={{ background: "linear-gradient(to bottom, transparent 0%, hsl(var(--background) / 0.3) 40%, hsl(var(--background) / 0.7) 70%, hsl(var(--background)) 100%)" }}
         />
         <div className="px-6 pt-6 pb-16">
           {/* Weight display */}
