@@ -71,8 +71,8 @@ const WorkoutSuggestion = ({
   if (todayWorkout) {
     return (
       <div className="flex items-center gap-3 rounded-[16px] px-3.5 py-3.5" style={{ background: "rgba(17,24,39,0.03)", boxShadow: "0 4px 12px rgba(17,24,39,0.06)" }}>
-        <div className="w-8 h-8 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: "hsl(25 80% 52% / 0.1)" }}>
-          <Check className="w-[18px] h-[18px]" style={{ color: "hsl(25 80% 52%)" }} />
+        <div className="w-8 h-8 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: "hsl(340 60% 68% / 0.1)" }}>
+          <Check className="w-[18px] h-[18px]" style={{ color: "hsl(340 60% 68%)" }} />
         </div>
         <div>
           <p className="text-[11px] font-bold uppercase tracking-wider mb-0.5" style={{ color: "rgba(17,24,39,0.55)" }}>Treino concluído</p>
