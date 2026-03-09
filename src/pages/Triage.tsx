@@ -940,15 +940,11 @@ const Triage = () => {
       // ===== 23: Health motivation =====
       case 23:
         return (
-          <div className="flex-1 flex flex-col items-center px-8">
-            
-            <h1 className="text-2xl font-bold text-foreground text-center mt-4 mb-6 leading-tight">
+          <div className="flex-1 flex flex-col items-center justify-center px-8">
+            <h1 className="text-3xl font-bold text-foreground text-center leading-tight mb-6">
               Pesquisas mostram que manter um peso saudável leva a uma vida mais longa
             </h1>
-            <div className="flex-1 flex items-center justify-center">
-              <img src={familyImg} alt="Família" className="w-72 h-72 object-contain" />
-            </div>
-            <p className="text-muted-foreground italic text-center mb-4">
+            <p className="text-lg text-muted-foreground italic text-center">
               Mais tempo com quem você mais ama
             </p>
           </div>
