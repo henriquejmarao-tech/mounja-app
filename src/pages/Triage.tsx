@@ -543,8 +543,8 @@ const Triage = () => {
                   <button key={opt.value} onClick={() => toggleHelp(opt.value)}
                     className={cn("flex flex-col items-center justify-center gap-3 p-5 rounded-2xl border-2 transition-all text-center",
                       selected ? "border-triage-action bg-triage-action/10" : "border-border bg-card")}>
-                    <span className="text-3xl">{opt.emoji}</span>
-                    <span className="text-xs font-medium text-foreground leading-tight">{opt.label}</span>
+                    <opt.icon className={cn("w-7 h-7", selected ? "text-triage-action" : "text-muted-foreground")} />
+                    <span className="text-sm font-semibold text-foreground leading-tight">{opt.label}</span>
                   </button>
                 );
               })}
