@@ -53,7 +53,7 @@
     --shadow-elevated: 0 8px 28px -6px hsl(11 55% 66% / 0.10), 0 4px 16px -4px hsl(36 10% 50% / 0.06);
 
     --tab-bar-height: 56px;
-    --safe-area-bottom: max(env(safe-area-inset-bottom, 0px), 12px);
+    --safe-area-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   .dark {
