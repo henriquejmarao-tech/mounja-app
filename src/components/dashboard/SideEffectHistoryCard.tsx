@@ -46,8 +46,13 @@ const SideEffectHistoryCard = ({ selectedDate }: { selectedDate?: string }) => {
         .gte("date", cutoff),
     ]);
 
-    const logs = (logsRes.data as any[]) || [];
+    const logsRaw = (logsRes.data as any[]) || [];
     const injections = new Set(((injRes.data as any[]) || []).map((i) => i.date));
+
+    // Deduplicate logs by date — keep last entry
+    const logsByDate = new Map<string, any>();
+    for (const l of logsRaw) logsByDate.set(l.date, l);
+    const logs = Array.from(logsByDate.values());
 
     // Build 30 days
     const result: DayData[] = [];
