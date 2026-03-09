@@ -424,14 +424,6 @@ const Dashboard = () => {
         <WeightTrendsCard weightHistory={weightHistory} />
       </div>
 
-      {/* ── Milestones ── */}
-      <div className="px-5 mb-4 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
-        <MilestonesCard
-          initialWeight={initialWeight}
-          currentWeight={currentWeight}
-          goalWeight={goalWeight}
-        />
-      </div>
 
       {/* ── Side Effect History ── */}
       <div className="px-5 mb-4 animate-fade-in-up" style={{ animationDelay: "240ms" }}>
