@@ -183,8 +183,8 @@ const MealAnalysisOverlay = ({ photoPreview, analyzing, result, onClose }: MealA
       </div>
 
       {/* Bottom content panel - scrollable */}
-      <div className="relative z-30 bg-card rounded-t-[28px] -mt-6 min-h-[55vh]">
-        <div className="px-5 pt-6" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 24px)" }}>
+      <div className="relative z-30 bg-card rounded-t-[28px] -mt-6 flex-1 overflow-y-auto overscroll-contain" style={{ WebkitOverflowScrolling: "touch" } as React.CSSProperties}>
+        <div className="px-5 pt-6" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 32px)" }}>
           {/* Analyzing state */}
           {analyzing && !result && (
             <div className="space-y-4 animate-fade-in">
