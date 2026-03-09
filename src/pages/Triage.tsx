@@ -833,7 +833,7 @@ const Triage = () => {
             <div className="w-full mb-6">
               <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Seu nome</label>
               <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Como quer ser chamado?"
-                className="w-full px-4 py-3.5 rounded-2xl border border-border bg-card text-base focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
+                className="w-full px-4 py-3.5 rounded-2xl border border-border bg-card text-base focus:ring-2 focus:ring-foreground/20 focus:border-foreground outline-none" />
             </div>
             <div className="flex-1 flex items-center justify-center">
               <img src={personalImg} alt="Personalizar" className="w-56 h-56 object-contain" />
