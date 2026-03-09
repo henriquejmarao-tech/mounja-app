@@ -204,17 +204,13 @@ const ProgressPage = () => {
 
           {/* Card 1: Summary with latest photo */}
           <div onClick={() => navigate("/progress-detail")} className="bg-card rounded-[20px] p-5 shadow-card border border-border/50 min-w-[calc(100vw-40px)] max-w-[calc(100vw-40px)] snap-center cursor-pointer active:scale-[0.98] transition-transform">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <span className="text-lg font-bold text-foreground">📊</span>
-                <span className="text-base font-bold text-foreground">Resumo</span>
-              </div>
-              {daysOnTreatment && (
+            {daysOnTreatment && (
+              <div className="flex justify-end mb-4">
                 <span className="bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-full">
                   Dia {daysOnTreatment}
                 </span>
-              )}
-            </div>
+              </div>
+            )}
 
             <div className="flex gap-3">
               {/* Photo */}
