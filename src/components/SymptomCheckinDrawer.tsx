@@ -126,11 +126,11 @@ const SymptomCheckinDrawer = ({ open, onOpenChange, date }: SymptomCheckinDrawer
     setSaving(true);
     try {
       const dateStr = localDateStr(date || new Date());
-      // Build payload with known DB columns
-      const dbFields: Record<string, number> = {};
+      // Build payload with known DB columns — explicitly set all to 0 or 1
       const knownColumns = ["symptom_nausea", "symptom_constipation", "symptom_diarrhea", "symptom_headache", "symptom_fatigue", "symptom_injection_pain"];
+      const dbFields: Record<string, number> = {};
       knownColumns.forEach((key) => {
-        if (selected[key]) dbFields[key] = 1;
+        dbFields[key] = selected[key] ? 1 : 0;
       });
 
       // Collect non-DB symptoms into notes
@@ -144,13 +144,13 @@ const SymptomCheckinDrawer = ({ open, onOpenChange, date }: SymptomCheckinDrawer
           return key;
         });
 
-      const { data } = await supabase.from("daily_logs").select("id, notes").eq("user_id", user.id).eq("date", dateStr).limit(1);
+      const { data } = await supabase.from("daily_logs").select("id").eq("user_id", user.id).eq("date", dateStr).limit(1);
       const existing = (data as any[])?.[0];
 
       const notesExtra = extraSymptoms.length > 0 ? `Checkin: ${extraSymptoms.join(", ")}` : null;
       const payload: any = { user_id: user.id, date: dateStr, ...dbFields };
       if (notesExtra) {
-        payload.notes = existing?.notes ? `${existing.notes}\n${notesExtra}` : notesExtra;
+        payload.notes = notesExtra;
       }
 
       if (existing) {
