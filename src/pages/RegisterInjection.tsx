@@ -104,7 +104,7 @@ const RegisterInjection = () => {
 
   const today = new Date();
   const dateLabel = today.toLocaleDateString("pt-BR", { month: "short", day: "numeric", year: "numeric" });
-  const timeLabel = `${hour}:${minute} ${period}`;
+  const timeLabel = `${hour}:${minute}`;
 
   const selectedSiteLabel = injectionSites.find((s) => s.id === selectedSite)?.label || "—";
 
