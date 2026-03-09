@@ -101,21 +101,26 @@ const EditGoalsDrawer = ({ open, onOpenChange, goals, onSave }: EditGoalsDrawerP
 
           <div className="space-y-5 mb-6">
             {rows.map((row) => (
-              <div key={row.label} className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <span className="text-xl">{row.emoji}</span>
-                  <span className="text-base font-semibold text-foreground">
-                    {row.label}{" "}
-                    <span className="text-muted-foreground font-normal text-sm">{row.unit}</span>
-                  </span>
+              <div key={row.label}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">{row.emoji}</span>
+                    <span className="text-base font-semibold text-foreground">
+                      {row.label}{" "}
+                      <span className="text-muted-foreground font-normal text-sm">{row.unit}</span>
+                    </span>
+                  </div>
+                  <input
+                    type="number"
+                    inputMode="decimal"
+                    value={row.value}
+                    onChange={(e) => row.onChange(e.target.value)}
+                    className="w-36 text-center bg-muted/50 rounded-2xl py-3 text-base font-semibold text-foreground border-0 outline-none focus:ring-2 focus:ring-primary/30"
+                  />
                 </div>
-                <input
-                  type="number"
-                  inputMode="decimal"
-                  value={row.value}
-                  onChange={(e) => row.onChange(e.target.value)}
-                  className="w-36 text-center bg-muted/50 rounded-2xl py-3 text-base font-semibold text-foreground border-0 outline-none focus:ring-2 focus:ring-primary/30"
-                />
+                {"hint" in row && row.hint && (
+                  <p className="text-xs text-muted-foreground ml-10 mt-1">{row.hint}</p>
+                )}
               </div>
             ))}
           </div>
