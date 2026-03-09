@@ -394,7 +394,7 @@ const Triage = () => {
       case 1:
         return (
           <div className="flex-1 flex flex-col px-8">
-            <button onClick={back} className="mt-2 mb-4 self-start text-muted-foreground"><ArrowLeft className="w-6 h-6" /></button>
+            
             <div className="flex-1 flex flex-col items-center">
               <img src={privacyImg} alt="Privacidade" className="w-48 h-48 object-contain mb-6" />
               <h1 className="text-2xl font-bold text-foreground text-left w-full mb-4">Saúde com privacidade</h1>
