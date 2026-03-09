@@ -1006,7 +1006,7 @@ const Triage = () => {
         <div className="px-6 pb-8 pt-4" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 2rem)" }}>
           <button onClick={next} disabled={!canAdvance() || saving}
             className={cn("w-full font-bold py-4 rounded-[28px] flex items-center justify-center gap-2 transition-all duration-300 active:scale-[0.98]",
-              canAdvance() ? "bg-primary text-primary-foreground shadow-elevated" : "bg-muted text-muted-foreground")}>
+              canAdvance() ? "bg-foreground text-background shadow-elevated" : "bg-muted text-muted-foreground")}>
             {buttonLabel}
           </button>
         </div>
