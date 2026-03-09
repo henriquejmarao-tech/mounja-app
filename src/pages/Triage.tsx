@@ -93,7 +93,7 @@ const ScrollPicker = ({
       <div className="relative" style={{ height: containerHeight }}>
         {/* Selection highlight */}
         <div
-          className="absolute left-0 right-0 bg-muted rounded-xl z-0 pointer-events-none"
+          className="absolute left-0 right-0 bg-triage-action/15 rounded-xl z-0 pointer-events-none"
           style={{ top: padCount * itemHeight, height: itemHeight }}
         />
         {/* Gradient masks */}
@@ -700,7 +700,7 @@ const Triage = () => {
                 {(["daily", "weekly", "custom"] as const).map((f) => (
                   <button key={f} onClick={() => setFrequency(f)}
                     className={cn("flex-1 py-2.5 rounded-lg text-sm font-medium transition-all",
-                      frequency === f ? "bg-card text-foreground shadow-sm" : "text-muted-foreground")}>
+                      frequency === f ? "bg-card text-triage-action shadow-sm font-bold" : "text-muted-foreground")}>
                     {f === "daily" ? "Diário" : f === "weekly" ? "Semanal" : "Personalizado"}
                   </button>
                 ))}
@@ -714,7 +714,7 @@ const Triage = () => {
                   {weekDays.map((d, i) => (
                     <button key={i} onClick={() => setApplicationDay(i)}
                       className={cn("w-10 h-10 rounded-full text-sm font-semibold transition-all",
-                        applicationDay === i ? "bg-foreground text-background" : "text-muted-foreground")}>
+                        applicationDay === i ? "bg-triage-action text-white" : "text-muted-foreground")}>
                       {d.short}
                     </button>
                   ))}
