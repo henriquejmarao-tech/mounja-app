@@ -497,7 +497,6 @@ const Triage = () => {
       case 5:
         return (
           <div className="flex-1 flex flex-col items-center px-8">
-            <button onClick={back} className="self-start mt-2 mb-4 text-muted-foreground"><ArrowLeft className="w-6 h-6" /></button>
             <div className="bg-card rounded-3xl shadow-elevated p-6 w-full max-w-xs mx-auto mb-8">
               <p className="text-center font-semibold text-foreground mb-3">
                 {new Date().toLocaleDateString("pt-BR", { day: "numeric", month: "long" })}
