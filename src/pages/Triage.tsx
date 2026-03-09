@@ -508,7 +508,7 @@ const Triage = () => {
                   <div key={i} className="text-center">
                     <span className="text-[10px] text-muted-foreground">{d}</span>
                     <div className={cn("w-8 h-8 rounded-full flex items-center justify-center text-xs mt-1",
-                      i === 3 ? "bg-primary text-primary-foreground font-bold" : "text-muted-foreground")}>
+                      i === 3 ? "bg-foreground text-background font-bold" : "text-muted-foreground")}>
                       {new Date().getDate() - 3 + i}
                     </div>
                   </div>
