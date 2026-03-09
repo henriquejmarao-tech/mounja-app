@@ -938,7 +938,7 @@ const Triage = () => {
             
             <h1 className="text-3xl font-bold text-foreground text-center leading-tight">
               Boa notícia! Perder{" "}
-              <span className="text-primary">{weightDiff.toFixed(1)} kg</span>{" "}
+              <span className="text-triage-action">{weightDiff.toFixed(1)} kg</span>{" "}
               é totalmente possível.
             </h1>
           </div>
@@ -1007,7 +1007,7 @@ const Triage = () => {
             <button onClick={back} className="text-muted-foreground"><ArrowLeft className="w-5 h-5" /></button>
           )}
           <div className="flex-1 h-1.5 bg-foreground/20 rounded-full overflow-hidden">
-            <div className="h-full bg-primary rounded-full transition-all duration-500"
+            <div className="h-full bg-triage-action rounded-full transition-all duration-500"
               style={{ width: `${progressPct}%` }} />
           </div>
         </div>
