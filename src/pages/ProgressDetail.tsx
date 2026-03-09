@@ -17,6 +17,7 @@ const ProgressDetail = () => {
   const [injections, setInjections] = useState<any[]>([]);
   const [latestPhoto, setLatestPhoto] = useState<{ url: string; weight?: number } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedIdx, setSelectedIdx] = useState<number>(0);
 
   const fetchData = useCallback(async () => {
     if (!user) return;
