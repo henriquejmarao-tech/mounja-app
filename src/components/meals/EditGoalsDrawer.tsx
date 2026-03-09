@@ -86,7 +86,7 @@ const EditGoalsDrawer = ({ open, onOpenChange, goals, onSave }: EditGoalsDrawerP
     { emoji: "🔥", label: "Calorias", unit: "(kcal)", value: calories, onChange: (v: string) => handleChange(setCalories, v, "cal") },
     { emoji: "🍖", label: "Proteína", unit: "(g)", value: protein, onChange: (v: string) => handleChange(setProtein, v, "pro") },
     { emoji: "🌾", label: "Fibra", unit: "(g)", value: fiber, onChange: (v: string) => handleChange(setFiber, v, "fib") },
-    { emoji: "💧", label: "Água", unit: "(copos)", value: water, onChange: (v: string) => handleChange(setWater, v, "wat"), hint: `≈ ${((parseInt(water) || 0) * 0.25).toFixed(1).replace(".0", "")}L` },
+    { emoji: "💧", label: "Água", unit: "(copos)", value: water, onChange: (v: string) => handleChange(setWater, v, "wat"), hint: (() => { const ml = (parseInt(water) || 0) * 250; return ml >= 1000 ? `≈ ${(ml / 1000).toFixed(ml % 1000 === 0 ? 0 : 1).replace(".0", "")}L` : `≈ ${ml}ml`; })() },
   ];
 
   return (
