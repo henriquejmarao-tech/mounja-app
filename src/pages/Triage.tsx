@@ -853,7 +853,7 @@ const Triage = () => {
                 { value: "other", label: "Outro" },
               ].map((opt) => (
                 <button key={opt.value}
-                  onClick={() => { setSex(opt.value); setTimeout(() => setStep(18), 300); }}
+                  onClick={() => { setSex(opt.value); }}
                   className={cn("w-full py-4 px-5 rounded-2xl text-base font-medium transition-all text-center",
                     sex === opt.value ? "bg-triage-action text-white" : "bg-muted text-foreground")}>
                   {opt.label}
