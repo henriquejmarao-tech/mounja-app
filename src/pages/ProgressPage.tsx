@@ -291,7 +291,7 @@ const ProgressPage = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 13%, 91%)" />
                     <XAxis dataKey="label" tick={{ fontSize: 10, fill: "hsl(220, 10%, 50%)" }} tickLine={false} axisLine={false} />
                     <YAxis domain={["dataMin - 1", "dataMax + 1"]} tick={{ fontSize: 10, fill: "hsl(220, 10%, 50%)" }} tickLine={false} axisLine={false} width={40} tickFormatter={(v) => `${v} kg`} />
-                    <Line type="monotone" dataKey="peso" stroke="hsl(250, 58%, 58%)" strokeWidth={2.5} dot={{ r: 3, fill: "hsl(250, 58%, 58%)" }} />
+                    <Line type="monotone" dataKey="peso" stroke="hsl(25, 70%, 55%)" strokeWidth={2.5} dot={{ r: 3, fill: "hsl(25, 70%, 55%)" }} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
