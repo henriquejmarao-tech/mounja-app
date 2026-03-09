@@ -938,7 +938,7 @@ const Triage = () => {
             
             <h1 className="text-3xl font-bold text-foreground text-center leading-tight">
               Boa notícia! Perder{" "}
-              <span className="text-primary">{weightDiff.toFixed(1)} kg</span>{" "}
+              <span className="text-triage-action">{weightDiff.toFixed(1)} kg</span>{" "}
               é totalmente possível.
             </h1>
           </div>
