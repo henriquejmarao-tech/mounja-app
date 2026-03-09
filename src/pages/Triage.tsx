@@ -412,8 +412,8 @@ const Triage = () => {
             <label className="flex items-start gap-3 mb-4 cursor-pointer select-none">
               <button onClick={() => setPrivacyAccepted(!privacyAccepted)}
                 className={cn("w-6 h-6 min-w-6 rounded-md border-2 flex items-center justify-center transition-all mt-0.5",
-                  privacyAccepted ? "bg-primary border-primary" : "border-border")}>
-                {privacyAccepted && <Check className="w-4 h-4 text-primary-foreground" />}
+                  privacyAccepted ? "bg-foreground border-foreground" : "border-border")}>
+                {privacyAccepted && <Check className="w-4 h-4 text-background" />}
               </button>
               <span className="text-xs text-muted-foreground leading-relaxed">
                 Concordo com a coleta das minhas informações de saúde conforme as normas da LGPD.
@@ -478,12 +478,12 @@ const Triage = () => {
                 return (
                   <button key={opt.value} onClick={() => toggleMotivation(opt.value)}
                     className={cn("w-full py-4 px-5 rounded-2xl text-left transition-all border-2",
-                      selected ? "bg-primary/10 border-primary" : "bg-secondary border-transparent")}>
+                      selected ? "bg-foreground/5 border-foreground" : "bg-secondary border-transparent")}>
                     <div className="flex items-center justify-between">
-                      <span className={cn("font-medium", selected && "text-primary")}>{opt.label}</span>
+                      <span className={cn("font-medium", selected && "text-foreground")}>{opt.label}</span>
                       <div className={cn("w-6 h-6 rounded-full border-2 flex items-center justify-center",
-                        selected ? "bg-primary border-primary" : "border-muted-foreground/30")}>
-                        {selected && <Check className="w-3.5 h-3.5 text-primary-foreground" />}
+                        selected ? "bg-foreground border-foreground" : "border-muted-foreground/30")}>
+                        {selected && <Check className="w-3.5 h-3.5 text-background" />}
                       </div>
                     </div>
                     {selected && <p className="text-sm text-muted-foreground mt-2">{opt.description}</p>}
@@ -508,7 +508,7 @@ const Triage = () => {
                   <div key={i} className="text-center">
                     <span className="text-[10px] text-muted-foreground">{d}</span>
                     <div className={cn("w-8 h-8 rounded-full flex items-center justify-center text-xs mt-1",
-                      i === 3 ? "bg-primary text-primary-foreground font-bold" : "text-muted-foreground")}>
+                      i === 3 ? "bg-foreground text-background font-bold" : "text-muted-foreground")}>
                       {new Date().getDate() - 3 + i}
                     </div>
                   </div>
@@ -544,7 +544,7 @@ const Triage = () => {
                 return (
                   <button key={opt.value} onClick={() => toggleHelp(opt.value)}
                     className={cn("flex flex-col items-center justify-center gap-3 p-5 rounded-2xl border-2 transition-all text-center",
-                      selected ? "border-primary bg-primary/5" : "border-border bg-card")}>
+                      selected ? "border-foreground bg-foreground/5" : "border-border bg-card")}>
                     <span className="text-3xl">{opt.emoji}</span>
                     <span className="text-xs font-medium text-foreground leading-tight">{opt.label}</span>
                   </button>
@@ -598,7 +598,7 @@ const Triage = () => {
               <div className="flex items-center gap-3">
                 <input type="number" step="0.5" inputMode="decimal" value={doseValue}
                   onChange={(e) => setDoseValue(e.target.value)} placeholder="5.0"
-                  className="w-24 h-16 text-center text-2xl font-bold border-2 border-primary/30 rounded-xl bg-card text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none" />
+                  className="w-24 h-16 text-center text-2xl font-bold border-2 border-foreground/30 rounded-xl bg-card text-foreground focus:border-foreground focus:ring-2 focus:ring-foreground/20 outline-none" />
                 <span className="text-xl font-semibold text-muted-foreground">mg</span>
               </div>
             </div>
@@ -625,9 +625,9 @@ const Triage = () => {
                   return (
                     <button key={site.value} onClick={() => setInjectionSite(site.value)}
                       className={cn("absolute w-6 h-6 rounded-full border-2 transition-all -translate-x-1/2 -translate-y-1/2",
-                        selected ? "bg-primary border-primary scale-125" : "bg-card border-muted-foreground/30 hover:border-primary/50")}
+                        selected ? "bg-foreground border-foreground scale-125" : "bg-card border-muted-foreground/30 hover:border-foreground/50")}
                       style={{ left: `${site.x}%`, top: `${site.y}%` }}>
-                      {selected && <div className="w-2 h-2 bg-primary-foreground rounded-full mx-auto" />}
+                      {selected && <div className="w-2 h-2 bg-background rounded-full mx-auto" />}
                     </button>
                   );
                 })}
@@ -649,11 +649,11 @@ const Triage = () => {
             <div className="space-y-4">
               <button onClick={() => setAlternatesSites(true)}
                 className={cn("w-full p-5 rounded-2xl border-2 text-left transition-all",
-                  alternatesSites === true ? "border-primary bg-primary/5" : "border-border bg-card")}>
+                  alternatesSites === true ? "border-foreground bg-foreground/5" : "border-border bg-card")}>
                 <div className="flex items-center gap-3 mb-2">
                   <div className={cn("w-6 h-6 rounded-full border-2 flex items-center justify-center",
-                    alternatesSites === true ? "bg-primary border-primary" : "border-muted-foreground/30")}>
-                    {alternatesSites === true && <Check className="w-3.5 h-3.5 text-primary-foreground" />}
+                    alternatesSites === true ? "bg-foreground border-foreground" : "border-muted-foreground/30")}>
+                    {alternatesSites === true && <Check className="w-3.5 h-3.5 text-background" />}
                   </div>
                   <span className="font-bold text-foreground">Sim, eu alterno</span>
                 </div>
@@ -666,11 +666,11 @@ const Triage = () => {
               </button>
               <button onClick={() => setAlternatesSites(false)}
                 className={cn("w-full p-5 rounded-2xl border-2 text-left transition-all",
-                  alternatesSites === false ? "border-primary bg-primary/5" : "border-border bg-card")}>
+                  alternatesSites === false ? "border-foreground bg-foreground/5" : "border-border bg-card")}>
                 <div className="flex items-center gap-3 mb-2">
                   <div className={cn("w-6 h-6 rounded-full border-2 flex items-center justify-center",
-                    alternatesSites === false ? "bg-primary border-primary" : "border-muted-foreground/30")}>
-                    {alternatesSites === false && <Check className="w-3.5 h-3.5 text-primary-foreground" />}
+                    alternatesSites === false ? "bg-foreground border-foreground" : "border-muted-foreground/30")}>
+                    {alternatesSites === false && <Check className="w-3.5 h-3.5 text-background" />}
                   </div>
                   <span className="font-bold text-foreground">Não, mantenho o mesmo</span>
                 </div>
@@ -763,11 +763,11 @@ const Triage = () => {
                 }}
                 disabled={(date) => date > new Date() || date < new Date("2020-01-01")}
                 locale={ptBR}
-                className={cn("p-3 pointer-events-auto rounded-2xl border-2 border-primary/30 bg-card shadow-card")}
+                className={cn("p-3 pointer-events-auto rounded-2xl border-2 border-foreground/30 bg-card shadow-card")}
               />
             </div>
             {lastApplicationDate && (
-              <p className="text-center text-sm font-semibold text-primary mt-2">
+              <p className="text-center text-sm font-semibold text-foreground mt-2">
                 {format(new Date(lastApplicationDate + "T12:00:00"), "d 'de' MMMM 'de' yyyy", { locale: ptBR })}
               </p>
             )}
@@ -833,7 +833,7 @@ const Triage = () => {
             <div className="w-full mb-6">
               <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Seu nome</label>
               <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Como quer ser chamado?"
-                className="w-full px-4 py-3.5 rounded-2xl border border-border bg-card text-base focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
+                className="w-full px-4 py-3.5 rounded-2xl border border-border bg-card text-base focus:ring-2 focus:ring-foreground/20 focus:border-foreground outline-none" />
             </div>
             <div className="flex-1 flex items-center justify-center">
               <img src={personalImg} alt="Personalizar" className="w-56 h-56 object-contain" />
@@ -930,7 +930,7 @@ const Triage = () => {
             <button onClick={back} className="absolute top-14 left-5 text-muted-foreground"><ArrowLeft className="w-6 h-6" /></button>
             <h1 className="text-3xl font-bold text-foreground text-center leading-tight">
               Boa notícia! Perder{" "}
-              <span className="text-primary">{weightDiff.toFixed(1)} kg</span>{" "}
+              <span className="text-secondary">{weightDiff.toFixed(1)} kg</span>{" "}
               é totalmente possível.
             </h1>
           </div>
@@ -1006,7 +1006,7 @@ const Triage = () => {
         <div className="px-6 pb-8 pt-4" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 2rem)" }}>
           <button onClick={next} disabled={!canAdvance() || saving}
             className={cn("w-full font-bold py-4 rounded-[28px] flex items-center justify-center gap-2 transition-all duration-300 active:scale-[0.98]",
-              canAdvance() ? "bg-primary text-primary-foreground shadow-elevated" : "bg-muted text-muted-foreground")}>
+              canAdvance() ? "bg-foreground text-background shadow-elevated" : "bg-muted text-muted-foreground")}>
             {buttonLabel}
           </button>
         </div>
