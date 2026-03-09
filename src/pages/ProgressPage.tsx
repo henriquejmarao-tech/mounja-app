@@ -112,7 +112,7 @@ const ProgressPage = () => {
       <div
         className="relative"
         style={{
-          background: "linear-gradient(180deg, hsl(250, 58%, 55%) 0%, hsl(250, 50%, 62%) 60%, hsl(250, 45%, 68%) 100%)",
+          background: "linear-gradient(160deg, hsl(340, 60%, 68%) 0%, hsl(320, 50%, 55%) 50%, hsl(280, 45%, 35%) 100%)",
           paddingTop: "env(safe-area-inset-top, 0px)",
         }}
       >
