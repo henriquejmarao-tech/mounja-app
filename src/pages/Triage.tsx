@@ -810,19 +810,16 @@ const Triage = () => {
               <svg viewBox="0 0 280 120" className="w-full h-32">
                 <line x1="0" y1="30" x2="280" y2="30" stroke="hsl(var(--border))" strokeWidth="0.5" strokeDasharray="4" />
                 <line x1="0" y1="70" x2="280" y2="70" stroke="hsl(var(--border))" strokeWidth="0.5" strokeDasharray="4" />
-                <path d="M 10 40 C 60 35, 100 60, 140 55 C 180 50, 220 25, 270 20" fill="none" stroke="hsl(0, 72%, 51%)" strokeWidth="2.5" />
-                <text x="220" y="15" fill="hsl(var(--muted-foreground))" fontSize="8">Dieta tradicional</text>
-                <path d="M 10 40 C 60 50, 100 70, 140 85 C 180 95, 220 98, 270 100" fill="none" stroke="hsl(var(--foreground))" strokeWidth="2.5" />
-                <text x="15" y="108" fill="hsl(var(--primary))" fontSize="9" fontWeight="bold">Mounjá</text>
-                <circle cx="10" cy="40" r="4" fill="hsl(var(--background))" stroke="hsl(var(--foreground))" strokeWidth="2" />
-                <circle cx="270" cy="100" r="4" fill="hsl(var(--background))" stroke="hsl(var(--foreground))" strokeWidth="2" />
+                <path d="M 10 40 C 60 35, 100 50, 140 48 C 180 46, 220 42, 270 38" fill="none" stroke="hsl(var(--foreground))" strokeWidth="2.5" />
+                <text x="200" y="30" fill="hsl(var(--foreground))" fontSize="8" fontWeight="600">Dieta tradicional</text>
+                <path d="M 10 40 C 60 50, 100 70, 140 85 C 180 95, 220 98, 270 100" fill="none" stroke="hsl(var(--triage-action))" strokeWidth="2.5" />
+                <text x="200" y="108" fill="hsl(var(--triage-action))" fontSize="9" fontWeight="bold">Mounjá</text>
+                <circle cx="10" cy="40" r="4" fill="hsl(var(--background))" stroke="hsl(var(--triage-action))" strokeWidth="2" />
+                <circle cx="270" cy="100" r="4" fill="hsl(var(--background))" stroke="hsl(var(--triage-action))" strokeWidth="2" />
               </svg>
               <div className="flex justify-between text-xs text-muted-foreground mt-2">
                 <span>Mês 1</span><span>Mês 6</span>
               </div>
-              <p className="text-sm text-muted-foreground text-center mt-4">
-                Muitos usuários alcançam perda de peso sustentável com uso consistente
-              </p>
             </div>
           </div>
         );
