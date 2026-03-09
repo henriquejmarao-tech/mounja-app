@@ -41,6 +41,7 @@ const savePendingTriageData = async (userId: string) => {
         height_cm: data.heightCm,
         current_weight: currentWeight,
         goal: deriveGoal(),
+        weight_goal: data.goalKg + data.goalDecimal / 10,
         current_dose: currentDose,
         medication: data.medication || null,
         application_interval_days: deriveIntervalDays(),

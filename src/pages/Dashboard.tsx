@@ -115,7 +115,7 @@ const Dashboard = () => {
   const selectedDayHasInjection = weekInjections.has(selectedDateStr);
   const selectedIsInPast = selectedDateStr < localDateStr(new Date());
   const initialWeight = profile?.current_weight;
-  const goalWeight = profile?.goal ? parseFloat(profile.goal) : null;
+  const goalWeight = (profile as any)?.weight_goal ? parseFloat((profile as any).weight_goal) : null;
   const currentWeight = latestWeight || (weightHistory.length > 0 ? weightHistory[weightHistory.length - 1].peso : null);
 
   // Calculate days until next injection from selected date perspective
