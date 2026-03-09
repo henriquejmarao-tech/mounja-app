@@ -91,6 +91,7 @@ const Settings = () => {
 
         {/* Support section */}
         <div className="bg-card rounded-2xl border border-border/50 divide-y divide-border/50">
+          <MenuItem icon={HelpCircle} label="Como usar" onClick={() => navigate("/como-usar")} />
           <MenuItem icon={Lightbulb} label="Sugerir funcionalidade" onClick={() => { setFeedbackType("suggestion"); setShowFeedback(true); }} />
         </div>
 

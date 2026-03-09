@@ -122,6 +122,7 @@ const AppRoutes = () => {
         <Route path="/tratamento/agenda" element={<ProtectedRoute><TriageGuard><SchedulePage /></TriageGuard></ProtectedRoute>} />
         <Route path="/analise-medicacao" element={<ProtectedRoute><TriageGuard><MedicationAnalysis /></TriageGuard></ProtectedRoute>} />
         <Route path="/historico-efeitos" element={<ProtectedRoute><TriageGuard><SideEffectHistory /></TriageGuard></ProtectedRoute>} />
+        <Route path="/como-usar" element={<ProtectedRoute><TriageGuard><HowToUse /></TriageGuard></ProtectedRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>
