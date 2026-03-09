@@ -403,20 +403,18 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* ── Análise de Medicação (Em breve) ── */}
+      {/* ── Análise de Medicação ── */}
       <div className="px-5 mb-4 animate-fade-in-up" style={{ animationDelay: "140ms" }}>
-        <div className="bg-card rounded-2xl p-5 border border-border/50 shadow-card">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <h3 className="text-base font-bold text-foreground">Análise de Medicação</h3>
-              <span className="text-[11px] font-semibold text-muted-foreground bg-muted px-2 py-0.5 rounded-full">Em breve</span>
-            </div>
+        <button
+          onClick={() => navigate("/analise-medicacao")}
+          className="w-full bg-card rounded-2xl p-5 border border-border/50 shadow-card active:scale-[0.98] transition-transform text-left"
+        >
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-base font-bold text-foreground">Análise de Medicação</h3>
+            <Sparkles className="w-5 h-5 text-primary" />
           </div>
-          <div className="flex flex-col items-center justify-center py-6 opacity-50">
-            <span className="text-4xl mb-3">💊</span>
-            <p className="text-sm text-muted-foreground text-center">Acompanhe a evolução do seu tratamento com análises inteligentes</p>
-          </div>
-        </div>
+          <p className="text-sm text-muted-foreground">Análise inteligente da evolução do seu tratamento com sugestões de dose e comportamento</p>
+        </button>
       </div>
 
       {/* ── Weight Trends ── */}
