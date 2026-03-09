@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { cn, localDateStr } from "@/lib/utils";
+import { cn, localDateStr, diffCalendarDays } from "@/lib/utils";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { toast } from "sonner";
 import DoseTimeline from "@/components/history/DoseTimeline";
@@ -98,7 +98,7 @@ const Application = () => {
 
   const daysUntilNext = useMemo(() => {
     if (!dose.nextApplicationAt) return null;
-    return Math.max(0, Math.ceil((new Date(dose.nextApplicationAt).getTime() - Date.now()) / 86400000));
+    return Math.max(0, diffCalendarDays(new Date(), new Date(dose.nextApplicationAt)));
   }, [dose.nextApplicationAt]);
 
   const weekNumber = useMemo(() => {

@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { Scale, Camera, ClipboardList, Lightbulb, CalendarDays, Newspaper } from "lucide-react";
-import { cn, localDateStr } from "@/lib/utils";
+import { cn, localDateStr, diffCalendarDays } from "@/lib/utils";
 import { toast } from "sonner";
 import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
 import WeightTrendsCard from "@/components/dashboard/WeightTrendsCard";
@@ -121,9 +121,7 @@ const Dashboard = () => {
   // Calculate days until next injection from selected date perspective
   const daysUntilNextFromSelected = useMemo(() => {
     if (!dose.nextApplicationAt) return null;
-    const nextDate = new Date(dose.nextApplicationAt);
-    const diffMs = nextDate.getTime() - selectedDate.getTime();
-    return Math.max(0, Math.ceil(diffMs / 86400000));
+    return Math.max(0, diffCalendarDays(selectedDate, new Date(dose.nextApplicationAt)));
   }, [dose.nextApplicationAt, selectedDate]);
 
   // Check if selected future/today date IS the scheduled injection day
