@@ -118,7 +118,7 @@ const SideEffectHistory = () => {
                     // Grey dot only = nothing
 
                     return (
-                      <div key={day.date} className="relative flex flex-col items-center shrink-0" style={{ width: "calc((100% - 87px) / 30 + 3px)" }}>
+                      <div key={day.date} className="relative flex flex-col items-center" style={{ flex: "1 1 0", minWidth: 0 }}>
                         <div
                           className={cn(
                             "w-[9px] h-[9px] rounded-full",
