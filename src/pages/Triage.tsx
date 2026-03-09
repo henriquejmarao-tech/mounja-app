@@ -394,7 +394,7 @@ const Triage = () => {
       case 1:
         return (
           <div className="flex-1 flex flex-col px-8">
-            <button onClick={back} className="mt-2 mb-4 self-start text-muted-foreground"><ArrowLeft className="w-6 h-6" /></button>
+            
             <div className="flex-1 flex flex-col items-center">
               <img src={privacyImg} alt="Privacidade" className="w-48 h-48 object-contain mb-6" />
               <h1 className="text-2xl font-bold text-foreground text-left w-full mb-4">Saúde com privacidade</h1>
@@ -497,7 +497,6 @@ const Triage = () => {
       case 5:
         return (
           <div className="flex-1 flex flex-col items-center px-8">
-            <button onClick={back} className="self-start mt-2 mb-4 text-muted-foreground"><ArrowLeft className="w-6 h-6" /></button>
             <div className="bg-card rounded-3xl shadow-elevated p-6 w-full max-w-xs mx-auto mb-8">
               <p className="text-center font-semibold text-foreground mb-3">
                 {new Date().toLocaleDateString("pt-BR", { day: "numeric", month: "long" })}
@@ -523,7 +522,7 @@ const Triage = () => {
                 "Fique à frente dos efeitos colaterais acompanhando padrões e tendências",
               ].map((text, i) => (
                 <div key={i} className="flex items-start gap-3">
-                  <CheckCircle2 className="w-6 h-6 text-primary min-w-6 mt-0.5" />
+                  <CheckCircle2 className="w-6 h-6 text-triage-action min-w-6 mt-0.5" />
                   <p className="text-sm text-muted-foreground">{text}</p>
                 </div>
               ))}
@@ -557,7 +556,6 @@ const Triage = () => {
       case 7:
         return (
           <div className="flex-1 flex flex-col items-center px-8">
-            <button onClick={back} className="self-start mt-2 mb-4 text-muted-foreground"><ArrowLeft className="w-6 h-6" /></button>
             <img src={celebrationImg} alt="Celebração" className="w-52 h-52 object-contain mb-6" />
             <h1 className="text-2xl font-bold text-foreground text-center mb-6">Entendido! Vamos te ajudar a:</h1>
             <div className="space-y-5 w-full">
@@ -578,7 +576,6 @@ const Triage = () => {
       case 8:
         return (
           <div className="flex-1 flex flex-col items-center px-8">
-            <button onClick={back} className="self-start mt-2 mb-4 text-muted-foreground"><ArrowLeft className="w-6 h-6" /></button>
             <h1 className="text-2xl font-bold text-foreground text-center mt-4 mb-4">
               Agora vamos conhecer melhor o seu tratamento
             </h1>
@@ -794,7 +791,6 @@ const Triage = () => {
       case 15:
         return (
           <div className="flex-1 flex flex-col items-center px-8">
-            <button onClick={back} className="self-start mt-2 mb-4 text-muted-foreground"><ArrowLeft className="w-6 h-6" /></button>
             <h1 className="text-3xl font-bold text-foreground text-center mb-8">O Mounjá gera resultados duradouros</h1>
             <div className="bg-card rounded-2xl shadow-card p-6 w-full">
               <p className="font-semibold text-foreground mb-4">Seu peso</p>
@@ -822,7 +818,6 @@ const Triage = () => {
       case 16:
         return (
           <div className="flex-1 flex flex-col items-center px-8">
-            <button onClick={back} className="self-start mt-2 mb-4 text-muted-foreground"><ArrowLeft className="w-6 h-6" /></button>
             <h1 className="text-2xl font-bold text-foreground text-center mt-2 mb-2">
               Agora vamos te conhecer melhor
             </h1>
@@ -926,7 +921,7 @@ const Triage = () => {
       case 22:
         return (
           <div className="flex-1 flex flex-col items-center justify-center px-8">
-            <button onClick={back} className="absolute top-14 left-5 text-muted-foreground"><ArrowLeft className="w-6 h-6" /></button>
+            
             <h1 className="text-3xl font-bold text-foreground text-center leading-tight">
               Boa notícia! Perder{" "}
               <span className="text-primary">{weightDiff.toFixed(1)} kg</span>{" "}
@@ -939,7 +934,7 @@ const Triage = () => {
       case 23:
         return (
           <div className="flex-1 flex flex-col items-center px-8">
-            <button onClick={back} className="self-start mt-2 mb-4 text-muted-foreground"><ArrowLeft className="w-6 h-6" /></button>
+            
             <h1 className="text-2xl font-bold text-foreground text-center mt-4 mb-6 leading-tight">
               Pesquisas mostram que manter um peso saudável leva a uma vida mais longa
             </h1>
