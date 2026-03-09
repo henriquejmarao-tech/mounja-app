@@ -714,7 +714,7 @@ const Triage = () => {
                   {weekDays.map((d, i) => (
                     <button key={i} onClick={() => setApplicationDay(i)}
                       className={cn("w-10 h-10 rounded-full text-sm font-semibold transition-all",
-                        applicationDay === i ? "bg-foreground text-background" : "text-muted-foreground")}>
+                        applicationDay === i ? "bg-triage-action text-white" : "text-muted-foreground")}>
                       {d.short}
                     </button>
                   ))}
