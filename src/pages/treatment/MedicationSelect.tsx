@@ -47,7 +47,7 @@ const MedicationSelect = () => {
             <button
               key={med}
               onClick={() => handleSelect(med)}
-              className="w-full py-4 px-6 rounded-full bg-muted text-base font-semibold text-foreground text-center active:scale-[0.98] transition-transform"
+              className="w-full py-4 px-6 rounded-full bg-muted text-base font-semibold text-foreground text-center active:scale-[0.98] transition-transform hover:border-primary/30 border border-transparent"
             >
               {med}
             </button>

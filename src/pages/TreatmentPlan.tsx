@@ -192,7 +192,7 @@ const TreatmentPlan = () => {
 
             <button
               onClick={saveWeight}
-              className="w-full py-4 rounded-full bg-primary text-primary-foreground text-base font-bold active:scale-[0.98] transition-transform"
+              className="w-full py-4 rounded-full gradient-hero text-primary-foreground text-base font-bold active:scale-[0.98] transition-transform shadow-elevated"
             >
               Salvar
             </button>

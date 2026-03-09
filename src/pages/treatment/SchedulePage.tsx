@@ -168,7 +168,7 @@ const SchedulePage = () => {
         {/* Save */}
         <button
           onClick={handleSave}
-          className="w-full py-4 rounded-full bg-primary text-primary-foreground text-base font-bold active:scale-[0.98] transition-transform mt-4"
+          className="w-full py-4 rounded-full gradient-hero text-primary-foreground text-base font-bold active:scale-[0.98] transition-transform mt-4 shadow-elevated"
         >
           Salvar
         </button>

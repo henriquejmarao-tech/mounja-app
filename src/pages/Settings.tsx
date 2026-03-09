@@ -141,7 +141,7 @@ const Settings = () => {
               <span className="text-lg font-semibold text-muted-foreground ml-1">cm</span>
             </div>
 
-            <button onClick={saveHeight} className="w-full py-4 rounded-full bg-primary text-primary-foreground text-base font-bold active:scale-[0.98] transition-transform">
+            <button onClick={saveHeight} className="w-full py-4 rounded-full gradient-hero text-primary-foreground text-base font-bold active:scale-[0.98] transition-transform shadow-elevated">
               Salvar
             </button>
           </div>

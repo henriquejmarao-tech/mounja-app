@@ -97,7 +97,7 @@ const WeightPickerDrawer = ({ open, onOpenChange, initialWeight = 74, onSave }: 
           {/* Done button */}
           <button
             onClick={handleDone}
-            className="w-full bg-primary text-primary-foreground py-4 rounded-2xl text-base font-bold shadow-elevated active:scale-[0.97] transition-transform"
+            className="w-full gradient-hero text-primary-foreground py-4 rounded-2xl text-base font-bold shadow-elevated active:scale-[0.97] transition-transform"
           >
             Salvar
           </button>
