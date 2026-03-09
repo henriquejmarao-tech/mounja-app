@@ -687,7 +687,7 @@ const Triage = () => {
             <h1 className="text-2xl font-bold text-foreground text-center mb-6 mt-4">Quando você aplica {medication || "seu medicamento"}?</h1>
             <div className="mb-5">
               <p className="text-sm font-semibold text-foreground mb-2">Frequência</p>
-              <div className="flex bg-secondary rounded-xl p-1">
+              <div className="flex bg-muted rounded-xl p-1">
                 {(["daily", "weekly", "custom"] as const).map((f) => (
                   <button key={f} onClick={() => setFrequency(f)}
                     className={cn("flex-1 py-2.5 rounded-lg text-sm font-medium transition-all",
