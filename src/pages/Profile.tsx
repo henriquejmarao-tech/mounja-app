@@ -28,13 +28,13 @@ const Profile = () => {
   const [weightLost, setWeightLost] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const [editingUsername, setEditingUsername] = useState(false);
-  const [usernameInput, setUsernameInput] = useState("");
-  const [savingUsername, setSavingUsername] = useState(false);
+  const [editingName, setEditingName] = useState(false);
+  const [nameInput, setNameInput] = useState("");
+  const [savingName, setSavingName] = useState(false);
 
   useEffect(() => {
     if (profile) {
-      setUsernameInput((profile as any).username || "");
+      setNameInput(profile.name || "");
     }
   }, [profile]);
 
