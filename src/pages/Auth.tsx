@@ -145,7 +145,7 @@ const Auth = () => {
   return (
     <div className="bg-background flex flex-col overflow-y-auto" style={{ minHeight: "100dvh" }}>
       {/* Hero brand area */}
-      <div className="relative overflow-hidden flex flex-col items-center justify-center pt-12 pb-6 px-8 shrink-0">
+      <div className="relative overflow-hidden flex flex-col items-center justify-center pt-20 pb-6 px-8 shrink-0">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/15 via-accent/25 to-background" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-primary/8 blur-3xl" />
         <div className="absolute bottom-0 right-0 w-64 h-64 rounded-full bg-secondary/10 blur-2xl" />
