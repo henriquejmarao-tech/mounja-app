@@ -119,21 +119,17 @@ const ProgressDetail = () => {
       </div>
 
       {/* Main card */}
-      <div className="mx-5 bg-card rounded-3xl p-5 shadow-card border border-border/30">
-        {/* Logo + Day badge */}
-        <div className="flex items-center justify-between mb-5">
-          <div className="flex items-center gap-2">
-            <img src={logoMounja} alt="Mounja" className="w-8 h-8 rounded-lg" />
-            <span className="text-lg font-extrabold text-foreground tracking-tight">Mounja</span>
-          </div>
-          {daysOnTreatment && (
+      <div className="mx-4 bg-card rounded-3xl p-4 shadow-card border border-border/30">
+        {/* Day badge only */}
+        {daysOnTreatment && (
+          <div className="flex justify-end mb-3">
             <span className="bg-primary text-primary-foreground text-xs font-bold px-4 py-1.5 rounded-full">
               Dia {daysOnTreatment}
             </span>
-          )}
-        </div>
+          </div>
+        )}
 
-        {/* Photo - full width, clickable */}
+        {/* Photo */}
         <div
           onClick={() => navigate("/fotos")}
           className="rounded-2xl overflow-hidden bg-muted relative mb-4 cursor-pointer active:scale-[0.98] transition-transform"
@@ -156,27 +152,27 @@ const ProgressDetail = () => {
           )}
         </div>
 
-        {/* Stats grid */}
-        <div className="grid grid-cols-4 gap-2 mb-2">
-          <div className="bg-card rounded-2xl p-3 text-center border border-border/40">
-            <p className="text-[10px] text-muted-foreground font-medium">Data</p>
-            <p className="text-base font-extrabold text-foreground">
-              {new Date().toLocaleDateString("pt-BR", { day: "numeric", month: "numeric", year: "2-digit" })}
+        {/* Stats grid - 2x2 for better readability */}
+        <div className="grid grid-cols-4 gap-1.5 mb-2">
+          <div className="bg-muted/40 rounded-xl py-2.5 px-2 text-center">
+            <p className="text-[9px] text-muted-foreground font-medium leading-tight">Data</p>
+            <p className="text-sm font-extrabold text-foreground mt-0.5">
+              {new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })}
             </p>
           </div>
-          <div className="bg-card rounded-2xl p-3 text-center border border-border/40">
-            <p className="text-[10px] text-muted-foreground font-medium">Aplicações</p>
-            <p className="text-base font-extrabold text-foreground">{injections.length}</p>
+          <div className="bg-muted/40 rounded-xl py-2.5 px-2 text-center">
+            <p className="text-[9px] text-muted-foreground font-medium leading-tight">Aplic.</p>
+            <p className="text-sm font-extrabold text-foreground mt-0.5">{injections.length}</p>
           </div>
-          <div className="bg-card rounded-2xl p-3 text-center border border-border/40">
-            <p className="text-[10px] text-muted-foreground font-medium">Perda</p>
-            <p className="text-base font-extrabold text-foreground">
+          <div className="bg-muted/40 rounded-xl py-2.5 px-2 text-center">
+            <p className="text-[9px] text-muted-foreground font-medium leading-tight">Perda</p>
+            <p className="text-sm font-extrabold text-foreground mt-0.5">
               {totalLost && totalLost > 0 ? `-${totalLost.toFixed(1)}` : "—"}
             </p>
           </div>
-          <div className="bg-card rounded-2xl p-3 text-center border border-border/40">
-            <p className="text-[10px] text-muted-foreground font-medium">IMC</p>
-            <p className="text-base font-extrabold text-foreground">{bmi ?? "—"}</p>
+          <div className="bg-muted/40 rounded-xl py-2.5 px-2 text-center">
+            <p className="text-[9px] text-muted-foreground font-medium leading-tight">IMC</p>
+            <p className="text-sm font-extrabold text-foreground mt-0.5">{bmi ?? "—"}</p>
           </div>
         </div>
 
