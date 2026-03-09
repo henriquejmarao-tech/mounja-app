@@ -225,8 +225,7 @@ const Dashboard = () => {
         <div className="relative pt-safe px-5 pb-1 flex items-center justify-between">
           <button
             onClick={() => navigate("/perfil")}
-            className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white active:scale-90 transition-transform"
-            style={{ backgroundColor: "hsl(25, 70%, 55%)" }}
+            className="text-base font-bold text-foreground/80 active:scale-90 transition-transform"
           >
             {(profile?.username?.[0] || profile?.name?.[0] || "U").toUpperCase()}
           </button>
@@ -240,7 +239,7 @@ const Dashboard = () => {
             onClick={() => setWhatsNewOpen(true)}
             className="p-2 -mr-2 active:scale-90 transition-transform"
           >
-            <Bell className="w-[22px] h-[22px] text-primary" />
+            <Bell className="w-[22px] h-[22px] text-foreground/60" />
           </button>
         </div>
 
