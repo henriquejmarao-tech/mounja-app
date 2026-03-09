@@ -458,7 +458,7 @@ const Triage = () => {
                 <button key={opt.value}
                   onClick={() => { setExperience(opt.value); setTimeout(() => setStep(4), 300); }}
                   className={cn("w-full py-4 px-5 rounded-2xl text-base font-medium transition-all text-left",
-                    experience === opt.value ? "bg-foreground text-background" : "bg-muted text-foreground")}>
+                    experience === opt.value ? "bg-triage-action text-white" : "bg-muted text-foreground")}>
                   {opt.label}
                 </button>
               ))}
