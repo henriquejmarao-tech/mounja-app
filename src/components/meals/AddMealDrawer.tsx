@@ -106,7 +106,7 @@ const AddMealDrawer = forwardRef<HTMLDivElement, AddMealDrawerProps>(
 
         if (insertErr) throw insertErr;
 
-        toast.success("Refeição registrada! 🍽️");
+        
         onMealAdded();
         resetAndClose();
       } catch (err: any) {
