@@ -767,7 +767,7 @@ const Triage = () => {
               />
             </div>
             {lastApplicationDate && (
-              <p className="text-center text-sm font-semibold text-primary mt-2">
+              <p className="text-center text-sm font-semibold text-foreground mt-2">
                 {format(new Date(lastApplicationDate + "T12:00:00"), "d 'de' MMMM 'de' yyyy", { locale: ptBR })}
               </p>
             )}
