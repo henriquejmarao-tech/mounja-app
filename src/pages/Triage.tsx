@@ -953,23 +953,32 @@ const Triage = () => {
       // ===== 24: Creating plan (loading) =====
       case 24:
         return (
-          <div className="flex-1 flex flex-col items-center justify-center px-8"
-            style={{ background: "linear-gradient(180deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.9) 100%)" }}>
-            <div className="w-32 h-32 rounded-full bg-primary-foreground/20 flex items-center justify-center mb-8">
-              <div className="w-24 h-24 rounded-full bg-primary-foreground/30 flex items-center justify-center">
-                <span className="text-4xl">📋</span>
-              </div>
+          <div className="flex-1 flex flex-col items-center justify-center px-8 relative overflow-hidden"
+            style={{ background: "linear-gradient(160deg, hsl(15, 75%, 75%) 0%, hsl(340, 65%, 62%) 40%, hsl(255, 50%, 48%) 100%)" }}>
+            {/* Animated background blobs */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <div className="absolute w-64 h-64 rounded-full bg-white/10 -top-20 -left-20" style={{ animation: "blob-drift 8s ease-in-out infinite" }} />
+              <div className="absolute w-48 h-48 rounded-full bg-white/8 top-1/3 -right-16" style={{ animation: "blob-orbit 10s ease-in-out infinite" }} />
+              <div className="absolute w-56 h-56 rounded-full bg-white/5 -bottom-24 left-1/4" style={{ animation: "blob-float 6s ease-in-out infinite" }} />
             </div>
-            <h1 className="text-2xl font-bold text-primary-foreground text-center mb-3">
-              Criando seu plano personalizado
-            </h1>
-            <p className="text-primary-foreground/70 text-center mb-8">
-              Pessoas que acompanham seu tratamento têm até 175% mais chances de alcançar seus objetivos
-            </p>
-            <div className="w-full max-w-xs">
-              <div className="h-2 bg-primary-foreground/20 rounded-full overflow-hidden">
-                <div className="h-full bg-primary-foreground rounded-full transition-all duration-300"
-                  style={{ width: `${loadingProgress}%` }} />
+            <div className="relative z-10 flex flex-col items-center">
+              <div className="w-28 h-28 rounded-full bg-white/15 flex items-center justify-center mb-6 backdrop-blur-sm animate-scale-in">
+                <div className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center" style={{ animation: "blob-breathe 3s ease-in-out infinite" }}>
+                  <div className="w-3 h-3 bg-white rounded-full" style={{ animation: "blob-float 1.5s ease-in-out infinite" }} />
+                </div>
+              </div>
+              <h1 className="text-3xl font-bold text-white text-center mb-3 animate-fade-in-up">
+                Criando seu plano personalizado
+              </h1>
+              <p className="text-white/70 text-center mb-10 text-base animate-fade-in-up" style={{ animationDelay: "0.15s" }}>
+                Pessoas que acompanham seu tratamento têm até 175% mais chances de alcançar seus objetivos
+              </p>
+              <div className="w-full max-w-xs animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
+                <div className="h-2.5 bg-white/20 rounded-full overflow-hidden backdrop-blur-sm">
+                  <div className="h-full bg-white rounded-full transition-all duration-500 ease-out"
+                    style={{ width: `${loadingProgress}%` }} />
+                </div>
+                <p className="text-white/50 text-xs text-center mt-3">{Math.round(loadingProgress)}%</p>
               </div>
             </div>
           </div>
