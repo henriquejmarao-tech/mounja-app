@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
-import { Scale, Camera, ClipboardList, Lightbulb, Bell, Sparkles } from "lucide-react";
+import { Scale, Camera, ClipboardList, Lightbulb, Bell, Sparkles, Check } from "lucide-react";
 import { cn, localDateStr, diffCalendarDays } from "@/lib/utils";
 import { toast } from "sonner";
 import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
