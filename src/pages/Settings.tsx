@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {
   ChevronRight, LogOut, MessageSquare, Star, Send, Bug, Lightbulb, X,
-  Pill, Ruler, Share2, Star as StarOutline,
+  Pill, Ruler, Share2, Star as StarOutline, HelpCircle,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -91,6 +91,7 @@ const Settings = () => {
 
         {/* Support section */}
         <div className="bg-card rounded-2xl border border-border/50 divide-y divide-border/50">
+          <MenuItem icon={HelpCircle} label="Como usar" onClick={() => navigate("/como-usar")} />
           <MenuItem icon={Lightbulb} label="Sugerir funcionalidade" onClick={() => { setFeedbackType("suggestion"); setShowFeedback(true); }} />
         </div>
 
