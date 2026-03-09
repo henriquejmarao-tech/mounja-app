@@ -67,10 +67,11 @@ const Settings = () => {
   };
 
   const handleShare = async () => {
+    const shareUrl = "https://mounja-app.lovable.app";
     if (navigator.share) {
-      await navigator.share({ title: "Mounja", text: "Acompanhe sua jornada com Mounjaro®", url: window.location.origin });
+      await navigator.share({ title: "Mounja", text: "Acompanhe sua jornada com Mounjaro®", url: shareUrl });
     } else {
-      await navigator.clipboard.writeText(window.location.origin);
+      await navigator.clipboard.writeText(shareUrl);
       toast.success("Link copiado!");
     }
   };
