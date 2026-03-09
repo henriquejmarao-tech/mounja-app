@@ -98,7 +98,7 @@ const Application = () => {
 
   const daysUntilNext = useMemo(() => {
     if (!dose.nextApplicationAt) return null;
-    return Math.max(0, Math.ceil((new Date(dose.nextApplicationAt).getTime() - Date.now()) / 86400000));
+    return Math.max(0, diffCalendarDays(new Date(), new Date(dose.nextApplicationAt)));
   }, [dose.nextApplicationAt]);
 
   const weekNumber = useMemo(() => {

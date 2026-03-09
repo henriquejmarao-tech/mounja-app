@@ -121,9 +121,7 @@ const Dashboard = () => {
   // Calculate days until next injection from selected date perspective
   const daysUntilNextFromSelected = useMemo(() => {
     if (!dose.nextApplicationAt) return null;
-    const nextDate = new Date(dose.nextApplicationAt);
-    const diffMs = nextDate.getTime() - selectedDate.getTime();
-    return Math.max(0, Math.ceil(diffMs / 86400000));
+    return Math.max(0, diffCalendarDays(selectedDate, new Date(dose.nextApplicationAt)));
   }, [dose.nextApplicationAt, selectedDate]);
 
   // Check if selected future/today date IS the scheduled injection day

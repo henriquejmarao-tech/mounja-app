@@ -53,7 +53,7 @@ const DailyHabitsCard = () => {
 
     // Post-injection tip
     const daysUntilNext = dose.nextApplicationAt
-      ? Math.max(0, Math.ceil((new Date(dose.nextApplicationAt).getTime() - Date.now()) / 86400000))
+      ? Math.max(0, diffCalendarDays(new Date(), new Date(dose.nextApplicationAt)))
       : null;
     if (daysUntilNext !== null && (daysUntilNext >= 6 || daysUntilNext === 0)) {
       allTips.push({

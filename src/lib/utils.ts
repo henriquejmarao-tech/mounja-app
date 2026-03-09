@@ -12,3 +12,10 @@ export function localDateStr(date: Date = new Date()): string {
   const d = String(date.getDate()).padStart(2, "0");
   return `${y}-${m}-${d}`;
 }
+
+/** Returns the number of calendar days between two dates (positive = future). */
+export function diffCalendarDays(from: Date, to: Date): number {
+  const a = new Date(from.getFullYear(), from.getMonth(), from.getDate());
+  const b = new Date(to.getFullYear(), to.getMonth(), to.getDate());
+  return Math.round((b.getTime() - a.getTime()) / 86400000);
+}
