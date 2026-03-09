@@ -40,6 +40,7 @@ import TreatmentSite from "./pages/treatment/TreatmentSite";
 import SchedulePage from "./pages/treatment/SchedulePage";
 import MedicationAnalysis from "./pages/MedicationAnalysis";
 import SideEffectHistory from "./pages/SideEffectHistory";
+import HowToUse from "./pages/HowToUse";
 
 const queryClient = new QueryClient();
 
