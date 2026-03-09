@@ -544,7 +544,7 @@ const Triage = () => {
                 return (
                   <button key={opt.value} onClick={() => toggleHelp(opt.value)}
                     className={cn("flex flex-col items-center justify-center gap-3 p-5 rounded-2xl border-2 transition-all text-center",
-                      selected ? "border-foreground bg-foreground/5" : "border-border bg-card")}>
+                      selected ? "border-triage-action bg-triage-action/10" : "border-border bg-card")}>
                     <span className="text-3xl">{opt.emoji}</span>
                     <span className="text-xs font-medium text-foreground leading-tight">{opt.label}</span>
                   </button>
