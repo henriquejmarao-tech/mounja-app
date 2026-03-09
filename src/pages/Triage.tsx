@@ -522,7 +522,7 @@ const Triage = () => {
                 "Fique à frente dos efeitos colaterais acompanhando padrões e tendências",
               ].map((text, i) => (
                 <div key={i} className="flex items-start gap-3">
-                  <CheckCircle2 className="w-6 h-6 text-primary min-w-6 mt-0.5" />
+                  <CheckCircle2 className="w-6 h-6 text-triage-action min-w-6 mt-0.5" />
                   <p className="text-sm text-muted-foreground">{text}</p>
                 </div>
               ))}
