@@ -80,9 +80,8 @@ function ScrollColumn({ items, selected, onChange }: { items: (string | number)[
 
 import React from "react";
 
-const hours = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0"));
+const hours = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
 const minutes = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, "0"));
-const periods = ["AM", "PM"];
 
 const RegisterInjection = () => {
   const navigate = useNavigate();
@@ -96,9 +95,8 @@ const RegisterInjection = () => {
 
   // Time state
   const now = new Date();
-  const [hour, setHour] = useState(String(now.getHours() % 12 || 12).padStart(2, "0"));
+  const [hour, setHour] = useState(String(now.getHours()).padStart(2, "0"));
   const [minute, setMinute] = useState(String(now.getMinutes()).padStart(2, "0"));
-  const [period, setPeriod] = useState(now.getHours() >= 12 ? "PM" : "AM");
 
   // Drawers
   const [showTimePicker, setShowTimePicker] = useState(false);
@@ -106,7 +104,7 @@ const RegisterInjection = () => {
 
   const today = new Date();
   const dateLabel = today.toLocaleDateString("pt-BR", { month: "short", day: "numeric", year: "numeric" });
-  const timeLabel = `${hour}:${minute} ${period}`;
+  const timeLabel = `${hour}:${minute}`;
 
   const selectedSiteLabel = injectionSites.find((s) => s.id === selectedSite)?.label || "—";
 
@@ -245,7 +243,6 @@ const RegisterInjection = () => {
             <div className="flex items-center justify-center gap-4 py-4">
               <ScrollColumn items={hours} selected={hour} onChange={(v) => setHour(v as string)} />
               <ScrollColumn items={minutes} selected={minute} onChange={(v) => setMinute(v as string)} />
-              <ScrollColumn items={periods} selected={period} onChange={(v) => setPeriod(v as string)} />
             </div>
             <button
               onClick={() => setShowTimePicker(false)}

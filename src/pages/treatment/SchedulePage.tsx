@@ -22,7 +22,6 @@ const SchedulePage = () => {
   const [intervalDays, setIntervalDays] = useState(profile?.application_interval_days || 7);
   const [hour, setHour] = useState(9);
   const [minute, setMinute] = useState(30);
-  const [ampm, setAmpm] = useState<"AM" | "PM">("AM");
 
   const handleSave = async () => {
     if (!user) return;
@@ -107,22 +106,22 @@ const SchedulePage = () => {
           <div className="border-t border-border/30 my-4" />
           <p className="text-sm font-bold text-foreground mb-4">Horário de aplicação</p>
           <div className="flex items-center justify-center gap-2">
-            {/* Hour */}
+            {/* Hour (24h) */}
             <div className="flex flex-col items-center gap-1">
-              <button onClick={() => setHour((h) => (h % 12) + 1)} className="text-sm text-muted-foreground/50 h-5">
-                {((hour % 12) + 2) > 12 ? ((hour % 12) + 2) - 12 : (hour % 12) + 2}
+              <button onClick={() => setHour((h) => (h + 2) % 24)} className="text-sm text-muted-foreground/50 h-5">
+                {String((hour + 2) % 24).padStart(2, "0")}
               </button>
-              <button onClick={() => setHour((h) => (h % 12) + 1)} className="text-base text-muted-foreground h-6">
-                {(hour % 12) + 1 > 12 ? 1 : (hour % 12) + 1}
+              <button onClick={() => setHour((h) => (h + 1) % 24)} className="text-base text-muted-foreground h-6">
+                {String((hour + 1) % 24).padStart(2, "0")}
               </button>
               <div className="bg-muted rounded-xl px-5 py-3 my-1">
-                <span className="text-xl font-bold text-foreground">{hour}</span>
+                <span className="text-xl font-bold text-foreground">{String(hour).padStart(2, "0")}</span>
               </div>
-              <button onClick={() => setHour((h) => h <= 1 ? 12 : h - 1)} className="text-base text-muted-foreground h-6">
-                {hour <= 1 ? 12 : hour - 1}
+              <button onClick={() => setHour((h) => (h - 1 + 24) % 24)} className="text-base text-muted-foreground h-6">
+                {String((hour - 1 + 24) % 24).padStart(2, "0")}
               </button>
-              <button onClick={() => setHour((h) => h <= 1 ? 12 : h - 1)} className="text-sm text-muted-foreground/50 h-5">
-                {hour <= 2 ? (hour <= 1 ? 11 : 12) : hour - 2}
+              <button onClick={() => setHour((h) => (h - 2 + 24) % 24)} className="text-sm text-muted-foreground/50 h-5">
+                {String((hour - 2 + 24) % 24).padStart(2, "0")}
               </button>
             </div>
 
@@ -145,22 +144,6 @@ const SchedulePage = () => {
               <button onClick={() => setMinute((m) => (m - 10 + 60) % 60)} className="text-sm text-muted-foreground/50 h-5">
                 {String((minute - 10 + 60) % 60).padStart(2, "0")}
               </button>
-            </div>
-
-            {/* AM/PM */}
-            <div className="flex flex-col items-center gap-1 ml-2">
-              <div className="h-5" />
-              <div className="h-6" />
-              <div className="bg-muted rounded-xl px-4 py-3 my-1">
-                <span className="text-xl font-bold text-foreground">{ampm}</span>
-              </div>
-              <button
-                onClick={() => setAmpm((v) => (v === "AM" ? "PM" : "AM"))}
-                className="text-base text-muted-foreground h-6"
-              >
-                {ampm === "AM" ? "PM" : "AM"}
-              </button>
-              <div className="h-5" />
             </div>
           </div>
         </div>
