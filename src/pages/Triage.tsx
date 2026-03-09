@@ -166,12 +166,12 @@ const motivationOptions = [
 ];
 
 const helpOptions = [
-  { value: "consistency", label: "Constância no tratamento", icon: CalendarCheck },
-  { value: "weight_tracking", label: "Acompanhar perda de peso", icon: TrendingDown },
-  { value: "appetite", label: "Monitorar apetite e compulsão", icon: Brain },
-  { value: "side_effects", label: "Gerenciar efeitos colaterais", icon: ShieldCheck },
-  { value: "nutrition", label: "Refeições e nutrição", icon: Utensils },
-  { value: "motivation", label: "Manter a motivação", icon: Trophy },
+  { value: "consistency", label: "Constância no tratamento", highlight: "Constância", icon: CalendarCheck },
+  { value: "weight_tracking", label: "Acompanhar perda de peso", highlight: "perda de peso", icon: TrendingDown },
+  { value: "appetite", label: "Monitorar apetite e compulsão", highlight: "Monitorar", icon: Brain },
+  { value: "side_effects", label: "Gerenciar efeitos colaterais", highlight: "colaterais", icon: ShieldCheck },
+  { value: "nutrition", label: "Refeições e nutrição", highlight: "nutrição", icon: Utensils },
+  { value: "motivation", label: "Manter a motivação", highlight: "motivação", icon: Trophy },
 ];
 
 const injectionSites = [
@@ -544,7 +544,14 @@ const Triage = () => {
                     className={cn("flex flex-col items-center justify-center gap-3 p-5 rounded-2xl border-2 transition-all text-center",
                       selected ? "border-triage-action bg-triage-action/10" : "border-border bg-card")}>
                     <opt.icon className={cn("w-7 h-7", selected ? "text-triage-action" : "text-muted-foreground")} />
-                    <span className="text-sm font-semibold text-foreground leading-tight">{opt.label}</span>
+                    <span className="text-sm font-semibold text-foreground leading-tight">
+                      {opt.highlight ? opt.label.split(opt.highlight).map((part, i, arr) => (
+                        <span key={i}>
+                          {part}
+                          {i < arr.length - 1 && <span className="font-extrabold text-triage-action">{opt.highlight}</span>}
+                        </span>
+                      )) : opt.label}
+                    </span>
                   </button>
                 );
               })}
