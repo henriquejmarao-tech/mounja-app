@@ -763,7 +763,7 @@ const Triage = () => {
                 }}
                 disabled={(date) => date > new Date() || date < new Date("2020-01-01")}
                 locale={ptBR}
-                className={cn("p-3 pointer-events-auto rounded-2xl border-2 border-primary/30 bg-card shadow-card")}
+                className={cn("p-3 pointer-events-auto rounded-2xl border-2 border-foreground/30 bg-card shadow-card")}
               />
             </div>
             {lastApplicationDate && (
