@@ -649,10 +649,10 @@ const Triage = () => {
             <div className="space-y-4">
               <button onClick={() => setAlternatesSites(true)}
                 className={cn("w-full p-5 rounded-2xl border-2 text-left transition-all",
-                  alternatesSites === true ? "border-foreground bg-foreground/5" : "border-border bg-card")}>
+                  alternatesSites === true ? "border-triage-action bg-triage-action/10" : "border-border bg-card")}>
                 <div className="flex items-center gap-3 mb-2">
                   <div className={cn("w-6 h-6 rounded-full border-2 flex items-center justify-center",
-                    alternatesSites === true ? "bg-foreground border-foreground" : "border-muted-foreground/30")}>
+                    alternatesSites === true ? "bg-triage-action border-triage-action" : "border-muted-foreground/30")}>
                     {alternatesSites === true && <Check className="w-3.5 h-3.5 text-background" />}
                   </div>
                   <span className="font-bold text-foreground">Sim, eu alterno</span>
