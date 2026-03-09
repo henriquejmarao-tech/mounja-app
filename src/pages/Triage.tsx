@@ -556,7 +556,6 @@ const Triage = () => {
       case 7:
         return (
           <div className="flex-1 flex flex-col items-center px-8">
-            <button onClick={back} className="self-start mt-2 mb-4 text-muted-foreground"><ArrowLeft className="w-6 h-6" /></button>
             <img src={celebrationImg} alt="Celebração" className="w-52 h-52 object-contain mb-6" />
             <h1 className="text-2xl font-bold text-foreground text-center mb-6">Entendido! Vamos te ajudar a:</h1>
             <div className="space-y-5 w-full">
