@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
-import { Scale, Camera, ClipboardList, Lightbulb, Bell, Sparkles } from "lucide-react";
+import { Scale, Camera, ClipboardList, Lightbulb, Bell, Sparkles, Check } from "lucide-react";
 import { cn, localDateStr, diffCalendarDays } from "@/lib/utils";
 import { toast } from "sonner";
 import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
@@ -32,6 +32,7 @@ const Dashboard = () => {
   const [whatsNewOpen, setWhatsNewOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [weekInjections, setWeekInjections] = useState<Set<string>>(new Set());
+  const [hasPhotoToday, setHasPhotoToday] = useState(false);
 
   const selectedDateStr = localDateStr(selectedDate);
   const isSelectedToday = selectedDateStr === localDateStr(new Date());
@@ -92,15 +93,17 @@ const Dashboard = () => {
       const sunday = new Date(monday);
       sunday.setDate(monday.getDate() + 6);
 
-      const [logRes, weightRes, injRes] = await Promise.all([
+      const [logRes, weightRes, injRes, photoRes] = await Promise.all([
         supabase.from("daily_logs").select("*").eq("user_id", user.id).eq("date", today).limit(1),
         supabase.from("daily_logs").select("date, weight").eq("user_id", user.id).not("weight", "is", null).order("date", { ascending: true }).limit(30),
         supabase.from("injections").select("date").eq("user_id", user.id).gte("date", localDateStr(monday)).lte("date", localDateStr(sunday)),
+        supabase.from("progress_photos").select("id").eq("user_id", user.id).eq("date", today).limit(1),
       ]);
       setTodayLog((logRes.data as any[])?.[0] || null);
       const wData = ((weightRes.data as any[]) || []).map((l) => ({ date: l.date, peso: Number(l.weight) }));
       setWeightHistory(wData);
       setWeekInjections(new Set(((injRes.data as any[]) || []).map((i) => i.date)));
+      setHasPhotoToday(((photoRes.data as any[]) || []).length > 0);
 
       if (wData.length >= 3) {
         const diff = wData[0].peso - wData[wData.length - 1].peso;
@@ -372,32 +375,47 @@ const Dashboard = () => {
               emoji: "📋",
               bg: "bg-card",
               action: () => setSymptomDrawerOpen(true),
+              done: !!(todayLog?.symptom_nausea || todayLog?.symptom_fatigue || todayLog?.symptom_headache || todayLog?.symptom_constipation || todayLog?.symptom_diarrhea || todayLog?.symptom_injection_pain),
             },
             {
               label: "Atualizar\npeso",
               emoji: "⚖️",
               bg: "bg-card",
               action: () => setWeightPickerOpen(true),
+              done: !!todayLog?.weight,
             },
             {
               label: "Fotos de\nprogresso",
               emoji: "📸",
               bg: "bg-card",
               action: () => setPhotoDrawerOpen(true),
+              done: hasPhotoToday,
             },
           ].map((item, i) => (
             <button
               key={i}
               onClick={item.action}
               className={cn(
-                "rounded-2xl p-4 shadow-card flex flex-col items-center gap-3 active:scale-95 transition-transform border border-border/50",
+                "rounded-2xl p-4 shadow-card flex flex-col items-center gap-2 active:scale-95 transition-transform border border-border/50 relative",
                 item.bg
               )}
             >
               <span className="text-sm font-semibold text-foreground text-center whitespace-pre-line leading-tight">
                 {item.label}
               </span>
-              <span className="text-3xl">{item.emoji}</span>
+              <span className="text-xl">{item.emoji}</span>
+              {/* Checkbox */}
+              <div
+                className={cn(
+                  "w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all",
+                  item.done
+                    ? "border-transparent"
+                    : "border-border/60 bg-transparent"
+                )}
+                style={item.done ? { background: "hsl(15, 75%, 75%)" } : undefined}
+              >
+                {item.done && <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />}
+              </div>
             </button>
           ))}
         </div>
