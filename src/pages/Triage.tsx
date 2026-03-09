@@ -166,12 +166,12 @@ const motivationOptions = [
 ];
 
 const helpOptions = [
-  { value: "consistency", label: "Constância no tratamento", icon: CalendarCheck },
-  { value: "weight_tracking", label: "Acompanhar perda de peso", icon: TrendingDown },
-  { value: "appetite", label: "Monitorar apetite e compulsão", icon: Brain },
-  { value: "side_effects", label: "Gerenciar efeitos colaterais", icon: ShieldCheck },
-  { value: "nutrition", label: "Refeições e nutrição", icon: Utensils },
-  { value: "motivation", label: "Manter a motivação", icon: Trophy },
+  { value: "consistency", label: "Constância no tratamento", highlight: "Constância", icon: CalendarCheck },
+  { value: "weight_tracking", label: "Acompanhar perda de peso", highlight: "perda de peso", icon: TrendingDown },
+  { value: "appetite", label: "Monitorar apetite e compulsão", highlight: "Monitorar", icon: Brain },
+  { value: "side_effects", label: "Gerenciar efeitos colaterais", highlight: "colaterais", icon: ShieldCheck },
+  { value: "nutrition", label: "Refeições e nutrição", highlight: "nutrição", icon: Utensils },
+  { value: "motivation", label: "Manter a motivação", highlight: "motivação", icon: Trophy },
 ];
 
 const injectionSites = [
