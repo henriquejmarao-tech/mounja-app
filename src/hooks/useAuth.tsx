@@ -89,6 +89,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         name: data.name, sex: data.sex || null, age, height_cm: data.heightCm,
         current_weight: currentWeight, goal: deriveGoal(), current_dose: currentDose,
         medication: data.medication || null,
+        weight_goal: data.goalKg + data.goalDecimal / 10,
         application_interval_days: deriveInterval(),
         application_day: weekDays[data.applicationDay] || null,
         application_frequency: data.frequency, triage_completed: true,
