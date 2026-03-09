@@ -478,7 +478,7 @@ const Triage = () => {
                 return (
                   <button key={opt.value} onClick={() => toggleMotivation(opt.value)}
                     className={cn("w-full py-4 px-5 rounded-2xl text-left transition-all border-2",
-                      selected ? "bg-foreground/5 border-foreground" : "bg-secondary border-transparent")}>
+                      selected ? "bg-foreground/5 border-foreground" : "bg-muted border-transparent")}>
                     <div className="flex items-center justify-between">
                       <span className={cn("font-medium", selected && "text-foreground")}>{opt.label}</span>
                       <div className={cn("w-6 h-6 rounded-full border-2 flex items-center justify-center",
