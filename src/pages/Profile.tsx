@@ -79,32 +79,24 @@ const Profile = () => {
     fetch();
   }, [user]);
 
-  const handleSaveUsername = async () => {
+  const handleSaveName = async () => {
     if (!user) return;
-    const cleaned = usernameInput.trim().toLowerCase().replace(/[^a-z0-9._]/g, "");
-    if (!cleaned || cleaned.length < 3) {
-      toast.error("Username deve ter pelo menos 3 caracteres.");
+    const cleaned = nameInput.trim();
+    if (!cleaned || cleaned.length < 2) {
+      toast.error("Nome deve ter pelo menos 2 caracteres.");
       return;
     }
-    if (cleaned.length > 30) {
-      toast.error("Username deve ter no máximo 30 caracteres.");
-      return;
-    }
-    setSavingUsername(true);
-    const { error } = await supabase.from("profiles").update({ username: cleaned } as any).eq("id", user.id);
+    setSavingName(true);
+    const { error } = await supabase.from("profiles").update({ name: cleaned }).eq("id", user.id);
     if (error) {
-      if (error.code === "23505") {
-        toast.error("Esse username já está em uso. Tente outro.");
-      } else {
-        toast.error("Erro ao salvar username.");
-      }
+      toast.error("Erro ao salvar nome.");
     } else {
-      toast.success("Username atualizado! ✨");
-      setUsernameInput(cleaned);
-      setEditingUsername(false);
+      toast.success("Nome atualizado! ✨");
+      setNameInput(cleaned);
+      setEditingName(false);
       await refreshProfile();
     }
-    setSavingUsername(false);
+    setSavingName(false);
   };
 
   const startDate = profile?.mounjaro_start_date;
