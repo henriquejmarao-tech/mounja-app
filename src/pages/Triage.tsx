@@ -930,7 +930,7 @@ const Triage = () => {
             <button onClick={back} className="absolute top-14 left-5 text-muted-foreground"><ArrowLeft className="w-6 h-6" /></button>
             <h1 className="text-3xl font-bold text-foreground text-center leading-tight">
               Boa notícia! Perder{" "}
-              <span className="text-primary">{weightDiff.toFixed(1)} kg</span>{" "}
+              <span className="text-secondary">{weightDiff.toFixed(1)} kg</span>{" "}
               é totalmente possível.
             </h1>
           </div>
