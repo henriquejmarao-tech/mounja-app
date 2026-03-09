@@ -478,11 +478,11 @@ const Triage = () => {
                 return (
                   <button key={opt.value} onClick={() => toggleMotivation(opt.value)}
                     className={cn("w-full py-4 px-5 rounded-2xl text-left transition-all border-2",
-                      selected ? "bg-foreground/5 border-foreground" : "bg-muted border-transparent")}>
+                      selected ? "bg-triage-action/10 border-triage-action" : "bg-muted border-transparent")}>
                     <div className="flex items-center justify-between">
                       <span className={cn("font-medium", selected && "text-foreground")}>{opt.label}</span>
                       <div className={cn("w-6 h-6 rounded-full border-2 flex items-center justify-center",
-                        selected ? "bg-foreground border-foreground" : "border-muted-foreground/30")}>
+                        selected ? "bg-triage-action border-triage-action" : "border-muted-foreground/30")}>
                         {selected && <Check className="w-3.5 h-3.5 text-background" />}
                       </div>
                     </div>
