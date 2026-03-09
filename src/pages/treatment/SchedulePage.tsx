@@ -22,7 +22,6 @@ const SchedulePage = () => {
   const [intervalDays, setIntervalDays] = useState(profile?.application_interval_days || 7);
   const [hour, setHour] = useState(9);
   const [minute, setMinute] = useState(30);
-  const [ampm, setAmpm] = useState<"AM" | "PM">("AM");
 
   const handleSave = async () => {
     if (!user) return;
