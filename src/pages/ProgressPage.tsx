@@ -64,6 +64,11 @@ const ProgressPage = () => {
       })
     );
     setPhotos(photosWithUrls.filter((p) => p.url));
+
+    // Today's photo for the first card
+    const todayStr = localDateStr(new Date());
+    const todayPhoto = photosWithUrls.find((p) => p.url && p.date === todayStr) || null;
+    setTodayPhoto(todayPhoto);
     setLoading(false);
   }, [user, period]);
 
