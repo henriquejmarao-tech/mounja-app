@@ -30,6 +30,7 @@ const ProgressPage = () => {
   const [activeSlide, setActiveSlide] = useState(0);
   const [startWeightDrawer, setStartWeightDrawer] = useState(false);
   const [goalWeightDrawer, setGoalWeightDrawer] = useState(false);
+  const [uploading, setUploading] = useState(false);
   
   const scrollRef = useRef<HTMLDivElement>(null);
 
