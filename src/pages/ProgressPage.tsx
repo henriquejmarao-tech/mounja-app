@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import WeightTrendsDrawer from "@/components/dashboard/WeightTrendsDrawer";
+import WeightPickerDrawer from "@/components/WeightPickerDrawer";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
@@ -8,12 +9,13 @@ import { ChevronRight } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
 import { useNavigate } from "react-router-dom";
 import ProgressDetailDrawer from "@/components/progress/ProgressDetailDrawer";
+import { toast } from "sonner";
 
 
 type Period = "30d" | "90d" | "180d" | "all";
 
 const ProgressPage = () => {
-  const { user, profile } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
   const { dose } = useApplicationData();
   const navigate = useNavigate();
 
@@ -26,6 +28,8 @@ const ProgressPage = () => {
   const [detailOpen, setDetailOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [activeSlide, setActiveSlide] = useState(0);
+  const [startWeightDrawer, setStartWeightDrawer] = useState(false);
+  const [goalWeightDrawer, setGoalWeightDrawer] = useState(false);
   
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -99,6 +103,21 @@ const ProgressPage = () => {
     : 0;
 
 
+  const saveStartWeight = async (weight: number) => {
+    if (!user) return;
+    const { error } = await supabase.from("profiles").update({ current_weight: weight }).eq("id", user.id);
+    if (error) { toast.error("Erro ao salvar"); return; }
+    await refreshProfile();
+    toast.success("Peso inicial atualizado");
+  };
+
+  const saveGoalWeight = async (weight: number) => {
+    if (!user) return;
+    const { error } = await supabase.from("profiles").update({ weight_goal: weight }).eq("id", user.id);
+    if (error) { toast.error("Erro ao salvar"); return; }
+    await refreshProfile();
+    toast.success("Peso meta atualizado");
+  };
   const periods: { value: Period; label: string }[] = [
     { value: "30d", label: "30d" },
     { value: "90d", label: "90d" },
@@ -154,25 +173,25 @@ const ProgressPage = () => {
 
             {/* Labels */}
             <div className="flex justify-between mt-3">
-              <div className="text-left">
+              <button onClick={() => setStartWeightDrawer(true)} className="text-left active:scale-95 transition-transform">
                 <p className="text-[10px] font-medium text-white/50">início</p>
                 <p className="text-sm font-bold text-white/90">
                   {initialWeight ? Number(initialWeight).toFixed(1) : "—"}
                   <span className="text-[10px] font-medium text-white/50 ml-0.5">kg</span>
                 </p>
-              </div>
+              </button>
               <div className="text-center">
                 <p className="text-[10px] font-medium text-white/50">
                   {Math.round(weightProgress * 100)}%
                 </p>
               </div>
-              <div className="text-right">
+              <button onClick={() => setGoalWeightDrawer(true)} className="text-right active:scale-95 transition-transform">
                 <p className="text-[10px] font-medium text-white/50">meta</p>
                 <p className="text-sm font-bold text-white/90">
                   {goalWeight?.toFixed(1) ?? "—"}
                   <span className="text-[10px] font-medium text-white/50 ml-0.5">kg</span>
                 </p>
-              </div>
+              </button>
             </div>
           </div>
         </div>
@@ -349,6 +368,18 @@ const ProgressPage = () => {
         open={weightDrawerOpen}
         onOpenChange={setWeightDrawerOpen}
         weightHistory={weightData.map(({ date, peso }) => ({ date, peso }))}
+      />
+      <WeightPickerDrawer
+        open={startWeightDrawer}
+        onOpenChange={setStartWeightDrawer}
+        initialWeight={initialWeight ? Number(initialWeight) : 74}
+        onSave={saveStartWeight}
+      />
+      <WeightPickerDrawer
+        open={goalWeightDrawer}
+        onOpenChange={setGoalWeightDrawer}
+        initialWeight={goalWeight ?? 65}
+        onSave={saveGoalWeight}
       />
     </div>
   );
