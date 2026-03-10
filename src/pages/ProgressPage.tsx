@@ -229,40 +229,26 @@ const ProgressPage = () => {
               </div>
             )}
 
-            <div className="flex gap-3">
-              {/* Photo - today only */}
-              <div className="flex-1 rounded-2xl overflow-hidden bg-muted aspect-[3/4]">
-                {todayPhoto ? (
-                  <img src={todayPhoto.url} alt="Progresso" className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs text-center px-2">
-                    Nenhuma foto de hoje
-                  </div>
-                )}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-muted/50 rounded-xl p-3 text-center border border-border/30">
+                <p className="text-[10px] text-muted-foreground font-medium">Data</p>
+                <p className="text-lg font-bold text-foreground">
+                  {new Date().toLocaleDateString("pt-BR", { day: "numeric", month: "numeric", year: "2-digit" })}
+                </p>
               </div>
-
-              {/* Stats */}
-              <div className="flex flex-col gap-2 w-28">
-                <div className="bg-muted/50 rounded-xl p-3 text-center border border-border/30">
-                  <p className="text-[10px] text-muted-foreground font-medium">Data</p>
-                  <p className="text-lg font-bold text-foreground">
-                    {new Date().toLocaleDateString("pt-BR", { day: "numeric", month: "numeric", year: "2-digit" })}
-                  </p>
-                </div>
-                <div className="bg-muted/50 rounded-xl p-3 text-center border border-border/30">
-                  <p className="text-[10px] text-muted-foreground font-medium">Aplicações</p>
-                  <p className="text-lg font-bold text-foreground">{injections.length}</p>
-                </div>
-                <div className="bg-muted/50 rounded-xl p-3 text-center border border-border/30">
-                  <p className="text-[10px] text-muted-foreground font-medium">Perda de peso</p>
-                  <p className="text-lg font-bold text-foreground">
-                    {totalLost && totalLost > 0 ? `-${totalLost.toFixed(1)}` : "—"}
-                  </p>
-                </div>
-                <div className="bg-muted/50 rounded-xl p-3 text-center border border-border/30">
-                  <p className="text-[10px] text-muted-foreground font-medium">IMC</p>
-                  <p className="text-lg font-bold text-foreground">{bmi ?? "—"}</p>
-                </div>
+              <div className="bg-muted/50 rounded-xl p-3 text-center border border-border/30">
+                <p className="text-[10px] text-muted-foreground font-medium">Aplicações</p>
+                <p className="text-lg font-bold text-foreground">{injections.length}</p>
+              </div>
+              <div className="bg-muted/50 rounded-xl p-3 text-center border border-border/30">
+                <p className="text-[10px] text-muted-foreground font-medium">Perda de peso</p>
+                <p className="text-lg font-bold text-foreground">
+                  {totalLost && totalLost > 0 ? `-${totalLost.toFixed(1)}` : "—"}
+                </p>
+              </div>
+              <div className="bg-muted/50 rounded-xl p-3 text-center border border-border/30">
+                <p className="text-[10px] text-muted-foreground font-medium">IMC</p>
+                <p className="text-lg font-bold text-foreground">{bmi ?? "—"}</p>
               </div>
             </div>
           </div>

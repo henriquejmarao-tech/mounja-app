@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { cn, localDateStr } from "@/lib/utils";
 import { toast } from "sonner";
-import { Trash2, Camera, ShieldCheck } from "lucide-react";
+import { Trash2, Camera, ShieldCheck, ImagePlus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface Photo {
@@ -202,7 +202,28 @@ const PhotoGallery = () => {
           </button>
         )}
 
-        {/* Add photo - only today */}
+        {/* Add photo from gallery */}
+        <label
+          className={cn(
+            "w-14 h-14 rounded-2xl bg-card border border-primary/20 flex items-center justify-center shadow-sm cursor-pointer active:scale-90 transition-transform",
+            uploading && "opacity-50 pointer-events-none"
+          )}
+        >
+          {uploading ? (
+            <div className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+          ) : (
+            <ImagePlus className="w-5 h-5 text-primary" />
+          )}
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleUpload}
+            className="hidden"
+            disabled={uploading}
+          />
+        </label>
+
+        {/* Take photo with camera */}
         <label
           className={cn(
             "w-14 h-14 rounded-2xl bg-card border border-primary/20 flex items-center justify-center shadow-sm cursor-pointer active:scale-90 transition-transform ml-auto",
