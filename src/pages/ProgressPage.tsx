@@ -173,25 +173,25 @@ const ProgressPage = () => {
 
             {/* Labels */}
             <div className="flex justify-between mt-3">
-              <div className="text-left">
+              <button onClick={() => setStartWeightDrawer(true)} className="text-left active:scale-95 transition-transform">
                 <p className="text-[10px] font-medium text-white/50">início</p>
                 <p className="text-sm font-bold text-white/90">
                   {initialWeight ? Number(initialWeight).toFixed(1) : "—"}
                   <span className="text-[10px] font-medium text-white/50 ml-0.5">kg</span>
                 </p>
-              </div>
+              </button>
               <div className="text-center">
                 <p className="text-[10px] font-medium text-white/50">
                   {Math.round(weightProgress * 100)}%
                 </p>
               </div>
-              <div className="text-right">
+              <button onClick={() => setGoalWeightDrawer(true)} className="text-right active:scale-95 transition-transform">
                 <p className="text-[10px] font-medium text-white/50">meta</p>
                 <p className="text-sm font-bold text-white/90">
                   {goalWeight?.toFixed(1) ?? "—"}
                   <span className="text-[10px] font-medium text-white/50 ml-0.5">kg</span>
                 </p>
-              </div>
+              </button>
             </div>
           </div>
         </div>
