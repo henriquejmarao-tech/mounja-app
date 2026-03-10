@@ -340,6 +340,7 @@ const ProgressPage = () => {
         </div>
       </div>
 
+      <ProgressDetailDrawer open={detailOpen} onOpenChange={setDetailOpen} />
     </div>
   );
 };
