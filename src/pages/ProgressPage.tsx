@@ -6,6 +6,7 @@ import { cn, localDateStr } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
 import { useNavigate } from "react-router-dom";
+import ProgressDetailDrawer from "@/components/progress/ProgressDetailDrawer";
 
 
 type Period = "30d" | "90d" | "180d" | "all";
