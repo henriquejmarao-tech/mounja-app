@@ -105,6 +105,26 @@ const LogPage = () => {
       cat.items.forEach((s) => { syms[s.key] = existing?.[s.key] || 0; });
     });
     setSymptoms(syms);
+
+    // Load photo for this date
+    const { data: photoRows } = await supabase
+      .from("progress_photos")
+      .select("id, photo_url")
+      .eq("user_id", user.id)
+      .eq("date", dateStr)
+      .order("created_at", { ascending: false })
+      .limit(1);
+    const existingPhoto = (photoRows as any[])?.[0];
+    if (existingPhoto) {
+      setPhotoId(existingPhoto.id);
+      const { data: signedData } = await supabase.storage
+        .from("progress-photos")
+        .createSignedUrl(existingPhoto.photo_url, 3600);
+      setPhotoUrl(signedData?.signedUrl || null);
+    } else {
+      setPhotoId(null);
+      setPhotoUrl(null);
+    }
   }, [user, dateStr]);
 
   const loadDates = useCallback(async () => {
