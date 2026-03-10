@@ -392,7 +392,7 @@ const Dashboard = () => {
               emoji: "📋",
               bg: "bg-card",
               action: () => setSymptomDrawerOpen(true),
-              done: !!(todayLog?.symptom_nausea || todayLog?.symptom_fatigue || todayLog?.symptom_headache || todayLog?.symptom_constipation || todayLog?.symptom_diarrhea || todayLog?.symptom_injection_pain),
+              done: todayLog?.symptom_nausea !== null && todayLog?.symptom_nausea !== undefined,
             },
             {
               label: "Atualizar\npeso",
