@@ -6,6 +6,7 @@ import { cn, localDateStr } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
 import { useNavigate } from "react-router-dom";
+import ProgressDetailDrawer from "@/components/progress/ProgressDetailDrawer";
 
 
 type Period = "30d" | "90d" | "180d" | "all";
@@ -19,6 +20,8 @@ const ProgressPage = () => {
   const [weightData, setWeightData] = useState<{ date: string; peso: number; label: string }[]>([]);
   const [injections, setInjections] = useState<any[]>([]);
   const [photos, setPhotos] = useState<{ id: string; url: string; date: string }[]>([]);
+  const [todayPhoto, setTodayPhoto] = useState<{ id: string; url: string; date: string } | null>(null);
+  const [detailOpen, setDetailOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [activeSlide, setActiveSlide] = useState(0);
   
@@ -64,6 +67,11 @@ const ProgressPage = () => {
       })
     );
     setPhotos(photosWithUrls.filter((p) => p.url));
+
+    // Today's photo for the first card
+    const todayStr = localDateStr(new Date());
+    const todayPhoto = photosWithUrls.find((p) => p.url && p.date === todayStr) || null;
+    setTodayPhoto(todayPhoto);
     setLoading(false);
   }, [user, period]);
 
@@ -189,7 +197,7 @@ const ProgressPage = () => {
           <style>{`.progress-scroll::-webkit-scrollbar{display:none}`}</style>
 
           {/* Card 1: Summary with latest photo */}
-          <div onClick={() => navigate("/progress-detail")} className="bg-card rounded-[20px] p-5 shadow-card border border-border/50 min-w-[calc(100vw-40px)] max-w-[calc(100vw-40px)] snap-center cursor-pointer active:scale-[0.98] transition-transform">
+          <div onClick={() => setDetailOpen(true)} className="bg-card rounded-[20px] p-5 shadow-card border border-border/50 min-w-[calc(100vw-40px)] max-w-[calc(100vw-40px)] snap-center cursor-pointer active:scale-[0.98] transition-transform">
             {daysOnTreatment && (
               <div className="flex justify-end mb-4">
                 <span className="bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-full">
@@ -199,13 +207,13 @@ const ProgressPage = () => {
             )}
 
             <div className="flex gap-3">
-              {/* Photo */}
+              {/* Photo - today only */}
               <div className="flex-1 rounded-2xl overflow-hidden bg-muted aspect-[3/4]">
-                {photos[0] ? (
-                  <img src={photos[0].url} alt="Progresso" className="w-full h-full object-cover" />
+                {todayPhoto ? (
+                  <img src={todayPhoto.url} alt="Progresso" className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">
-                    Sem foto
+                  <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs text-center px-2">
+                    Nenhuma foto de hoje
                   </div>
                 )}
               </div>
@@ -332,6 +340,7 @@ const ProgressPage = () => {
         </div>
       </div>
 
+      <ProgressDetailDrawer open={detailOpen} onOpenChange={setDetailOpen} />
     </div>
   );
 };
