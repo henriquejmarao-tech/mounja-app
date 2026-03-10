@@ -118,8 +118,7 @@ const ProgressPage = () => {
     await refreshProfile();
     toast.success("Peso meta atualizado");
   };
-
-
+  const periods: { value: Period; label: string }[] = [
     { value: "30d", label: "30d" },
     { value: "90d", label: "90d" },
     { value: "180d", label: "180d" },
