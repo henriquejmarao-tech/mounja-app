@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { cn, localDateStr } from "@/lib/utils";
 import { toast } from "sonner";
-import { Trash2, Camera, ShieldCheck } from "lucide-react";
+import { Trash2, Camera, ShieldCheck, ImagePlus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface Photo {

@@ -230,16 +230,7 @@ const ProgressPage = () => {
             )}
 
             <div className="flex gap-3">
-              {/* Photo - today only */}
-              <div className="flex-1 rounded-2xl overflow-hidden bg-muted aspect-[3/4]">
-                {todayPhoto ? (
-                  <img src={todayPhoto.url} alt="Progresso" className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs text-center px-2">
-                    Nenhuma foto de hoje
-                  </div>
-                )}
-              </div>
+              {/* Stats only - no photo in this card */}
 
               {/* Stats */}
               <div className="flex flex-col gap-2 w-28">
