@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { cn, localDateStr } from "@/lib/utils";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Camera, ImagePlus, Trash2 } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
 import { useNavigate } from "react-router-dom";
 import ProgressDetailDrawer from "@/components/progress/ProgressDetailDrawer";
