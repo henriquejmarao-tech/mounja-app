@@ -16,7 +16,6 @@ const periods = [
 ];
 
 const WeightTrendsCard = ({ weightHistory, onExpand }: WeightTrendsCardProps) => {
-  const navigate = useNavigate();
   const [activePeriod, setActivePeriod] = useState(0);
 
   const filteredData = useMemo(() => {
