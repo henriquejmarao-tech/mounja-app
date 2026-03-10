@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Check, CheckCircle2, ThumbsUp, CalendarCheck, TrendingDown, Brain, ShieldCheck, Utensils, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { saveTriageData } from "@/hooks/useTriageStorage";
+import { saveTriageData, clearTriageData } from "@/hooks/useTriageStorage";
+import { localDateStr } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -334,11 +336,11 @@ const Triage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (saving) return;
     setSaving(true);
     try {
-      saveTriageData({
+      const triagePayload = {
         medication,
         experience,
         motivations,
@@ -360,8 +362,54 @@ const Triage = () => {
         weightDecimal,
         goalKg,
         goalDecimal,
-      });
-      navigate("/auth?mode=signup");
+      };
+
+      // Check if user is already logged in
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        // Save directly to profile
+        saveTriageData(triagePayload);
+        const weekDays = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
+        const cw = weightKg + weightDecimal / 10;
+        const currentDose = doseValue ? `${doseValue} mg` : null;
+        const age = new Date().getFullYear() - birthYear;
+        const deriveGoal = () => {
+          if (motivations.includes("health_control")) return "weight_loss";
+          if (motivations.includes("food_relationship")) return "glycemic_control";
+          return "weight_loss";
+        };
+        const deriveInterval = () => {
+          if (doseIntervalDays) return doseIntervalDays;
+          if (frequency === "daily") return 1;
+          if (frequency === "weekly") return 7;
+          return customIntervalDays;
+        };
+        await supabase.from("profiles").update({
+          name, sex: sex || null, age, height_cm: heightCm,
+          current_weight: cw, goal: deriveGoal(), current_dose: currentDose,
+          medication: medication || null,
+          weight_goal: goalKg + goalDecimal / 10,
+          application_interval_days: deriveInterval(),
+          application_day: weekDays[applicationDay] || null,
+          application_frequency: frequency, triage_completed: true,
+        } as any).eq("id", session.user.id);
+        if (currentDose && lastApplicationDate) {
+          await supabase.from("injections").insert({
+            user_id: session.user.id, date: lastApplicationDate, dose: currentDose,
+            site: injectionSite || null, notes: "Registrado via triagem inicial",
+          });
+        }
+        await supabase.from("daily_logs").insert({
+          user_id: session.user.id, date: localDateStr(), weight: cw,
+        });
+        clearTriageData();
+        navigate("/");
+        // Force page reload to refresh profile
+        window.location.reload();
+      } else {
+        saveTriageData(triagePayload);
+        navigate("/auth?mode=signup");
+      }
     } catch {
       setSaving(false);
     }
