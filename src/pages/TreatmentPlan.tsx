@@ -12,31 +12,13 @@ const TreatmentPlan = () => {
   const navigate = useNavigate();
   const { user, profile, refreshProfile } = useAuth();
   const [weightDrawer, setWeightDrawer] = useState<WeightDrawer>(null);
-  const [weightInt, setWeightInt] = useState(70);
-  const [weightDec, setWeightDec] = useState(0);
 
-  const openWeightDrawer = (type: WeightDrawer) => {
-    if (type === "start" && profile?.current_weight) {
-      const w = Number(profile.current_weight);
-      setWeightInt(Math.floor(w));
-      setWeightDec(Math.round((w % 1) * 10));
-    } else if (type === "goal" && (profile as any)?.weight_goal) {
-      const g = parseFloat((profile as any).weight_goal);
-      if (!isNaN(g)) {
-        setWeightInt(Math.floor(g));
-        setWeightDec(Math.round((g % 1) * 10));
-      }
-    }
-    setWeightDrawer(type);
-  };
-
-  const saveWeight = async () => {
+  const saveWeight = async (weight: number) => {
     if (!user || !weightDrawer) return;
-    const value = weightInt + weightDec / 10;
     const field = weightDrawer === "start" ? "current_weight" : "weight_goal";
     const updateData = weightDrawer === "start"
-      ? { current_weight: value }
-      : { weight_goal: value };
+      ? { current_weight: weight }
+      : { weight_goal: weight };
 
     const { error } = await supabase.from("profiles").update(updateData).eq("id", user.id);
     if (error) {
