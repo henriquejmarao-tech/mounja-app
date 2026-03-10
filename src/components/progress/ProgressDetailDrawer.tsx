@@ -49,12 +49,16 @@ const ProgressDetailDrawer = ({ open, onOpenChange }: Props) => {
         .limit(1),
     ]);
 
+    // Deduplicate by date — last entry wins
+    const rawLogs = ((logsRes.data as any[]) || []);
+    const byDate = new Map<string, number>();
+    for (const l of rawLogs) byDate.set(l.date, Number(l.weight));
     setWeightData(
-      ((logsRes.data as any[]) || []).map((l) => ({
-        date: l.date,
-        peso: Number(l.weight),
-        label: new Date(l.date + "T12:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
-      }))
+      Array.from(byDate, ([date, peso]) => ({
+        date,
+        peso,
+        label: new Date(date + "T12:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
+      })).sort((a, b) => a.date.localeCompare(b.date))
     );
     setInjections((injRes.data as any[]) || []);
 
