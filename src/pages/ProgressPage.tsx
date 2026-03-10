@@ -86,6 +86,49 @@ const ProgressPage = () => {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
+  const todayStr = localDateStr(new Date());
+
+  const handlePhotoUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop() || "jpg";
+      const path = `${user.id}/${todayStr}-${Date.now()}.${ext}`;
+      const { error: uploadError } = await supabase.storage
+        .from("progress-photos")
+        .upload(path, file, { upsert: true });
+      if (uploadError) throw uploadError;
+      await supabase.from("progress_photos").insert({
+        user_id: user.id,
+        date: todayStr,
+        photo_url: path,
+      } as any);
+      toast.success("Foto salva ✓");
+      await fetchData();
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao enviar foto");
+    }
+    setUploading(false);
+    e.target.value = "";
+  }, [user, todayStr, fetchData]);
+
+  const handleDeletePhoto = useCallback(async () => {
+    if (!todayPhoto || !user) return;
+    try {
+      // Get storage path
+      const { data } = await supabase.from("progress_photos").select("photo_url").eq("id", todayPhoto.id).limit(1);
+      const storagePath = (data as any[])?.[0]?.photo_url;
+      if (storagePath) await supabase.storage.from("progress-photos").remove([storagePath]);
+      await supabase.from("progress_photos").delete().eq("id", todayPhoto.id);
+      setTodayPhoto(null);
+      toast.success("Foto removida");
+      await fetchData();
+    } catch {
+      toast.error("Erro ao remover");
+    }
+  }, [todayPhoto, user, fetchData]);
+
   const initialWeight = profile?.current_weight;
   const currentWeight = weightData.length > 0 ? weightData[weightData.length - 1].peso : (initialWeight ? Number(initialWeight) : null);
   const goalWeightRaw = (profile as any)?.weight_goal ? parseFloat(String((profile as any).weight_goal).replace(",", ".")) : NaN;
