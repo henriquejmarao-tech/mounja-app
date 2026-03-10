@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from "react";
+import WeightTrendsDrawer from "@/components/dashboard/WeightTrendsDrawer";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
