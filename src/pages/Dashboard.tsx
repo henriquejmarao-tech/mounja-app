@@ -39,6 +39,12 @@ const Dashboard = () => {
   const selectedDateStr = localDateStr(selectedDate);
   const isSelectedToday = selectedDateStr === localDateStr(new Date());
 
+  const refreshTodayLog = useCallback(async () => {
+    if (!user) return;
+    const { data } = await supabase.from("daily_logs").select("*").eq("user_id", user.id).eq("date", selectedDateStr).limit(1);
+    setTodayLog((data as any[])?.[0] || null);
+  }, [user, selectedDateStr]);
+
   const handleWeightSave = useCallback(async (weight: number) => {
     if (!user) return;
     const dateStr = selectedDateStr;
@@ -57,7 +63,8 @@ const Dashboard = () => {
       for (const l of logs as any[]) byDate.set(l.date, Number(l.weight));
       setWeightHistory(Array.from(byDate, ([date, peso]) => ({ date, peso })).sort((a, b) => a.date.localeCompare(b.date)));
     }
-  }, [user]);
+    await refreshTodayLog();
+  }, [user, selectedDateStr, refreshTodayLog]);
 
 
   // Week strip data
@@ -385,7 +392,7 @@ const Dashboard = () => {
               emoji: "📋",
               bg: "bg-card",
               action: () => setSymptomDrawerOpen(true),
-              done: !!(todayLog?.symptom_nausea || todayLog?.symptom_fatigue || todayLog?.symptom_headache || todayLog?.symptom_constipation || todayLog?.symptom_diarrhea || todayLog?.symptom_injection_pain),
+              done: todayLog?.symptom_nausea !== null && todayLog?.symptom_nausea !== undefined,
             },
             {
               label: "Atualizar\npeso",
@@ -474,7 +481,10 @@ const Dashboard = () => {
       />
       <SymptomCheckinDrawer
         open={symptomDrawerOpen}
-        onOpenChange={setSymptomDrawerOpen}
+        onOpenChange={(open) => {
+          setSymptomDrawerOpen(open);
+          if (!open) refreshTodayLog();
+        }}
         date={selectedDate}
       />
       <PhotoDrawer
