@@ -103,7 +103,23 @@ const ProgressPage = () => {
     : 0;
 
 
-  const periods: { value: Period; label: string }[] = [
+  const saveStartWeight = async (weight: number) => {
+    if (!user) return;
+    const { error } = await supabase.from("profiles").update({ current_weight: weight }).eq("id", user.id);
+    if (error) { toast.error("Erro ao salvar"); return; }
+    await refreshProfile();
+    toast.success("Peso inicial atualizado");
+  };
+
+  const saveGoalWeight = async (weight: number) => {
+    if (!user) return;
+    const { error } = await supabase.from("profiles").update({ weight_goal: weight }).eq("id", user.id);
+    if (error) { toast.error("Erro ao salvar"); return; }
+    await refreshProfile();
+    toast.success("Peso meta atualizado");
+  };
+
+
     { value: "30d", label: "30d" },
     { value: "90d", label: "90d" },
     { value: "180d", label: "180d" },
