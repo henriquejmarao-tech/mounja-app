@@ -16,7 +16,7 @@ const periods = [
   { label: "All", days: 9999 },
 ];
 
-const WeightTrendsCard = ({ weightHistory }: WeightTrendsCardProps) => {
+const WeightTrendsCard = ({ weightHistory, onExpand }: WeightTrendsCardProps) => {
   const navigate = useNavigate();
   const [activePeriod, setActivePeriod] = useState(0);
 
