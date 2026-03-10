@@ -229,31 +229,26 @@ const ProgressPage = () => {
               </div>
             )}
 
-            <div className="flex gap-3">
-              {/* Stats only - no photo in this card */}
-
-              {/* Stats */}
-              <div className="flex flex-col gap-2 w-28">
-                <div className="bg-muted/50 rounded-xl p-3 text-center border border-border/30">
-                  <p className="text-[10px] text-muted-foreground font-medium">Data</p>
-                  <p className="text-lg font-bold text-foreground">
-                    {new Date().toLocaleDateString("pt-BR", { day: "numeric", month: "numeric", year: "2-digit" })}
-                  </p>
-                </div>
-                <div className="bg-muted/50 rounded-xl p-3 text-center border border-border/30">
-                  <p className="text-[10px] text-muted-foreground font-medium">Aplicações</p>
-                  <p className="text-lg font-bold text-foreground">{injections.length}</p>
-                </div>
-                <div className="bg-muted/50 rounded-xl p-3 text-center border border-border/30">
-                  <p className="text-[10px] text-muted-foreground font-medium">Perda de peso</p>
-                  <p className="text-lg font-bold text-foreground">
-                    {totalLost && totalLost > 0 ? `-${totalLost.toFixed(1)}` : "—"}
-                  </p>
-                </div>
-                <div className="bg-muted/50 rounded-xl p-3 text-center border border-border/30">
-                  <p className="text-[10px] text-muted-foreground font-medium">IMC</p>
-                  <p className="text-lg font-bold text-foreground">{bmi ?? "—"}</p>
-                </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-muted/50 rounded-xl p-3 text-center border border-border/30">
+                <p className="text-[10px] text-muted-foreground font-medium">Data</p>
+                <p className="text-lg font-bold text-foreground">
+                  {new Date().toLocaleDateString("pt-BR", { day: "numeric", month: "numeric", year: "2-digit" })}
+                </p>
+              </div>
+              <div className="bg-muted/50 rounded-xl p-3 text-center border border-border/30">
+                <p className="text-[10px] text-muted-foreground font-medium">Aplicações</p>
+                <p className="text-lg font-bold text-foreground">{injections.length}</p>
+              </div>
+              <div className="bg-muted/50 rounded-xl p-3 text-center border border-border/30">
+                <p className="text-[10px] text-muted-foreground font-medium">Perda de peso</p>
+                <p className="text-lg font-bold text-foreground">
+                  {totalLost && totalLost > 0 ? `-${totalLost.toFixed(1)}` : "—"}
+                </p>
+              </div>
+              <div className="bg-muted/50 rounded-xl p-3 text-center border border-border/30">
+                <p className="text-[10px] text-muted-foreground font-medium">IMC</p>
+                <p className="text-lg font-bold text-foreground">{bmi ?? "—"}</p>
               </div>
             </div>
           </div>
