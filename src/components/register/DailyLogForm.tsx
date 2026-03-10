@@ -119,6 +119,54 @@ const DailyLogForm = () => {
     loadToday();
   }, [user, todayStr]);
 
+  const handlePhotoUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop() || "jpg";
+      const path = `${user.id}/${todayStr}-${Date.now()}.${ext}`;
+      const { error: uploadError } = await supabase.storage
+        .from("progress-photos")
+        .upload(path, file, { upsert: true });
+      if (uploadError) throw uploadError;
+      const { data: inserted } = await supabase.from("progress_photos").insert({
+        user_id: user.id,
+        date: todayStr,
+        photo_url: path,
+      } as any).select("id").single();
+      if (inserted) setPhotoId((inserted as any).id);
+      const { data: signedData } = await supabase.storage
+        .from("progress-photos")
+        .createSignedUrl(path, 3600);
+      if (signedData?.signedUrl) setPhotoUrl(signedData.signedUrl);
+      toast.success("Foto adicionada ✓");
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao enviar foto");
+    }
+    setUploading(false);
+    e.target.value = "";
+  }, [user, todayStr]);
+
+  const handlePhotoDelete = useCallback(async () => {
+    if (!photoId || !user) return;
+    try {
+      const { data } = await supabase
+        .from("progress_photos")
+        .select("photo_url")
+        .eq("id", photoId)
+        .limit(1);
+      const storagePath = (data as any[])?.[0]?.photo_url;
+      if (storagePath) await supabase.storage.from("progress-photos").remove([storagePath]);
+      await supabase.from("progress_photos").delete().eq("id", photoId);
+      setPhotoUrl(null);
+      setPhotoId(null);
+      toast.success("Foto removida");
+    } catch {
+      toast.error("Erro ao remover");
+    }
+  }, [photoId, user]);
+
   const renderScale = (value: number, onChange: (v: number) => void, label: string, emoji: string) => (
     <div className="mb-4">
       <div className="flex items-center gap-2 mb-1.5">
