@@ -43,7 +43,7 @@ const WeightTrendsCard = ({ weightHistory, onExpand }: WeightTrendsCardProps) =>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-bold text-foreground">Tendência de peso</h2>
         <button
-          onClick={() => navigate("/progress")}
+          onClick={() => onExpand?.()}
           className="text-xs text-primary font-semibold flex items-center gap-0.5"
         >
           Ver mais <ChevronRight className="w-3.5 h-3.5" />
