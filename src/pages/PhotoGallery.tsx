@@ -150,7 +150,7 @@ const PhotoGallery = () => {
                 key={photo.id}
                 className="min-w-full snap-center flex flex-col items-center px-5"
               >
-                <div className="w-full rounded-3xl overflow-hidden bg-muted flex-1 max-h-[65vh]">
+                <div className="w-full rounded-3xl overflow-hidden bg-muted aspect-[3/4] max-h-[65vh]">
                   <img
                     src={photo.url}
                     alt="Progresso"
