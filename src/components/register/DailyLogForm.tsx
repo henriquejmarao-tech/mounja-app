@@ -96,6 +96,24 @@ const DailyLogForm = () => {
           }
         }
       }
+
+      // Load today's photo
+      const { data: photoRows } = await supabase
+        .from("progress_photos")
+        .select("id, photo_url")
+        .eq("user_id", user.id)
+        .eq("date", todayStr)
+        .order("created_at", { ascending: false })
+        .limit(1);
+      const existingPhoto = (photoRows as any[])?.[0];
+      if (existingPhoto) {
+        setPhotoId(existingPhoto.id);
+        const { data: signedData } = await supabase.storage
+          .from("progress-photos")
+          .createSignedUrl(existingPhoto.photo_url, 3600);
+        if (signedData?.signedUrl) setPhotoUrl(signedData.signedUrl);
+      }
+
       setLoading(false);
     };
     loadToday();
