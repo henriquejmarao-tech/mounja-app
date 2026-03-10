@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { Check, ChevronDown, ChevronUp, RefreshCw } from "lucide-react";
+import { Check, ChevronDown, ChevronUp, RefreshCw, Camera, ImagePlus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { cn, localDateStr } from "@/lib/utils";
 
@@ -49,6 +49,11 @@ const DailyLogForm = () => {
   const [foodQuality, setFoodQuality] = useState("");
   const [notes, setNotes] = useState("");
 
+  // Photo state
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+  const [photoId, setPhotoId] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+
   const isUpdate = !!existingLogId;
 
   // Load existing log for today
@@ -91,10 +96,76 @@ const DailyLogForm = () => {
           }
         }
       }
+
+      // Load today's photo
+      const { data: photoRows } = await supabase
+        .from("progress_photos")
+        .select("id, photo_url")
+        .eq("user_id", user.id)
+        .eq("date", todayStr)
+        .order("created_at", { ascending: false })
+        .limit(1);
+      const existingPhoto = (photoRows as any[])?.[0];
+      if (existingPhoto) {
+        setPhotoId(existingPhoto.id);
+        const { data: signedData } = await supabase.storage
+          .from("progress-photos")
+          .createSignedUrl(existingPhoto.photo_url, 3600);
+        if (signedData?.signedUrl) setPhotoUrl(signedData.signedUrl);
+      }
+
       setLoading(false);
     };
     loadToday();
   }, [user, todayStr]);
+
+  const handlePhotoUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop() || "jpg";
+      const path = `${user.id}/${todayStr}-${Date.now()}.${ext}`;
+      const { error: uploadError } = await supabase.storage
+        .from("progress-photos")
+        .upload(path, file, { upsert: true });
+      if (uploadError) throw uploadError;
+      const { data: inserted } = await supabase.from("progress_photos").insert({
+        user_id: user.id,
+        date: todayStr,
+        photo_url: path,
+      } as any).select("id").single();
+      if (inserted) setPhotoId((inserted as any).id);
+      const { data: signedData } = await supabase.storage
+        .from("progress-photos")
+        .createSignedUrl(path, 3600);
+      if (signedData?.signedUrl) setPhotoUrl(signedData.signedUrl);
+      toast.success("Foto adicionada ✓");
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao enviar foto");
+    }
+    setUploading(false);
+    e.target.value = "";
+  }, [user, todayStr]);
+
+  const handlePhotoDelete = useCallback(async () => {
+    if (!photoId || !user) return;
+    try {
+      const { data } = await supabase
+        .from("progress_photos")
+        .select("photo_url")
+        .eq("id", photoId)
+        .limit(1);
+      const storagePath = (data as any[])?.[0]?.photo_url;
+      if (storagePath) await supabase.storage.from("progress-photos").remove([storagePath]);
+      await supabase.from("progress_photos").delete().eq("id", photoId);
+      setPhotoUrl(null);
+      setPhotoId(null);
+      toast.success("Foto removida");
+    } catch {
+      toast.error("Erro ao remover");
+    }
+  }, [photoId, user]);
 
   const renderScale = (value: number, onChange: (v: number) => void, label: string, emoji: string) => (
     <div className="mb-4">
@@ -262,6 +333,59 @@ const DailyLogForm = () => {
           <p className="text-xs text-muted-foreground mt-2 text-center">
             ≈ <span className="font-bold text-foreground">{Math.round(parseFloat(waterL) * 1000 / 250)}</span> copos de 250ml
           </p>
+        )}
+      </div>
+
+      {/* Progress Photo */}
+      <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50">
+        <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
+          <Camera className="w-4 h-4 text-muted-foreground" />
+          Foto de progresso
+        </h3>
+        {photoUrl ? (
+          <div className="space-y-3">
+            <img src={photoUrl} alt="Progresso" className="w-full rounded-2xl object-cover max-h-64" />
+            <div className="flex gap-2">
+              <button onClick={handlePhotoDelete} className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl border border-destructive/20 text-destructive text-xs font-semibold active:scale-95 transition-transform">
+                <Trash2 className="w-3.5 h-3.5" /> Remover
+              </button>
+              <label className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-muted text-foreground text-xs font-semibold cursor-pointer active:scale-95 transition-transform">
+                <ImagePlus className="w-3.5 h-3.5" /> Trocar
+                <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
+              </label>
+            </div>
+          </div>
+        ) : (
+          <div className="flex gap-2">
+            <label className={cn(
+              "flex-1 flex flex-col items-center gap-2 py-6 rounded-xl border-2 border-dashed border-border cursor-pointer hover:border-primary/30 transition-colors",
+              uploading && "opacity-50 pointer-events-none"
+            )}>
+              {uploading ? (
+                <div className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+              ) : (
+                <>
+                  <ImagePlus className="w-6 h-6 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground font-medium">Galeria</span>
+                </>
+              )}
+              <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" disabled={uploading} />
+            </label>
+            <label className={cn(
+              "flex-1 flex flex-col items-center gap-2 py-6 rounded-xl border-2 border-dashed border-border cursor-pointer hover:border-primary/30 transition-colors",
+              uploading && "opacity-50 pointer-events-none"
+            )}>
+              {uploading ? (
+                <div className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+              ) : (
+                <>
+                  <Camera className="w-6 h-6 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground font-medium">Câmera</span>
+                </>
+              )}
+              <input type="file" accept="image/*" capture="environment" onChange={handlePhotoUpload} className="hidden" disabled={uploading} />
+            </label>
+          </div>
         )}
       </div>
 
