@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { Check, ChevronDown, ChevronUp, RefreshCw } from "lucide-react";
+import { Check, ChevronDown, ChevronUp, RefreshCw, Camera, ImagePlus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { cn, localDateStr } from "@/lib/utils";
 
