@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from "react";
+import WeightTrendsDrawer from "@/components/dashboard/WeightTrendsDrawer";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
@@ -17,6 +18,7 @@ const ProgressPage = () => {
   const navigate = useNavigate();
 
   const [period, setPeriod] = useState<Period>("30d");
+  const [weightDrawerOpen, setWeightDrawerOpen] = useState(false);
   const [weightData, setWeightData] = useState<{ date: string; peso: number; label: string }[]>([]);
   const [injections, setInjections] = useState<any[]>([]);
   const [photos, setPhotos] = useState<{ id: string; url: string; date: string }[]>([]);
@@ -251,7 +253,7 @@ const ProgressPage = () => {
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-base font-bold text-foreground">Tendência de Peso</h3>
               <button
-                onClick={() => navigate("/progress")}
+                onClick={() => setWeightDrawerOpen(true)}
                 className="text-xs font-semibold text-muted-foreground flex items-center gap-0.5"
               >
                 Ver mais <ChevronRight className="w-3 h-3" />
@@ -343,6 +345,11 @@ const ProgressPage = () => {
       </div>
 
       <ProgressDetailDrawer open={detailOpen} onOpenChange={setDetailOpen} />
+      <WeightTrendsDrawer
+        open={weightDrawerOpen}
+        onOpenChange={setWeightDrawerOpen}
+        weightHistory={weightData.map(({ date, peso }) => ({ date, peso }))}
+      />
     </div>
   );
 };
