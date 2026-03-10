@@ -49,12 +49,14 @@ const ProgressPage = () => {
       supabase.from("progress_photos").select("id, photo_url, date").eq("user_id", user.id).order("date", { ascending: false }).limit(20),
     ]);
 
+    const byDate = new Map<string, number>();
+    for (const l of (logsRes.data as any[]) || []) byDate.set(l.date, Number(l.weight));
     setWeightData(
-      ((logsRes.data as any[]) || []).map((l) => ({
-        date: l.date,
-        peso: Number(l.weight),
-        label: new Date(l.date + "T12:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
-      }))
+      Array.from(byDate, ([date, peso]) => ({
+        date,
+        peso,
+        label: new Date(date + "T12:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
+      })).sort((a, b) => a.date.localeCompare(b.date))
     );
     setInjections((injRes.data as any[]) || []);
 
