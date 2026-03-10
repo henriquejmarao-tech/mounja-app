@@ -1,6 +1,5 @@
 import { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
-import { LineChart, Line, ResponsiveContainer, YAxis, XAxis, CartesianGrid, ReferenceLine, Area, AreaChart } from "recharts";
+import { AreaChart, Area, ResponsiveContainer, YAxis, XAxis, CartesianGrid } from "recharts";
 import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
 
