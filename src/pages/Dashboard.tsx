@@ -311,7 +311,7 @@ const Dashboard = () => {
                   </p>
                   <button
                     onClick={() => selectedDayHasInjection ? navigate("/plano-tratamento") : navigate("/registrar-aplicacao")}
-                    className="mt-5 bg-primary text-primary-foreground px-8 py-3 rounded-full text-sm font-bold shadow-elevated active:scale-95 transition-transform"
+                    className="mt-5 bg-[hsl(25,85%,55%)] text-white px-8 py-3 rounded-full text-sm font-bold shadow-elevated active:scale-95 transition-transform"
                   >
                     {selectedDayHasInjection ? "Editar Tratamento" : "Registrar aplicação"}
                   </button>
