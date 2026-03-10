@@ -163,7 +163,7 @@ const Dashboard = () => {
   const isInjectionDayVisual = selectedDayHasInjection || isScheduledInjectionDay;
 
   const heroGradient = isInjectionDayVisual
-    ? "linear-gradient(160deg, hsl(314, 16%, 42%) 0%, hsl(11, 40%, 62%) 50%, hsl(11, 55%, 70%) 100%)"
+    ? "linear-gradient(180deg, hsl(15, 75%, 75%) 0%, hsl(340, 65%, 62%) 45%, hsl(295, 55%, 42%) 100%)"
     : "linear-gradient(180deg, hsl(36, 30%, 96%) 0%, hsl(36, 25%, 97%) 40%, hsl(36, 33%, 95%) 100%)";
 
   if (loading) {
