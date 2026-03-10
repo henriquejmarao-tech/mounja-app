@@ -481,7 +481,10 @@ const Dashboard = () => {
       />
       <SymptomCheckinDrawer
         open={symptomDrawerOpen}
-        onOpenChange={setSymptomDrawerOpen}
+        onOpenChange={(open) => {
+          setSymptomDrawerOpen(open);
+          if (!open) refreshTodayLog();
+        }}
         date={selectedDate}
       />
       <PhotoDrawer
