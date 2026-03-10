@@ -490,6 +490,11 @@ const Dashboard = () => {
         open={whatsNewOpen}
         onOpenChange={setWhatsNewOpen}
       />
+      <WeightTrendsDrawer
+        open={weightDrawerOpen}
+        onOpenChange={setWeightDrawerOpen}
+        weightHistory={weightHistory}
+      />
     </div>
   );
 };
