@@ -251,9 +251,12 @@ const Dashboard = () => {
           </button>
           <button
             onClick={() => setCalendarDrawerOpen(true)}
-            className="bg-muted/60 px-4 py-1.5 rounded-full active:scale-95 transition-all shadow-sm"
+            className={cn(
+              "px-4 py-1.5 rounded-full active:scale-95 transition-all shadow-sm",
+              isInjectionDayVisual ? "bg-[hsl(25,85%,55%)]" : "bg-muted/60"
+            )}
           >
-            <p className="text-sm font-bold text-foreground">{monthLabel}</p>
+            <p className={cn("text-sm font-bold", isInjectionDayVisual ? "text-white" : "text-foreground")}>{monthLabel}</p>
           </button>
           <button
             onClick={() => setWhatsNewOpen(true)}
@@ -308,7 +311,7 @@ const Dashboard = () => {
                   </p>
                   <button
                     onClick={() => selectedDayHasInjection ? navigate("/plano-tratamento") : navigate("/registrar-aplicacao")}
-                    className="mt-5 bg-primary text-primary-foreground px-8 py-3 rounded-full text-sm font-bold shadow-elevated active:scale-95 transition-transform"
+                    className="mt-5 bg-[hsl(25,85%,55%)] text-white px-8 py-3 rounded-full text-sm font-bold shadow-elevated active:scale-95 transition-transform"
                   >
                     {selectedDayHasInjection ? "Editar Tratamento" : "Registrar aplicação"}
                   </button>
