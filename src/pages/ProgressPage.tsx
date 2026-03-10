@@ -28,6 +28,8 @@ const ProgressPage = () => {
   const [detailOpen, setDetailOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [activeSlide, setActiveSlide] = useState(0);
+  const [startWeightDrawer, setStartWeightDrawer] = useState(false);
+  const [goalWeightDrawer, setGoalWeightDrawer] = useState(false);
   
   const scrollRef = useRef<HTMLDivElement>(null);
 
