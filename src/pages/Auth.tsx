@@ -108,10 +108,14 @@ const Auth = () => {
         });
         if (error) throw error;
 
-        // If user was auto-confirmed and we have triage data, save it
-        if (data.user && hasTriage) {
+        // Only save triage data if user has an active session (auto-confirm enabled)
+        // Otherwise, keep data in localStorage — useAuth will save it after email confirmation
+        if (data.session && data.user && hasTriage) {
           await savePendingTriageData(data.user.id);
           toast.success("Conta criada e plano salvo! 🎉");
+        } else if (data.user && !data.session) {
+          // Email confirmation required — keep triage data in localStorage
+          toast.success("Conta criada! Verifique seu e-mail para confirmar. 📩");
         } else {
           toast.success("Conta criada! Verifique seu e-mail para confirmar.");
         }
