@@ -1,11 +1,11 @@
 import { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
-import { LineChart, Line, ResponsiveContainer, YAxis, XAxis, CartesianGrid, ReferenceLine, Area, AreaChart } from "recharts";
+import { AreaChart, Area, ResponsiveContainer, YAxis, XAxis, CartesianGrid } from "recharts";
 import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
 
 interface WeightTrendsCardProps {
   weightHistory: { date: string; peso: number }[];
+  onExpand?: () => void;
 }
 
 const periods = [
@@ -15,8 +15,7 @@ const periods = [
   { label: "All", days: 9999 },
 ];
 
-const WeightTrendsCard = ({ weightHistory }: WeightTrendsCardProps) => {
-  const navigate = useNavigate();
+const WeightTrendsCard = ({ weightHistory, onExpand }: WeightTrendsCardProps) => {
   const [activePeriod, setActivePeriod] = useState(0);
 
   const filteredData = useMemo(() => {
@@ -42,7 +41,7 @@ const WeightTrendsCard = ({ weightHistory }: WeightTrendsCardProps) => {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-bold text-foreground">Tendência de peso</h2>
         <button
-          onClick={() => navigate("/progress")}
+          onClick={() => onExpand?.()}
           className="text-xs text-primary font-semibold flex items-center gap-0.5"
         >
           Ver mais <ChevronRight className="w-3.5 h-3.5" />

@@ -15,6 +15,7 @@ import SymptomCheckinDrawer from "@/components/SymptomCheckinDrawer";
 import PhotoDrawer from "@/components/PhotoDrawer";
 import CalendarDrawer from "@/components/dashboard/CalendarDrawer";
 import WhatsNewDrawer from "@/components/dashboard/WhatsNewDrawer";
+import WeightTrendsDrawer from "@/components/dashboard/WeightTrendsDrawer";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -33,6 +34,7 @@ const Dashboard = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [weekInjections, setWeekInjections] = useState<Set<string>>(new Set());
   const [hasPhotoToday, setHasPhotoToday] = useState(false);
+  const [weightDrawerOpen, setWeightDrawerOpen] = useState(false);
 
   const selectedDateStr = localDateStr(selectedDate);
   const isSelectedToday = selectedDateStr === localDateStr(new Date());
@@ -445,7 +447,7 @@ const Dashboard = () => {
 
       {/* ── Weight Trends ── */}
       <div className="px-5 mb-4 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
-        <WeightTrendsCard weightHistory={weightHistory} />
+        <WeightTrendsCard weightHistory={weightHistory} onExpand={() => setWeightDrawerOpen(true)} />
       </div>
 
 
@@ -487,6 +489,11 @@ const Dashboard = () => {
       <WhatsNewDrawer
         open={whatsNewOpen}
         onOpenChange={setWhatsNewOpen}
+      />
+      <WeightTrendsDrawer
+        open={weightDrawerOpen}
+        onOpenChange={setWeightDrawerOpen}
+        weightHistory={weightHistory}
       />
     </div>
   );
