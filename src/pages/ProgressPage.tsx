@@ -345,6 +345,11 @@ const ProgressPage = () => {
       </div>
 
       <ProgressDetailDrawer open={detailOpen} onOpenChange={setDetailOpen} />
+      <WeightTrendsDrawer
+        open={weightDrawerOpen}
+        onOpenChange={setWeightDrawerOpen}
+        weightHistory={weightData.map(({ date, peso }) => ({ date, peso }))}
+      />
     </div>
   );
 };
