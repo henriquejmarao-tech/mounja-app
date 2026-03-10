@@ -15,7 +15,7 @@ import { toast } from "sonner";
 type Period = "30d" | "90d" | "180d" | "all";
 
 const ProgressPage = () => {
-  const { user, profile } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
   const { dose } = useApplicationData();
   const navigate = useNavigate();
 
