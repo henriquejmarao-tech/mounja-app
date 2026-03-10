@@ -77,6 +77,11 @@ const LogPage = () => {
   const [datesWithLogs, setDatesWithLogs] = useState<string[]>([]);
   const [showCalendar, setShowCalendar] = useState(false);
 
+  // Photo state
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+  const [photoId, setPhotoId] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+
   // Injection fields
   const [showInjection, setShowInjection] = useState(false);
   const [injDose, setInjDose] = useState(dose.currentDose || "");
