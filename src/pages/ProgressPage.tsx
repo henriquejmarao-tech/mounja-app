@@ -19,6 +19,8 @@ const ProgressPage = () => {
   const [weightData, setWeightData] = useState<{ date: string; peso: number; label: string }[]>([]);
   const [injections, setInjections] = useState<any[]>([]);
   const [photos, setPhotos] = useState<{ id: string; url: string; date: string }[]>([]);
+  const [todayPhoto, setTodayPhoto] = useState<{ id: string; url: string; date: string } | null>(null);
+  const [detailOpen, setDetailOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [activeSlide, setActiveSlide] = useState(0);
   
