@@ -369,7 +369,6 @@ const Triage = () => {
       if (session?.user) {
         // Save directly to profile
         saveTriageData(triagePayload);
-        const { savePendingTriageDirectly } = await import("@/hooks/useTriageStorage");
         const weekDays = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
         const cw = weightKg + weightDecimal / 10;
         const currentDose = doseValue ? `${doseValue} mg` : null;
