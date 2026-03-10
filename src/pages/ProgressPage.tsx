@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import WeightTrendsDrawer from "@/components/dashboard/WeightTrendsDrawer";
+import WeightPickerDrawer from "@/components/WeightPickerDrawer";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
@@ -8,6 +9,7 @@ import { ChevronRight } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
 import { useNavigate } from "react-router-dom";
 import ProgressDetailDrawer from "@/components/progress/ProgressDetailDrawer";
+import { toast } from "sonner";
 
 
 type Period = "30d" | "90d" | "180d" | "all";
