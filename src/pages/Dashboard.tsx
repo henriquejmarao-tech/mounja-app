@@ -34,6 +34,7 @@ const Dashboard = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [weekInjections, setWeekInjections] = useState<Set<string>>(new Set());
   const [hasPhotoToday, setHasPhotoToday] = useState(false);
+  const [weightDrawerOpen, setWeightDrawerOpen] = useState(false);
 
   const selectedDateStr = localDateStr(selectedDate);
   const isSelectedToday = selectedDateStr === localDateStr(new Date());
