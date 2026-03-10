@@ -399,7 +399,6 @@ const Triage = () => {
             site: injectionSite || null, notes: "Registrado via triagem inicial",
           });
         }
-        const { localDateStr } = await import("@/lib/utils");
         await supabase.from("daily_logs").insert({
           user_id: session.user.id, date: localDateStr(), weight: cw,
         });
