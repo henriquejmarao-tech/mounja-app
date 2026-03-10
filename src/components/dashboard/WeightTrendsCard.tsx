@@ -6,6 +6,7 @@ import { ChevronRight } from "lucide-react";
 
 interface WeightTrendsCardProps {
   weightHistory: { date: string; peso: number }[];
+  onExpand?: () => void;
 }
 
 const periods = [
