@@ -218,7 +218,7 @@ const Dashboard = () => {
           <div
             className="absolute top-[55%] -right-16 w-[280px] h-[280px] rounded-full opacity-10 animate-[blob-drift_20s_ease-in-out_infinite_4s]"
             style={{
-              background: "radial-gradient(circle, hsl(340, 20%, 50%) 0%, transparent 70%)",
+              background: "radial-gradient(circle, hsl(295, 55%, 42%) 0%, transparent 70%)",
               filter: "blur(45px)",
             }}
           />
