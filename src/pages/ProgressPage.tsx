@@ -18,6 +18,7 @@ const ProgressPage = () => {
   const navigate = useNavigate();
 
   const [period, setPeriod] = useState<Period>("30d");
+  const [weightDrawerOpen, setWeightDrawerOpen] = useState(false);
   const [weightData, setWeightData] = useState<{ date: string; peso: number; label: string }[]>([]);
   const [injections, setInjections] = useState<any[]>([]);
   const [photos, setPhotos] = useState<{ id: string; url: string; date: string }[]>([]);
