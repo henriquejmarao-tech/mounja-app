@@ -253,7 +253,7 @@ const ProgressPage = () => {
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-base font-bold text-foreground">Tendência de Peso</h3>
               <button
-                onClick={() => navigate("/progress")}
+                onClick={() => setWeightDrawerOpen(true)}
                 className="text-xs font-semibold text-muted-foreground flex items-center gap-0.5"
               >
                 Ver mais <ChevronRight className="w-3 h-3" />
