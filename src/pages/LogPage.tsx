@@ -387,6 +387,59 @@ const LogPage = () => {
           )}
         </div>
 
+        {/* Progress Photo */}
+        <div className="bg-card rounded-2xl p-5 shadow-card border border-border/50">
+          <div className="flex items-center gap-2 mb-3">
+            <Camera className="w-4 h-4 text-muted-foreground" />
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Foto de progresso</p>
+          </div>
+          {photoUrl ? (
+            <div className="space-y-3">
+              <img src={photoUrl} alt="Progresso" className="w-full rounded-2xl object-cover max-h-64" />
+              <div className="flex gap-2">
+                <button onClick={handlePhotoDelete} className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl border border-destructive/20 text-destructive text-xs font-semibold active:scale-95 transition-transform">
+                  <Trash2 className="w-3.5 h-3.5" /> Remover
+                </button>
+                <label className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-secondary/50 text-foreground text-xs font-semibold cursor-pointer active:scale-95 transition-transform">
+                  <ImagePlus className="w-3.5 h-3.5" /> Trocar
+                  <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
+                </label>
+              </div>
+            </div>
+          ) : (
+            <div className="flex gap-3">
+              <label className={cn(
+                "flex-1 flex flex-col items-center gap-2 py-6 rounded-xl border-2 border-dashed border-border cursor-pointer hover:border-primary/30 transition-colors",
+                uploading && "opacity-50 pointer-events-none"
+              )}>
+                {uploading ? (
+                  <div className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <ImagePlus className="w-6 h-6 text-muted-foreground" />
+                    <span className="text-xs text-muted-foreground font-medium">Galeria</span>
+                  </>
+                )}
+                <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" disabled={uploading} />
+              </label>
+              <label className={cn(
+                "flex-1 flex flex-col items-center gap-2 py-6 rounded-xl border-2 border-dashed border-border cursor-pointer hover:border-primary/30 transition-colors",
+                uploading && "opacity-50 pointer-events-none"
+              )}>
+                {uploading ? (
+                  <div className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <Camera className="w-6 h-6 text-muted-foreground" />
+                    <span className="text-xs text-muted-foreground font-medium">Câmera</span>
+                  </>
+                )}
+                <input type="file" accept="image/*" capture="environment" onChange={handlePhotoUpload} className="hidden" disabled={uploading} />
+              </label>
+            </div>
+          )}
+        </div>
+
         {/* Notes */}
         <div className="bg-card rounded-2xl p-5 shadow-card border border-border/50">
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">📝 Notas</p>
