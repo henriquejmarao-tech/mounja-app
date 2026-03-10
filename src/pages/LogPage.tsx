@@ -5,7 +5,7 @@ import { useApplicationData } from "@/hooks/useApplicationData";
 import { cn, localDateStr } from "@/lib/utils";
 import { toast } from "sonner";
 import { Calendar } from "@/components/ui/calendar";
-import { Syringe, Scale, Utensils, Activity, ChevronDown, ChevronUp, Save } from "lucide-react";
+import { Syringe, Scale, Utensils, Activity, ChevronDown, ChevronUp, Save, Camera, ImagePlus, Trash2 } from "lucide-react";
 
 const symptomCategories = [
   {
