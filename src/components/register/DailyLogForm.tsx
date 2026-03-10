@@ -336,6 +336,59 @@ const DailyLogForm = () => {
         )}
       </div>
 
+      {/* Progress Photo */}
+      <div className="bg-card rounded-2xl p-4 shadow-card border border-border/50">
+        <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
+          <Camera className="w-4 h-4 text-muted-foreground" />
+          Foto de progresso
+        </h3>
+        {photoUrl ? (
+          <div className="space-y-3">
+            <img src={photoUrl} alt="Progresso" className="w-full rounded-2xl object-cover max-h-64" />
+            <div className="flex gap-2">
+              <button onClick={handlePhotoDelete} className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl border border-destructive/20 text-destructive text-xs font-semibold active:scale-95 transition-transform">
+                <Trash2 className="w-3.5 h-3.5" /> Remover
+              </button>
+              <label className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-muted text-foreground text-xs font-semibold cursor-pointer active:scale-95 transition-transform">
+                <ImagePlus className="w-3.5 h-3.5" /> Trocar
+                <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
+              </label>
+            </div>
+          </div>
+        ) : (
+          <div className="flex gap-2">
+            <label className={cn(
+              "flex-1 flex flex-col items-center gap-2 py-6 rounded-xl border-2 border-dashed border-border cursor-pointer hover:border-primary/30 transition-colors",
+              uploading && "opacity-50 pointer-events-none"
+            )}>
+              {uploading ? (
+                <div className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+              ) : (
+                <>
+                  <ImagePlus className="w-6 h-6 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground font-medium">Galeria</span>
+                </>
+              )}
+              <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" disabled={uploading} />
+            </label>
+            <label className={cn(
+              "flex-1 flex flex-col items-center gap-2 py-6 rounded-xl border-2 border-dashed border-border cursor-pointer hover:border-primary/30 transition-colors",
+              uploading && "opacity-50 pointer-events-none"
+            )}>
+              {uploading ? (
+                <div className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+              ) : (
+                <>
+                  <Camera className="w-6 h-6 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground font-medium">Câmera</span>
+                </>
+              )}
+              <input type="file" accept="image/*" capture="environment" onChange={handlePhotoUpload} className="hidden" disabled={uploading} />
+            </label>
+          </div>
+        )}
+      </div>
+
       {/* More details toggle */}
       <button onClick={() => setShowOptional(!showOptional)} className="w-full flex items-center justify-between bg-card rounded-2xl p-4 shadow-card border border-border/50 text-sm">
         <div>
