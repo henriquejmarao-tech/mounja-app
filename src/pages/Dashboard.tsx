@@ -15,6 +15,7 @@ import SymptomCheckinDrawer from "@/components/SymptomCheckinDrawer";
 import PhotoDrawer from "@/components/PhotoDrawer";
 import CalendarDrawer from "@/components/dashboard/CalendarDrawer";
 import WhatsNewDrawer from "@/components/dashboard/WhatsNewDrawer";
+import WeightTrendsDrawer from "@/components/dashboard/WeightTrendsDrawer";
 
 const Dashboard = () => {
   const navigate = useNavigate();
