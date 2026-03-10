@@ -49,6 +49,11 @@ const DailyLogForm = () => {
   const [foodQuality, setFoodQuality] = useState("");
   const [notes, setNotes] = useState("");
 
+  // Photo state
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+  const [photoId, setPhotoId] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+
   const isUpdate = !!existingLogId;
 
   // Load existing log for today
