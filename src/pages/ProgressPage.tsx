@@ -220,38 +220,62 @@ const ProgressPage = () => {
         >
           <style>{`.progress-scroll::-webkit-scrollbar{display:none}`}</style>
 
-          {/* Card 1: Summary with latest photo */}
-          <div onClick={() => setDetailOpen(true)} className="bg-card rounded-[20px] p-5 shadow-card border border-border/50 min-w-[calc(100vw-40px)] max-w-[calc(100vw-40px)] snap-center cursor-pointer active:scale-[0.98] transition-transform">
-            {daysOnTreatment && (
-              <div className="flex justify-end mb-4">
+          {/* Card 1: Today's Photo */}
+          <div className="bg-card rounded-[20px] p-5 shadow-card border border-border/50 min-w-[calc(100vw-40px)] max-w-[calc(100vw-40px)] snap-center">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-base font-bold text-foreground">Foto de Hoje</h3>
+              {daysOnTreatment && (
                 <span className="bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-full">
                   Dia {daysOnTreatment}
                 </span>
+              )}
+            </div>
+
+            {todayPhoto ? (
+              <div className="space-y-3">
+                <div className="rounded-2xl overflow-hidden bg-muted aspect-[3/4] max-h-[45vh]">
+                  <img src={todayPhoto.url} alt="Progresso" className="w-full h-full object-cover" />
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); handleDeletePhoto(); }}
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl border border-destructive/20 text-destructive text-xs font-semibold active:scale-95 transition-transform"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" /> Remover
+                  </button>
+                  <label className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-secondary/50 text-foreground text-xs font-semibold cursor-pointer active:scale-95 transition-transform">
+                    <ImagePlus className="w-3.5 h-3.5" /> Trocar
+                    <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
+                  </label>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <div className="rounded-2xl bg-muted aspect-[3/4] max-h-[45vh] flex items-center justify-center">
+                  <p className="text-sm text-muted-foreground text-center px-4">Nenhuma foto de hoje</p>
+                </div>
+                <div className="flex gap-2">
+                  <label className={cn(
+                    "flex-1 flex items-center justify-center gap-1.5 py-3 rounded-xl bg-secondary/50 text-foreground text-xs font-semibold cursor-pointer active:scale-95 transition-transform",
+                    uploading && "opacity-50 pointer-events-none"
+                  )}>
+                    <ImagePlus className="w-4 h-4" /> Galeria
+                    <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" disabled={uploading} />
+                  </label>
+                  <label className={cn(
+                    "flex-1 flex items-center justify-center gap-1.5 py-3 rounded-xl bg-primary/10 text-primary text-xs font-semibold cursor-pointer active:scale-95 transition-transform",
+                    uploading && "opacity-50 pointer-events-none"
+                  )}>
+                    {uploading ? (
+                      <div className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+                    ) : (
+                      <><Camera className="w-4 h-4" /> Câmera</>
+                    )}
+                    <input type="file" accept="image/*" capture="environment" onChange={handlePhotoUpload} className="hidden" disabled={uploading} />
+                  </label>
+                </div>
               </div>
             )}
-
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-muted/50 rounded-xl p-3 text-center border border-border/30">
-                <p className="text-[10px] text-muted-foreground font-medium">Data</p>
-                <p className="text-lg font-bold text-foreground">
-                  {new Date().toLocaleDateString("pt-BR", { day: "numeric", month: "numeric", year: "2-digit" })}
-                </p>
-              </div>
-              <div className="bg-muted/50 rounded-xl p-3 text-center border border-border/30">
-                <p className="text-[10px] text-muted-foreground font-medium">Aplicações</p>
-                <p className="text-lg font-bold text-foreground">{injections.length}</p>
-              </div>
-              <div className="bg-muted/50 rounded-xl p-3 text-center border border-border/30">
-                <p className="text-[10px] text-muted-foreground font-medium">Perda de peso</p>
-                <p className="text-lg font-bold text-foreground">
-                  {totalLost && totalLost > 0 ? `-${totalLost.toFixed(1)}` : "—"}
-                </p>
-              </div>
-              <div className="bg-muted/50 rounded-xl p-3 text-center border border-border/30">
-                <p className="text-[10px] text-muted-foreground font-medium">IMC</p>
-                <p className="text-lg font-bold text-foreground">{bmi ?? "—"}</p>
-              </div>
-            </div>
           </div>
 
           {/* Card 2: Weight Trends */}
