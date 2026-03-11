@@ -183,8 +183,14 @@ const MealAnalysisOverlay = ({ photoPreview, analyzing, result, onClose }: MealA
       </div>
 
       {/* Bottom content panel - scrollable */}
-      <div className="relative z-30 bg-card rounded-t-[28px] -mt-6 flex-1 overflow-y-auto overscroll-contain" style={{ WebkitOverflowScrolling: "touch" } as React.CSSProperties}>
-        <div className="px-5 pt-6" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 32px)" }}>
+      <div
+        className="relative z-30 bg-card rounded-t-[28px] -mt-6 flex-1 flex flex-col min-h-0"
+        style={{ touchAction: "pan-y" }}
+      >
+        <div
+          className="flex-1 overflow-y-auto overscroll-contain px-5 pt-6 pb-2"
+          style={{ WebkitOverflowScrolling: "touch", touchAction: "pan-y" } as React.CSSProperties}
+        >
           {/* Analyzing state */}
           {analyzing && !result && (
             <div className="space-y-4 animate-fade-in">
@@ -276,17 +282,21 @@ const MealAnalysisOverlay = ({ photoPreview, analyzing, result, onClose }: MealA
                   <p className="text-xs text-accent-foreground leading-relaxed">💡 {result.tip}</p>
                 </div>
               )}
-
-              {/* Action button */}
-              <button
-                onClick={onClose}
-                className="w-full py-3.5 rounded-2xl font-bold text-sm gradient-hero text-primary-foreground shadow-elevated active:scale-[0.98] transition-all touch-manipulation"
-              >
-                Salvar refeição ✓
-              </button>
             </div>
           )}
         </div>
+
+        {/* Sticky action button - always visible at bottom */}
+        {result && showResult && (
+          <div className="shrink-0 px-5 pt-2" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 16px)" }}>
+            <button
+              onClick={onClose}
+              className="w-full py-4 rounded-2xl font-bold text-base gradient-hero text-primary-foreground shadow-elevated active:scale-[0.98] transition-all touch-manipulation"
+            >
+              Salvar refeição ✓
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Global particle keyframes */}
