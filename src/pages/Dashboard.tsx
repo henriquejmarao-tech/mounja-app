@@ -413,8 +413,9 @@ const Dashboard = () => {
               key={i}
               onClick={item.action}
               className={cn(
-                "rounded-2xl p-4 shadow-card flex flex-col items-center gap-2 active:scale-95 transition-transform border border-border/50 relative",
-                item.bg
+                "rounded-2xl p-4 shadow-card flex flex-col items-center gap-2 active:scale-95 transition-transform relative",
+                item.bg,
+                item.done ? "border border-border/50" : "gradient-border-spin"
               )}
             >
               <span className="text-sm font-semibold text-foreground text-center whitespace-pre-line leading-tight">
