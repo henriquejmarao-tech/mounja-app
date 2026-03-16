@@ -1052,17 +1052,17 @@ const Triage = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col relative"
-      style={{ paddingTop: questionSteps ? "calc(env(safe-area-inset-top, 0px) + 1rem)" : "env(safe-area-inset-top, 0px)" }}>
+      style={{ paddingTop: (questionSteps || step === 0) ? "calc(env(safe-area-inset-top, 0px) + 1rem)" : "env(safe-area-inset-top, 0px)" }}>
 
       {/* Progress bar */}
-      {questionSteps && (
+      {(questionSteps || step === 0) && (
         <div className="px-6 flex items-center gap-3 mb-2">
           {showBackInProgress && (
             <button onClick={back} className="text-muted-foreground"><ArrowLeft className="w-5 h-5" /></button>
           )}
-          <div className="flex-1 h-1.5 bg-foreground/20 rounded-full overflow-hidden">
-            <div className="h-full bg-triage-action rounded-full transition-all duration-500"
-              style={{ width: `${progressPct}%` }} />
+          <div className="flex-1 h-1.5 bg-foreground/10 rounded-full overflow-hidden">
+            <div className="h-full gradient-hero rounded-full transition-all duration-500"
+              style={{ width: `${step === 0 ? 2 : progressPct}%` }} />
           </div>
         </div>
       )}
@@ -1073,7 +1073,11 @@ const Triage = () => {
         <div className="px-6 pb-8 pt-4" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 2rem)" }}>
           <button onClick={next} disabled={!canAdvance() || saving}
             className={cn("w-full font-bold py-4 rounded-[28px] flex items-center justify-center gap-2 transition-all duration-300 active:scale-[0.98]",
-              canAdvance() ? "bg-triage-action text-white shadow-elevated" : "bg-muted text-muted-foreground")}>
+              canAdvance()
+                ? step === 0
+                  ? "gradient-hero text-primary-foreground shadow-elevated"
+                  : "bg-triage-action text-white shadow-elevated"
+                : "bg-muted text-muted-foreground")}>
             {buttonLabel}
           </button>
         </div>
