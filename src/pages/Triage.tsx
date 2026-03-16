@@ -16,6 +16,7 @@ import treatmentImg from "@/assets/onboarding-treatment.png";
 import personalImg from "@/assets/onboarding-personal.png";
 import familyImg from "@/assets/onboarding-family.png";
 import logoImg from "@/assets/logo-mounja.png";
+import mascotPointingImg from "@/assets/mascot-pointing.png";
 
 /* ─── Scroll Picker Component ─── */
 const ScrollPicker = ({
