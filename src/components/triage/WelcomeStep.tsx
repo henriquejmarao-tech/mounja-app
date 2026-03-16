@@ -35,24 +35,24 @@ const WelcomeStep = () => {
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center px-6 relative">
-      {/* Soft glow behind mascot */}
+      {/* Soft radial glow behind mascot — brand colors at very low opacity */}
       <div
         className="absolute pointer-events-none"
         style={{
-          width: 280,
-          height: 280,
-          top: "50%",
+          width: 320,
+          height: 320,
+          top: "52%",
           left: "50%",
-          transform: "translate(-50%, -38%)",
+          transform: "translate(-50%, -30%)",
           borderRadius: "50%",
           background:
-            "radial-gradient(circle, hsl(340 65% 62% / 0.08) 0%, hsl(15 75% 75% / 0.04) 50%, transparent 80%)",
-          filter: "blur(30px)",
+            "radial-gradient(circle, hsl(15 75% 75% / 0.10) 0%, hsl(340 65% 62% / 0.06) 40%, hsl(295 55% 42% / 0.03) 70%, transparent 100%)",
+          filter: "blur(40px)",
         }}
       />
 
       {/* Speech bubble */}
-      <div className="relative ml-4 max-w-[260px] mb-4">
+      <div className="relative ml-4 max-w-[260px]" style={{ marginBottom: 20 }}>
         <div className="bg-card rounded-2xl px-5 py-4 shadow-card border border-border/40">
           <p className="text-[1.05rem] font-bold text-foreground leading-snug min-h-[3.2em]">
             {displayedText}
@@ -61,18 +61,19 @@ const WelcomeStep = () => {
             )}
           </p>
         </div>
-        {/* Tail pointing down-left toward mascot */}
+        {/* Tail pointing down toward mascot's head */}
         <div
           className="absolute w-3.5 h-3.5 bg-card border-r border-b border-border/40 rotate-45"
           style={{ bottom: -6, left: 36 }}
         />
       </div>
 
-      {/* Mascot */}
+      {/* Mascot — no container, transparent PNG floating on background */}
       <img
         src={mascotPointingImg}
         alt="Mounjá"
-        className="w-52 h-auto object-contain relative z-10 drop-shadow-md"
+        className="w-52 h-auto object-contain relative z-10"
+        style={{ marginBottom: 48, background: "none" }}
       />
     </div>
   );
