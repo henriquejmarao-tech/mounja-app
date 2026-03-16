@@ -431,13 +431,7 @@ const Triage = () => {
     switch (step) {
       // ===== 0: Welcome =====
       case 0:
-        return (
-            <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
-            <h1 className="text-3xl font-extrabold text-foreground leading-tight">
-              Tudo que você precisa para o seu tratamento
-            </h1>
-          </div>
-        );
+        return <WelcomeStep />;
 
       // ===== 1: Privacy =====
       case 1:
