@@ -280,7 +280,7 @@ const Dashboard = () => {
                     className={cn(
                       "w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all",
                       isSelected
-                        ? "bg-primary text-primary-foreground shadow-elevated"
+                        ? "gradient-hero text-primary-foreground shadow-elevated"
                         : d.isToday
                           ? "ring-2 ring-primary/30 text-foreground"
                           : "text-foreground/70"
