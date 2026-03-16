@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import mascotPointingImg from "@/assets/mascot-pointing.png";
 
 const FULL_TEXT = "Tudo que você precisa para o seu tratamento";
-const TYPING_DURATION = 1500; // ms
+const TYPING_DURATION = 1500;
 
 const WelcomeStep = () => {
   const [displayedText, setDisplayedText] = useState("");
@@ -13,7 +13,6 @@ const WelcomeStep = () => {
   useEffect(() => {
     const charDelay = TYPING_DURATION / FULL_TEXT.length;
     let i = 0;
-
     intervalRef.current = setInterval(() => {
       i++;
       setDisplayedText(FULL_TEXT.slice(0, i));
@@ -22,11 +21,9 @@ const WelcomeStep = () => {
         setDoneTyping(true);
       }
     }, charDelay);
-
     return () => clearInterval(intervalRef.current);
   }, []);
 
-  // Blink cursor
   useEffect(() => {
     if (doneTyping) {
       const t = setTimeout(() => setShowCursor(false), 1200);
@@ -37,24 +34,45 @@ const WelcomeStep = () => {
   }, [doneTyping]);
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center px-8">
+    <div className="flex-1 flex flex-col items-center justify-center px-6 relative">
+      {/* Soft glow behind mascot */}
+      <div
+        className="absolute pointer-events-none"
+        style={{
+          width: 280,
+          height: 280,
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -38%)",
+          borderRadius: "50%",
+          background:
+            "radial-gradient(circle, hsl(340 65% 62% / 0.08) 0%, hsl(15 75% 75% / 0.04) 50%, transparent 80%)",
+          filter: "blur(30px)",
+        }}
+      />
+
       {/* Speech bubble */}
-      <div className="relative bg-card rounded-2xl px-6 py-5 shadow-card border border-border/50 max-w-[300px] mb-4">
-        <p className="text-lg font-bold text-foreground leading-snug min-h-[3.6em]">
-          {displayedText}
-          {showCursor && (
-            <span className="inline-block w-[2px] h-[1.1em] bg-foreground/60 ml-0.5 align-text-bottom animate-pulse" />
-          )}
-        </p>
-        {/* Bubble tail */}
-        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-card border-r border-b border-border/50 rotate-45" />
+      <div className="relative ml-4 max-w-[260px] mb-4">
+        <div className="bg-card rounded-2xl px-5 py-4 shadow-card border border-border/40">
+          <p className="text-[1.05rem] font-bold text-foreground leading-snug min-h-[3.2em]">
+            {displayedText}
+            {showCursor && (
+              <span className="inline-block w-[2px] h-[1.05em] bg-foreground/50 ml-0.5 align-text-bottom animate-pulse" />
+            )}
+          </p>
+        </div>
+        {/* Tail pointing down-left toward mascot */}
+        <div
+          className="absolute w-3.5 h-3.5 bg-card border-r border-b border-border/40 rotate-45"
+          style={{ bottom: -6, left: 36 }}
+        />
       </div>
 
       {/* Mascot */}
       <img
         src={mascotPointingImg}
-        alt="Mounjá mascot"
-        className="w-56 h-auto object-contain drop-shadow-lg"
+        alt="Mounjá"
+        className="w-52 h-auto object-contain relative z-10 drop-shadow-md"
       />
     </div>
   );
