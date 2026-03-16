@@ -116,7 +116,7 @@
     box-shadow: var(--shadow-elevated);
   }
   .gradient-hero {
-    background: linear-gradient(180deg, hsl(340 60% 68%), hsl(280 45% 35%));
+    background: linear-gradient(180deg, hsl(15 75% 75%), hsl(340 65% 62%), hsl(295 55% 42%));
   }
 }
 
