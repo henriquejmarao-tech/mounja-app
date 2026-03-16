@@ -18,6 +18,7 @@ import familyImg from "@/assets/onboarding-family.png";
 import logoImg from "@/assets/logo-mounja.png";
 import mascotPointingImg from "@/assets/mascot-pointing.png";
 import WelcomeStep from "@/components/triage/WelcomeStep";
+import PrivacyStep from "@/components/triage/PrivacyStep";
 
 /* ─── Scroll Picker Component ─── */
 const ScrollPicker = ({
@@ -436,34 +437,7 @@ const Triage = () => {
 
       // ===== 1: Privacy =====
       case 1:
-        return (
-          <div className="flex-1 flex flex-col px-8">
-            
-            <div className="flex-1 flex flex-col items-center">
-              <img src={privacyImg} alt="Privacidade" className="w-48 h-48 object-contain mb-6" />
-              <h1 className="text-2xl font-bold text-foreground text-left w-full mb-4">Saúde com privacidade</h1>
-              <p className="text-muted-foreground text-sm leading-relaxed mb-4">
-                O Mounjá existe para te ajudar a acompanhar e entender seu progresso, não para fornecer aconselhamento médico.
-              </p>
-              <p className="text-muted-foreground text-sm leading-relaxed mb-4">
-                Seus dados são tratados com total segurança, seguindo todas as normas da <span className="font-semibold text-foreground">LGPD (Lei Geral de Proteção de Dados)</span>. Não vendemos seus dados e você pode solicitar a exclusão a qualquer momento.
-              </p>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                Ao usar o Mounjá, você consente com a coleta e uso das suas informações de saúde exclusivamente para melhorar sua experiência no aplicativo.
-              </p>
-            </div>
-            <label className="flex items-start gap-3 mb-4 cursor-pointer select-none">
-              <button onClick={() => setPrivacyAccepted(!privacyAccepted)}
-                className={cn("w-6 h-6 min-w-6 rounded-md border-2 flex items-center justify-center transition-all mt-0.5",
-                  privacyAccepted ? "bg-triage-action border-triage-action" : "border-border")}>
-                {privacyAccepted && <Check className="w-4 h-4 text-background" />}
-              </button>
-              <span className="text-xs text-muted-foreground leading-relaxed">
-                Concordo com a coleta das minhas informações de saúde conforme as normas da LGPD.
-              </span>
-            </label>
-          </div>
-        );
+        return <PrivacyStep accepted={privacyAccepted} onToggle={() => setPrivacyAccepted(!privacyAccepted)} />;
 
       // ===== 2: Medication (auto-advance) =====
       case 2:
@@ -1074,7 +1048,7 @@ const Triage = () => {
           <button onClick={next} disabled={!canAdvance() || saving}
             className={cn("w-full font-bold py-4 rounded-[28px] flex items-center justify-center gap-2 transition-all duration-300 active:scale-[0.98]",
               canAdvance()
-                ? step === 0
+                ? (step === 0 || step === 1)
                   ? "gradient-hero text-primary-foreground shadow-elevated"
                   : "bg-triage-action text-white shadow-elevated"
                 : "bg-muted text-muted-foreground")}>
