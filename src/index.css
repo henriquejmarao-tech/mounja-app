@@ -118,6 +118,45 @@
   .gradient-hero {
     background: linear-gradient(180deg, hsl(15 75% 75%), hsl(340 65% 62%), hsl(295 55% 42%));
   }
+
+
+  .gradient-border-spin {
+    position: relative;
+    z-index: 0;
+  }
+  .gradient-border-spin::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: 1.125rem;
+    padding: 2px;
+    background: conic-gradient(
+      from var(--gradient-angle, 0deg),
+      hsl(15 75% 75%),
+      hsl(340 65% 62%),
+      hsl(295 55% 42%),
+      hsl(340 65% 62%),
+      hsl(15 75% 75%)
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: gradient-rotate 3s linear infinite;
+    z-index: -1;
+  }
+}
+
+@property --gradient-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes gradient-rotate {
+  to {
+    --gradient-angle: 360deg;
+  }
 }
 
 /* Animated background blob keyframes */
