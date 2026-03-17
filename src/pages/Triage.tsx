@@ -996,14 +996,11 @@ const Triage = () => {
       {(questionSteps || step === 0) && (
         <div className="px-6 flex items-center gap-3 mb-2 relative z-20">
           {showBackInProgress && (
-            <button onClick={back} className={step === 4 ? "text-white/70" : "text-muted-foreground"}><ArrowLeft className="w-5 h-5" /></button>
+            <button onClick={back} className="text-muted-foreground"><ArrowLeft className="w-5 h-5" /></button>
           )}
-          <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: step === 4 ? "hsl(0 0% 100% / 0.2)" : undefined }}>
-            <div className={cn("h-full rounded-full transition-all duration-500", step !== 4 && "gradient-hero")}
-              style={{
-                width: `${step === 0 ? 2 : progressPct}%`,
-                ...(step === 4 ? { background: "hsl(0 0% 100% / 0.9)" } : {}),
-              }} />
+          <div className="flex-1 h-1.5 bg-foreground/10 rounded-full overflow-hidden">
+            <div className="h-full gradient-hero rounded-full transition-all duration-500"
+              style={{ width: `${step === 0 ? 2 : progressPct}%` }} />
           </div>
         </div>
       )}
@@ -1018,10 +1015,7 @@ const Triage = () => {
                 ? (step <= 4)
                   ? "gradient-hero text-primary-foreground shadow-elevated"
                   : "bg-triage-action text-white shadow-elevated"
-                : step === 4
-                  ? "text-white/40"
-                  : "bg-muted text-muted-foreground")}
-            style={step === 4 && !canAdvance() ? { background: "hsl(0 0% 100% / 0.15)" } : undefined}>
+                : "bg-muted text-muted-foreground")}>
             {buttonLabel}
           </button>
         </div>
