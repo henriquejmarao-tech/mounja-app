@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Minus, Plus, Droplets, ChevronRight, Flame, Beef, Leaf } from "lucide-react";
+import { Minus, Plus, Droplets, ChevronRight, Flame, Beef, Leaf, Lock } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
+import { usePlan } from "@/hooks/usePlan";
 import { supabase } from "@/integrations/supabase/client";
 import { localDateStr, cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -9,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import EditGoalsDrawer from "@/components/meals/EditGoalsDrawer";
 import AddMealDrawer from "@/components/meals/AddMealDrawer";
 import MealCard from "@/components/meals/MealCard";
+import PremiumGateModal from "@/components/PremiumGateModal";
 
 const DAYS_LABELS = ["S", "T", "Q", "Q", "S", "S", "D"];
 const ML_PER_GLASS = 250;
@@ -81,7 +83,9 @@ const ProgressRing = ({ value, goal, size = 100, stroke = 8, label, unit, color,
 const MealsPage = () => {
   const { user, profile, refreshProfile } = useAuth();
   const { latestWeight } = useApplicationData();
+  const { isFree } = usePlan();
   const navigate = useNavigate();
+  const [premiumModalOpen, setPremiumModalOpen] = useState(false);
 
   const [currentDate] = useState(new Date());
   const [waterGlasses, setWaterGlasses] = useState(0);
@@ -356,10 +360,14 @@ const MealsPage = () => {
             <p className="text-base font-bold text-foreground mb-1">Nenhuma refeição registrada</p>
             <p className="text-sm text-muted-foreground mb-5">Comece sua sequência hoje</p>
             <button
-              onClick={() => setAddMealOpen(true)}
-              className="gradient-hero text-primary-foreground px-6 py-2.5 rounded-full text-sm font-bold active:scale-95 transition-transform"
-              style={{ boxShadow: "0px 6px 16px rgba(128, 0, 128, 0.12)" }}
+              onClick={() => isFree ? setPremiumModalOpen(true) : setAddMealOpen(true)}
+              className={cn(
+                "px-6 py-2.5 rounded-full text-sm font-bold active:scale-95 transition-transform inline-flex items-center gap-2",
+                isFree ? "bg-muted text-muted-foreground" : "gradient-hero text-primary-foreground"
+              )}
+              style={!isFree ? { boxShadow: "0px 6px 16px rgba(128, 0, 128, 0.12)" } : undefined}
             >
+              {isFree && <Lock className="w-3.5 h-3.5" />}
               Registrar primeira refeição
             </button>
           </div>
@@ -406,14 +414,17 @@ const MealsPage = () => {
 
       {/* ── Floating Action Button ── */}
       <button
-        onClick={() => setAddMealOpen(true)}
-        className="fixed right-5 z-40 w-14 h-14 rounded-full gradient-hero text-primary-foreground flex items-center justify-center active:scale-90 transition-transform touch-manipulation animate-cta-entrance"
+        onClick={() => isFree ? setPremiumModalOpen(true) : setAddMealOpen(true)}
+        className={cn(
+          "fixed right-5 z-40 w-14 h-14 rounded-full flex items-center justify-center active:scale-90 transition-transform touch-manipulation animate-cta-entrance",
+          isFree ? "bg-muted/80 text-muted-foreground" : "gradient-hero text-primary-foreground"
+        )}
         style={{
           bottom: "calc(env(safe-area-inset-bottom, 0px) + 80px)",
-          boxShadow: "0px 8px 24px rgba(128, 0, 128, 0.2)",
+          boxShadow: isFree ? "0px 4px 12px rgba(0,0,0,0.08)" : "0px 8px 24px rgba(128, 0, 128, 0.2)",
         }}
       >
-        <Plus className="w-6 h-6" />
+        {isFree ? <Lock className="w-5 h-5" /> : <Plus className="w-6 h-6" />}
       </button>
 
       {/* ── Drawers ── */}
@@ -432,6 +443,15 @@ const MealsPage = () => {
           onMealAdded={fetchData}
         />
       )}
+
+      {/* Premium Gate Modal */}
+      <PremiumGateModal
+        open={premiumModalOpen}
+        onOpenChange={setPremiumModalOpen}
+        title="Recurso premium"
+        description="O registro de refeições com foto está disponível no plano premium."
+        ctaLabel="Fazer upgrade"
+      />
     </div>
   );
 };

@@ -3,7 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
-import { Scale, Camera, ClipboardList, Lightbulb, Bell, Sparkles, Check, ChevronRight } from "lucide-react";
+import { usePlan } from "@/hooks/usePlan";
+import { Scale, Camera, ClipboardList, Lightbulb, Bell, Sparkles, Check, ChevronRight, Lock } from "lucide-react";
+import PremiumGateModal from "@/components/PremiumGateModal";
 
 import { cn, localDateStr, diffCalendarDays } from "@/lib/utils";
 import { toast } from "sonner";
@@ -22,6 +24,8 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { user, profile } = useAuth();
   const { dose, latestWeight } = useApplicationData();
+  const { isFree } = usePlan();
+  const [premiumModalOpen, setPremiumModalOpen] = useState(false);
 
   const [todayLog, setTodayLog] = useState<any>(null);
   const [weightHistory, setWeightHistory] = useState<{ date: string; peso: number }[]>([]);
@@ -574,9 +578,18 @@ const Dashboard = () => {
       {/* ── Análise de Medicação ── */}
       <div className="px-5 mb-6 animate-fade-in-up" style={{ animationDelay: "140ms" }}>
         <button
-          onClick={() => navigate("/analise-medicacao")}
-          className="w-full bg-card rounded-2xl p-5 border border-border/50 shadow-card active:scale-[0.98] transition-transform text-left"
+          onClick={() => isFree ? setPremiumModalOpen(true) : navigate("/analise-medicacao")}
+          className={cn(
+            "w-full bg-card rounded-2xl p-5 border border-border/50 shadow-card active:scale-[0.98] transition-transform text-left relative overflow-hidden",
+            isFree && "opacity-80"
+          )}
         >
+          {isFree && (
+            <div className="absolute inset-0 bg-background/40 backdrop-blur-[1px] z-10 flex flex-col items-center justify-center rounded-2xl">
+              <Lock className="w-5 h-5 text-muted-foreground mb-1.5" />
+              <span className="text-[11px] font-semibold text-muted-foreground">Disponível no plano premium</span>
+            </div>
+          )}
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-base font-bold text-foreground" style={{ color: "hsl(0 0% 12%)" }}>Análise de Medicação</h3>
             <div className="w-8 h-8 rounded-xl gradient-hero flex items-center justify-center">
@@ -590,6 +603,14 @@ const Dashboard = () => {
           </div>
         </button>
       </div>
+
+      {/* Premium Gate Modal */}
+      <PremiumGateModal
+        open={premiumModalOpen}
+        onOpenChange={setPremiumModalOpen}
+        title="Funcionalidade premium"
+        description="A análise inteligente da sua medicação está disponível apenas para usuários premium."
+      />
 
       {/* ── Weight Trends ── */}
       <div className="px-5 mb-6 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
