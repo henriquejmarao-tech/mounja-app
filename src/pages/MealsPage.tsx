@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Minus, Plus, Droplets, ChevronRight } from "lucide-react";
+import { Minus, Plus, Droplets, ChevronRight, Flame, Beef, Leaf } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,7 +13,7 @@ import MealCard from "@/components/meals/MealCard";
 const DAYS_LABELS = ["S", "T", "Q", "Q", "S", "S", "D"];
 const ML_PER_GLASS = 250;
 
-/* ── Gradient Progress Ring ─────────────────────────────── */
+/* ── Progress Ring ─────────────────────────────── */
 interface RingProps {
   value: number;
   goal: number;
@@ -21,10 +21,12 @@ interface RingProps {
   stroke?: number;
   label: string;
   unit: string;
-  gradientId: string;
+  color: string;
+  iconColor: string;
+  icon: React.ReactNode;
 }
 
-const ProgressRing = ({ value, goal, size = 100, stroke = 8, label, unit, gradientId }: RingProps) => {
+const ProgressRing = ({ value, goal, size = 100, stroke = 8, label, unit, color, iconColor, icon }: RingProps) => {
   const radius = (size - stroke) / 2;
   const circumference = 2 * Math.PI * radius;
   const pct = Math.min(value / (goal || 1), 1);
@@ -34,12 +36,6 @@ const ProgressRing = ({ value, goal, size = 100, stroke = 8, label, unit, gradie
     <div className="flex flex-col items-center gap-1.5">
       <div className="relative" style={{ width: size, height: size }}>
         <svg width={size} height={size} className="-rotate-90">
-          <defs>
-            <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="hsl(295, 55%, 42%)" />
-              <stop offset="100%" stopColor="hsl(15, 75%, 75%)" />
-            </linearGradient>
-          </defs>
           {/* Track */}
           <circle
             cx={size / 2}
@@ -56,7 +52,7 @@ const ProgressRing = ({ value, goal, size = 100, stroke = 8, label, unit, gradie
             cy={size / 2}
             r={radius}
             fill="none"
-            stroke={`url(#${gradientId})`}
+            stroke={color}
             strokeWidth={stroke}
             strokeLinecap="round"
             strokeDasharray={circumference}
@@ -74,7 +70,10 @@ const ProgressRing = ({ value, goal, size = 100, stroke = 8, label, unit, gradie
           </span>
         </div>
       </div>
-      <span className="text-[11px] font-semibold text-muted-foreground">{label}</span>
+      <div className="flex items-center gap-1">
+        <span style={{ color: iconColor }}>{icon}</span>
+        <span className="text-[11px] font-semibold text-muted-foreground">{label}</span>
+      </div>
     </div>
   );
 };
@@ -247,7 +246,9 @@ const MealsPage = () => {
             <ProgressRing
               value={caloriesCurrent}
               goal={caloriesGoal}
-              gradientId="ring-cal"
+              color="hsl(15, 65%, 65%)"
+              iconColor="hsl(15, 65%, 60%)"
+              icon={<Flame className="w-3.5 h-3.5" />}
               label="Calorias"
               unit=""
               size={100}
@@ -256,7 +257,9 @@ const MealsPage = () => {
             <ProgressRing
               value={proteinCurrent}
               goal={proteinGoal}
-              gradientId="ring-pro"
+              color="hsl(295, 45%, 50%)"
+              iconColor="hsl(295, 45%, 50%)"
+              icon={<Beef className="w-3.5 h-3.5" />}
               label="Proteína"
               unit="g"
               size={88}
@@ -265,7 +268,9 @@ const MealsPage = () => {
             <ProgressRing
               value={fiberCurrent}
               goal={fiberGoal}
-              gradientId="ring-fib"
+              color="hsl(160, 40%, 50%)"
+              iconColor="hsl(160, 40%, 50%)"
+              icon={<Leaf className="w-3.5 h-3.5" />}
               label="Fibra"
               unit="g"
               size={88}
