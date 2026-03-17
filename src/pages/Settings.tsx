@@ -86,6 +86,7 @@ const Settings = () => {
         {/* Treatment section */}
         <div className="bg-card rounded-2xl border border-border/50 divide-y divide-border/50">
           <MenuItem icon={Pill} label="Plano de tratamento" onClick={() => navigate("/plano-tratamento")} />
+          <MenuItem icon={CreditCard} label="Alterar plano" onClick={() => navigate("/planos")} />
           <MenuItem icon={Ruler} label="Atualizar altura" onClick={openHeight} />
         </div>
 
