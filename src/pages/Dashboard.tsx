@@ -179,7 +179,8 @@ const Dashboard = () => {
   const isTodayApplicationDay = useMemo(() => {
     if (!dose.nextApplicationAt) return false;
     const nextDateStr = localDateStr(new Date(dose.nextApplicationAt));
-    return todayStr === nextDateStr;
+    // Exact match OR overdue (nextApplicationAt is in the past/today = user should apply)
+    return todayStr === nextDateStr || nextDateStr <= todayStr;
   }, [dose.nextApplicationAt, todayStr]);
 
   const todayHasInjection = weekInjections.has(todayStr);
