@@ -431,7 +431,7 @@ const Triage = () => {
    const noButtonSteps = [24];
   const showNextBtn = !noButtonSteps.includes(step);
 
-  const buttonLabel = step === 23 ? "Criar meu plano" : step === 0 ? "Próximo" : "Continuar";
+  const buttonLabel = step === 23 ? "Criar meu plano" : step === 5 ? "Entendi, vamos lá" : step === 0 ? "Próximo" : "Continuar";
 
   const renderStep = () => {
     switch (step) {
