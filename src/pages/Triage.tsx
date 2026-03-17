@@ -269,7 +269,7 @@ const medications = [
   23 Health motivation (family)
   24 Creating plan (loading → save)
 */
-const TOTAL_STEPS = 25;
+const TOTAL_STEPS = 26;
 
 const Triage = () => {
   const navigate = useNavigate();
@@ -371,7 +371,8 @@ const Triage = () => {
         setLoadingProgress((prev) => {
           if (prev >= 100) {
             clearInterval(interval);
-            handleSave();
+            // Transition to plan ready screen
+            setTimeout(() => setStep(25), 400);
             return 100;
           }
           return prev + 2;
@@ -467,7 +468,7 @@ const Triage = () => {
   const stepsWithBack = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23];
   const showBackInProgress = stepsWithBack.includes(step);
   // Auto-advance steps (no button)
-   const noButtonSteps = [24];
+   const noButtonSteps = [24, 25];
   const showNextBtn = !noButtonSteps.includes(step);
 
   const buttonLabel = step === 23 ? "Criar meu plano" : step === 8 ? "Vamos lá" : step === 7 ? "Perfeito, continuar" : step === 5 ? "Entendi, vamos lá" : step === 0 ? "Próximo" : "Continuar";
@@ -1032,6 +1033,123 @@ const Triage = () => {
             </div>
           </div>
         );
+
+      // ===== 25: Plan ready screen =====
+      case 25: {
+        const age = new Date().getFullYear() - birthYear;
+        const projectedLoss = Math.min(weightDiff, Math.round((currentWeight * 0.025) * 10) / 10);
+        const dayLabel = weekDays[applicationDay]?.full || "Segunda";
+        const displayName = name?.trim().split(" ")[0];
+
+        return (
+          <div className="fixed inset-0 z-50 overflow-y-auto" style={{ background: "#FAFAFA" }}>
+            <div className="min-h-full flex flex-col px-6 pt-12 pb-10">
+              {/* Hero with mascot */}
+              <div className="flex flex-col items-center text-center mb-6 animate-fade-in">
+                <img
+                  src={mascotPointingImg}
+                  alt="Mascote"
+                  className="w-28 h-28 object-contain mb-4"
+                  style={{ filter: "drop-shadow(0 4px 16px rgba(123,47,247,0.10))" }}
+                />
+                <h1 className="text-2xl font-extrabold leading-tight mb-2" style={{ color: "#1A1A1A" }}>
+                  {displayName
+                    ? <>{displayName}, esse é o seu{" "}<span style={{ background: "linear-gradient(135deg, #7B2FF7, #F857A6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>plano ideal</span></>
+                    : <>Seu <span style={{ background: "linear-gradient(135deg, #7B2FF7, #F857A6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>plano ideal</span> está pronto</>
+                  }
+                </h1>
+                <p className="text-sm" style={{ color: "#888" }}>
+                  Baseado no seu perfil, rotina e objetivos
+                </p>
+              </div>
+
+              {/* Main value card */}
+              <div
+                className="rounded-3xl p-6 mb-5 animate-fade-in"
+                style={{
+                  background: "linear-gradient(135deg, rgba(123,47,247,0.06) 0%, rgba(248,87,166,0.06) 100%)",
+                  border: "1px solid rgba(123,47,247,0.10)",
+                  animationDelay: "0.1s",
+                }}
+              >
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "linear-gradient(135deg, #7B2FF7, #F857A6)" }}>
+                    <TrendingDown className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold" style={{ color: "#1A1A1A" }}>
+                      Você pode perder até <span style={{ background: "linear-gradient(135deg, #7B2FF7, #F857A6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{projectedLoss.toFixed(1)} kg</span> nas próximas semanas
+                    </p>
+                  </div>
+                </div>
+                <p className="text-xs ml-[52px]" style={{ color: "#999" }}>Com consistência e acompanhamento</p>
+              </div>
+
+              {/* Summary - 3 items */}
+              <div className="grid grid-cols-3 gap-3 mb-5 animate-fade-in" style={{ animationDelay: "0.2s" }}>
+                {[
+                  { icon: Utensils, value: "1700 kcal", sub: "Déficit ideal para você" },
+                  { icon: Trophy, value: "112g/dia", sub: "Para preservar massa magra" },
+                  { icon: CalendarCheck, value: dayLabel, sub: "Consistência semanal" },
+                ].map((item, i) => (
+                  <div key={i} className="rounded-2xl p-3 text-center" style={{ background: "#fff", border: "1px solid #F0F0F0" }}>
+                    <div className="w-8 h-8 rounded-lg mx-auto mb-2 flex items-center justify-center" style={{ background: "linear-gradient(135deg, rgba(123,47,247,0.08), rgba(248,87,166,0.08))" }}>
+                      <item.icon className="w-4 h-4" style={{ color: "#7B2FF7" }} />
+                    </div>
+                    <p className="text-sm font-bold" style={{ color: "#1A1A1A" }}>{item.value}</p>
+                    <p className="text-[10px] mt-1 leading-tight" style={{ color: "#AAA" }}>{item.sub}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Personalization block */}
+              <div className="rounded-2xl p-4 mb-5 animate-fade-in" style={{ background: "#fff", border: "1px solid #F0F0F0", animationDelay: "0.3s" }}>
+                <p className="text-xs font-semibold mb-3" style={{ color: "#999" }}>Criado com base em:</p>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    `${age} anos`,
+                    `${currentWeight.toFixed(1)} kg`,
+                    `Meta: ${goalWeight.toFixed(1)} kg`,
+                  ].map((tag, i) => (
+                    <span key={i} className="text-xs font-medium px-3 py-1.5 rounded-full" style={{ background: "linear-gradient(135deg, rgba(123,47,247,0.06), rgba(248,87,166,0.06))", color: "#7B2FF7" }}>
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Scientific trust */}
+              <p className="text-[11px] text-center mb-6 italic animate-fade-in" style={{ color: "#BBB", animationDelay: "0.35s" }}>
+                Baseado em estudos clínicos sobre GLP-1
+              </p>
+
+              {/* Spacer */}
+              <div className="flex-1" />
+
+              {/* CTA */}
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className="w-full font-bold py-4 rounded-[28px] flex items-center justify-center gap-2 text-white shadow-elevated active:scale-[0.98] transition-all duration-300 animate-fade-in disabled:opacity-50"
+                style={{
+                  background: "linear-gradient(135deg, #7B2FF7 0%, #F857A6 100%)",
+                  animationDelay: "0.4s",
+                }}
+              >
+                {saving ? (
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  "Quero começar meu plano"
+                )}
+              </button>
+
+              <p className="text-[11px] text-center mt-3" style={{ color: "#CCC" }}>
+                Salve seu plano para acessar quando quiser
+              </p>
+            </div>
+          </div>
+        );
+      }
 
       default:
         return null;
