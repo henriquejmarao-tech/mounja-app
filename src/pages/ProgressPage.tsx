@@ -369,7 +369,7 @@ const ProgressPage = () => {
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-base font-bold text-foreground">Fotos de progresso</h3>
                 <button
-                  onClick={() => navigate("/fotos")}
+                  onClick={() => { setGalleryInitialIndex(0); setGalleryOpen(true); }}
                   className="text-xs font-medium text-muted-foreground flex items-center gap-0.5 active:scale-95 transition-transform"
                 >
                   Ver todas <ChevronRight className="w-3 h-3" />
