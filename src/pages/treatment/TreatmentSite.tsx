@@ -101,9 +101,8 @@ const TreatmentSite = () => {
           <svg viewBox="0 0 180 280" className="w-44 h-auto" style={{ filter: "drop-shadow(0 2px 8px hsl(0 0% 0% / 0.04))" }}>
             <defs>
               <linearGradient id={GRAD_ID} x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="hsl(295, 55%, 42%)" />
-                <stop offset="50%" stopColor="hsl(340, 65%, 62%)" />
-                <stop offset="100%" stopColor="hsl(15, 75%, 75%)" />
+                <stop offset="0%" stopColor="#7B2FF7" />
+                <stop offset="100%" stopColor="#F857A6" />
               </linearGradient>
             </defs>
 
