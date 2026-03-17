@@ -173,9 +173,27 @@ const Dashboard = () => {
   // Vibrant state: recorded injection OR scheduled injection day
   const isInjectionDayVisual = selectedDayHasInjection || isScheduledInjectionDay;
 
-  const heroGradient = isInjectionDayVisual
-    ? "linear-gradient(160deg, hsl(314, 16%, 42%) 0%, hsl(11, 40%, 62%) 50%, hsl(11, 55%, 70%) 100%)"
-    : "linear-gradient(180deg, hsl(36, 30%, 96%) 0%, hsl(36, 25%, 97%) 40%, hsl(36, 33%, 95%) 100%)";
+  // ── APPLICATION DAY MODE ──
+  // True when TODAY (real today, not selected) is an application day
+  const todayStr = localDateStr(new Date());
+  const isTodayApplicationDay = useMemo(() => {
+    if (!dose.nextApplicationAt) return false;
+    const nextDateStr = localDateStr(new Date(dose.nextApplicationAt));
+    return todayStr === nextDateStr;
+  }, [dose.nextApplicationAt, todayStr]);
+
+  const todayHasInjection = weekInjections.has(todayStr);
+  // Application day mode: today IS the day AND user is viewing today
+  const showApplicationDayMode = (isTodayApplicationDay || todayHasInjection) && isSelectedToday;
+  const applicationDayCompleted = todayHasInjection;
+
+  const heroGradient = showApplicationDayMode
+    ? applicationDayCompleted
+      ? "linear-gradient(180deg, hsl(150, 20%, 96%) 0%, hsl(150, 15%, 97%) 40%, hsl(36, 20%, 97%) 100%)"
+      : "linear-gradient(180deg, hsl(20, 40%, 96%) 0%, hsl(340, 20%, 96%) 40%, hsl(36, 25%, 97%) 100%)"
+    : isInjectionDayVisual
+      ? "linear-gradient(160deg, hsl(314, 16%, 42%) 0%, hsl(11, 40%, 62%) 50%, hsl(11, 55%, 70%) 100%)"
+      : "linear-gradient(180deg, hsl(36, 30%, 96%) 0%, hsl(36, 25%, 97%) 40%, hsl(36, 33%, 95%) 100%)";
 
   if (loading) {
     return (
@@ -191,7 +209,7 @@ const Dashboard = () => {
       style={{ background: heroGradient }}
     >
       {/* ── Animated floating blobs — only on injection days ── */}
-      {isInjectionDayVisual && (
+      {isInjectionDayVisual && !showApplicationDayMode && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           {/* Top-center glow */}
           <div
@@ -307,98 +325,179 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Mascot — light touch */}
-        <div className="flex justify-center -mb-2 animate-mascot-float">
-          <img src={mascotSitting} alt="" className="w-12 h-12 opacity-60" />
-        </div>
+        {/* ── APPLICATION DAY MODE HERO ── */}
+        {showApplicationDayMode && hasTreatment ? (
+          <div className="relative animate-fade-in-up pb-6">
+            {/* Mascot */}
+            <div className="flex justify-center mt-1 mb-2">
+              <img src={mascotSitting} alt="" className="w-14 h-14 opacity-80" />
+            </div>
 
-        {/* Hero content */}
-        <div className="relative animate-fade-in-up pb-10">
-          <div className="flex flex-col items-center justify-center text-center px-6 py-10">
-            {hasTreatment ? (
-              isInjectionDayVisual ? (
+            <div className="flex flex-col items-center justify-center text-center px-6">
+              {applicationDayCompleted ? (
                 <>
-                  <p className="text-primary-foreground/90 text-base font-semibold tracking-wide">Mounjaro®</p>
-                  <p className="text-primary-foreground text-5xl font-extrabold mt-1 tracking-tight">
-                    {dose.currentDose}
+                  {/* Completed state */}
+                  <div className="w-14 h-14 rounded-full bg-emerald-100 flex items-center justify-center mb-3 animate-scale-in">
+                    <Check className="w-7 h-7 text-emerald-600" strokeWidth={2.5} />
+                  </div>
+                  <p className="text-2xl font-extrabold text-foreground tracking-tight">
+                    Aplicação registrada
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-1.5 font-medium">
+                    Próxima dose em {dose.applicationIntervalDays} dias
                   </p>
                   <button
-                    onClick={() => selectedDayHasInjection ? navigate("/plano-tratamento") : navigate("/registrar-aplicacao")}
-                    className="mt-6 gradient-hero text-primary-foreground px-10 py-3.5 rounded-full text-[15px] font-bold active:scale-95 transition-transform animate-cta-entrance"
-                    style={{ boxShadow: "0px 8px 20px rgba(128, 0, 128, 0.15)" }}
+                    onClick={() => navigate("/plano-tratamento")}
+                    className="mt-5 bg-card text-foreground px-8 py-3 rounded-full text-[14px] font-bold border border-border/50 shadow-card active:scale-95 transition-transform"
                   >
-                    {selectedDayHasInjection ? "Editar Tratamento" : "Registrar aplicação"}
-                  </button>
-                </>
-              ) : selectedIsInPast ? (
-                <>
-                  <p className="text-foreground/40 text-base font-semibold tracking-wide">
-                    {selectedDate.toLocaleDateString("pt-BR", { day: "numeric", month: "long" })}
-                  </p>
-                  <p className="text-foreground text-2xl font-extrabold mt-2 leading-tight">
-                    Sem aplicação registrada
-                  </p>
-                  <button
-                    onClick={() => navigate("/registrar-aplicacao")}
-                    className="mt-6 gradient-hero text-primary-foreground px-10 py-3.5 rounded-full text-[15px] font-bold active:scale-95 transition-transform animate-cta-entrance"
-                    style={{ boxShadow: "0px 8px 20px rgba(128, 0, 128, 0.15)" }}
-                  >
-                    Registrar aplicação
+                    Ver plano de tratamento
                   </button>
                 </>
               ) : (
                 <>
-                  <p className="text-foreground/40 text-base font-semibold tracking-wide">
-                    {isAfterNextApplication ? "Última aplicação" : "Próxima aplicação"}
+                  {/* Active application day — urgent but warm */}
+                  <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full mb-4"
+                    style={{ background: "linear-gradient(135deg, rgba(123,47,247,0.1) 0%, rgba(248,87,166,0.1) 100%)" }}>
+                    <span className="text-sm">💉</span>
+                    <span className="text-[12px] font-bold" style={{
+                      background: "linear-gradient(to right, #7B2FF7, #F857A6)",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent"
+                    }}>Dia de aplicação</span>
+                  </div>
+
+                  <p className="text-[28px] font-extrabold text-foreground tracking-tight leading-tight">
+                    Hoje é dia de{"\n"}aplicação
                   </p>
-                  <p className="text-foreground text-5xl font-extrabold mt-1 tracking-tight">
-                    {isAfterNextApplication
-                      ? daysSinceLastApplication !== null
-                        ? daysSinceLastApplication === 0
-                          ? "Hoje"
-                          : daysSinceLastApplication === 1
-                          ? "Ontem"
-                          : `${daysSinceLastApplication} dias atrás`
-                        : "—"
-                      : daysUntilNextFromSelected !== null
-                      ? daysUntilNextFromSelected === 0
-                        ? "Hoje"
-                        : daysUntilNextFromSelected === 1
-                        ? "Amanhã"
-                        : `${daysUntilNextFromSelected} dias`
-                      : "—"}
+                  <p className="text-sm text-muted-foreground mt-2 font-medium max-w-[260px]">
+                    Mantenha sua rotina em dia e registre sua dose
                   </p>
+
+                  {/* Dose badge */}
+                  <div className="mt-4 bg-card rounded-full px-5 py-2 border border-border/50 shadow-sm">
+                    <span className="text-sm font-bold text-foreground">
+                      {dose.currentDose} de Mounjaro®
+                    </span>
+                  </div>
+
+                  {/* Primary CTA — dominant */}
                   <button
                     onClick={() => navigate("/registrar-aplicacao")}
-                    className="mt-6 gradient-hero text-primary-foreground px-10 py-3.5 rounded-full text-[15px] font-bold active:scale-95 transition-transform animate-cta-entrance"
-                    style={{ boxShadow: "0px 8px 20px rgba(128, 0, 128, 0.15)" }}
+                    className="mt-5 px-12 py-4 rounded-full text-[16px] font-bold text-white active:scale-95 transition-all animate-cta-entrance"
+                    style={{
+                      background: "linear-gradient(to right, #7B2FF7, #F857A6)",
+                      boxShadow: "0px 8px 24px rgba(123, 47, 247, 0.25), 0px 2px 8px rgba(248, 87, 166, 0.15)",
+                      transform: "scale(1.05)",
+                    }}
                   >
                     Registrar aplicação
                   </button>
                 </>
-              )
-            ) : (
-              <>
-                <p className="text-foreground text-2xl font-extrabold leading-tight">
-                  Registre seu{"\n"}primeiro tratamento
-                </p>
-                <button
-                  onClick={() => navigate("/log")}
-                  className="mt-6 gradient-hero text-primary-foreground px-10 py-3.5 rounded-full text-[15px] font-bold active:scale-95 transition-transform animate-cta-entrance"
-                  style={{ boxShadow: "0px 8px 20px rgba(128, 0, 128, 0.15)" }}
-                >
-                  Registrar tratamento
-                </button>
-              </>
-            )}
-            <button
-              onClick={() => navigate("/progress")}
-              className="mt-2 text-foreground/40 text-[11px] font-medium opacity-60"
-            >
-              Ver tudo
-            </button>
+              )}
+              <button
+                onClick={() => navigate("/progress")}
+                className="mt-2 text-foreground/40 text-[11px] font-medium opacity-60"
+              >
+                Ver tudo
+              </button>
+            </div>
           </div>
-        </div>
+        ) : (
+          <>
+            {/* Mascot — light touch */}
+            <div className="flex justify-center -mb-2 animate-mascot-float">
+              <img src={mascotSitting} alt="" className="w-12 h-12 opacity-60" />
+            </div>
+
+            {/* Normal Hero content */}
+            <div className="relative animate-fade-in-up pb-10">
+              <div className="flex flex-col items-center justify-center text-center px-6 py-10">
+                {hasTreatment ? (
+                  isInjectionDayVisual ? (
+                    <>
+                      <p className="text-primary-foreground/90 text-base font-semibold tracking-wide">Mounjaro®</p>
+                      <p className="text-primary-foreground text-5xl font-extrabold mt-1 tracking-tight">
+                        {dose.currentDose}
+                      </p>
+                      <button
+                        onClick={() => selectedDayHasInjection ? navigate("/plano-tratamento") : navigate("/registrar-aplicacao")}
+                        className="mt-6 gradient-hero text-primary-foreground px-10 py-3.5 rounded-full text-[15px] font-bold active:scale-95 transition-transform animate-cta-entrance"
+                        style={{ boxShadow: "0px 8px 20px rgba(128, 0, 128, 0.15)" }}
+                      >
+                        {selectedDayHasInjection ? "Editar Tratamento" : "Registrar aplicação"}
+                      </button>
+                    </>
+                  ) : selectedIsInPast ? (
+                    <>
+                      <p className="text-foreground/40 text-base font-semibold tracking-wide">
+                        {selectedDate.toLocaleDateString("pt-BR", { day: "numeric", month: "long" })}
+                      </p>
+                      <p className="text-foreground text-2xl font-extrabold mt-2 leading-tight">
+                        Sem aplicação registrada
+                      </p>
+                      <button
+                        onClick={() => navigate("/registrar-aplicacao")}
+                        className="mt-6 gradient-hero text-primary-foreground px-10 py-3.5 rounded-full text-[15px] font-bold active:scale-95 transition-transform animate-cta-entrance"
+                        style={{ boxShadow: "0px 8px 20px rgba(128, 0, 128, 0.15)" }}
+                      >
+                        Registrar aplicação
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-foreground/40 text-base font-semibold tracking-wide">
+                        {isAfterNextApplication ? "Última aplicação" : "Próxima aplicação"}
+                      </p>
+                      <p className="text-foreground text-5xl font-extrabold mt-1 tracking-tight">
+                        {isAfterNextApplication
+                          ? daysSinceLastApplication !== null
+                            ? daysSinceLastApplication === 0
+                              ? "Hoje"
+                              : daysSinceLastApplication === 1
+                              ? "Ontem"
+                              : `${daysSinceLastApplication} dias atrás`
+                            : "—"
+                          : daysUntilNextFromSelected !== null
+                          ? daysUntilNextFromSelected === 0
+                            ? "Hoje"
+                            : daysUntilNextFromSelected === 1
+                            ? "Amanhã"
+                            : `${daysUntilNextFromSelected} dias`
+                          : "—"}
+                      </p>
+                      <button
+                        onClick={() => navigate("/registrar-aplicacao")}
+                        className="mt-6 gradient-hero text-primary-foreground px-10 py-3.5 rounded-full text-[15px] font-bold active:scale-95 transition-transform animate-cta-entrance"
+                        style={{ boxShadow: "0px 8px 20px rgba(128, 0, 128, 0.15)" }}
+                      >
+                        Registrar aplicação
+                      </button>
+                    </>
+                  )
+                ) : (
+                  <>
+                    <p className="text-foreground text-2xl font-extrabold leading-tight">
+                      Registre seu{"\n"}primeiro tratamento
+                    </p>
+                    <button
+                      onClick={() => navigate("/log")}
+                      className="mt-6 gradient-hero text-primary-foreground px-10 py-3.5 rounded-full text-[15px] font-bold active:scale-95 transition-transform animate-cta-entrance"
+                      style={{ boxShadow: "0px 8px 20px rgba(128, 0, 128, 0.15)" }}
+                    >
+                      Registrar tratamento
+                    </button>
+                  </>
+                )}
+                <button
+                  onClick={() => navigate("/progress")}
+                  className="mt-2 text-foreground/40 text-[11px] font-medium opacity-60"
+                >
+                  Ver tudo
+                </button>
+              </div>
+            </div>
+          </>
+        )}
 
       {/* ── My daily check-in ── */}
       <div className="px-5 mb-6 animate-fade-in-up" style={{ animationDelay: "80ms" }}>
