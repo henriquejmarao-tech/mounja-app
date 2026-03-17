@@ -565,13 +565,20 @@ const Triage = () => {
         );
 
       // ===== 10: Injection site =====
-      case 10:
+      case 10: {
+        const SITE_GRAD = "linear-gradient(135deg, #7B2FF7 0%, #F857A6 100%)";
         return (
           <div className="flex-1 flex flex-col px-6">
-            <h1 className="text-2xl font-bold text-foreground text-center mb-6 mt-4">Qual seu local habitual de aplicação?</h1>
+            <h1 className="text-xl font-extrabold text-foreground text-center mb-6 mt-4">Qual seu local habitual de aplicação?</h1>
             <div className="flex-1 flex items-center justify-center">
               <div className="relative w-64 h-80">
-                <svg viewBox="0 0 100 130" className="w-full h-full" fill="none" stroke="hsl(var(--border))" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg viewBox="0 0 100 130" className="w-full h-full" fill="none" stroke="#D0D0D0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <defs>
+                    <linearGradient id="triage-site-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#7B2FF7" />
+                      <stop offset="100%" stopColor="#F857A6" />
+                    </linearGradient>
+                  </defs>
                   <circle cx="50" cy="15" r="10" />
                   <line x1="50" y1="25" x2="50" y2="70" />
                   <line x1="50" y1="35" x2="25" y2="50" />
@@ -580,25 +587,31 @@ const Triage = () => {
                   <line x1="50" y1="70" x2="65" y2="110" />
                 </svg>
                 {injectionSites.map((site) => {
-                  const selected = injectionSite === site.value;
+                  const isSel = injectionSite === site.value;
                   return (
                     <button key={site.value} onClick={() => setInjectionSite(site.value)}
-                      className={cn("absolute w-6 h-6 rounded-full border-2 transition-all -translate-x-1/2 -translate-y-1/2",
-                        selected ? "bg-triage-action border-triage-action scale-125" : "bg-card border-muted-foreground/30 hover:border-triage-action/50")}
-                      style={{ left: `${site.x}%`, top: `${site.y}%` }}>
-                      {selected && <div className="w-2 h-2 bg-background rounded-full mx-auto" />}
+                      className="absolute w-7 h-7 rounded-full transition-all -translate-x-1/2 -translate-y-1/2"
+                      style={{
+                        left: `${site.x}%`, top: `${site.y}%`,
+                        background: isSel ? SITE_GRAD : "#E5E5E5",
+                        border: "none",
+                        boxShadow: isSel ? "0 0 0 4px rgba(123,47,247,0.15)" : "none",
+                        transform: `translate(-50%, -50%) scale(${isSel ? 1.2 : 1})`,
+                      }}>
+                      {isSel && <div className="w-2.5 h-2.5 bg-white rounded-full mx-auto" />}
                     </button>
                   );
                 })}
               </div>
             </div>
             {injectionSite && (
-              <p className="text-center text-sm font-medium text-foreground mb-4">
+              <p className="text-center text-sm font-medium mb-4" style={{ color: "#333" }}>
                 {injectionSites.find((s) => s.value === injectionSite)?.label}
               </p>
             )}
           </div>
         );
+      }
 
       // ===== 11: Alternate sites =====
       case 11:
