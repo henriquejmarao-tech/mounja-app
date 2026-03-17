@@ -440,28 +440,14 @@ const Triage = () => {
       case 1:
         return <PrivacyStep accepted={privacyAccepted} onToggle={() => setPrivacyAccepted(!privacyAccepted)} />;
 
-      // ===== 2: Medication (auto-advance) =====
+      // ===== 2: Medication =====
       case 2:
         return (
-          <div className="flex-1 flex flex-col px-6">
-            <h1 className="text-2xl font-extrabold text-foreground text-center mt-6 mb-8">
-              Qual medicamento você usa?
-            </h1>
-            <div className="space-y-3">
-              {medications.map((med) => (
-                <button
-                  key={med}
-                  onClick={() => { setMedication(med); }}
-                  className={cn(
-                    "w-full py-4 px-6 rounded-full text-base font-semibold text-center active:scale-[0.98] transition-all",
-                    medication === med ? "bg-triage-action text-white" : "bg-muted text-foreground"
-                  )}
-                >
-                  {med}
-                </button>
-              ))}
-            </div>
-          </div>
+          <MedicationStep
+            medications={medications}
+            selected={medication}
+            onSelect={(med) => setMedication(med)}
+          />
         );
 
       // ===== 3: Experience (auto-advance) =====
