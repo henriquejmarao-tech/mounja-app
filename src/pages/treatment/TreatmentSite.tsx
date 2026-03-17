@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
 import mascotImg from "@/assets/mascot-pointing.png";
 
-const GRADIENT = "linear-gradient(135deg, hsl(295 55% 42%), hsl(340 65% 62%), hsl(15 75% 75%))";
+const GRADIENT = "linear-gradient(135deg, #7B2FF7 0%, #F857A6 100%)";
 const GRAD_ID = "site-grad";
 
 const sites = [
