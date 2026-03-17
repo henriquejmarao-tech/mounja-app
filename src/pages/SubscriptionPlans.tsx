@@ -100,8 +100,8 @@ const SubscriptionPlans = () => {
   useEffect(() => {
     if (!pointingLoaded) return;
     const t1 = setTimeout(() => setRevealStage(1), 100);
-    const t2 = setTimeout(() => setRevealStage(2), 400);
-    const t3 = setTimeout(() => setRevealStage(3), 700);
+    const t2 = setTimeout(() => setRevealStage(2), 500);
+    const t3 = setTimeout(() => setRevealStage(3), 800);
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, [pointingLoaded]);
 
