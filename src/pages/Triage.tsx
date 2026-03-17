@@ -465,8 +465,7 @@ const Triage = () => {
   // Progress bar
   const questionSteps = step >= 2 && step <= 23;
   const progressPct = questionSteps ? ((step - 1) / 22) * 100 : 0;
-  const stepsWithBack = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23];
-  const showBackInProgress = stepsWithBack.includes(step);
+  const showBackInProgress = step > 0;
   // Auto-advance steps (no button)
    const noButtonSteps = [24, 25];
   const showNextBtn = !noButtonSteps.includes(step);
@@ -1163,6 +1162,14 @@ const Triage = () => {
       }}>
 
       {/* Progress bar */}
+      {/* Back button for non-progress steps (24, 25) */}
+      {showBackInProgress && !questionSteps && step !== 0 && (
+        <div className="px-6 pt-2 pb-1 relative z-20">
+          <button onClick={back} className="text-muted-foreground"><ArrowLeft className="w-5 h-5" /></button>
+        </div>
+      )}
+
+      {/* Progress bar with back button */}
       {(questionSteps || step === 0) && (
         <div className="px-6 flex items-center gap-3 mb-2 relative z-20">
           {showBackInProgress && (
