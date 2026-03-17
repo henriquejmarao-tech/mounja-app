@@ -25,8 +25,8 @@ const symptomCategories = [
   },
   {
     title: "Apetite",
-    color: "bg-orange-100 text-orange-700",
-    activeColor: "bg-orange-500 text-white ring-2 ring-orange-500/30 shadow-sm",
+    color: "bg-purple-100 text-purple-700",
+    activeColor: "bg-purple-500 text-white ring-2 ring-purple-500/30 shadow-sm",
     items: [
       { key: "appetite_suppressed", label: "Sem apetite", emoji: "🚫" },
       { key: "appetite_cravings", label: "Compulsão", emoji: "🍫" },

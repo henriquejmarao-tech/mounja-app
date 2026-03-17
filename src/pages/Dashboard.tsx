@@ -163,7 +163,7 @@ const Dashboard = () => {
   const isInjectionDayVisual = selectedDayHasInjection || isScheduledInjectionDay;
 
   const heroGradient = isInjectionDayVisual
-    ? "linear-gradient(160deg, hsl(314, 16%, 42%) 0%, hsl(11, 40%, 62%) 50%, hsl(11, 55%, 70%) 100%)"
+    ? "linear-gradient(160deg, hsl(270, 65%, 50%) 0%, hsl(310, 60%, 55%) 50%, hsl(330, 80%, 65%) 100%)"
     : "linear-gradient(180deg, hsl(36, 30%, 96%) 0%, hsl(36, 25%, 97%) 40%, hsl(36, 33%, 95%) 100%)";
 
   if (loading) {
@@ -186,7 +186,7 @@ const Dashboard = () => {
           <div
             className="absolute -top-32 left-1/2 -translate-x-1/2 w-[420px] h-[420px] rounded-full opacity-30 animate-[blob-breathe_12s_ease-in-out_infinite]"
             style={{
-              background: "radial-gradient(circle, hsl(11, 55%, 60%) 0%, hsl(314, 20%, 50%) 40%, transparent 70%)",
+              background: "radial-gradient(circle, hsl(270, 80%, 60%) 0%, hsl(310, 60%, 55%) 40%, transparent 70%)",
               filter: "blur(30px)",
             }}
           />
@@ -194,7 +194,7 @@ const Dashboard = () => {
           <div
             className="absolute -top-10 -left-16 w-[300px] h-[200px] rounded-full opacity-25 animate-[blob-drift_18s_ease-in-out_infinite]"
             style={{
-              background: "radial-gradient(ellipse 70% 50%, hsl(340, 30%, 55%) 0%, transparent 70%)",
+              background: "radial-gradient(ellipse 70% 50%, hsl(330, 80%, 65%) 0%, transparent 70%)",
               filter: "blur(25px)",
             }}
           />
@@ -202,7 +202,7 @@ const Dashboard = () => {
           <div
             className="absolute -top-6 -right-10 w-[260px] h-[220px] rounded-full opacity-20 animate-[blob-orbit_22s_ease-in-out_infinite_reverse]"
             style={{
-              background: "radial-gradient(ellipse 60% 70%, hsl(25, 50%, 58%) 0%, transparent 70%)",
+              background: "radial-gradient(ellipse 60% 70%, hsl(290, 70%, 55%) 0%, transparent 70%)",
               filter: "blur(28px)",
             }}
           />
@@ -210,7 +210,7 @@ const Dashboard = () => {
           <div
             className="absolute top-[35%] -left-8 w-[200px] h-[200px] rounded-full opacity-12 animate-[blob-float_15s_ease-in-out_infinite_2s]"
             style={{
-              background: "radial-gradient(circle, hsl(25, 55%, 60%) 0%, transparent 70%)",
+              background: "radial-gradient(circle, hsl(270, 65%, 55%) 0%, transparent 70%)",
               filter: "blur(30px)",
             }}
           />
@@ -218,7 +218,7 @@ const Dashboard = () => {
           <div
             className="absolute top-[55%] -right-16 w-[280px] h-[280px] rounded-full opacity-10 animate-[blob-drift_20s_ease-in-out_infinite_4s]"
             style={{
-              background: "radial-gradient(circle, hsl(340, 20%, 50%) 0%, transparent 70%)",
+              background: "radial-gradient(circle, hsl(330, 60%, 60%) 0%, transparent 70%)",
               filter: "blur(45px)",
             }}
           />
@@ -226,7 +226,7 @@ const Dashboard = () => {
           <div
             className="absolute bottom-[10%] left-[20%] w-[180px] h-[180px] rounded-full opacity-8 animate-[blob-orbit_25s_ease-in-out_infinite_6s]"
             style={{
-              background: "radial-gradient(circle, hsl(11, 45%, 70%) 0%, transparent 70%)",
+              background: "radial-gradient(circle, hsl(280, 60%, 65%) 0%, transparent 70%)",
               filter: "blur(35px)",
             }}
           />
@@ -430,7 +430,7 @@ const Dashboard = () => {
                     ? "border-transparent"
                     : "border-border/60 bg-transparent"
                 )}
-                style={item.done ? { background: "hsl(15, 75%, 75%)" } : undefined}
+                style={item.done ? { background: "linear-gradient(135deg, hsl(270, 80%, 60%), hsl(330, 80%, 65%))" } : undefined}
               >
                 {item.done && <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />}
               </div>
