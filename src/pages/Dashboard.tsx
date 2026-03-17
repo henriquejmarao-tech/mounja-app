@@ -297,8 +297,13 @@ const Dashboard = () => {
           </div>
         </div>
 
+        {/* Mascot — light touch */}
+        <div className="flex justify-center -mb-2 animate-mascot-float">
+          <img src={mascotSitting} alt="" className="w-12 h-12 opacity-60" />
+        </div>
+
         {/* Hero content */}
-        <div className="relative animate-fade-in-up pb-8">
+        <div className="relative animate-fade-in-up pb-10">
           <div className="flex flex-col items-center justify-center text-center px-6 py-10">
             {hasTreatment ? (
               isInjectionDayVisual ? (
@@ -309,7 +314,8 @@ const Dashboard = () => {
                   </p>
                   <button
                     onClick={() => selectedDayHasInjection ? navigate("/plano-tratamento") : navigate("/registrar-aplicacao")}
-                    className="mt-5 gradient-hero text-primary-foreground px-8 py-3 rounded-full text-sm font-bold shadow-elevated active:scale-95 transition-transform"
+                    className="mt-6 gradient-hero text-primary-foreground px-10 py-3.5 rounded-full text-[15px] font-bold active:scale-95 transition-transform animate-cta-entrance"
+                    style={{ boxShadow: "0px 8px 20px rgba(128, 0, 128, 0.15)" }}
                   >
                     {selectedDayHasInjection ? "Editar Tratamento" : "Registrar aplicação"}
                   </button>
@@ -324,7 +330,8 @@ const Dashboard = () => {
                   </p>
                   <button
                     onClick={() => navigate("/registrar-aplicacao")}
-                    className="mt-5 gradient-hero text-primary-foreground px-8 py-3 rounded-full text-sm font-bold shadow-elevated active:scale-95 transition-transform"
+                    className="mt-6 gradient-hero text-primary-foreground px-10 py-3.5 rounded-full text-[15px] font-bold active:scale-95 transition-transform animate-cta-entrance"
+                    style={{ boxShadow: "0px 8px 20px rgba(128, 0, 128, 0.15)" }}
                   >
                     Registrar aplicação
                   </button>
@@ -353,7 +360,8 @@ const Dashboard = () => {
                   </p>
                   <button
                     onClick={() => navigate("/registrar-aplicacao")}
-                    className="mt-5 gradient-hero text-primary-foreground px-8 py-3 rounded-full text-sm font-bold shadow-elevated active:scale-95 transition-transform"
+                    className="mt-6 gradient-hero text-primary-foreground px-10 py-3.5 rounded-full text-[15px] font-bold active:scale-95 transition-transform animate-cta-entrance"
+                    style={{ boxShadow: "0px 8px 20px rgba(128, 0, 128, 0.15)" }}
                   >
                     Registrar aplicação
                   </button>
@@ -366,7 +374,8 @@ const Dashboard = () => {
                 </p>
                 <button
                   onClick={() => navigate("/log")}
-                  className="mt-6 bg-primary text-primary-foreground px-8 py-3 rounded-full text-sm font-bold shadow-elevated active:scale-95 transition-transform"
+                  className="mt-6 gradient-hero text-primary-foreground px-10 py-3.5 rounded-full text-[15px] font-bold active:scale-95 transition-transform animate-cta-entrance"
+                  style={{ boxShadow: "0px 8px 20px rgba(128, 0, 128, 0.15)" }}
                 >
                   Registrar tratamento
                 </button>
@@ -374,7 +383,7 @@ const Dashboard = () => {
             )}
             <button
               onClick={() => navigate("/progress")}
-              className="mt-2 text-foreground/40 text-xs font-medium"
+              className="mt-2 text-foreground/40 text-[11px] font-medium opacity-60"
             >
               Ver tudo
             </button>
