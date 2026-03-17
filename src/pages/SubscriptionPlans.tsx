@@ -1,12 +1,14 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { Check, Crown, Sparkles, Star } from "lucide-react";
+import { Check, Crown, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import useEmblaCarousel from "embla-carousel-react";
-import mascotImg from "@/assets/mascot-pointing.png";
+import mascotPointingImg from "@/assets/mascot-pointing-down.png";
+import mascotSittingImg from "@/assets/mascot-sitting.png";
 
+/* ─── plan data ─── */
 interface Plan {
   id: string;
   title: string;
@@ -65,17 +67,43 @@ const plans: Plan[] = [
   },
 ];
 
+/* ─── main page ─── */
 const SubscriptionPlans = () => {
   const navigate = useNavigate();
   const { user, refreshProfile } = useAuth();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [loading, setLoading] = useState(false);
 
+  // image preloading
+  const [pointingLoaded, setPointingLoaded] = useState(false);
+  const [sittingLoaded, setSittingLoaded] = useState(false);
+  const [revealStage, setRevealStage] = useState(0); // 0=hidden, 1=mascot, 2=card, 3=cta
+
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "center",
     loop: false,
     skipSnaps: false,
   });
+
+  // preload images
+  useEffect(() => {
+    const img1 = new Image();
+    img1.src = mascotPointingImg;
+    img1.onload = () => setPointingLoaded(true);
+
+    const img2 = new Image();
+    img2.src = mascotSittingImg;
+    img2.onload = () => setSittingLoaded(true);
+  }, []);
+
+  // staggered reveal once pointing mascot is loaded
+  useEffect(() => {
+    if (!pointingLoaded) return;
+    const t1 = setTimeout(() => setRevealStage(1), 100);
+    const t2 = setTimeout(() => setRevealStage(2), 400);
+    const t3 = setTimeout(() => setRevealStage(3), 700);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+  }, [pointingLoaded]);
 
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
@@ -86,9 +114,7 @@ const SubscriptionPlans = () => {
     if (!emblaApi) return;
     emblaApi.on("select", onSelect);
     onSelect();
-    return () => {
-      emblaApi.off("select", onSelect);
-    };
+    return () => { emblaApi.off("select", onSelect); };
   }, [emblaApi, onSelect]);
 
   const handleSelectPlan = async (planId: string) => {
@@ -106,21 +132,58 @@ const SubscriptionPlans = () => {
     }
   };
 
+  // determine which mascot to show based on selected index
+  const showPointingMascot = selectedIndex === 0;
+  const showSittingMascot = selectedIndex === 1;
+  const showNoMascot = selectedIndex === 2;
+
   return (
-    <div className="min-h-[100dvh] flex flex-col bg-background">
+    <div className="min-h-[100dvh] flex flex-col bg-background overflow-hidden">
       {/* Header */}
-      <div className="pt-12 pb-4 px-6 text-center">
-        <img src={mascotImg} alt="Mascote" className="w-16 h-16 mx-auto mb-3 object-contain" />
+      <div className="pt-14 pb-1 px-6 text-center relative z-10">
         <h1 className="text-xl font-bold text-foreground">
           Escolha seu plano
         </h1>
-        <p className="text-sm text-muted-foreground mt-1.5 max-w-[280px] mx-auto">
-          Desbloqueie todo o potencial do seu tratamento
+        <p className="text-[13px] text-muted-foreground mt-1 max-w-[260px] mx-auto leading-snug">
+          Desbloqueie os recursos mais completos do seu tratamento
         </p>
       </div>
 
+      {/* Mascot area - fixed height to prevent layout jumps */}
+      <div className="relative flex justify-center items-end h-[160px] z-20">
+        {/* Pointing mascot */}
+        <img
+          src={mascotPointingImg}
+          alt="Mounjá apontando"
+          className={cn(
+            "absolute bottom-0 w-[180px] h-[180px] object-contain drop-shadow-lg transition-all duration-500 ease-out",
+            revealStage >= 1 && showPointingMascot
+              ? "opacity-100 translate-y-[18px]"
+              : "opacity-0 translate-y-[30px] pointer-events-none"
+          )}
+        />
+        {/* Sitting mascot */}
+        <img
+          src={mascotSittingImg}
+          alt="Mounjá sentado"
+          className={cn(
+            "absolute bottom-0 w-[140px] h-[140px] object-contain drop-shadow-lg transition-all duration-500 ease-out",
+            sittingLoaded && showSittingMascot
+              ? "opacity-100 translate-y-[14px]"
+              : "opacity-0 translate-y-[26px] pointer-events-none"
+          )}
+        />
+      </div>
+
       {/* Carousel */}
-      <div className="flex-1 flex flex-col justify-center px-0 py-4">
+      <div
+        className={cn(
+          "flex-1 flex flex-col px-0 pt-0 pb-6 transition-all duration-500 ease-out relative z-10",
+          revealStage >= 2
+            ? "opacity-100 translate-y-0"
+            : "opacity-0 translate-y-4"
+        )}
+      >
         <div ref={emblaRef} className="overflow-hidden">
           <div className="flex">
             {plans.map((plan, idx) => (
@@ -133,6 +196,7 @@ const SubscriptionPlans = () => {
                   active={idx === selectedIndex}
                   onSelect={() => handleSelectPlan(plan.id)}
                   loading={loading}
+                  showCta={revealStage >= 3}
                 />
               </div>
             ))}
@@ -145,10 +209,10 @@ const SubscriptionPlans = () => {
             <div
               key={idx}
               className={cn(
-                "w-2 h-2 rounded-full transition-all duration-300",
+                "h-2 rounded-full transition-all duration-300",
                 idx === selectedIndex
                   ? "w-6 bg-gradient-to-r from-[hsl(270,80%,60%)] to-[hsl(330,80%,65%)]"
-                  : "bg-muted-foreground/25"
+                  : "w-2 bg-muted-foreground/25"
               )}
             />
           ))}
@@ -158,16 +222,19 @@ const SubscriptionPlans = () => {
   );
 };
 
+/* ─── plan card ─── */
 const PlanCard = ({
   plan,
   active,
   onSelect,
   loading,
+  showCta,
 }: {
   plan: Plan;
   active: boolean;
   onSelect: () => void;
   loading: boolean;
+  showCta: boolean;
 }) => {
   return (
     <div
@@ -179,7 +246,6 @@ const PlanCard = ({
         active ? "scale-100" : "scale-[0.95] opacity-80"
       )}
     >
-      {/* Glow effect for highlighted */}
       {plan.highlighted && (
         <div className="absolute -inset-1 rounded-[24px] bg-gradient-to-br from-[hsl(270,80%,60%)/0.2] via-[hsl(300,70%,60%)/0.1] to-[hsl(330,80%,65%)/0.2] blur-lg -z-10" />
       )}
@@ -190,7 +256,6 @@ const PlanCard = ({
           plan.muted ? "bg-muted/80" : "bg-card"
         )}
       >
-        {/* Badge */}
         {plan.badge && (
           <div className="flex items-center gap-1.5 mb-3">
             <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-gradient-to-r from-[hsl(270,80%,60%)] to-[hsl(330,80%,65%)] text-white text-[11px] font-bold uppercase tracking-wide">
@@ -200,7 +265,6 @@ const PlanCard = ({
           </div>
         )}
 
-        {/* Title & Price */}
         <h3
           className={cn(
             "text-lg font-bold",
@@ -241,13 +305,12 @@ const PlanCard = ({
           </div>
         )}
 
-        {/* Benefits */}
         <div className="mt-4 space-y-2.5">
           {plan.benefits.map((benefit, i) => (
             <div key={i} className="flex items-start gap-2.5">
               <div
                 className={cn(
-                  "w-4.5 h-4.5 rounded-full flex items-center justify-center mt-0.5 shrink-0",
+                  "w-[18px] h-[18px] rounded-full flex items-center justify-center mt-0.5 shrink-0",
                   plan.highlighted
                     ? "bg-gradient-to-br from-[hsl(270,80%,60%)] to-[hsl(330,80%,65%)]"
                     : plan.muted
@@ -284,12 +347,13 @@ const PlanCard = ({
           onClick={onSelect}
           disabled={loading}
           className={cn(
-            "mt-5 w-full py-3 rounded-2xl font-bold text-sm transition-all duration-200 active:scale-[0.97]",
+            "mt-5 w-full py-3 rounded-2xl font-bold text-sm transition-all duration-300 active:scale-[0.97]",
             plan.highlighted
               ? "text-white shadow-lg"
               : plan.muted
               ? "bg-muted text-muted-foreground border border-border"
-              : "bg-foreground/5 text-foreground border border-border hover:bg-foreground/10"
+              : "bg-foreground/5 text-foreground border border-border hover:bg-foreground/10",
+            showCta ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
           )}
           style={
             plan.highlighted
