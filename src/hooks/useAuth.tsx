@@ -8,6 +8,7 @@ interface Profile {
   id: string;
   name: string | null;
   triage_completed: boolean;
+  subscription_seen: boolean;
   current_dose: string | null;
   current_weight: number | null;
   goal: string | null;
