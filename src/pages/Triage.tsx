@@ -735,8 +735,8 @@ const Triage = () => {
       case 13:
         return (
           <div className="flex-1 flex flex-col px-6">
-            <h1 className="text-2xl font-bold text-foreground text-center mb-2 mt-4">Quando foi sua última aplicação?</h1>
-            <p className="text-sm text-muted-foreground text-center mb-4">Isso nos ajuda a calcular seu próximo tratamento</p>
+            <h1 className="text-xl font-extrabold text-foreground text-center mb-1 mt-4">Quando foi sua última aplicação?</h1>
+            <p className="text-sm text-center mb-4" style={{ color: "#999" }}>Usamos isso para calcular seu próximo dia automaticamente</p>
             <div className="flex-1 flex items-center justify-center">
               <Calendar
                 mode="single"
@@ -751,9 +751,24 @@ const Triage = () => {
                 }}
                 disabled={(date) => date > new Date() || date < new Date("2020-01-01")}
                 locale={ptBR}
-                className={cn("p-3 pointer-events-auto rounded-2xl border-2 border-triage-action/30 bg-card shadow-card")}
+                className={cn("p-3 pointer-events-auto rounded-2xl bg-white")}
+                style={{
+                  border: "1.5px solid #E5E5E5",
+                  boxShadow: "0 2px 12px rgba(0,0,0,0.05)",
+                }}
+                classNames={{
+                  caption_label: "text-sm font-bold text-foreground",
+                  nav_button: cn(
+                    buttonVariants({ variant: "outline" }),
+                    "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 border-none"
+                  ),
+                  day_selected: "bg-transparent font-bold text-[#111] ring-2 ring-offset-1 ring-[#7B2FF7] scale-105 transition-all",
+                  day_today: "bg-[#F5F5F5] text-foreground font-medium",
+                  head_cell: "text-muted-foreground rounded-md w-9 font-medium text-[0.8rem]",
+                }}
               />
             </div>
+            <p className="text-xs text-center mt-3" style={{ color: "#aaa" }}>Selecione o dia da sua última aplicação</p>
             {lastApplicationDate && (
               <p className="text-center text-sm font-semibold text-foreground mt-2">
                 {format(new Date(lastApplicationDate + "T12:00:00"), "d 'de' MMMM 'de' yyyy", { locale: ptBR })}
