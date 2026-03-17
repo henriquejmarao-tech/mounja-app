@@ -23,6 +23,7 @@ import MedicationStep from "@/components/triage/MedicationStep";
 import ExperienceStep from "@/components/triage/ExperienceStep";
 import MotivationStep from "@/components/triage/MotivationStep";
 import AppPreviewStep from "@/components/triage/AppPreviewStep";
+import HelpNeedsStep from "@/components/triage/HelpNeedsStep";
 
 /* ─── Scroll Picker Component ─── */
 const ScrollPicker = ({
