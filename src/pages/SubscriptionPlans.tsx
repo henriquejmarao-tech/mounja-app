@@ -144,9 +144,6 @@ const SubscriptionPlans = () => {
         <h1 className="text-xl font-bold text-foreground">
           Escolha seu plano
         </h1>
-        <p className="text-[13px] text-muted-foreground mt-1 max-w-[260px] mx-auto leading-snug">
-          Desbloqueie os recursos mais completos do seu tratamento
-        </p>
       </div>
 
       {/* Mascot area — mascots physically overlap card top edge */}
