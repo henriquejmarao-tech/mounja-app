@@ -798,8 +798,8 @@ const Triage = () => {
       case 14:
         return (
           <div className="flex-1 flex flex-col px-6">
-            <h1 className="text-2xl font-bold text-foreground text-center mb-2 mt-4">De quantos em quantos dias você aplica?</h1>
-            <p className="text-sm text-muted-foreground text-center mb-8">Qual o intervalo entre suas doses?</p>
+            <h1 className="text-xl font-extrabold text-foreground text-center mb-1 mt-4">Defina seu intervalo de aplicação</h1>
+            <p className="text-sm text-center mb-8" style={{ color: "#999" }}>A cada quantos dias você aplica?</p>
             <div className="flex-1 flex items-center justify-center">
               <div className="flex items-center gap-4">
                 <span className="text-lg font-medium text-foreground">A cada</span>
