@@ -270,7 +270,7 @@ const Dashboard = () => {
         </div>
       )}
 
-        {/* ── Header with avatar + month + notifications ── */}
+        {/* ── Header ── */}
         <div className="relative pt-safe px-5 pb-1 flex items-center justify-between">
           <button
             onClick={() => navigate("/perfil")}
@@ -278,12 +278,19 @@ const Dashboard = () => {
           >
             {(profile?.username?.[0] || profile?.name?.[0] || "U").toUpperCase()}
           </button>
-          <button
-            onClick={() => setCalendarDrawerOpen(true)}
-            className="bg-muted/60 px-4 py-1.5 rounded-full active:scale-95 transition-all shadow-sm"
-          >
-            <p className="text-sm font-bold text-foreground">{monthLabel}</p>
-          </button>
+          {showApplicationDayMode && !applicationDayCompleted ? (
+            <div className="flex flex-col items-center">
+              <p className="text-sm font-bold text-foreground">Hoje é dia de aplicação</p>
+              <p className="text-[10px] text-muted-foreground font-medium">Mantenha sua consistência semanal</p>
+            </div>
+          ) : (
+            <button
+              onClick={() => setCalendarDrawerOpen(true)}
+              className="bg-muted/60 px-4 py-1.5 rounded-full active:scale-95 transition-all shadow-sm"
+            >
+              <p className="text-sm font-bold text-foreground">{monthLabel}</p>
+            </button>
+          )}
           <button
             onClick={() => setWhatsNewOpen(true)}
             className="p-2 -mr-2 active:scale-90 transition-transform"
