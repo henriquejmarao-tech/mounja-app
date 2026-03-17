@@ -973,42 +973,50 @@ const Triage = () => {
       // ===== 24: Creating plan (loading) =====
       case 24:
         return (
-           <div className="z-50 flex flex-col items-center justify-center px-8 overflow-hidden"
+          <div className="z-50 flex flex-col items-center justify-center px-8"
             style={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              width: "100vw",
-              height: "100dvh",
-              background: "linear-gradient(160deg, hsl(15, 75%, 75%) 0%, hsl(340, 65%, 62%) 40%, hsl(255, 50%, 48%) 100%)",
+              position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+              width: "100vw", height: "100dvh",
+              background: "#FAFAFA",
             }}>
-            {/* Animated background blobs */}
-            <div className="overflow-hidden pointer-events-none" style={{ position: "absolute", top: "-50px", left: "-50px", right: "-50px", bottom: "-50px" }}>
-              <div className="absolute w-64 h-64 rounded-full bg-white/10 -top-20 -left-20" style={{ animation: "blob-drift 8s ease-in-out infinite" }} />
-              <div className="absolute w-48 h-48 rounded-full bg-white/8 top-1/3 -right-16" style={{ animation: "blob-orbit 10s ease-in-out infinite" }} />
-              <div className="absolute w-56 h-56 rounded-full bg-white/5 -bottom-24 left-1/4" style={{ animation: "blob-float 6s ease-in-out infinite" }} />
-              <div className="absolute w-72 h-72 rounded-full bg-white/5 bottom-0 right-0" style={{ animation: "blob-drift 12s ease-in-out infinite reverse" }} />
-            </div>
-            <div className="relative z-10 flex flex-col items-center">
-              <div className="w-28 h-28 rounded-full bg-white/15 flex items-center justify-center mb-6 backdrop-blur-sm animate-scale-in">
-                <div className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center" style={{ animation: "blob-breathe 3s ease-in-out infinite" }}>
+            <div className="flex flex-col items-center w-full max-w-sm">
+              {/* Animated icon */}
+              <div
+                className="w-24 h-24 rounded-3xl flex items-center justify-center mb-8 animate-scale-in"
+                style={{
+                  background: "linear-gradient(135deg, rgba(123,47,247,0.08) 0%, rgba(248,87,166,0.08) 100%)",
+                  boxShadow: "0 4px 24px rgba(123,47,247,0.08)",
+                }}
+              >
+                <div
+                  className="w-14 h-14 rounded-2xl flex items-center justify-center"
+                  style={{
+                    background: "linear-gradient(135deg, #7B2FF7 0%, #F857A6 100%)",
+                  }}
+                >
                   <div className="w-3 h-3 bg-white rounded-full" style={{ animation: "blob-float 1.5s ease-in-out infinite" }} />
                 </div>
               </div>
-              <h1 className="text-3xl font-bold text-white text-center mb-3 animate-fade-in-up">
-                Criando seu plano personalizado
+
+              <h1 className="text-2xl font-extrabold text-center mb-2 animate-fade-in-up" style={{ color: "#222" }}>
+                Montando seu plano ideal
               </h1>
-              <p className="text-white/70 text-center mb-10 text-base animate-fade-in-up" style={{ animationDelay: "0.15s" }}>
-                Pessoas que acompanham seu tratamento têm até 175% mais chances de alcançar seus objetivos
+              <p className="text-center mb-10 text-sm animate-fade-in-up" style={{ color: "#999", animationDelay: "0.15s" }}>
+                Analisando seus dados e objetivos
               </p>
-              <div className="w-full max-w-xs animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
-                <div className="h-2.5 bg-white/20 rounded-full overflow-hidden backdrop-blur-sm">
-                  <div className="h-full bg-white rounded-full transition-all duration-500 ease-out"
-                    style={{ width: `${loadingProgress}%` }} />
+
+              {/* Progress bar */}
+              <div className="w-full animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
+                <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "#E5E5E5" }}>
+                  <div
+                    className="h-full rounded-full transition-all duration-500 ease-out"
+                    style={{
+                      width: `${loadingProgress}%`,
+                      background: "linear-gradient(135deg, #7B2FF7 0%, #F857A6 100%)",
+                    }}
+                  />
                 </div>
-                <p className="text-white/50 text-xs text-center mt-3">{Math.round(loadingProgress)}%</p>
+                <p className="text-xs text-center mt-3" style={{ color: "#bbb" }}>{Math.round(loadingProgress)}%</p>
               </div>
             </div>
           </div>
