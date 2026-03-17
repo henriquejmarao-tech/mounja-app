@@ -22,6 +22,7 @@ import PrivacyStep from "@/components/triage/PrivacyStep";
 import MedicationStep from "@/components/triage/MedicationStep";
 import ExperienceStep from "@/components/triage/ExperienceStep";
 import MotivationStep from "@/components/triage/MotivationStep";
+import AppPreviewStep from "@/components/triage/AppPreviewStep";
 
 /* ─── Scroll Picker Component ─── */
 const ScrollPicker = ({
@@ -430,7 +431,7 @@ const Triage = () => {
    const noButtonSteps = [24];
   const showNextBtn = !noButtonSteps.includes(step);
 
-  const buttonLabel = step === 23 ? "Criar meu plano" : step === 0 ? "Próximo" : "Continuar";
+  const buttonLabel = step === 23 ? "Criar meu plano" : step === 5 ? "Entendi, vamos lá" : step === 0 ? "Próximo" : "Continuar";
 
   const renderStep = () => {
     switch (step) {
@@ -475,40 +476,7 @@ const Triage = () => {
 
       // ===== 5: App Preview =====
       case 5:
-        return (
-          <div className="flex-1 flex flex-col items-center px-8">
-            <div className="bg-card rounded-3xl shadow-elevated p-6 w-full max-w-xs mx-auto mb-8">
-              <p className="text-center font-semibold text-foreground mb-3">
-                {new Date().toLocaleDateString("pt-BR", { day: "numeric", month: "long" })}
-              </p>
-              <div className="flex justify-center gap-3 mb-4">
-                {["D", "S", "T", "Q", "Q", "S", "S"].map((d, i) => (
-                  <div key={i} className="text-center">
-                    <span className="text-[10px] text-muted-foreground">{d}</span>
-                    <div className={cn("w-8 h-8 rounded-full flex items-center justify-center text-xs mt-1",
-                      i === 3 ? "bg-triage-action text-white font-bold" : "text-muted-foreground")}>
-                      {new Date().getDate() - 3 + i}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <p className="text-center text-sm text-muted-foreground">Próximo tratamento</p>
-              <p className="text-center text-4xl font-bold text-foreground">3 dias</p>
-            </div>
-            <h1 className="text-2xl font-bold text-foreground text-center mb-4">O Mounjá é muito mais que um rastreador</h1>
-            <div className="space-y-4 w-full">
-              {["Registre suas doses e nunca mais tenha dúvidas sobre sua rotina",
-                "Veja seu progresso ao longo do tempo com peso, apetite e energia",
-                "Fique à frente dos efeitos colaterais acompanhando padrões e tendências",
-              ].map((text, i) => (
-                <div key={i} className="flex items-start gap-3">
-                  <CheckCircle2 className="w-6 h-6 text-triage-action min-w-6 mt-0.5" />
-                  <p className="text-sm text-muted-foreground">{text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
+        return <AppPreviewStep />;
 
       // ===== 6: Help needs =====
       case 6:
