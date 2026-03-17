@@ -27,6 +27,8 @@ const ProgressPage = () => {
   const [loading, setLoading] = useState(true);
   const [startWeightDrawer, setStartWeightDrawer] = useState(false);
   const [goalWeightDrawer, setGoalWeightDrawer] = useState(false);
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [galleryInitialIndex, setGalleryInitialIndex] = useState(0);
   const [uploading, setUploading] = useState(false);
 
   const periodDays: Record<Period, number | null> = { "30d": 30, "90d": 90, "180d": 180, all: null };
