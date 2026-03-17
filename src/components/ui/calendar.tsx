@@ -13,6 +13,7 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
   return (
     <>
       <style>{`
+        /* ── Selected day: gradient border on white ── */
         .cal-grad-selected {
           background: #fff !important;
           color: #111 !important;
@@ -44,6 +45,44 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         .cal-cell-override:has([aria-selected]) {
           background: transparent !important;
         }
+
+        /* ── Application day: filled gradient ── */
+        @keyframes applicationPulse {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(123, 47, 247, 0.3); }
+          50% { box-shadow: 0 0 10px 3px rgba(123, 47, 247, 0.15); }
+        }
+        .cal-application-day {
+          background: linear-gradient(135deg, #7B2FF7 0%, #F857A6 100%) !important;
+          color: #fff !important;
+          font-weight: 700 !important;
+          border-radius: 9999px !important;
+          transform: scale(1.12);
+          transition: all 0.2s ease;
+          animation: applicationPulse 2.5s ease-in-out infinite;
+        }
+        .cal-application-day:hover,
+        .cal-application-day:focus {
+          background: linear-gradient(135deg, #7B2FF7 0%, #F857A6 100%) !important;
+          color: #fff !important;
+        }
+        /* When application day is also selected, gradient fill wins */
+        .cal-application-day.cal-grad-selected {
+          background: linear-gradient(135deg, #7B2FF7 0%, #F857A6 100%) !important;
+          color: #fff !important;
+        }
+        .cal-application-day.cal-grad-selected::before {
+          display: none;
+        }
+
+        /* ── Today (non-application): subtle neutral ── */
+        .cal-today-neutral {
+          background: hsl(0 0% 96%) !important;
+          color: hsl(0 0% 15%) !important;
+          font-weight: 600 !important;
+          border-radius: 9999px !important;
+          position: relative !important;
+          box-shadow: inset 0 0 0 1.5px rgba(123, 47, 247, 0.25);
+        }
       `}</style>
       <DayPicker
         showOutsideDays={showOutsideDays}
@@ -68,7 +107,7 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
           day: cn(buttonVariants({ variant: "ghost" }), "h-9 w-9 p-0 font-normal aria-selected:opacity-100"),
           day_range_end: "day-range-end",
           day_selected: "cal-grad-selected",
-          day_today: "bg-[#F5F5F5] text-foreground font-medium",
+          day_today: "cal-today-neutral",
           day_outside:
             "day-outside text-muted-foreground opacity-50 aria-selected:bg-transparent aria-selected:text-muted-foreground aria-selected:opacity-30",
           day_disabled: "text-muted-foreground opacity-50",
