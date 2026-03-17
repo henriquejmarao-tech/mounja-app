@@ -82,22 +82,14 @@ const SubscriptionPlans = () => {
     setSelectedIndex(emblaApi.selectedScrollSnap());
   }, [emblaApi]);
 
-  useState(() => {
-    if (emblaApi) {
-      emblaApi.on("select", onSelect);
-      onSelect();
-    }
-  });
-
-  // Re-attach listener when emblaApi becomes available
-  useState(() => {
+  useEffect(() => {
     if (!emblaApi) return;
     emblaApi.on("select", onSelect);
     onSelect();
     return () => {
       emblaApi.off("select", onSelect);
     };
-  });
+  }, [emblaApi, onSelect]);
 
   const handleSelectPlan = async (planId: string) => {
     if (!user || loading) return;
