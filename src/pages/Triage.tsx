@@ -511,24 +511,55 @@ const Triage = () => {
           : medication === "Zepbound®"
           ? ["2.5", "5.0", "7.5", "10.0", "12.5", "15.0"]
           : ["0.25", "0.5", "1.0", "2.5", "5.0", "7.5", "10.0"];
+        const GRAD = "linear-gradient(135deg, #7B2FF7 0%, #F857A6 100%)";
         return (
           <div className="flex-1 flex flex-col px-6">
-            <h1 className="text-2xl font-bold text-foreground text-center mb-8 mt-4">Qual sua dose atual de {medication || "seu medicamento"}?</h1>
+            <h1 className="text-xl font-extrabold text-center mb-6 mt-4" style={{ color: "#222" }}>
+              Qual sua dose atual de {medication || "seu medicamento"}?
+            </h1>
             <div className="flex flex-wrap justify-center gap-2 mb-8">
-              {commonDoses.map((dose) => (
-                <button key={dose} onClick={() => setDoseValue(dose)}
-                  className={cn("px-5 py-3 rounded-2xl text-base font-semibold transition-all",
-                    doseValue === dose ? "bg-triage-action text-white" : "bg-muted text-foreground")}>
-                  {dose} mg
-                </button>
-              ))}
+              {commonDoses.map((dose) => {
+                const isSelected = doseValue === dose;
+                return (
+                  <button key={dose} onClick={() => setDoseValue(dose)}
+                    className="relative px-5 py-3 rounded-2xl text-base font-semibold transition-all"
+                    style={{
+                      background: "#fff",
+                      color: isSelected ? "#111" : "#333",
+                      border: isSelected ? "none" : "1.5px solid #E5E5E5",
+                      boxShadow: isSelected ? "0 0 0 2px rgba(123,47,247,0.15)" : "0 1px 4px rgba(0,0,0,0.04)",
+                    }}>
+                    {isSelected && (
+                      <div className="absolute inset-0 rounded-2xl pointer-events-none" style={{
+                        padding: 2, background: GRAD,
+                        WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                        WebkitMaskComposite: "xor", maskComposite: "exclude",
+                      }} />
+                    )}
+                    <span className="relative z-10">{dose} mg</span>
+                  </button>
+                );
+              })}
             </div>
             <div className="flex items-center justify-center gap-3">
-              <span className="text-sm text-muted-foreground">Ou digite:</span>
-              <input type="number" step="0.5" inputMode="decimal" value={doseValue}
-                onChange={(e) => setDoseValue(e.target.value)} placeholder="0.0"
-                className="w-24 h-14 text-center text-xl font-bold border-2 border-triage-action/30 rounded-xl bg-card text-foreground focus:border-triage-action focus:ring-2 focus:ring-triage-action/20 outline-none" />
-              <span className="text-lg font-semibold text-muted-foreground">mg</span>
+              <span className="text-sm" style={{ color: "#888" }}>Ou digite:</span>
+              <div className="relative rounded-xl" style={{
+                boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
+              }}>
+                <input type="number" step="0.5" inputMode="decimal" value={doseValue}
+                  onChange={(e) => setDoseValue(e.target.value)} placeholder="Ex: 7.5"
+                  className="w-28 h-14 text-center text-xl font-bold rounded-xl outline-none peer"
+                  style={{ background: "#fff", color: "#222", border: "1.5px solid #E5E5E5" }}
+                  onFocus={(e) => { e.currentTarget.style.border = "none"; e.currentTarget.style.boxShadow = "none"; (e.currentTarget.parentElement!.querySelector('.grad-border') as HTMLElement)!.style.opacity = "1"; }}
+                  onBlur={(e) => { e.currentTarget.style.border = "1.5px solid #E5E5E5"; (e.currentTarget.parentElement!.querySelector('.grad-border') as HTMLElement)!.style.opacity = "0"; }}
+                />
+                <div className="grad-border absolute inset-0 rounded-xl pointer-events-none transition-opacity" style={{
+                  opacity: 0, padding: 2, background: GRAD,
+                  WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                  WebkitMaskComposite: "xor", maskComposite: "exclude",
+                }} />
+              </div>
+              <span className="text-lg font-semibold" style={{ color: "#888" }}>mg</span>
             </div>
           </div>
         );
