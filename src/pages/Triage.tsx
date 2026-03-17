@@ -482,30 +482,11 @@ const Triage = () => {
       // ===== 6: Help needs =====
       case 6:
         return (
-          <div className="flex-1 flex flex-col px-6">
-            <h1 className="text-2xl font-bold text-foreground text-center mb-2 mt-4">Como podemos te ajudar?</h1>
-            <p className="text-sm text-muted-foreground text-center mb-6">Escolha quantas quiser</p>
-            <div className="grid grid-cols-2 gap-3 flex-1 overflow-y-auto">
-              {helpOptions.map((opt) => {
-                const selected = helpNeeds.includes(opt.value);
-                return (
-                  <button key={opt.value} onClick={() => toggleHelp(opt.value)}
-                    className={cn("flex flex-col items-center justify-center gap-3 p-5 rounded-2xl border-2 transition-all text-center",
-                      selected ? "border-triage-action bg-triage-action/10" : "border-border bg-card")}>
-                    <opt.icon className={cn("w-7 h-7", selected ? "text-triage-action" : "text-muted-foreground")} />
-                    <span className="text-sm font-semibold text-foreground leading-tight">
-                      {opt.highlight ? opt.label.split(opt.highlight).map((part, i, arr) => (
-                        <span key={i}>
-                          {part}
-                          {i < arr.length - 1 && <span className="font-extrabold text-triage-action">{opt.highlight}</span>}
-                        </span>
-                      )) : opt.label}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+          <HelpNeedsStep
+            options={helpOptions}
+            selected={helpNeeds}
+            onToggle={toggleHelp}
+          />
         );
 
       // ===== 7: Confirmation =====
