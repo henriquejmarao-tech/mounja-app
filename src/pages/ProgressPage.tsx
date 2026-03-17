@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import WeightTrendsDrawer from "@/components/dashboard/WeightTrendsDrawer";
 import WeightPickerDrawer from "@/components/WeightPickerDrawer";
+import PhotoGalleryDrawer from "@/components/PhotoGalleryDrawer";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
@@ -26,6 +27,8 @@ const ProgressPage = () => {
   const [loading, setLoading] = useState(true);
   const [startWeightDrawer, setStartWeightDrawer] = useState(false);
   const [goalWeightDrawer, setGoalWeightDrawer] = useState(false);
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [galleryInitialIndex, setGalleryInitialIndex] = useState(0);
   const [uploading, setUploading] = useState(false);
 
   const periodDays: Record<Period, number | null> = { "30d": 30, "90d": 90, "180d": 180, all: null };
@@ -231,7 +234,7 @@ const ProgressPage = () => {
             <div className="bg-card rounded-[20px] p-5 shadow-card border border-border/30">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-base font-bold text-foreground">Foto de hoje</h3>
-                <button onClick={() => navigate("/fotos")} className="text-muted-foreground active:scale-95 transition-transform">
+                <button onClick={() => { setGalleryInitialIndex(0); setGalleryOpen(true); }} className="text-muted-foreground active:scale-95 transition-transform">
                   <ChevronRight className="w-5 h-5" />
                 </button>
               </div>
@@ -366,7 +369,7 @@ const ProgressPage = () => {
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-base font-bold text-foreground">Fotos de progresso</h3>
                 <button
-                  onClick={() => navigate("/fotos")}
+                  onClick={() => { setGalleryInitialIndex(0); setGalleryOpen(true); }}
                   className="text-xs font-medium text-muted-foreground flex items-center gap-0.5 active:scale-95 transition-transform"
                 >
                   Ver todas <ChevronRight className="w-3 h-3" />
@@ -375,15 +378,19 @@ const ProgressPage = () => {
 
               {photos.length > 0 ? (
                 <div className="grid grid-cols-2 gap-3">
-                  {photos.slice(0, 4).map((photo) => (
-                    <div key={photo.id} className="flex flex-col gap-1">
+                  {photos.slice(0, 4).map((photo, idx) => (
+                    <button
+                      key={photo.id}
+                      onClick={() => { setGalleryInitialIndex(idx); setGalleryOpen(true); }}
+                      className="flex flex-col gap-1 active:scale-[0.97] transition-transform"
+                    >
                       <div className="rounded-2xl overflow-hidden aspect-[3/4] bg-muted">
                         <img src={photo.url} alt="Progresso" className="w-full h-full object-cover" />
                       </div>
                       <p className="text-[10px] text-muted-foreground text-center font-medium">
                         {new Date(photo.date + "T12:00:00").toLocaleDateString("pt-BR", { day: "numeric", month: "short" })}
                       </p>
-                    </div>
+                    </button>
                   ))}
                 </div>
               ) : (
@@ -407,6 +414,7 @@ const ProgressPage = () => {
       <WeightTrendsDrawer open={weightDrawerOpen} onOpenChange={setWeightDrawerOpen} weightHistory={weightData.map(({ date, peso }) => ({ date, peso }))} />
       <WeightPickerDrawer open={startWeightDrawer} onOpenChange={setStartWeightDrawer} initialWeight={initialWeight ? Number(initialWeight) : 74} onSave={saveStartWeight} />
       <WeightPickerDrawer open={goalWeightDrawer} onOpenChange={setGoalWeightDrawer} initialWeight={goalWeight ?? 65} onSave={saveGoalWeight} />
+      <PhotoGalleryDrawer open={galleryOpen} onOpenChange={setGalleryOpen} initialIndex={galleryInitialIndex} onPhotosChanged={fetchData} />
     </div>
   );
 };
