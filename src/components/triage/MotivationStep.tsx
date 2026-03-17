@@ -87,21 +87,18 @@ const MotivationStep = ({ options, selected, onToggle }: MotivationStepProps) =>
         />
 
         {/* Mascot */}
-        <div
-          className="transition-all duration-700 ease-out"
+        <img
+          src={mascotThinkingImg}
+          alt="Mounjá pensando"
+          className="w-20 h-auto object-contain relative z-10 transition-all duration-700 ease-out"
           style={{
+            background: "transparent",
             opacity: mascotVisible ? 1 : 0,
             transform: mascotVisible ? "translateY(0)" : "translateY(16px)",
+            filter: "drop-shadow(0 4px 12px hsl(280 40% 30% / 0.12))",
           }}
-        >
-          <img
-            src={mascotThinkingImg}
-            alt="Mounjá pensando"
-            className="w-20 h-auto object-contain relative z-10"
-            style={{ background: "none" }}
-            onLoad={() => setMascotLoaded(true)}
-          />
-        </div>
+          onLoad={() => setMascotLoaded(true)}
+        />
 
         {/* Speech bubble */}
         <div
