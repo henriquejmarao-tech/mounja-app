@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { saveTriageData, clearTriageData } from "@/hooks/useTriageStorage";
 import { localDateStr } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
+import { buttonVariants } from "@/components/ui/button";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
