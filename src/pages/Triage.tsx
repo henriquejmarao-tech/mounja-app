@@ -497,13 +497,7 @@ const Triage = () => {
 
       // ===== 8: Treatment intro =====
       case 8:
-        return (
-          <div className="flex-1 flex flex-col items-center justify-center px-8">
-            <h1 className="text-3xl font-bold text-foreground text-center leading-tight">
-              Agora vamos conhecer melhor o seu tratamento
-            </h1>
-          </div>
-        );
+        return <TreatmentIntroStep />;
 
       // ===== 9: Dose input =====
       case 9:
