@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import WeightTrendsDrawer from "@/components/dashboard/WeightTrendsDrawer";
 import WeightPickerDrawer from "@/components/WeightPickerDrawer";
+import PhotoGalleryDrawer from "@/components/PhotoGalleryDrawer";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
