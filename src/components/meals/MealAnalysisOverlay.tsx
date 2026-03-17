@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Flame, Beef, Leaf, Sparkles, Check } from "lucide-react";
 
 interface AnalysisResult {
