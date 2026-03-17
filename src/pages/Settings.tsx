@@ -78,43 +78,103 @@ const Settings = () => {
 
   return (
     <div className="min-h-screen bg-background pb-nav">
-      <div className="px-6 pt-safe pb-2">
+      <div className="px-6 pt-safe pb-1">
         <h1 className="text-2xl font-extrabold text-foreground mt-4">Configurações</h1>
+        <p className="text-sm text-muted-foreground mt-0.5">Gerencie sua experiência</p>
       </div>
 
-      <div className="px-5 space-y-4 mt-4">
-        {/* Treatment section */}
-        <div className="bg-card rounded-2xl border border-border/50 divide-y divide-border/50">
-          <MenuItem icon={Pill} label="Plano de tratamento" onClick={() => navigate("/plano-tratamento")} />
-          <MenuItem icon={CreditCard} label="Alterar plano" onClick={() => navigate("/planos")} />
-          <MenuItem icon={Ruler} label="Atualizar altura" onClick={openHeight} />
+      <div className="px-5 mt-6 space-y-6">
+        {/* ── Section 1: Seu tratamento ── */}
+        <div>
+          <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/50 px-1 mb-2">
+            Seu tratamento
+          </p>
+          <div className="bg-card rounded-[20px] border border-border/30 shadow-card divide-y divide-border/30 overflow-hidden">
+            <MenuItem
+              icon={Pill}
+              iconColor="hsl(295, 45%, 55%)"
+              label="Plano de tratamento"
+              subtitle="Medicamento, dose e agenda"
+              onClick={() => navigate("/plano-tratamento")}
+            />
+            <MenuItem
+              icon={CreditCard}
+              iconColor="hsl(295, 45%, 55%)"
+              label="Alterar plano"
+              subtitle="Gerencie sua assinatura"
+              onClick={() => navigate("/planos")}
+            />
+            <MenuItem
+              icon={Ruler}
+              iconColor="hsl(295, 45%, 55%)"
+              label="Atualizar altura"
+              subtitle={profile?.height_cm ? `Atual: ${Number(profile.height_cm).toFixed(0)} cm` : "Defina sua altura"}
+              onClick={openHeight}
+            />
+          </div>
         </div>
 
-        {/* Support section */}
-        <div className="bg-card rounded-2xl border border-border/50 divide-y divide-border/50">
-          <MenuItem icon={HelpCircle} label="Como usar" onClick={() => navigate("/como-usar")} />
-          <MenuItem icon={Lightbulb} label="Sugerir funcionalidade" onClick={() => { setFeedbackType("suggestion"); setShowFeedback(true); }} />
+        {/* ── Section 2: Preferências e suporte ── */}
+        <div>
+          <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/50 px-1 mb-2">
+            Preferências e suporte
+          </p>
+          <div className="bg-card rounded-[20px] border border-border/30 shadow-card divide-y divide-border/30 overflow-hidden">
+            <MenuItem
+              icon={HelpCircle}
+              iconColor="hsl(210, 50%, 60%)"
+              label="Como usar"
+              subtitle="Aprenda a usar cada aba"
+              onClick={() => navigate("/como-usar")}
+            />
+            <MenuItem
+              icon={Lightbulb}
+              iconColor="hsl(210, 50%, 60%)"
+              label="Sugerir funcionalidade"
+              subtitle="Nos ajude a melhorar"
+              onClick={() => { setFeedbackType("suggestion"); setShowFeedback(true); }}
+            />
+          </div>
         </div>
 
-        {/* Share section */}
-        <div className="bg-card rounded-2xl border border-border/50 divide-y divide-border/50">
-          <MenuItem icon={Share2} label="Compartilhar Mounja" onClick={handleShare} />
-          <MenuItem icon={StarOutline} label="Avaliar o app" onClick={() => { setFeedbackType("rating"); setShowFeedback(true); }} />
+        {/* ── Section 3: Crescimento ── */}
+        <div>
+          <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/50 px-1 mb-2">
+            Crescimento
+          </p>
+          <div className="bg-card rounded-[20px] border border-border/30 shadow-card divide-y divide-border/30 overflow-hidden">
+            <MenuItem
+              icon={Share2}
+              iconColor="hsl(340, 55%, 60%)"
+              label="Compartilhar Mounja"
+              subtitle="Indique para amigos"
+              onClick={handleShare}
+            />
+            <MenuItem
+              icon={StarOutline}
+              iconColor="hsl(340, 55%, 60%)"
+              label="Avaliar o app"
+              subtitle="Sua opinião importa"
+              onClick={() => { setFeedbackType("rating"); setShowFeedback(true); }}
+            />
+          </div>
         </div>
 
         {/* User ID */}
-        <p className="text-xs text-muted-foreground/50 text-center pt-2 select-all">
-          User Id: {user?.id}
+        <p className="text-[10px] text-muted-foreground/30 text-center select-all">
+          {user?.id}
         </p>
 
-        {/* Logout */}
-        <button
-          onClick={handleLogout}
-          className="w-full flex items-center justify-center gap-2 py-3.5 text-destructive text-sm font-semibold rounded-2xl hover:bg-destructive/5 transition-colors"
-        >
-          <LogOut className="w-4 h-4" />
-          Sair da conta
-        </button>
+        {/* ── Logout ── */}
+        <div className="pt-2 pb-4">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center justify-center gap-2 py-3.5 text-sm font-semibold rounded-2xl bg-destructive/5 text-destructive/80 active:scale-[0.98] transition-all"
+          >
+            <LogOut className="w-4 h-4" />
+            Sair da conta
+          </button>
+        </div>
       </div>
 
       {/* Height Drawer */}
@@ -124,7 +184,6 @@ const Settings = () => {
             <DrawerHeader className="px-0 pt-2 pb-4">
               <DrawerTitle className="text-lg font-bold text-center">Atualizar altura</DrawerTitle>
             </DrawerHeader>
-
             <div className="flex items-center justify-center gap-2 mb-8">
               <div className="flex flex-col items-center gap-1">
                 <button onClick={() => setHeightInt((v) => v + 1)} className="text-sm text-muted-foreground/50 h-5">{heightInt + 2}</button>
@@ -135,10 +194,8 @@ const Settings = () => {
                 <button onClick={() => setHeightInt((v) => Math.max(100, v - 1))} className="text-base text-muted-foreground h-6">{heightInt - 1}</button>
                 <button onClick={() => setHeightInt((v) => Math.max(100, v - 1))} className="text-sm text-muted-foreground/50 h-5">{heightInt - 2}</button>
               </div>
-
               <span className="text-lg font-semibold text-muted-foreground ml-1">cm</span>
             </div>
-
             <button onClick={saveHeight} className="w-full py-4 rounded-full gradient-hero text-primary-foreground text-base font-bold active:scale-[0.98] transition-transform shadow-elevated">
               Salvar
             </button>
@@ -149,10 +206,10 @@ const Settings = () => {
       {/* Feedback modal */}
       {showFeedback && (
         <div className="fixed inset-0 z-[60] flex items-end justify-center bg-foreground/30 backdrop-blur-sm" onClick={() => setShowFeedback(false)}>
-          <div className="bg-card w-full max-w-lg rounded-t-3xl p-5 pb-8 animate-fade-in-up shadow-elevated" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-card w-full max-w-lg rounded-t-3xl p-5 pb-8 animate-fade-in shadow-elevated" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-5">
               <h2 className="font-bold text-lg">Dar opinião</h2>
-              <button onClick={() => setShowFeedback(false)} className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
+              <button onClick={() => setShowFeedback(false)} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
                 <X className="w-4 h-4 text-muted-foreground" />
               </button>
             </div>
@@ -160,7 +217,7 @@ const Settings = () => {
               {feedbackTypes.map((ft) => (
                 <button key={ft.value} onClick={() => setFeedbackType(ft.value)}
                   className={cn("flex-1 flex flex-col items-center gap-1.5 py-3 rounded-xl border transition-all text-xs font-semibold",
-                    feedbackType === ft.value ? "bg-primary text-primary-foreground border-primary" : "bg-secondary border-border text-muted-foreground"
+                    feedbackType === ft.value ? "bg-primary text-primary-foreground border-primary" : "bg-muted border-border text-muted-foreground"
                   )}
                 >
                   <span className="text-lg">{ft.emoji}</span>{ft.label}
@@ -192,13 +249,30 @@ const Settings = () => {
   );
 };
 
-const MenuItem = ({ icon: Icon, label, onClick }: { icon: any; label: string; onClick: () => void }) => (
-  <button onClick={onClick} className="w-full flex items-center justify-between px-5 py-4 active:bg-muted/50 transition-colors">
-    <div className="flex items-center gap-3">
-      <Icon className="w-5 h-5 text-muted-foreground" />
-      <span className="text-base font-medium text-foreground">{label}</span>
+/* ── Menu Item ── */
+interface MenuItemProps {
+  icon: any;
+  iconColor: string;
+  label: string;
+  subtitle?: string;
+  onClick: () => void;
+}
+
+const MenuItem = ({ icon: Icon, iconColor, label, subtitle, onClick }: MenuItemProps) => (
+  <button onClick={onClick} className="w-full flex items-center justify-between px-5 py-4 active:bg-muted/30 transition-colors">
+    <div className="flex items-center gap-3.5">
+      <div
+        className="w-9 h-9 rounded-xl flex items-center justify-center"
+        style={{ background: `${iconColor}12` }}
+      >
+        <Icon className="w-[18px] h-[18px]" style={{ color: iconColor }} />
+      </div>
+      <div className="text-left">
+        <span className="text-[15px] font-semibold text-foreground leading-tight block">{label}</span>
+        {subtitle && <span className="text-[11px] text-muted-foreground/60 leading-tight">{subtitle}</span>}
+      </div>
     </div>
-    <ChevronRight className="w-4 h-4 text-muted-foreground/50" />
+    <ChevronRight className="w-4 h-4 text-muted-foreground/30" />
   </button>
 );
 
