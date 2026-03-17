@@ -101,6 +101,21 @@ const CalendarDrawer = ({ open, onOpenChange }: CalendarDrawerProps) => {
   const injectionDays = Object.keys(injectionDates).map((d) => new Date(d + "T12:00:00"));
   const logDays = logDates.map((d) => new Date(d + "T12:00:00"));
 
+  // Build list of application days (past injections + next planned)
+  const applicationDayDates = [...injectionDays];
+  if (dose.nextApplicationAt) {
+    const nextDate = new Date(dose.nextApplicationAt);
+    applicationDayDates.push(new Date(localDateStr(nextDate) + "T12:00:00"));
+  }
+
+  // Check if selected date is an application day
+  const isApplicationDay = applicationDayDates.some(
+    (d) => localDateStr(d) === dateStr
+  );
+  const isTodayApplicationDay = applicationDayDates.some(
+    (d) => localDateStr(d) === localDateStr(new Date())
+  );
+
   return (
     <>
       <Drawer open={open} onOpenChange={onOpenChange}>
@@ -116,6 +131,18 @@ const CalendarDrawer = ({ open, onOpenChange }: CalendarDrawerProps) => {
             </button>
           </div>
 
+          {isTodayApplicationDay && (
+            <div className="mx-4 mb-2 px-4 py-2.5 rounded-2xl flex items-center gap-2.5"
+              style={{ background: "linear-gradient(135deg, rgba(123,47,247,0.08) 0%, rgba(248,87,166,0.08) 100%)" }}>
+              <span className="text-lg">💉</span>
+              <span className="text-[13px] font-semibold" style={{ 
+                background: "linear-gradient(135deg, #7B2FF7, #F857A6)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent"
+              }}>Hoje é dia de aplicação</span>
+            </div>
+          )}
+
           <div className="px-4 overflow-y-auto max-h-[60vh]">
             <Calendar
               mode="single"
@@ -124,9 +151,10 @@ const CalendarDrawer = ({ open, onOpenChange }: CalendarDrawerProps) => {
               modifiers={{
                 hasInjection: injectionDays,
                 hasLog: logDays,
+                applicationDay: applicationDayDates,
               }}
-              modifiersStyles={{
-                hasInjection: { fontWeight: 700 },
+              modifiersClassNames={{
+                applicationDay: "cal-application-day",
               }}
               className="w-full"
             />
