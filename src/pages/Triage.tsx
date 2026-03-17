@@ -1040,6 +1040,17 @@ const Triage = () => {
         const dayLabel = weekDays[applicationDay]?.full || "Segunda";
         const displayName = name?.trim().split(" ")[0];
 
+        // Calculate personalized calorie target based on Mifflin-St Jeor
+        const isMale = sex === "masculino";
+        const bmr = isMale
+          ? 10 * currentWeight + 6.25 * (heightCm || 170) - 5 * age + 5
+          : 10 * currentWeight + 6.25 * (heightCm || 160) - 5 * age - 161;
+        const tdee = bmr * 1.3; // light activity assumed
+        const calorieTarget = Math.round(Math.max(1200, tdee - 500) / 50) * 50;
+
+        // Protein target: ~1.6g per kg of goal weight
+        const proteinTarget = Math.round(goalWeight * 1.6);
+
         return (
           <div className="fixed inset-0 z-50 overflow-y-auto" style={{ background: "#FAFAFA" }}>
             <div className="min-h-full flex flex-col px-6 pt-6 pb-10">
