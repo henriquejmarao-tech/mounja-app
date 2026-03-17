@@ -1091,14 +1091,15 @@ const Triage = () => {
               {/* Summary - 3 items */}
               <div className="grid grid-cols-3 gap-3 mb-5 animate-fade-in" style={{ animationDelay: "0.2s" }}>
                 {[
-                  { icon: Utensils, value: "1700 kcal", sub: "Déficit ideal para você" },
-                  { icon: Trophy, value: "112g/dia", sub: "Para preservar massa magra" },
-                  { icon: CalendarCheck, value: dayLabel, sub: "Consistência semanal" },
+                  { icon: Utensils, label: "Calorias", value: "1700 kcal", sub: "Déficit ideal para você" },
+                  { icon: Trophy, label: "Proteína", value: "112g/dia", sub: "Para preservar massa magra" },
+                  { icon: CalendarCheck, label: "Aplicação", value: dayLabel, sub: "Consistência semanal" },
                 ].map((item, i) => (
                   <div key={i} className="rounded-2xl p-3 text-center" style={{ background: "#fff", border: "1px solid #F0F0F0" }}>
-                    <div className="w-8 h-8 rounded-lg mx-auto mb-2 flex items-center justify-center" style={{ background: "linear-gradient(135deg, rgba(123,47,247,0.08), rgba(248,87,166,0.08))" }}>
+                    <div className="w-8 h-8 rounded-lg mx-auto mb-1.5 flex items-center justify-center" style={{ background: "linear-gradient(135deg, rgba(123,47,247,0.08), rgba(248,87,166,0.08))" }}>
                       <item.icon className="w-4 h-4" style={{ color: "#7B2FF7" }} />
                     </div>
+                    <p className="text-[10px] font-semibold uppercase tracking-wide mb-0.5" style={{ color: "#AAA" }}>{item.label}</p>
                     <p className="text-sm font-bold" style={{ color: "#1A1A1A" }}>{item.value}</p>
                     <p className="text-[10px] mt-1 leading-tight" style={{ color: "#AAA" }}>{item.sub}</p>
                   </div>
