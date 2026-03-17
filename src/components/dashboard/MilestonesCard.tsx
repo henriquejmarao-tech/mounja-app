@@ -63,9 +63,9 @@ const MilestonesCard = ({ initialWeight, currentWeight, goalWeight }: Milestones
         <h2 className="text-lg font-bold text-foreground">Marcos</h2>
         <button
           onClick={() => navigate("/progress")}
-          className="text-xs text-primary font-semibold flex items-center gap-0.5"
+          className="text-[11px] text-muted-foreground/50 font-semibold flex items-center gap-0.5"
         >
-          Ver todos <ChevronRight className="w-3.5 h-3.5" />
+          Ver todos <ChevronRight className="w-3 h-3" />
         </button>
       </div>
 
