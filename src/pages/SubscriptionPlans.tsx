@@ -149,28 +149,30 @@ const SubscriptionPlans = () => {
         </p>
       </div>
 
-      {/* Mascot area - fixed height to prevent layout jumps */}
-      <div className="relative flex justify-center items-end h-[160px] z-20">
-        {/* Pointing mascot */}
+      {/* Mascot area */}
+      <div className="relative flex justify-center items-end h-[140px] z-20 overflow-visible">
+        {/* Pointing mascot — large, feet resting on card */}
         <img
           src={mascotPointingImg}
           alt="Mounjá apontando"
+          style={{ filter: "drop-shadow(0px 8px 20px rgba(0,0,0,0.12))", background: "transparent" }}
           className={cn(
-            "absolute bottom-0 w-[180px] h-[180px] object-contain drop-shadow-lg transition-all duration-500 ease-out",
+            "absolute bottom-0 w-[200px] h-auto object-contain transition-all duration-500 ease-out",
             revealStage >= 1 && showPointingMascot
-              ? "opacity-100 translate-y-[18px]"
-              : "opacity-0 translate-y-[30px] pointer-events-none"
+              ? "opacity-100 translate-y-[28px]"
+              : "opacity-0 translate-y-[40px] pointer-events-none"
           )}
         />
-        {/* Sitting mascot */}
+        {/* Sitting mascot — smaller, seated on card edge */}
         <img
           src={mascotSittingImg}
           alt="Mounjá sentado"
+          style={{ filter: "drop-shadow(0px 8px 20px rgba(0,0,0,0.12))", background: "transparent" }}
           className={cn(
-            "absolute bottom-0 w-[140px] h-[140px] object-contain drop-shadow-lg transition-all duration-500 ease-out",
+            "absolute bottom-0 w-[130px] h-auto object-contain transition-all duration-500 ease-out",
             sittingLoaded && showSittingMascot
-              ? "opacity-100 translate-y-[14px]"
-              : "opacity-0 translate-y-[26px] pointer-events-none"
+              ? "opacity-100 translate-y-[22px]"
+              : "opacity-0 translate-y-[34px] pointer-events-none"
           )}
         />
       </div>
