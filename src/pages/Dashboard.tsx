@@ -470,8 +470,8 @@ const Dashboard = () => {
       </div>
 
       {/* ── Weight Trends ── */}
-      <div className="px-5 mb-4 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
-        <WeightTrendsCard weightHistory={weightHistory} onExpand={() => setWeightDrawerOpen(true)} />
+      <div className="px-5 mb-6 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
+        <WeightTrendsCard weightHistory={weightHistory} onExpand={() => setWeightDrawerOpen(true)} onRegisterWeight={() => setWeightPickerOpen(true)} />
       </div>
 
 
