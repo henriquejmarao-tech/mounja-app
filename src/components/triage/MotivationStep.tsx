@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
-import mascotThinkingImg from "@/assets/mascot-thinking.png";
+import mascotThinkingImg from "@/assets/mascot-pointing.png";
 
 const BUBBLE_TEXT = "Quero entender melhor o que te trouxe até aqui.";
 const TYPING_DURATION = 1200;
