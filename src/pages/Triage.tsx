@@ -20,6 +20,7 @@ import mascotPointingImg from "@/assets/mascot-pointing.png";
 import WelcomeStep from "@/components/triage/WelcomeStep";
 import PrivacyStep from "@/components/triage/PrivacyStep";
 import MedicationStep from "@/components/triage/MedicationStep";
+import ExperienceStep from "@/components/triage/ExperienceStep";
 
 /* ─── Scroll Picker Component ─── */
 const ScrollPicker = ({
