@@ -21,6 +21,7 @@ import WelcomeStep from "@/components/triage/WelcomeStep";
 import PrivacyStep from "@/components/triage/PrivacyStep";
 import MedicationStep from "@/components/triage/MedicationStep";
 import ExperienceStep from "@/components/triage/ExperienceStep";
+import MotivationStep from "@/components/triage/MotivationStep";
 
 /* ─── Scroll Picker Component ─── */
 const ScrollPicker = ({
@@ -465,29 +466,11 @@ const Triage = () => {
       // ===== 4: Motivation =====
       case 4:
         return (
-          <div className="flex-1 flex flex-col px-6">
-            <h1 className="text-2xl font-bold text-foreground text-center mb-2 mt-4">Por que você começou o tratamento?</h1>
-            <p className="text-sm text-muted-foreground text-center mb-6">Escolha quantas quiser</p>
-            <div className="space-y-3 flex-1 overflow-y-auto">
-              {motivationOptions.map((opt) => {
-                const selected = motivations.includes(opt.value);
-                return (
-                  <button key={opt.value} onClick={() => toggleMotivation(opt.value)}
-                    className={cn("w-full py-4 px-5 rounded-2xl text-left transition-all border-2",
-                      selected ? "bg-triage-action/10 border-triage-action" : "bg-muted border-transparent")}>
-                    <div className="flex items-center justify-between">
-                      <span className={cn("font-medium", selected && "text-foreground")}>{opt.label}</span>
-                      <div className={cn("w-6 h-6 rounded-full border-2 flex items-center justify-center",
-                        selected ? "bg-triage-action border-triage-action" : "border-muted-foreground/30")}>
-                        {selected && <Check className="w-3.5 h-3.5 text-background" />}
-                      </div>
-                    </div>
-                    {selected && <p className="text-sm text-muted-foreground mt-2">{opt.description}</p>}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+          <MotivationStep
+            options={motivationOptions}
+            selected={motivations}
+            onToggle={toggleMotivation}
+          />
         );
 
       // ===== 5: App Preview =====
@@ -1004,18 +987,26 @@ const Triage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col relative"
-      style={{ paddingTop: (questionSteps || step === 0) ? "calc(env(safe-area-inset-top, 0px) + 1rem)" : "env(safe-area-inset-top, 0px)" }}>
+    <div className={cn("min-h-screen flex flex-col relative", step === 4 ? "" : "bg-background")}
+      style={{
+        paddingTop: (questionSteps || step === 0) ? "calc(env(safe-area-inset-top, 0px) + 1rem)" : "env(safe-area-inset-top, 0px)",
+        ...(step === 4 ? {
+          background: "linear-gradient(135deg, hsl(280 50% 30%) 0%, hsl(320 55% 40%) 35%, hsl(350 60% 55%) 65%, hsl(20 70% 65%) 100%)",
+        } : {}),
+      }}>
 
       {/* Progress bar */}
       {(questionSteps || step === 0) && (
-        <div className="px-6 flex items-center gap-3 mb-2">
+        <div className="px-6 flex items-center gap-3 mb-2 relative z-20">
           {showBackInProgress && (
-            <button onClick={back} className="text-muted-foreground"><ArrowLeft className="w-5 h-5" /></button>
+            <button onClick={back} className={step === 4 ? "text-white/70" : "text-muted-foreground"}><ArrowLeft className="w-5 h-5" /></button>
           )}
-          <div className="flex-1 h-1.5 bg-foreground/10 rounded-full overflow-hidden">
-            <div className="h-full gradient-hero rounded-full transition-all duration-500"
-              style={{ width: `${step === 0 ? 2 : progressPct}%` }} />
+          <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: step === 4 ? "hsl(0 0% 100% / 0.2)" : undefined }}>
+            <div className={cn("h-full rounded-full transition-all duration-500", step !== 4 && "gradient-hero")}
+              style={{
+                width: `${step === 0 ? 2 : progressPct}%`,
+                ...(step === 4 ? { background: "hsl(0 0% 100% / 0.9)" } : {}),
+              }} />
           </div>
         </div>
       )}
@@ -1023,14 +1014,17 @@ const Triage = () => {
       {renderStep()}
 
       {showNextBtn && (
-        <div className="px-6 pb-8 pt-4" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 2rem)" }}>
+        <div className="px-6 pb-8 pt-4 relative z-20" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 2rem)" }}>
           <button onClick={next} disabled={!canAdvance() || saving}
             className={cn("w-full font-bold py-4 rounded-[28px] flex items-center justify-center gap-2 transition-all duration-300 active:scale-[0.98]",
               canAdvance()
-                ? (step <= 3)
+                ? (step <= 4)
                   ? "gradient-hero text-primary-foreground shadow-elevated"
                   : "bg-triage-action text-white shadow-elevated"
-                : "bg-muted text-muted-foreground")}>
+                : step === 4
+                  ? "text-white/40"
+                  : "bg-muted text-muted-foreground")}
+            style={step === 4 && !canAdvance() ? { background: "hsl(0 0% 100% / 0.15)" } : undefined}>
             {buttonLabel}
           </button>
         </div>
