@@ -847,22 +847,39 @@ const Triage = () => {
 
       // ===== 17: Sex (auto-advance) =====
       case 17:
+        const SGRAD = "linear-gradient(135deg, #7B2FF7 0%, #F857A6 100%)";
         return (
           <div className="flex-1 flex flex-col px-6">
-            <h1 className="text-2xl font-bold text-foreground text-center mb-8 mt-4">Qual seu sexo biológico?</h1>
+            <h1 className="text-xl font-extrabold text-foreground text-center mb-8 mt-4">Qual seu sexo biológico?</h1>
             <div className="space-y-3">
               {[
                 { value: "F", label: "Feminino" },
                 { value: "M", label: "Masculino" },
                 { value: "other", label: "Outro" },
-              ].map((opt) => (
-                <button key={opt.value}
-                  onClick={() => { setSex(opt.value); }}
-                  className={cn("w-full py-4 px-5 rounded-2xl text-base font-medium transition-all text-center",
-                    sex === opt.value ? "bg-triage-action text-white" : "bg-muted text-foreground")}>
-                  {opt.label}
-                </button>
-              ))}
+              ].map((opt) => {
+                const isSel = sex === opt.value;
+                return (
+                  <button key={opt.value}
+                    onClick={() => { setSex(opt.value); }}
+                    className="w-full py-4 px-5 rounded-2xl text-base font-medium transition-all text-center relative"
+                    style={{
+                      background: "#fff",
+                      color: isSel ? "#111" : "#666",
+                      fontWeight: isSel ? 700 : 500,
+                      border: isSel ? "none" : "1.5px solid #E5E5E5",
+                      boxShadow: isSel ? "0 0 0 2px rgba(123,47,247,0.15)" : "0 1px 4px rgba(0,0,0,0.04)",
+                    }}>
+                    {isSel && (
+                      <div className="absolute inset-0 rounded-2xl pointer-events-none" style={{
+                        padding: 2, background: SGRAD,
+                        WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                        WebkitMaskComposite: "xor", maskComposite: "exclude" as any,
+                      }} />
+                    )}
+                    <span className="relative z-10">{opt.label}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
         );
@@ -934,7 +951,7 @@ const Triage = () => {
             
             <h1 className="text-3xl font-bold text-foreground text-center leading-tight">
               Boa notícia! Perder{" "}
-              <span className="text-triage-action">{weightDiff.toFixed(1)} kg</span>{" "}
+              <span style={{ background: "linear-gradient(135deg, #7B2FF7, #F857A6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{weightDiff.toFixed(1)} kg</span>{" "}
               é totalmente possível.
             </h1>
           </div>
