@@ -19,6 +19,7 @@ import logoImg from "@/assets/logo-mounja.png";
 import mascotPointingImg from "@/assets/mascot-pointing.png";
 import WelcomeStep from "@/components/triage/WelcomeStep";
 import PrivacyStep from "@/components/triage/PrivacyStep";
+import MedicationStep from "@/components/triage/MedicationStep";
 
 /* ─── Scroll Picker Component ─── */
 const ScrollPicker = ({
