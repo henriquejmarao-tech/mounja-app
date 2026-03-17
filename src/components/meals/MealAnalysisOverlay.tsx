@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Flame, Beef, Leaf, Sparkles, Check } from "lucide-react";
 
 interface AnalysisResult {
@@ -27,7 +27,7 @@ const MealAnalysisOverlay = ({ photoPreview, analyzing, result, onClose }: MealA
   const [statusIdx, setStatusIdx] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [counters, setCounters] = useState({ cal: 0, prot: 0, fib: 0 });
-  const intervalRef = useRef<ReturnType<typeof setInterval>>();
+  
 
   // Cycle status messages
   useEffect(() => {
@@ -37,34 +37,39 @@ const MealAnalysisOverlay = ({ photoPreview, analyzing, result, onClose }: MealA
     return () => clearInterval(id);
   }, [analyzing]);
 
-  // Animate counters when result arrives
+  // Animate counters when result arrives — use rAF for smooth, non-blocking animation
   useEffect(() => {
     if (!result) {
       setShowResult(false);
       setCounters({ cal: 0, prot: 0, fib: 0 });
       return;
     }
+
+    // Show result card immediately — no delay
+    setShowResult(true);
+
     const targetCal = result.total_calories || 0;
     const targetProt = result.total_protein || 0;
     const targetFib = result.total_fiber || 0;
-    const duration = 1200;
-    const steps = 40;
-    let step = 0;
+    const duration = 900;
+    let start: number | null = null;
+    let rafId: number;
 
-    setTimeout(() => setShowResult(true), 300);
-
-    intervalRef.current = setInterval(() => {
-      step++;
-      const ease = 1 - Math.pow(1 - Math.min(step / steps, 1), 3);
+    const animate = (ts: number) => {
+      if (!start) start = ts;
+      const elapsed = ts - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
       setCounters({
         cal: Math.round(targetCal * ease),
         prot: Math.round(targetProt * ease),
         fib: Math.round(targetFib * ease),
       });
-      if (step >= steps) clearInterval(intervalRef.current);
-    }, duration / steps);
+      if (progress < 1) rafId = requestAnimationFrame(animate);
+    };
 
-    return () => clearInterval(intervalRef.current);
+    rafId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(rafId);
   }, [result]);
 
   // Progress bar percentages (based on common daily goals)
