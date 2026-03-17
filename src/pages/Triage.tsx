@@ -330,9 +330,25 @@ const Triage = () => {
   };
 
   const next = () => {
-    if (step < TOTAL_STEPS - 1) setStep(step + 1);
+    if (step < TOTAL_STEPS - 1) {
+      let nextStep = step + 1;
+      // Skip interval step (14) for daily/weekly — auto-set interval
+      if (nextStep === 14 && frequency !== "custom") {
+        if (frequency === "daily") setDoseIntervalDays(1);
+        if (frequency === "weekly") setDoseIntervalDays(7);
+        nextStep = 15;
+      }
+      setStep(nextStep);
+    }
   };
-  const back = () => { if (step > 0) setStep(step - 1); };
+  const back = () => {
+    if (step > 0) {
+      let prevStep = step - 1;
+      // Skip interval step (14) going back for daily/weekly
+      if (prevStep === 14 && frequency !== "custom") prevStep = 13;
+      setStep(prevStep);
+    }
+  };
 
   const deriveGoal = () => {
     if (motivations.includes("health_control")) return "weight_loss";
