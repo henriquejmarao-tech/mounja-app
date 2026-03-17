@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {
   ChevronRight, LogOut, MessageSquare, Star, Send, Bug, Lightbulb, X,
-  Pill, Ruler, Share2, Star as StarOutline, HelpCircle,
+  Pill, Ruler, Share2, Star as StarOutline, HelpCircle, CreditCard,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
