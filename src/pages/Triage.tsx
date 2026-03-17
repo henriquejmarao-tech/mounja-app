@@ -28,6 +28,7 @@ import HelpNeedsStep from "@/components/triage/HelpNeedsStep";
 import ConfirmationStep from "@/components/triage/ConfirmationStep";
 import TreatmentIntroStep from "@/components/triage/TreatmentIntroStep";
 import AlternateSitesStep from "@/components/triage/AlternateSitesStep";
+import ResultsChartStep from "@/components/triage/ResultsChartStep";
 
 /* ─── Scroll Picker Component ─── */
 const ScrollPicker = ({
@@ -803,46 +804,7 @@ const Triage = () => {
 
       // ===== 15: Results motivation =====
       case 15:
-        return (
-          <div className="flex-1 flex flex-col items-center px-8">
-            <h1 className="text-2xl font-extrabold text-foreground text-center mb-8">O Mounjá gera resultados duradouros</h1>
-            <div className="bg-white rounded-2xl p-6 w-full" style={{ border: "1.5px solid #E5E5E5", boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
-              <p className="font-bold text-foreground mb-1">Evolução do seu peso com Mounjá</p>
-              <p className="text-xs mb-4" style={{ color: "#aaa" }}>Baseado em usuários com padrão semelhante ao seu</p>
-              <svg viewBox="0 0 280 130" className="w-full h-36">
-                <defs>
-                  <linearGradient id="chart-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#7B2FF7" />
-                    <stop offset="100%" stopColor="#F857A6" />
-                  </linearGradient>
-                  <filter id="glow">
-                    <feGaussianBlur stdDeviation="2" result="blur" />
-                    <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-                  </filter>
-                </defs>
-                {/* Grid lines */}
-                <line x1="0" y1="30" x2="280" y2="30" stroke="#E5E5E5" strokeWidth="0.5" strokeDasharray="4" />
-                <line x1="0" y1="65" x2="280" y2="65" stroke="#E5E5E5" strokeWidth="0.5" strokeDasharray="4" />
-                <line x1="0" y1="100" x2="280" y2="100" stroke="#E5E5E5" strokeWidth="0.5" strokeDasharray="4" />
-                {/* Traditional diet — thin gray */}
-                <path d="M 10 42 C 60 38, 100 50, 140 48 C 180 46, 220 43, 270 40" fill="none" stroke="#C0C0C0" strokeWidth="1.5" strokeDasharray="4 3" />
-                <circle cx="10" cy="42" r="2.5" fill="#C0C0C0" />
-                <circle cx="140" cy="48" r="2.5" fill="#C0C0C0" />
-                <circle cx="270" cy="40" r="2.5" fill="#C0C0C0" />
-                <text x="195" y="33" fill="#999" fontSize="7.5" fontWeight="500">Dieta tradicional</text>
-                {/* Mounjá — thick gradient with glow */}
-                <path d="M 10 42 C 60 52, 100 72, 140 88 C 180 98, 220 104, 270 108" fill="none" stroke="url(#chart-grad)" strokeWidth="3" strokeLinecap="round" filter="url(#glow)" />
-                <circle cx="10" cy="42" r="5" fill="white" stroke="url(#chart-grad)" strokeWidth="2" />
-                <circle cx="140" cy="88" r="4" fill="white" stroke="url(#chart-grad)" strokeWidth="2" />
-                <circle cx="270" cy="108" r="5" fill="white" stroke="url(#chart-grad)" strokeWidth="2" />
-                <text x="205" y="118" fill="url(#chart-grad)" fontSize="9" fontWeight="bold">Mounjá</text>
-              </svg>
-              <div className="flex justify-between text-xs mt-2" style={{ color: "#aaa" }}>
-                <span>Mês 1</span><span>Mês 3</span><span>Mês 6</span>
-              </div>
-            </div>
-          </div>
-        );
+        return <ResultsChartStep />;
 
       // ===== 16: Personal intro =====
       case 16:
@@ -1046,7 +1008,8 @@ const Triage = () => {
             className={cn("w-full font-bold py-4 rounded-[28px] flex items-center justify-center gap-2 transition-all duration-300 active:scale-[0.98]",
               canAdvance()
                 ? "gradient-hero text-primary-foreground shadow-elevated"
-                : "bg-muted text-muted-foreground")}>
+                : "bg-muted text-muted-foreground",
+              step === 15 && canAdvance() && "cta-pulse-active")}>
             {buttonLabel}
           </button>
         </div>
