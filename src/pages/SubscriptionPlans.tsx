@@ -149,30 +149,59 @@ const SubscriptionPlans = () => {
         </p>
       </div>
 
-      {/* Mascot area — compact, mascots overlap card top edge */}
-      <div className="relative flex justify-center items-end h-[120px] z-20 overflow-visible">
-        {/* Pointing mascot — standing on card top edge */}
+      {/* Mascot area — mascots physically overlap card top edge */}
+      <div className="relative flex justify-center items-end h-[110px] z-20 overflow-visible">
+        {/* Pointing mascot — feet break into the card */}
         <img
           src={mascotPointingImg}
           alt="Mounjá apontando"
-          style={{ filter: "drop-shadow(0px 8px 20px rgba(0,0,0,0.12))", background: "transparent" }}
+          style={{
+            filter: "drop-shadow(0px 6px 12px rgba(0,0,0,0.12))",
+            background: "transparent",
+          }}
           className={cn(
-            "absolute bottom-0 w-[180px] h-auto object-contain transition-all duration-500 ease-out",
+            "absolute bottom-0 w-[200px] h-auto object-contain",
+            "transition-all duration-[400ms] ease-[cubic-bezier(0.34,1.56,0.64,1)]",
             revealStage >= 1 && showPointingMascot
-              ? "opacity-100 translate-y-[55px]"
-              : "opacity-0 translate-y-[70px] pointer-events-none"
+              ? "opacity-100 translate-y-[68px]"
+              : "opacity-0 translate-y-[40px] pointer-events-none"
           )}
         />
-        {/* Sitting mascot — seated on card top edge */}
+        {/* Contact shadow for pointing mascot */}
+        <div
+          className={cn(
+            "absolute bottom-0 w-[90px] h-[10px] rounded-[50%] bg-black/[0.08] blur-[6px]",
+            "transition-all duration-[400ms] ease-[cubic-bezier(0.34,1.56,0.64,1)]",
+            revealStage >= 1 && showPointingMascot
+              ? "opacity-100 translate-y-[62px]"
+              : "opacity-0 translate-y-[40px] pointer-events-none"
+          )}
+        />
+
+        {/* Sitting mascot — hips rest on card edge */}
         <img
           src={mascotSittingImg}
           alt="Mounjá sentado"
-          style={{ filter: "drop-shadow(0px 8px 20px rgba(0,0,0,0.12))", background: "transparent" }}
+          style={{
+            filter: "drop-shadow(0px 6px 12px rgba(0,0,0,0.12))",
+            background: "transparent",
+          }}
           className={cn(
-            "absolute bottom-0 w-[120px] h-auto object-contain transition-all duration-500 ease-out",
+            "absolute bottom-0 w-[135px] h-auto object-contain",
+            "transition-all duration-[400ms] ease-[cubic-bezier(0.34,1.56,0.64,1)]",
             sittingLoaded && showSittingMascot
-              ? "opacity-100 translate-y-[45px]"
-              : "opacity-0 translate-y-[60px] pointer-events-none"
+              ? "opacity-100 translate-y-[58px]"
+              : "opacity-0 translate-y-[30px] pointer-events-none"
+          )}
+        />
+        {/* Contact shadow for sitting mascot */}
+        <div
+          className={cn(
+            "absolute bottom-0 w-[80px] h-[8px] rounded-[50%] bg-black/[0.07] blur-[5px]",
+            "transition-all duration-[400ms] ease-[cubic-bezier(0.34,1.56,0.64,1)]",
+            sittingLoaded && showSittingMascot
+              ? "opacity-100 translate-y-[52px]"
+              : "opacity-0 translate-y-[30px] pointer-events-none"
           )}
         />
       </div>
