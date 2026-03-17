@@ -571,42 +571,7 @@ const Triage = () => {
 
       // ===== 11: Alternate sites =====
       case 11:
-        return (
-          <div className="flex-1 flex flex-col px-6">
-            <h1 className="text-2xl font-bold text-foreground text-center mb-6 mt-4">Você alterna o local de aplicação entre as doses?</h1>
-            <div className="space-y-4">
-              <button onClick={() => setAlternatesSites(true)}
-                className={cn("w-full p-5 rounded-2xl border-2 text-left transition-all",
-                  alternatesSites === true ? "border-triage-action bg-triage-action/10" : "border-border bg-card")}>
-                <div className="flex items-center gap-3 mb-2">
-                  <div className={cn("w-6 h-6 rounded-full border-2 flex items-center justify-center",
-                    alternatesSites === true ? "bg-triage-action border-triage-action" : "border-muted-foreground/30")}>
-                    {alternatesSites === true && <Check className="w-3.5 h-3.5 text-background" />}
-                  </div>
-                  <span className="font-bold text-foreground">Sim, eu alterno</span>
-                </div>
-                <p className="text-sm text-muted-foreground ml-9">Troco entre os lados entre as doses</p>
-                {alternatesSites === true && (
-                  <div className="ml-9 mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-green-600 bg-green-50 px-2.5 py-1 rounded-full">
-                    <ThumbsUp className="w-3.5 h-3.5" /> Recomendado
-                  </div>
-                )}
-              </button>
-              <button onClick={() => setAlternatesSites(false)}
-                className={cn("w-full p-5 rounded-2xl border-2 text-left transition-all",
-                  alternatesSites === false ? "border-triage-action bg-triage-action/10" : "border-border bg-card")}>
-                <div className="flex items-center gap-3 mb-2">
-                  <div className={cn("w-6 h-6 rounded-full border-2 flex items-center justify-center",
-                    alternatesSites === false ? "bg-triage-action border-triage-action" : "border-muted-foreground/30")}>
-                    {alternatesSites === false && <Check className="w-3.5 h-3.5 text-background" />}
-                  </div>
-                  <span className="font-bold text-foreground">Não, mantenho o mesmo</span>
-                </div>
-                <p className="text-sm text-muted-foreground ml-9">Uso sempre o mesmo local</p>
-              </button>
-            </div>
-          </div>
-        );
+        return <AlternateSitesStep value={alternatesSites} onChange={setAlternatesSites} />;
 
       // ===== 12: Frequency =====
       case 12:
