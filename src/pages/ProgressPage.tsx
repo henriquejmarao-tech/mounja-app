@@ -234,7 +234,7 @@ const ProgressPage = () => {
             <div className="bg-card rounded-[20px] p-5 shadow-card border border-border/30">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-base font-bold text-foreground">Foto de hoje</h3>
-                <button onClick={() => navigate("/fotos")} className="text-muted-foreground active:scale-95 transition-transform">
+                <button onClick={() => { setGalleryInitialIndex(0); setGalleryOpen(true); }} className="text-muted-foreground active:scale-95 transition-transform">
                   <ChevronRight className="w-5 h-5" />
                 </button>
               </div>
