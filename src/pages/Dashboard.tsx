@@ -443,16 +443,20 @@ const Dashboard = () => {
                 {item.label}
               </span>
               <span className="text-xl">{item.emoji}</span>
-              {/* Checkbox — gradient when done */}
+              {/* Checkbox */}
               <div
                 className={cn(
-                  "w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all",
+                  "w-5 h-5 rounded-md flex items-center justify-center transition-all",
                   item.done
-                    ? "border-transparent gradient-hero"
-                    : "border-border/60 bg-transparent"
+                    ? "bg-transparent"
+                    : "border-2 border-border/60 bg-transparent"
                 )}
               >
-                {item.done && <Check className="w-3.5 h-3.5 text-white animate-scale-in" strokeWidth={3} />}
+                {item.done && (
+                  <div className="w-5 h-5 rounded-md gradient-hero flex items-center justify-center animate-scale-in">
+                    <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />
+                  </div>
+                )}
               </div>
             </button>
           ))}
