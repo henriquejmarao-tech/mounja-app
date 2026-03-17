@@ -987,12 +987,9 @@ const Triage = () => {
   };
 
   return (
-    <div className={cn("min-h-screen flex flex-col relative", step === 4 ? "" : "bg-background")}
+    <div className="min-h-screen bg-background flex flex-col relative"
       style={{
         paddingTop: (questionSteps || step === 0) ? "calc(env(safe-area-inset-top, 0px) + 1rem)" : "env(safe-area-inset-top, 0px)",
-        ...(step === 4 ? {
-          background: "linear-gradient(135deg, hsl(280 50% 30%) 0%, hsl(320 55% 40%) 35%, hsl(350 60% 55%) 65%, hsl(20 70% 65%) 100%)",
-        } : {}),
       }}>
 
       {/* Progress bar */}
