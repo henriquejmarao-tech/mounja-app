@@ -87,8 +87,11 @@ const AppPreviewStep = () => {
           {["D", "S", "T", "Q", "Q", "S", "S"].map((d, i) => (
             <div key={i} className="text-center">
               <span className="text-[10px] text-muted-foreground">{d}</span>
-              <div className={cn("w-8 h-8 rounded-full flex items-center justify-center text-xs mt-1",
-                i === 3 ? "bg-triage-action text-white font-bold" : "text-muted-foreground")}>
+              <div
+                className={cn("w-8 h-8 rounded-full flex items-center justify-center text-xs mt-1",
+                  i === 3 ? "text-primary-foreground font-bold" : "text-muted-foreground")}
+                style={i === 3 ? { background: "linear-gradient(135deg, hsl(295 55% 42%), hsl(340 65% 62%), hsl(15 75% 75%))" } : undefined}
+              >
                 {new Date().getDate() - 3 + i}
               </div>
             </div>
@@ -158,9 +161,19 @@ const AppPreviewStep = () => {
               transform: showBenefits ? "translateY(0)" : "translateY(12px)",
               transitionDelay: `${i * 120}ms`,
             }}
-          >
-            <CheckCircle2 className="w-5 h-5 text-primary min-w-5 mt-0.5" strokeWidth={1.8} />
-            <p className="text-sm text-muted-foreground leading-relaxed">{text}</p>
+            >
+              <svg className="w-5 h-5 min-w-5 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="url(#grad-check)" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+                <defs>
+                  <linearGradient id="grad-check" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="hsl(295 55% 42%)" />
+                    <stop offset="50%" stopColor="hsl(340 65% 62%)" />
+                    <stop offset="100%" stopColor="hsl(15 75% 75%)" />
+                  </linearGradient>
+                </defs>
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                <path d="m9 11 3 3L22 4" />
+              </svg>
+              <p className="text-sm text-muted-foreground leading-relaxed">{text}</p>
           </div>
         ))}
       </div>
