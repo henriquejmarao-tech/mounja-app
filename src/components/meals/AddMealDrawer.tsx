@@ -186,7 +186,8 @@ const AddMealDrawer = forwardRef<HTMLDivElement, AddMealDrawerProps>(
         if (insertErr) throw insertErr;
 
         toast.success("Refeição registrada! 🎉");
-        onMealAdded();
+        // Await data refresh so meals & goals update before UI transitions
+        await onMealAdded();
         resetAndClose();
       } catch (err: any) {
         console.error("Error saving meal:", err);
