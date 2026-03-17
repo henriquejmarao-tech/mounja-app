@@ -104,10 +104,27 @@ const ScrollPicker = ({
   return (
     <div className="relative flex items-center justify-center gap-2">
       <div className="relative" style={{ height: containerHeight }}>
-        {/* Selection highlight */}
+        {/* Selection highlight — gradient border, white bg */}
         <div
-          className="absolute left-0 right-0 bg-triage-action/15 rounded-xl z-0 pointer-events-none"
-          style={{ top: padCount * itemHeight, height: itemHeight }}
+          className="absolute left-0 right-0 rounded-xl z-0 pointer-events-none"
+          style={{
+            top: padCount * itemHeight,
+            height: itemHeight,
+            background: "#fff",
+            boxShadow: "0 1px 6px rgba(0,0,0,0.06)",
+          }}
+        />
+        <div
+          className="absolute left-0 right-0 rounded-xl z-0 pointer-events-none"
+          style={{
+            top: padCount * itemHeight,
+            height: itemHeight,
+            padding: 1.5,
+            background: "linear-gradient(135deg, #7B2FF7 0%, #F857A6 100%)",
+            WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+            WebkitMaskComposite: "xor",
+            maskComposite: "exclude" as any,
+          }}
         />
         {/* Gradient masks */}
         <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-background to-transparent z-10 pointer-events-none" />
