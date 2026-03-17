@@ -27,7 +27,7 @@ const MealAnalysisOverlay = ({ photoPreview, analyzing, result, onClose }: MealA
   const [statusIdx, setStatusIdx] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [counters, setCounters] = useState({ cal: 0, prot: 0, fib: 0 });
-  const intervalRef = useRef<ReturnType<typeof setInterval>>();
+  
 
   // Cycle status messages
   useEffect(() => {
