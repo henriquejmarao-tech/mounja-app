@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { Scale, Camera, ClipboardList, Lightbulb, Bell, Sparkles, Check, ChevronRight } from "lucide-react";
-import mascotSitting from "@/assets/mascot-sitting.png";
+
 import { cn, localDateStr, diffCalendarDays } from "@/lib/utils";
 import { toast } from "sonner";
 import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
