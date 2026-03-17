@@ -269,7 +269,7 @@ const medications = [
   23 Health motivation (family)
   24 Creating plan (loading → save)
 */
-const TOTAL_STEPS = 25;
+const TOTAL_STEPS = 26;
 
 const Triage = () => {
   const navigate = useNavigate();
