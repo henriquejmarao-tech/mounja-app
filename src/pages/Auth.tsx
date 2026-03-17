@@ -175,9 +175,9 @@ const Auth = () => {
           </p>
           <div className="flex flex-col gap-2 w-full">
             {[
-              { icon: TrendingDown, title: "Sua meta diária", value: "1700 kcal", subtitle: "Para perder gordura com consistência", accent: "#7B2FF7" },
-              { icon: Dumbbell, title: "Proteína por dia", value: "112g", subtitle: "Evita perda de músculo durante o emagrecimento", accent: "#F857A6" },
-              { icon: Utensils, title: "Dia da aplicação", value: "Toda segunda-feira", subtitle: "Mantém o efeito do tratamento estável", accent: "#34B89A" },
+              { icon: TrendingDown, title: "Déficit diário ideal para você", value: "1700 kcal", subtitle: "Para perder gordura com consistência", accent: "#7B2FF7" },
+              { icon: Dumbbell, title: "Quantidade ideal de proteína diária", value: "112g por dia", subtitle: "Para preservar sua massa muscular", accent: "#F857A6" },
+              { icon: Utensils, title: "Dia da sua aplicação semanal", value: "Segunda-feira", subtitle: "Para manter o efeito do tratamento", accent: "#34B89A" },
             ].map((item, i) => (
               <div
                 key={i}
