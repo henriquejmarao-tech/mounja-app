@@ -2,11 +2,12 @@ import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
-import { Mail, Lock, User, ArrowRight, Eye, EyeOff, Leaf } from "lucide-react";
+import { Mail, Lock, User, ArrowRight, Eye, EyeOff, TrendingDown, Utensils, Dumbbell } from "lucide-react";
 import { toast } from "sonner";
 import { getTriageData, clearTriageData, hasTriageData } from "@/hooks/useTriageStorage";
 import { localDateStr } from "@/lib/utils";
 import logoMounja from "@/assets/logo-mounja.png";
+import mascotPointingImg from "@/assets/mascot-pointing.png";
 
 const weekDays = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
 
@@ -147,41 +148,69 @@ const Auth = () => {
   };
 
   return (
-    <div className="bg-background flex flex-col overflow-y-auto" style={{ minHeight: "100dvh" }}>
-      {/* Hero brand area */}
-      <div className="relative overflow-hidden flex flex-col items-center justify-center pt-20 pb-6 px-8 shrink-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/15 via-accent/25 to-background" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-primary/8 blur-3xl" />
-        <div className="absolute bottom-0 right-0 w-64 h-64 rounded-full bg-secondary/10 blur-2xl" />
+    <div className="flex flex-col overflow-y-auto" style={{ minHeight: "100dvh", background: "#FAFAFA" }}>
+      {/* Hero area — changes based on triage state */}
+      {hasTriage && !isLogin ? (
+        /* ── Triage-aware hero: mascot + plan framing ── */
+        <div className="flex flex-col items-center pt-14 pb-4 px-8 shrink-0">
+          <img
+            src={mascotPointingImg}
+            alt="Mascote"
+            className="w-24 h-24 object-contain mb-3"
+            style={{ filter: "drop-shadow(0 4px 16px rgba(123,47,247,0.10))" }}
+          />
+          <h1 className="text-xl font-extrabold text-center leading-tight mb-1" style={{ color: "#1A1A1A" }}>
+            Salve seu{" "}
+            <span style={{ background: "linear-gradient(135deg, #7B2FF7, #F857A6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+              plano personalizado
+            </span>
+          </h1>
+          <p className="text-xs text-center" style={{ color: "#999" }}>
+            Seu plano já está pronto. Crie uma conta para não perder seus dados.
+          </p>
 
-        <div className="absolute top-8 left-6 opacity-15">
-          <Leaf className="w-8 h-8 text-primary rotate-[-30deg]" />
+          {/* Mini plan summary */}
+          <div className="flex items-center gap-2 mt-4 w-full">
+            {[
+              { icon: TrendingDown, label: "Meta: -2.1 kg" },
+              { icon: Utensils, label: "1700 kcal" },
+              { icon: Dumbbell, label: "112g prot" },
+            ].map((item, i) => (
+              <div
+                key={i}
+                className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl"
+                style={{ background: "#fff", border: "1px solid #F0F0F0" }}
+              >
+                <item.icon className="w-3.5 h-3.5" style={{ color: "#7B2FF7" }} />
+                <span className="text-[11px] font-semibold" style={{ color: "#444" }}>{item.label}</span>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="absolute top-16 right-8 opacity-10">
-          <Leaf className="w-6 h-6 text-primary rotate-[45deg]" />
-        </div>
-        <div className="absolute bottom-6 left-10 opacity-10">
-          <Leaf className="w-5 h-5 text-primary rotate-[15deg]" />
-        </div>
-
-        <div className="relative flex flex-col items-center">
-          <img src={logoMounja} alt="Mounjá" className="h-28 w-auto mb-2 object-contain drop-shadow-lg" />
-          <p className="text-base text-muted-foreground italic font-medium tracking-wide">
-            Aqui para caminhar com você.
+      ) : (
+        /* ── Default hero: logo ── */
+        <div className="flex flex-col items-center pt-20 pb-6 px-8 shrink-0">
+          <img src={logoMounja} alt="Mounjá" className="h-24 w-auto mb-2 object-contain drop-shadow-lg" />
+          <p className="text-sm italic font-medium" style={{ color: "#999" }}>
+            {isLogin ? "Que bom te ver de novo" : "Aqui para caminhar com você."}
           </p>
         </div>
-      </div>
+      )}
 
       {/* Form area */}
       <div className="flex-1 px-6 pb-10">
-        <p className="text-center text-sm text-muted-foreground mb-5 font-medium">
-          {isLogin ? "Acesse sua conta" : hasTriage ? "Salve seu plano para acessar quando quiser" : "Crie sua conta gratuita"}
-        </p>
+        {/* Only show subtitle for non-triage flows */}
+        {!(hasTriage && !isLogin) && (
+          <p className="text-center text-sm mb-5 font-medium" style={{ color: "#999" }}>
+            {isLogin ? "Acesse sua conta" : "Crie sua conta gratuita"}
+          </p>
+        )}
 
         {/* Google Login */}
         <button
           onClick={handleGoogleLogin}
-          className="w-full flex items-center justify-center gap-3 py-3.5 rounded-2xl border border-border bg-card shadow-card hover:shadow-elevated transition-all duration-300 mb-4"
+          className="w-full flex items-center justify-center gap-3 py-3.5 rounded-2xl transition-all duration-300 mb-4"
+          style={{ background: "#fff", border: "1px solid #E5E5E5", boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}
         >
           <svg width="20" height="20" viewBox="0 0 24 24">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
@@ -189,44 +218,52 @@ const Auth = () => {
             <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
             <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
           </svg>
-          <span className="text-sm font-semibold">Continuar com Google</span>
+          <span className="text-sm font-semibold" style={{ color: "#333" }}>
+            {hasTriage && !isLogin ? "Salvar com Google" : "Continuar com Google"}
+          </span>
         </button>
 
-        <div className="flex items-center gap-3 my-5">
-          <div className="flex-1 h-px bg-border" />
-          <span className="text-xs text-muted-foreground font-medium">ou</span>
-          <div className="flex-1 h-px bg-border" />
+        <div className="flex items-center gap-3 my-4">
+          <div className="flex-1 h-px" style={{ background: "#E5E5E5" }} />
+          <span className="text-xs font-medium" style={{ color: "#CCC" }}>ou</span>
+          <div className="flex-1 h-px" style={{ background: "#E5E5E5" }} />
         </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-3">
           {!isLogin && (
             <div className="relative">
-              <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: "#BBB" }} />
               <input
                 type="text"
                 placeholder="Seu nome"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-border bg-card text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                className="w-full pl-11 pr-4 py-3.5 rounded-2xl text-sm outline-none transition-all"
+                style={{ background: "#fff", border: "1px solid #E5E5E5" }}
+                onFocus={(e) => { e.currentTarget.style.borderColor = "#7B2FF7"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(123,47,247,0.08)"; }}
+                onBlur={(e) => { e.currentTarget.style.borderColor = "#E5E5E5"; e.currentTarget.style.boxShadow = "none"; }}
               />
             </div>
           )}
 
           <div className="relative">
-            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: "#BBB" }} />
             <input
               type="email"
               placeholder="Seu e-mail"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-border bg-card text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+              className="w-full pl-11 pr-4 py-3.5 rounded-2xl text-sm outline-none transition-all"
+              style={{ background: "#fff", border: "1px solid #E5E5E5" }}
+              onFocus={(e) => { e.currentTarget.style.borderColor = "#7B2FF7"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(123,47,247,0.08)"; }}
+              onBlur={(e) => { e.currentTarget.style.borderColor = "#E5E5E5"; e.currentTarget.style.boxShadow = "none"; }}
             />
           </div>
 
           <div className="relative">
-            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: "#BBB" }} />
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Sua senha"
@@ -234,12 +271,16 @@ const Auth = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
-              className="w-full pl-11 pr-12 py-3.5 rounded-2xl border border-border bg-card text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+              className="w-full pl-11 pr-12 py-3.5 rounded-2xl text-sm outline-none transition-all"
+              style={{ background: "#fff", border: "1px solid #E5E5E5" }}
+              onFocus={(e) => { e.currentTarget.style.borderColor = "#7B2FF7"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(123,47,247,0.08)"; }}
+              onBlur={(e) => { e.currentTarget.style.borderColor = "#E5E5E5"; e.currentTarget.style.boxShadow = "none"; }}
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground"
+              className="absolute right-4 top-1/2 -translate-y-1/2"
+              style={{ color: "#BBB" }}
             >
               {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
@@ -249,7 +290,8 @@ const Auth = () => {
             <button
               type="button"
               onClick={handleForgotPassword}
-              className="text-xs text-primary font-semibold ml-1"
+              className="text-xs font-semibold ml-1"
+              style={{ color: "#7B2FF7" }}
             >
               Esqueci minha senha
             </button>
@@ -258,24 +300,36 @@ const Auth = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full gradient-hero text-primary-foreground font-bold py-4 rounded-2xl flex items-center justify-center gap-2 shadow-elevated hover:shadow-glow active:scale-[0.98] transition-all duration-300 disabled:opacity-50"
+            className="w-full font-bold py-4 rounded-[28px] flex items-center justify-center gap-2 text-white active:scale-[0.98] transition-all duration-300 disabled:opacity-50"
+            style={{
+              background: "linear-gradient(135deg, #7B2FF7 0%, #F857A6 100%)",
+              boxShadow: "0 4px 16px rgba(123,47,247,0.20)",
+            }}
           >
             {loading ? (
-              <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
             ) : (
               <>
-                {isLogin ? "Entrar" : "Criar conta"}
+                {isLogin ? "Entrar" : hasTriage ? "Salvar e acessar meu plano" : "Criar conta"}
                 <ArrowRight className="w-5 h-5" />
               </>
             )}
           </button>
+
+          {/* Microcopy */}
+          {!isLogin && hasTriage && (
+            <p className="text-[11px] text-center" style={{ color: "#CCC" }}>
+              Leva menos de 10 segundos
+            </p>
+          )}
         </form>
 
-        <p className="text-center text-sm text-muted-foreground mt-6">
+        <p className="text-center text-xs mt-6" style={{ color: "#BBB" }}>
           {isLogin ? "Não tem conta?" : "Já tem conta?"}{" "}
           <button
             onClick={() => setIsLogin(!isLogin)}
-            className="text-primary font-semibold"
+            className="font-semibold"
+            style={{ color: "#7B2FF7" }}
           >
             {isLogin ? "Cadastre-se" : "Faça login"}
           </button>
