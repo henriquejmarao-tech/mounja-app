@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Minus, Plus, Droplets, ChevronRight } from "lucide-react";
+import { Minus, Plus, Droplets, ChevronRight, Flame, Beef, Leaf } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { supabase } from "@/integrations/supabase/client";
