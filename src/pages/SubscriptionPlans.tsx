@@ -369,13 +369,14 @@ const PlanCard = ({
             </div>
           ))}
         </div>
+        <div className="flex-1" />
 
         {/* CTA */}
         <button
           onClick={onSelect}
           disabled={loading}
           className={cn(
-            "mt-5 w-full py-3 rounded-2xl font-bold text-sm transition-all duration-300 active:scale-[0.97]",
+            "mt-4 w-full py-3 rounded-2xl font-bold text-sm transition-all duration-300 active:scale-[0.97]",
             plan.highlighted
               ? "text-white shadow-lg"
               : plan.muted
