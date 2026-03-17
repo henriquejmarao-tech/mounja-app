@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Minus, Plus, Droplets, ChevronRight, Flame, Beef, Leaf } from "lucide-react";
+import { Minus, Plus, Droplets, ChevronRight, Flame, Beef, Leaf, Lock } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
+import { usePlan } from "@/hooks/usePlan";
 import { supabase } from "@/integrations/supabase/client";
 import { localDateStr, cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -9,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import EditGoalsDrawer from "@/components/meals/EditGoalsDrawer";
 import AddMealDrawer from "@/components/meals/AddMealDrawer";
 import MealCard from "@/components/meals/MealCard";
+import PremiumGateModal from "@/components/PremiumGateModal";
 
 const DAYS_LABELS = ["S", "T", "Q", "Q", "S", "S", "D"];
 const ML_PER_GLASS = 250;
