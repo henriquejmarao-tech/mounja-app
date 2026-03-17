@@ -371,7 +371,8 @@ const Triage = () => {
         setLoadingProgress((prev) => {
           if (prev >= 100) {
             clearInterval(interval);
-            handleSave();
+            // Transition to plan ready screen
+            setTimeout(() => setStep(25), 400);
             return 100;
           }
           return prev + 2;
