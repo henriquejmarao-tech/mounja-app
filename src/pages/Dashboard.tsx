@@ -417,10 +417,6 @@ const Dashboard = () => {
           </div>
         ) : (
           <>
-            {/* Mascot — light touch */}
-            <div className="flex justify-center -mb-2 animate-mascot-float">
-              <img src={mascotSitting} alt="" className="w-12 h-12 opacity-60" />
-            </div>
 
             {/* Normal Hero content */}
             <div className="relative animate-fade-in-up pb-10">
