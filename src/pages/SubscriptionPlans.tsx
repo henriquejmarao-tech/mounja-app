@@ -280,7 +280,7 @@ const PlanCard = ({
 
       <div
         className={cn(
-          "rounded-[21px] p-5 flex flex-col min-h-[320px]",
+          "rounded-[21px] p-5 flex flex-col min-h-[340px]",
           plan.muted ? "bg-muted/80" : "bg-card"
         )}
       >
@@ -369,13 +369,14 @@ const PlanCard = ({
             </div>
           ))}
         </div>
+        <div className="flex-1" />
 
         {/* CTA */}
         <button
           onClick={onSelect}
           disabled={loading}
           className={cn(
-            "mt-5 w-full py-3 rounded-2xl font-bold text-sm transition-all duration-300 active:scale-[0.97]",
+            "mt-4 w-full py-3 rounded-2xl font-bold text-sm transition-all duration-300 active:scale-[0.97]",
             plan.highlighted
               ? "text-white shadow-lg"
               : plan.muted
