@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
-import { Mail, Lock, User, ArrowRight, Eye, EyeOff, TrendingDown, Utensils, Dumbbell } from "lucide-react";
+import { Mail, Lock, User, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import { getTriageData, clearTriageData, hasTriageData } from "@/hooks/useTriageStorage";
 import { localDateStr } from "@/lib/utils";
