@@ -1008,7 +1008,8 @@ const Triage = () => {
             className={cn("w-full font-bold py-4 rounded-[28px] flex items-center justify-center gap-2 transition-all duration-300 active:scale-[0.98]",
               canAdvance()
                 ? "gradient-hero text-primary-foreground shadow-elevated"
-                : "bg-muted text-muted-foreground")}>
+                : "bg-muted text-muted-foreground",
+              step === 15 && canAdvance() && "cta-pulse-active")}>
             {buttonLabel}
           </button>
         </div>
