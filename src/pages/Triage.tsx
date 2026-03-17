@@ -24,6 +24,7 @@ import ExperienceStep from "@/components/triage/ExperienceStep";
 import MotivationStep from "@/components/triage/MotivationStep";
 import AppPreviewStep from "@/components/triage/AppPreviewStep";
 import HelpNeedsStep from "@/components/triage/HelpNeedsStep";
+import ConfirmationStep from "@/components/triage/ConfirmationStep";
 
 /* ─── Scroll Picker Component ─── */
 const ScrollPicker = ({
@@ -432,7 +433,7 @@ const Triage = () => {
    const noButtonSteps = [24];
   const showNextBtn = !noButtonSteps.includes(step);
 
-  const buttonLabel = step === 23 ? "Criar meu plano" : step === 5 ? "Entendi, vamos lá" : step === 0 ? "Próximo" : "Continuar";
+  const buttonLabel = step === 23 ? "Criar meu plano" : step === 7 ? "Perfeito, continuar" : step === 5 ? "Entendi, vamos lá" : step === 0 ? "Próximo" : "Continuar";
 
   const renderStep = () => {
     switch (step) {
@@ -491,22 +492,7 @@ const Triage = () => {
 
       // ===== 7: Confirmation =====
       case 7:
-        return (
-          <div className="flex-1 flex flex-col items-center justify-center px-8">
-            <h1 className="text-3xl font-bold text-foreground text-center mb-8">Entendido! Vamos te ajudar a:</h1>
-            <div className="space-y-6 w-full">
-              {["Acompanhar seu tratamento facilmente e construir uma rotina que funcione para você.",
-                "Ver seu progresso se desenrolar e manter o rumo certo.",
-                "Ficar à frente dos efeitos colaterais e encontrar o que ajuda.",
-              ].map((text, i) => (
-                <div key={i} className="flex items-start gap-4">
-                  <CheckCircle2 className="w-7 h-7 text-triage-action min-w-7 mt-0.5" />
-                  <p className="text-base text-foreground/80">{text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
+        return <ConfirmationStep />;
 
       // ===== 8: Treatment intro =====
       case 8:
