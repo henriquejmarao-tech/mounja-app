@@ -167,6 +167,7 @@ const Auth = () => {
           </h1>
           <p className="text-xs text-center" style={{ color: "#999" }}>
             Seu plano já está pronto. Crie uma conta para não perder seus dados.
+          </p>
         </div>
       ) : (
         /* ── Default hero: logo ── */
