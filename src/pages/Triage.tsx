@@ -21,6 +21,7 @@ import WelcomeStep from "@/components/triage/WelcomeStep";
 import PrivacyStep from "@/components/triage/PrivacyStep";
 import MedicationStep from "@/components/triage/MedicationStep";
 import ExperienceStep from "@/components/triage/ExperienceStep";
+import MotivationStep from "@/components/triage/MotivationStep";
 
 /* ─── Scroll Picker Component ─── */
 const ScrollPicker = ({
