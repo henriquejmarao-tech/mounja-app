@@ -466,29 +466,11 @@ const Triage = () => {
       // ===== 4: Motivation =====
       case 4:
         return (
-          <div className="flex-1 flex flex-col px-6">
-            <h1 className="text-2xl font-bold text-foreground text-center mb-2 mt-4">Por que você começou o tratamento?</h1>
-            <p className="text-sm text-muted-foreground text-center mb-6">Escolha quantas quiser</p>
-            <div className="space-y-3 flex-1 overflow-y-auto">
-              {motivationOptions.map((opt) => {
-                const selected = motivations.includes(opt.value);
-                return (
-                  <button key={opt.value} onClick={() => toggleMotivation(opt.value)}
-                    className={cn("w-full py-4 px-5 rounded-2xl text-left transition-all border-2",
-                      selected ? "bg-triage-action/10 border-triage-action" : "bg-muted border-transparent")}>
-                    <div className="flex items-center justify-between">
-                      <span className={cn("font-medium", selected && "text-foreground")}>{opt.label}</span>
-                      <div className={cn("w-6 h-6 rounded-full border-2 flex items-center justify-center",
-                        selected ? "bg-triage-action border-triage-action" : "border-muted-foreground/30")}>
-                        {selected && <Check className="w-3.5 h-3.5 text-background" />}
-                      </div>
-                    </div>
-                    {selected && <p className="text-sm text-muted-foreground mt-2">{opt.description}</p>}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+          <MotivationStep
+            options={motivationOptions}
+            selected={motivations}
+            onToggle={toggleMotivation}
+          />
         );
 
       // ===== 5: App Preview =====
