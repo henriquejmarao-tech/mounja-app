@@ -360,10 +360,14 @@ const MealsPage = () => {
             <p className="text-base font-bold text-foreground mb-1">Nenhuma refeição registrada</p>
             <p className="text-sm text-muted-foreground mb-5">Comece sua sequência hoje</p>
             <button
-              onClick={() => setAddMealOpen(true)}
-              className="gradient-hero text-primary-foreground px-6 py-2.5 rounded-full text-sm font-bold active:scale-95 transition-transform"
-              style={{ boxShadow: "0px 6px 16px rgba(128, 0, 128, 0.12)" }}
+              onClick={() => isFree ? setPremiumModalOpen(true) : setAddMealOpen(true)}
+              className={cn(
+                "px-6 py-2.5 rounded-full text-sm font-bold active:scale-95 transition-transform inline-flex items-center gap-2",
+                isFree ? "bg-muted text-muted-foreground" : "gradient-hero text-primary-foreground"
+              )}
+              style={!isFree ? { boxShadow: "0px 6px 16px rgba(128, 0, 128, 0.12)" } : undefined}
             >
+              {isFree && <Lock className="w-3.5 h-3.5" />}
               Registrar primeira refeição
             </button>
           </div>
