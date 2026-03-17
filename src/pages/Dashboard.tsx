@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
-import { Scale, Camera, ClipboardList, Lightbulb, Bell, Sparkles, Check } from "lucide-react";
+import { Scale, Camera, ClipboardList, Lightbulb, Bell, Sparkles, Check, ChevronRight } from "lucide-react";
+import mascotSitting from "@/assets/mascot-sitting.png";
 import { cn, localDateStr, diffCalendarDays } from "@/lib/utils";
 import { toast } from "sonner";
 import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
@@ -296,8 +297,13 @@ const Dashboard = () => {
           </div>
         </div>
 
+        {/* Mascot — light touch */}
+        <div className="flex justify-center -mb-2 animate-mascot-float">
+          <img src={mascotSitting} alt="" className="w-12 h-12 opacity-60" />
+        </div>
+
         {/* Hero content */}
-        <div className="relative animate-fade-in-up pb-8">
+        <div className="relative animate-fade-in-up pb-10">
           <div className="flex flex-col items-center justify-center text-center px-6 py-10">
             {hasTreatment ? (
               isInjectionDayVisual ? (
@@ -308,7 +314,8 @@ const Dashboard = () => {
                   </p>
                   <button
                     onClick={() => selectedDayHasInjection ? navigate("/plano-tratamento") : navigate("/registrar-aplicacao")}
-                    className="mt-5 gradient-hero text-primary-foreground px-8 py-3 rounded-full text-sm font-bold shadow-elevated active:scale-95 transition-transform"
+                    className="mt-6 gradient-hero text-primary-foreground px-10 py-3.5 rounded-full text-[15px] font-bold active:scale-95 transition-transform animate-cta-entrance"
+                    style={{ boxShadow: "0px 8px 20px rgba(128, 0, 128, 0.15)" }}
                   >
                     {selectedDayHasInjection ? "Editar Tratamento" : "Registrar aplicação"}
                   </button>
@@ -323,7 +330,8 @@ const Dashboard = () => {
                   </p>
                   <button
                     onClick={() => navigate("/registrar-aplicacao")}
-                    className="mt-5 gradient-hero text-primary-foreground px-8 py-3 rounded-full text-sm font-bold shadow-elevated active:scale-95 transition-transform"
+                    className="mt-6 gradient-hero text-primary-foreground px-10 py-3.5 rounded-full text-[15px] font-bold active:scale-95 transition-transform animate-cta-entrance"
+                    style={{ boxShadow: "0px 8px 20px rgba(128, 0, 128, 0.15)" }}
                   >
                     Registrar aplicação
                   </button>
@@ -352,7 +360,8 @@ const Dashboard = () => {
                   </p>
                   <button
                     onClick={() => navigate("/registrar-aplicacao")}
-                    className="mt-5 gradient-hero text-primary-foreground px-8 py-3 rounded-full text-sm font-bold shadow-elevated active:scale-95 transition-transform"
+                    className="mt-6 gradient-hero text-primary-foreground px-10 py-3.5 rounded-full text-[15px] font-bold active:scale-95 transition-transform animate-cta-entrance"
+                    style={{ boxShadow: "0px 8px 20px rgba(128, 0, 128, 0.15)" }}
                   >
                     Registrar aplicação
                   </button>
@@ -365,7 +374,8 @@ const Dashboard = () => {
                 </p>
                 <button
                   onClick={() => navigate("/log")}
-                  className="mt-6 bg-primary text-primary-foreground px-8 py-3 rounded-full text-sm font-bold shadow-elevated active:scale-95 transition-transform"
+                  className="mt-6 gradient-hero text-primary-foreground px-10 py-3.5 rounded-full text-[15px] font-bold active:scale-95 transition-transform animate-cta-entrance"
+                  style={{ boxShadow: "0px 8px 20px rgba(128, 0, 128, 0.15)" }}
                 >
                   Registrar tratamento
                 </button>
@@ -373,7 +383,7 @@ const Dashboard = () => {
             )}
             <button
               onClick={() => navigate("/progress")}
-              className="mt-2 text-foreground/40 text-xs font-medium"
+              className="mt-2 text-foreground/40 text-[11px] font-medium opacity-60"
             >
               Ver tudo
             </button>
@@ -381,7 +391,7 @@ const Dashboard = () => {
         </div>
 
       {/* ── My daily check-in ── */}
-      <div className="px-5 mb-5 animate-fade-in-up" style={{ animationDelay: "80ms" }}>
+      <div className="px-5 mb-6 animate-fade-in-up" style={{ animationDelay: "80ms" }}>
         <h2 className="text-lg font-bold text-foreground mb-3">
           {isSelectedToday ? "Meu check-in diário" : `Check-in de ${selectedDate.toLocaleDateString("pt-BR", { day: "numeric", month: "short" })}`}
         </h2>
@@ -402,7 +412,7 @@ const Dashboard = () => {
               done: !!todayLog?.weight,
             },
             {
-              label: "Fotos de\nprogresso",
+              label: "Progresso\nvisual",
               emoji: "📸",
               bg: "bg-card",
               action: () => setPhotoDrawerOpen(true),
@@ -413,26 +423,26 @@ const Dashboard = () => {
               key={i}
               onClick={item.action}
               className={cn(
-                "rounded-2xl p-4 shadow-card flex flex-col items-center gap-2 active:scale-95 transition-transform relative",
+                "rounded-2xl p-3.5 shadow-card flex flex-col items-center gap-2 active:scale-95 transition-all relative",
                 item.bg,
                 item.done ? "border border-border/50" : "gradient-border-spin"
               )}
+              style={item.done ? { background: "hsl(var(--primary) / 0.06)" } : undefined}
             >
               <span className="text-sm font-semibold text-foreground text-center whitespace-pre-line leading-tight">
                 {item.label}
               </span>
               <span className="text-xl">{item.emoji}</span>
-              {/* Checkbox */}
+              {/* Checkbox — gradient when done */}
               <div
                 className={cn(
                   "w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all",
                   item.done
-                    ? "border-transparent"
+                    ? "border-transparent gradient-hero"
                     : "border-border/60 bg-transparent"
                 )}
-                style={item.done ? { background: "hsl(15, 75%, 75%)" } : undefined}
               >
-                {item.done && <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />}
+                {item.done && <Check className="w-3.5 h-3.5 text-white animate-scale-in" strokeWidth={3} />}
               </div>
             </button>
           ))}
@@ -440,27 +450,33 @@ const Dashboard = () => {
       </div>
 
       {/* ── Análise de Medicação ── */}
-      <div className="px-5 mb-4 animate-fade-in-up" style={{ animationDelay: "140ms" }}>
+      <div className="px-5 mb-6 animate-fade-in-up" style={{ animationDelay: "140ms" }}>
         <button
           onClick={() => navigate("/analise-medicacao")}
           className="w-full bg-card rounded-2xl p-5 border border-border/50 shadow-card active:scale-[0.98] transition-transform text-left"
         >
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-base font-bold text-foreground">Análise de Medicação</h3>
-            <Sparkles className="w-5 h-5 text-primary" />
+            <h3 className="text-base font-bold text-foreground" style={{ color: "hsl(0 0% 12%)" }}>Análise de Medicação</h3>
+            <div className="w-8 h-8 rounded-xl gradient-hero flex items-center justify-center">
+              <Sparkles className="w-4 h-4 text-white" />
+            </div>
           </div>
           <p className="text-sm text-muted-foreground">Análise inteligente da evolução do seu tratamento com sugestões de dose e comportamento</p>
+          <div className="flex items-center gap-1 mt-3">
+            <span className="text-xs font-semibold text-muted-foreground/50">Ver análise</span>
+            <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/50" />
+          </div>
         </button>
       </div>
 
       {/* ── Weight Trends ── */}
-      <div className="px-5 mb-4 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
-        <WeightTrendsCard weightHistory={weightHistory} onExpand={() => setWeightDrawerOpen(true)} />
+      <div className="px-5 mb-6 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
+        <WeightTrendsCard weightHistory={weightHistory} onExpand={() => setWeightDrawerOpen(true)} onRegisterWeight={() => setWeightPickerOpen(true)} />
       </div>
 
 
       {/* ── Side Effect History ── */}
-      <div className="px-5 mb-4 animate-fade-in-up" style={{ animationDelay: "240ms" }}>
+      <div className="px-5 mb-6 animate-fade-in-up" style={{ animationDelay: "240ms" }}>
         <SideEffectHistoryCard selectedDate={selectedDateStr} />
       </div>
 

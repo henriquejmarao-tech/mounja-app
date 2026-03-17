@@ -116,7 +116,42 @@
     box-shadow: var(--shadow-elevated);
   }
   .gradient-hero {
-    background: linear-gradient(180deg, hsl(15 75% 75%), hsl(340 65% 62%), hsl(295 55% 42%));
+    background: linear-gradient(to right, hsl(295 55% 42%), hsl(340 65% 62%), hsl(15 75% 75%));
+  }
+
+  /* Mascot float animation */
+  @keyframes mascot-float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-4px);
+    }
+  }
+  .animate-mascot-float {
+    animation: mascot-float 4s ease-in-out infinite;
+  }
+
+  /* Entrance animation for CTA */
+  @keyframes cta-entrance {
+    0% {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  .animate-cta-entrance {
+    animation: cta-entrance 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  /* Animated tab underline */
+  .tab-underline-gradient {
+    background: linear-gradient(to right, hsl(295 55% 42%), hsl(340 65% 62%), hsl(15 75% 75%));
+    height: 2px;
+    border-radius: 1px;
   }
 
 

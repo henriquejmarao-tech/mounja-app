@@ -63,9 +63,9 @@ const MilestonesCard = ({ initialWeight, currentWeight, goalWeight }: Milestones
         <h2 className="text-lg font-bold text-foreground">Marcos</h2>
         <button
           onClick={() => navigate("/progress")}
-          className="text-xs text-primary font-semibold flex items-center gap-0.5"
+          className="text-[11px] text-muted-foreground/50 font-semibold flex items-center gap-0.5"
         >
-          Ver todos <ChevronRight className="w-3.5 h-3.5" />
+          Ver todos <ChevronRight className="w-3 h-3" />
         </button>
       </div>
 
@@ -87,10 +87,9 @@ const MilestonesCard = ({ initialWeight, currentWeight, goalWeight }: Milestones
           <div className="flex-1">
             <div className="h-3 bg-muted/60 rounded-full overflow-hidden">
               <div
-                className="h-full rounded-full transition-all duration-500"
+                className="h-full rounded-full transition-all duration-500 gradient-hero"
                 style={{
                   width: `${milestoneData.progress}%`,
-                  background: "linear-gradient(90deg, hsl(250, 58%, 68%), hsl(250, 58%, 52%))",
                 }}
               />
             </div>

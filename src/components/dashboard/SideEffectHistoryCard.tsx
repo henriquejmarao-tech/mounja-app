@@ -96,9 +96,9 @@ const SideEffectHistoryCard = ({ selectedDate }: { selectedDate?: string }) => {
         <h2 className="text-lg font-bold text-foreground">Histórico de efeitos</h2>
         <button
           onClick={() => navigate("/historico-efeitos")}
-          className="text-xs text-primary font-semibold flex items-center gap-0.5"
+          className="text-[11px] text-muted-foreground/50 font-semibold flex items-center gap-0.5"
         >
-          Ver todos <ChevronRight className="w-3.5 h-3.5" />
+          Ver todos <ChevronRight className="w-3 h-3" />
         </button>
       </div>
 
