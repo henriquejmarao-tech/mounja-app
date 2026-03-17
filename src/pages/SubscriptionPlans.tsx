@@ -140,14 +140,14 @@ const SubscriptionPlans = () => {
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background overflow-hidden">
       {/* Header */}
-      <div className="pt-12 pb-0 px-6 text-center relative z-30">
+      <div className="pt-12 pb-4 px-6 text-center relative z-30">
         <h1 className="text-xl font-bold text-foreground">
           Escolha seu plano
         </h1>
       </div>
 
       {/* Mascot area — mascots physically overlap card top edge */}
-      <div className="relative flex justify-center items-end h-[130px] z-20 overflow-visible">
+      <div className="relative flex justify-center items-end h-[140px] z-20 overflow-visible">
         {/* Pointing mascot — feet break into the card */}
         <img
           src={mascotPointingImg}
