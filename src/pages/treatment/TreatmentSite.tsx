@@ -149,9 +149,8 @@ const TreatmentSite = () => {
                   <circle
                     cx={site.cx} cy={site.cy}
                     r={isSelected ? 9 : 7}
-                    fill={isSelected ? `url(#${GRAD_ID})` : "hsl(0 0% 90%)"}
-                    stroke={isSelected ? "none" : "hsl(0 0% 80%)"}
-                    strokeWidth="1.5"
+                    fill={isSelected ? `url(#${GRAD_ID})` : "#E5E5E5"}
+                    stroke="none"
                     style={{ transition: "all 0.3s ease" }}
                   />
                   {isSelected && (
