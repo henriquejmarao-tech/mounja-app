@@ -468,7 +468,7 @@ const Triage = () => {
   const stepsWithBack = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23];
   const showBackInProgress = stepsWithBack.includes(step);
   // Auto-advance steps (no button)
-   const noButtonSteps = [24];
+   const noButtonSteps = [24, 25];
   const showNextBtn = !noButtonSteps.includes(step);
 
   const buttonLabel = step === 23 ? "Criar meu plano" : step === 8 ? "Vamos lá" : step === 7 ? "Perfeito, continuar" : step === 5 ? "Entendi, vamos lá" : step === 0 ? "Próximo" : "Continuar";
