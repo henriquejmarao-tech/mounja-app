@@ -25,6 +25,7 @@ import MotivationStep from "@/components/triage/MotivationStep";
 import AppPreviewStep from "@/components/triage/AppPreviewStep";
 import HelpNeedsStep from "@/components/triage/HelpNeedsStep";
 import ConfirmationStep from "@/components/triage/ConfirmationStep";
+import TreatmentIntroStep from "@/components/triage/TreatmentIntroStep";
 
 /* ─── Scroll Picker Component ─── */
 const ScrollPicker = ({
@@ -433,7 +434,7 @@ const Triage = () => {
    const noButtonSteps = [24];
   const showNextBtn = !noButtonSteps.includes(step);
 
-  const buttonLabel = step === 23 ? "Criar meu plano" : step === 7 ? "Perfeito, continuar" : step === 5 ? "Entendi, vamos lá" : step === 0 ? "Próximo" : "Continuar";
+  const buttonLabel = step === 23 ? "Criar meu plano" : step === 8 ? "Vamos lá" : step === 7 ? "Perfeito, continuar" : step === 5 ? "Entendi, vamos lá" : step === 0 ? "Próximo" : "Continuar";
 
   const renderStep = () => {
     switch (step) {
@@ -496,13 +497,7 @@ const Triage = () => {
 
       // ===== 8: Treatment intro =====
       case 8:
-        return (
-          <div className="flex-1 flex flex-col items-center justify-center px-8">
-            <h1 className="text-3xl font-bold text-foreground text-center leading-tight">
-              Agora vamos conhecer melhor o seu tratamento
-            </h1>
-          </div>
-        );
+        return <TreatmentIntroStep />;
 
       // ===== 9: Dose input =====
       case 9:
