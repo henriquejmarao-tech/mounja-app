@@ -391,7 +391,7 @@ const Dashboard = () => {
         </div>
 
       {/* ── My daily check-in ── */}
-      <div className="px-5 mb-5 animate-fade-in-up" style={{ animationDelay: "80ms" }}>
+      <div className="px-5 mb-6 animate-fade-in-up" style={{ animationDelay: "80ms" }}>
         <h2 className="text-lg font-bold text-foreground mb-3">
           {isSelectedToday ? "Meu check-in diário" : `Check-in de ${selectedDate.toLocaleDateString("pt-BR", { day: "numeric", month: "short" })}`}
         </h2>
@@ -412,7 +412,7 @@ const Dashboard = () => {
               done: !!todayLog?.weight,
             },
             {
-              label: "Fotos de\nprogresso",
+              label: "Progresso\nvisual",
               emoji: "📸",
               bg: "bg-card",
               action: () => setPhotoDrawerOpen(true),
@@ -423,26 +423,26 @@ const Dashboard = () => {
               key={i}
               onClick={item.action}
               className={cn(
-                "rounded-2xl p-4 shadow-card flex flex-col items-center gap-2 active:scale-95 transition-transform relative",
+                "rounded-2xl p-3.5 shadow-card flex flex-col items-center gap-2 active:scale-95 transition-all relative",
                 item.bg,
                 item.done ? "border border-border/50" : "gradient-border-spin"
               )}
+              style={item.done ? { background: "hsl(var(--primary) / 0.06)" } : undefined}
             >
               <span className="text-sm font-semibold text-foreground text-center whitespace-pre-line leading-tight">
                 {item.label}
               </span>
               <span className="text-xl">{item.emoji}</span>
-              {/* Checkbox */}
+              {/* Checkbox — gradient when done */}
               <div
                 className={cn(
                   "w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all",
                   item.done
-                    ? "border-transparent"
+                    ? "border-transparent gradient-hero"
                     : "border-border/60 bg-transparent"
                 )}
-                style={item.done ? { background: "hsl(15, 75%, 75%)" } : undefined}
               >
-                {item.done && <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />}
+                {item.done && <Check className="w-3.5 h-3.5 text-white animate-scale-in" strokeWidth={3} />}
               </div>
             </button>
           ))}
