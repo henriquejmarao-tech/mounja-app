@@ -133,11 +133,11 @@
     border-radius: calc(1.125rem + 2.5px);
     background: conic-gradient(
       from var(--gradient-angle, 0deg),
-      hsl(15 75% 75%),
-      hsl(340 65% 62%),
-      hsl(295 55% 42%),
-      hsl(340 65% 62%),
-      hsl(15 75% 75%)
+      hsl(270, 80%, 60%),
+      hsl(330, 80%, 65%),
+      hsl(290, 70%, 55%),
+      hsl(330, 80%, 65%),
+      hsl(270, 80%, 60%)
     );
     z-index: -1;
     animation: gradient-rotate 3s linear infinite;
