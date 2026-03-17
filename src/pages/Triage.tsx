@@ -1091,17 +1091,17 @@ const Triage = () => {
               {/* Summary - 3 items */}
               <div className="grid grid-cols-3 gap-3 mb-5 animate-fade-in" style={{ animationDelay: "0.2s" }}>
                 {[
-                  { icon: Utensils, label: "Calorias", value: "1700 kcal", sub: "Déficit ideal para você" },
-                  { icon: Trophy, label: "Proteína", value: "112g/dia", sub: "Para preservar massa magra" },
-                  { icon: CalendarCheck, label: "Aplicação", value: dayLabel, sub: "Consistência semanal" },
+                  { icon: Utensils, label: "META DE CALORIAS", value: "1700 kcal", sub: "Déficit ideal para você", accent: "#E8475F", accentBg: "rgba(232,71,95,0.08)" },
+                  { icon: Trophy, label: "PROTEÍNA DIÁRIA", value: "112g por dia", sub: "Para preservar massa magra", accent: "#E8863C", accentBg: "rgba(232,134,60,0.08)" },
+                  { icon: CalendarCheck, label: "DIA DA APLICAÇÃO", value: `${dayLabel}-feira`, sub: "Consistência semanal", accent: "#7B2FF7", accentBg: "rgba(123,47,247,0.08)" },
                 ].map((item, i) => (
-                  <div key={i} className="rounded-2xl p-3 text-center" style={{ background: "#fff", border: "1px solid #F0F0F0" }}>
-                    <div className="w-8 h-8 rounded-lg mx-auto mb-1.5 flex items-center justify-center" style={{ background: "linear-gradient(135deg, rgba(123,47,247,0.08), rgba(248,87,166,0.08))" }}>
-                      <item.icon className="w-4 h-4" style={{ color: "#7B2FF7" }} />
+                  <div key={i} className="rounded-2xl p-3 text-center flex flex-col items-center" style={{ background: "#fff", border: "1px solid #F0F0F0" }}>
+                    <div className="w-9 h-9 rounded-xl mx-auto mb-2 flex items-center justify-center" style={{ background: item.accentBg }}>
+                      <item.icon className="w-4 h-4" style={{ color: item.accent }} />
                     </div>
-                    <p className="text-[10px] font-semibold uppercase tracking-wide mb-0.5" style={{ color: "#AAA" }}>{item.label}</p>
-                    <p className="text-sm font-bold" style={{ color: "#1A1A1A" }}>{item.value}</p>
-                    <p className="text-[10px] mt-1 leading-tight" style={{ color: "#AAA" }}>{item.sub}</p>
+                    <p className="text-[8px] font-bold uppercase tracking-wider mb-1" style={{ color: "#BBB", letterSpacing: "0.08em" }}>{item.label}</p>
+                    <p className="text-base font-extrabold leading-tight mb-1.5" style={{ color: "#1A1A1A" }}>{item.value}</p>
+                    <p className="text-[10px] leading-tight" style={{ color: "#AAA" }}>{item.sub}</p>
                   </div>
                 ))}
               </div>
