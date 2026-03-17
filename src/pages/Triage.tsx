@@ -816,7 +816,7 @@ const Triage = () => {
             <p className="text-sm text-center mb-6" style={{ color: "#999" }}>
               Falta só um passo rápido
             </p>
-            <div className="w-full">
+            <div className="w-full relative">
               <label className="text-xs font-semibold block mb-1.5" style={{ color: "#888" }}>Como você quer ser chamado?</label>
               <input
                 value={name}
