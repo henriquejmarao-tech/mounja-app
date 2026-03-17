@@ -12,7 +12,7 @@ interface HelpOption {
   value: string;
   label: string;
   highlight?: string;
-  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
+  icon: React.ComponentType<any>;
 }
 
 interface HelpNeedsStepProps {
