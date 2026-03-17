@@ -1042,7 +1042,11 @@ const Triage = () => {
 
         return (
           <div className="fixed inset-0 z-50 overflow-y-auto" style={{ background: "#FAFAFA" }}>
-            <div className="min-h-full flex flex-col px-6 pt-12 pb-10">
+            <div className="min-h-full flex flex-col px-6 pt-6 pb-10">
+              {/* Back button */}
+              <button onClick={back} className="self-start mb-4 text-muted-foreground">
+                <ArrowLeft className="w-5 h-5" />
+              </button>
               {/* Hero with mascot */}
               <div className="flex flex-col items-center text-center mb-6 animate-fade-in">
                 <img
