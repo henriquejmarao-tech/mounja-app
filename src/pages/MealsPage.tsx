@@ -443,6 +443,15 @@ const MealsPage = () => {
           onMealAdded={fetchData}
         />
       )}
+
+      {/* Premium Gate Modal */}
+      <PremiumGateModal
+        open={premiumModalOpen}
+        onOpenChange={setPremiumModalOpen}
+        title="Recurso premium"
+        description="O registro de refeições com foto está disponível no plano premium."
+        ctaLabel="Fazer upgrade"
+      />
     </div>
   );
 };
