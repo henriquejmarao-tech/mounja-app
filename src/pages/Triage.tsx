@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { saveTriageData, clearTriageData } from "@/hooks/useTriageStorage";
 import { localDateStr } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
-import { buttonVariants } from "@/components/ui/button";
+
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -772,16 +772,6 @@ const Triage = () => {
                 style={{
                   border: "1.5px solid #E5E5E5",
                   boxShadow: "0 2px 12px rgba(0,0,0,0.05)",
-                }}
-                classNames={{
-                  caption_label: "text-sm font-bold text-foreground",
-                  nav_button: cn(
-                    buttonVariants({ variant: "outline" }),
-                    "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 border-none"
-                  ),
-                  day_selected: "bg-transparent font-bold text-[#111] ring-2 ring-offset-1 ring-[#7B2FF7] scale-105 transition-all",
-                  day_today: "bg-[#F5F5F5] text-foreground font-medium",
-                  head_cell: "text-muted-foreground rounded-md w-9 font-medium text-[0.8rem]",
                 }}
               />
             </div>
