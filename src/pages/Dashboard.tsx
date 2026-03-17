@@ -179,7 +179,8 @@ const Dashboard = () => {
   const isTodayApplicationDay = useMemo(() => {
     if (!dose.nextApplicationAt) return false;
     const nextDateStr = localDateStr(new Date(dose.nextApplicationAt));
-    return todayStr === nextDateStr;
+    // Exact match OR overdue (nextApplicationAt is in the past/today = user should apply)
+    return todayStr === nextDateStr || nextDateStr <= todayStr;
   }, [dose.nextApplicationAt, todayStr]);
 
   const todayHasInjection = weekInjections.has(todayStr);
@@ -270,7 +271,7 @@ const Dashboard = () => {
         </div>
       )}
 
-        {/* ── Header with avatar + month + notifications ── */}
+        {/* ── Header ── */}
         <div className="relative pt-safe px-5 pb-1 flex items-center justify-between">
           <button
             onClick={() => navigate("/perfil")}
@@ -278,12 +279,19 @@ const Dashboard = () => {
           >
             {(profile?.username?.[0] || profile?.name?.[0] || "U").toUpperCase()}
           </button>
-          <button
-            onClick={() => setCalendarDrawerOpen(true)}
-            className="bg-muted/60 px-4 py-1.5 rounded-full active:scale-95 transition-all shadow-sm"
-          >
-            <p className="text-sm font-bold text-foreground">{monthLabel}</p>
-          </button>
+          {showApplicationDayMode && !applicationDayCompleted ? (
+            <div className="flex flex-col items-center">
+              <p className="text-sm font-bold text-foreground">Hoje é dia de aplicação</p>
+              <p className="text-[10px] text-muted-foreground font-medium">Mantenha sua consistência semanal</p>
+            </div>
+          ) : (
+            <button
+              onClick={() => setCalendarDrawerOpen(true)}
+              className="bg-muted/60 px-4 py-1.5 rounded-full active:scale-95 transition-all shadow-sm"
+            >
+              <p className="text-sm font-bold text-foreground">{monthLabel}</p>
+            </button>
+          )}
           <button
             onClick={() => setWhatsNewOpen(true)}
             className="p-2 -mr-2 active:scale-90 transition-transform"
@@ -327,80 +335,89 @@ const Dashboard = () => {
 
         {/* ── APPLICATION DAY MODE HERO ── */}
         {showApplicationDayMode && hasTreatment ? (
-          <div className="relative animate-fade-in-up pb-6">
-            {/* Mascot */}
-            <div className="flex justify-center mt-1 mb-2">
-              <img src={mascotSitting} alt="" className="w-14 h-14 opacity-80" />
-            </div>
-
-            <div className="flex flex-col items-center justify-center text-center px-6">
-              {applicationDayCompleted ? (
-                <>
-                  {/* Completed state */}
-                  <div className="w-14 h-14 rounded-full bg-emerald-100 flex items-center justify-center mb-3 animate-scale-in">
+          <div className="relative animate-fade-in-up pb-4 px-5">
+            {applicationDayCompleted ? (
+              /* ── Completed state ── */
+              <div className="rounded-3xl p-6 text-center"
+                style={{ background: "linear-gradient(135deg, hsl(150, 35%, 94%) 0%, hsl(160, 25%, 96%) 100%)" }}>
+                <div className="flex justify-center mb-3">
+                  <div className="w-14 h-14 rounded-full bg-white/80 flex items-center justify-center animate-scale-in shadow-sm">
                     <Check className="w-7 h-7 text-emerald-600" strokeWidth={2.5} />
                   </div>
-                  <p className="text-2xl font-extrabold text-foreground tracking-tight">
-                    Aplicação registrada
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-1.5 font-medium">
-                    Próxima dose em {dose.applicationIntervalDays} dias
-                  </p>
-                  <button
-                    onClick={() => navigate("/plano-tratamento")}
-                    className="mt-5 bg-card text-foreground px-8 py-3 rounded-full text-[14px] font-bold border border-border/50 shadow-card active:scale-95 transition-transform"
-                  >
-                    Ver plano de tratamento
-                  </button>
-                </>
-              ) : (
-                <>
-                  {/* Active application day — urgent but warm */}
-                  <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full mb-4"
-                    style={{ background: "linear-gradient(135deg, rgba(123,47,247,0.1) 0%, rgba(248,87,166,0.1) 100%)" }}>
-                    <span className="text-sm">💉</span>
-                    <span className="text-[12px] font-bold" style={{
-                      background: "linear-gradient(to right, #7B2FF7, #F857A6)",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent"
-                    }}>Dia de aplicação</span>
-                  </div>
+                </div>
+                <p className="text-xl font-extrabold text-foreground tracking-tight">
+                  Aplicação registrada ✓
+                </p>
+                <p className="text-sm text-muted-foreground mt-1 font-medium">
+                  Próxima dose em {dose.applicationIntervalDays} dias
+                </p>
+                <button
+                  onClick={() => navigate("/plano-tratamento")}
+                  className="mt-4 bg-white text-foreground px-7 py-2.5 rounded-full text-[13px] font-bold border border-border/50 shadow-sm active:scale-95 transition-transform"
+                >
+                  Ver plano de tratamento
+                </button>
+              </div>
+            ) : (
+              /* ── Active application day — gradient hero card ── */
+              <div className="rounded-3xl p-6 pb-7 text-center relative overflow-hidden"
+                style={{
+                  background: "linear-gradient(135deg, #7B2FF7 0%, #C64BAF 50%, #F857A6 100%)",
+                  boxShadow: "0 12px 32px rgba(123, 47, 247, 0.2), 0 4px 12px rgba(248, 87, 166, 0.15)",
+                }}>
+                {/* Subtle inner glow */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[300px] h-[200px] rounded-full opacity-20 pointer-events-none"
+                  style={{ background: "radial-gradient(circle, white 0%, transparent 70%)", filter: "blur(40px)" }} />
+                
+                {/* Mascot */}
+                <div className="flex justify-center mb-2 relative">
+                  <img src={mascotSitting} alt="" className="w-12 h-12 drop-shadow-lg" />
+                </div>
 
-                  <p className="text-[28px] font-extrabold text-foreground tracking-tight leading-tight">
-                    Hoje é dia de{"\n"}aplicação
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-2 font-medium max-w-[260px]">
-                    Mantenha sua rotina em dia e registre sua dose
-                  </p>
+                {/* Badge */}
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full mb-3"
+                  style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)" }}>
+                  <span className="text-xs">💉</span>
+                  <span className="text-[11px] font-bold text-white/90">Dia importante</span>
+                </div>
 
-                  {/* Dose badge */}
-                  <div className="mt-4 bg-card rounded-full px-5 py-2 border border-border/50 shadow-sm">
-                    <span className="text-sm font-bold text-foreground">
-                      {dose.currentDose} de Mounjaro®
-                    </span>
-                  </div>
+                <p className="text-white text-[22px] font-extrabold tracking-tight leading-tight">
+                  Hoje é dia de{"\n"}aplicação
+                </p>
+                <p className="text-white/70 text-[13px] mt-1.5 font-medium">
+                  Mantenha sua rotina em dia e registre sua dose
+                </p>
 
-                  {/* Primary CTA — dominant */}
+                {/* Dose */}
+                <div className="mt-3 inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full"
+                  style={{ background: "rgba(255,255,255,0.15)" }}>
+                  <span className="text-[13px] font-bold text-white">
+                    {dose.currentDose} de Mounjaro®
+                  </span>
+                </div>
+
+                {/* CTA */}
+                <div className="mt-5">
                   <button
                     onClick={() => navigate("/registrar-aplicacao")}
-                    className="mt-5 px-12 py-4 rounded-full text-[16px] font-bold text-white active:scale-95 transition-all animate-cta-entrance"
+                    className="w-full py-4 rounded-2xl text-[15px] font-bold active:scale-[0.97] transition-all"
                     style={{
-                      background: "linear-gradient(to right, #7B2FF7, #F857A6)",
-                      boxShadow: "0px 8px 24px rgba(123, 47, 247, 0.25), 0px 2px 8px rgba(248, 87, 166, 0.15)",
-                      transform: "scale(1.05)",
+                      background: "white",
+                      color: "#7B2FF7",
+                      boxShadow: "0 4px 16px rgba(0,0,0,0.1)",
                     }}
                   >
                     Registrar aplicação
                   </button>
-                </>
-              )}
-              <button
-                onClick={() => navigate("/progress")}
-                className="mt-2 text-foreground/40 text-[11px] font-medium opacity-60"
-              >
-                Ver tudo
-              </button>
-            </div>
+                </div>
+              </div>
+            )}
+            <button
+              onClick={() => navigate("/progress")}
+              className="mt-2 w-full text-center text-foreground/40 text-[11px] font-medium opacity-60"
+            >
+              Ver tudo
+            </button>
           </div>
         ) : (
           <>
