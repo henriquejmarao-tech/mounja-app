@@ -809,18 +809,39 @@ const Triage = () => {
       // ===== 16: Personal intro =====
       case 16:
         return (
-          <div className="flex-1 flex flex-col items-center px-8">
-            <h1 className="text-2xl font-bold text-foreground text-center mt-2 mb-2">
-              Agora vamos te conhecer melhor
+          <div className="flex-1 flex flex-col items-center px-8" style={{ animation: "fadeUp 0.4s ease-out" }}>
+            <h1 className="text-xl font-extrabold text-foreground text-center mt-2 mb-1">
+              Vamos montar seu plano personalizado
             </h1>
-            <p className="text-sm text-muted-foreground text-center mb-6">
-              Isso nos ajuda a personalizar sua experiência no Mounjá
+            <p className="text-sm text-center mb-6" style={{ color: "#999" }}>
+              Falta só um passo rápido
             </p>
-            <div className="w-full mb-6">
-              <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Seu nome</label>
-              <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Como quer ser chamado?"
-                className="w-full px-4 py-3.5 rounded-2xl border border-border bg-card text-base focus:ring-2 focus:ring-foreground/20 focus:border-foreground outline-none" />
+            <div className="w-full relative">
+              <label className="text-xs font-semibold block mb-1.5" style={{ color: "#888" }}>Como você quer ser chamado?</label>
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Seu nome"
+                autoFocus
+                className="w-full px-4 py-3.5 rounded-2xl text-base outline-none transition-all duration-300"
+                style={{
+                  background: "#fff",
+                  border: name ? "none" : "1.5px solid #E5E5E5",
+                  boxShadow: name ? "0 0 0 2px rgba(123,47,247,0.15)" : "0 1px 4px rgba(0,0,0,0.04)",
+                }}
+              />
+              {name && (
+                <div className="absolute inset-0 rounded-2xl pointer-events-none" style={{
+                  padding: 1.5,
+                  background: "linear-gradient(135deg, #7B2FF7 0%, #F857A6 100%)",
+                  WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                  WebkitMaskComposite: "xor",
+                  maskComposite: "exclude" as any,
+                }} />
+              )}
+              <p className="text-xs mt-2" style={{ color: "#bbb" }}>Usaremos isso para personalizar sua experiência</p>
             </div>
+            <style>{`@keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }`}</style>
           </div>
         );
 
