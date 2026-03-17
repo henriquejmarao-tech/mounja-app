@@ -414,6 +414,7 @@ const ProgressPage = () => {
       <WeightTrendsDrawer open={weightDrawerOpen} onOpenChange={setWeightDrawerOpen} weightHistory={weightData.map(({ date, peso }) => ({ date, peso }))} />
       <WeightPickerDrawer open={startWeightDrawer} onOpenChange={setStartWeightDrawer} initialWeight={initialWeight ? Number(initialWeight) : 74} onSave={saveStartWeight} />
       <WeightPickerDrawer open={goalWeightDrawer} onOpenChange={setGoalWeightDrawer} initialWeight={goalWeight ?? 65} onSave={saveGoalWeight} />
+      <PhotoGalleryDrawer open={galleryOpen} onOpenChange={setGalleryOpen} initialIndex={galleryInitialIndex} onPhotosChanged={fetchData} />
     </div>
   );
 };
