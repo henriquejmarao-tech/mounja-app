@@ -191,20 +191,17 @@ const Auth = () => {
         /* ── Default hero: logo ── */
         <div className="flex flex-col items-center pt-20 pb-6 px-8 shrink-0">
           <img src={logoMounja} alt="Mounjá" className="h-24 w-auto mb-2 object-contain drop-shadow-lg" />
-          <p className="text-sm italic font-medium" style={{ color: "#999" }}>
-            {isLogin ? "Que bom te ver de novo" : "Aqui para caminhar com você."}
+          <h1 className="text-xl font-extrabold text-center mb-1" style={{ color: "#1A1A1A" }}>
+            {isLogin ? "Bem-vindo de volta" : "Crie sua conta"}
+          </h1>
+          <p className="text-sm text-center font-medium" style={{ color: "#999" }}>
+            {isLogin ? "Acesse seu plano e acompanhe seu progresso" : "Aqui para caminhar com você."}
           </p>
         </div>
       )}
 
       {/* Form area */}
       <div className="flex-1 px-6 pb-10">
-        {/* Only show subtitle for non-triage flows */}
-        {!(hasTriage && !isLogin) && (
-          <p className="text-center text-sm mb-5 font-medium" style={{ color: "#999" }}>
-            {isLogin ? "Acesse sua conta" : "Crie sua conta gratuita"}
-          </p>
-        )}
 
         {/* Google Login */}
         <button
