@@ -330,9 +330,25 @@ const Triage = () => {
   };
 
   const next = () => {
-    if (step < TOTAL_STEPS - 1) setStep(step + 1);
+    if (step < TOTAL_STEPS - 1) {
+      let nextStep = step + 1;
+      // Skip interval step (14) for daily/weekly — auto-set interval
+      if (nextStep === 14 && frequency !== "custom") {
+        if (frequency === "daily") setDoseIntervalDays(1);
+        if (frequency === "weekly") setDoseIntervalDays(7);
+        nextStep = 15;
+      }
+      setStep(nextStep);
+    }
   };
-  const back = () => { if (step > 0) setStep(step - 1); };
+  const back = () => {
+    if (step > 0) {
+      let prevStep = step - 1;
+      // Skip interval step (14) going back for daily/weekly
+      if (prevStep === 14 && frequency !== "custom") prevStep = 13;
+      setStep(prevStep);
+    }
+  };
 
   const deriveGoal = () => {
     if (motivations.includes("health_control")) return "weight_loss";
@@ -782,8 +798,8 @@ const Triage = () => {
       case 14:
         return (
           <div className="flex-1 flex flex-col px-6">
-            <h1 className="text-2xl font-bold text-foreground text-center mb-2 mt-4">De quantos em quantos dias você aplica?</h1>
-            <p className="text-sm text-muted-foreground text-center mb-8">Qual o intervalo entre suas doses?</p>
+            <h1 className="text-xl font-extrabold text-foreground text-center mb-1 mt-4">Defina seu intervalo de aplicação</h1>
+            <p className="text-sm text-center mb-8" style={{ color: "#999" }}>A cada quantos dias você aplica?</p>
             <div className="flex-1 flex items-center justify-center">
               <div className="flex items-center gap-4">
                 <span className="text-lg font-medium text-foreground">A cada</span>
