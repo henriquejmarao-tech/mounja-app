@@ -209,7 +209,7 @@ const Dashboard = () => {
       style={{ background: heroGradient }}
     >
       {/* ── Animated floating blobs — only on injection days ── */}
-      {isInjectionDayVisual && (
+      {isInjectionDayVisual && !showApplicationDayMode && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           {/* Top-center glow */}
           <div
