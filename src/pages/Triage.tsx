@@ -28,6 +28,7 @@ import HelpNeedsStep from "@/components/triage/HelpNeedsStep";
 import ConfirmationStep from "@/components/triage/ConfirmationStep";
 import TreatmentIntroStep from "@/components/triage/TreatmentIntroStep";
 import AlternateSitesStep from "@/components/triage/AlternateSitesStep";
+import ResultsChartStep from "@/components/triage/ResultsChartStep";
 
 /* ─── Scroll Picker Component ─── */
 const ScrollPicker = ({
