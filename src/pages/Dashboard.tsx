@@ -369,10 +369,6 @@ const Dashboard = () => {
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[300px] h-[200px] rounded-full opacity-20 pointer-events-none"
                   style={{ background: "radial-gradient(circle, white 0%, transparent 70%)", filter: "blur(40px)" }} />
                 
-                {/* Mascot */}
-                <div className="flex justify-center mb-2 relative">
-                  <img src={mascotSitting} alt="" className="w-12 h-12 drop-shadow-lg" />
-                </div>
 
                 {/* Badge */}
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full mb-3"
