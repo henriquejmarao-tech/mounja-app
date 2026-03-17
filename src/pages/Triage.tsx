@@ -813,33 +813,44 @@ const Triage = () => {
             <h1 className="text-xl font-extrabold text-foreground text-center mt-2 mb-1">
               Vamos montar seu plano personalizado
             </h1>
-            <p className="text-sm text-center mb-6" style={{ color: "#999" }}>
+            <p className="text-sm text-center mb-4" style={{ color: "#999" }}>
               Falta só um passo rápido
             </p>
-            <div className="w-full relative">
-              <label className="text-xs font-semibold block mb-1.5" style={{ color: "#888" }}>Como você quer ser chamado?</label>
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Seu nome"
-                autoFocus
-                className="w-full px-4 py-3.5 rounded-2xl text-base outline-none transition-all duration-300"
-                style={{
-                  background: "#fff",
-                  border: name ? "none" : "1.5px solid #E5E5E5",
-                  boxShadow: name ? "0 0 0 2px rgba(123,47,247,0.15)" : "0 1px 4px rgba(0,0,0,0.04)",
-                }}
-              />
-              {name && (
-                <div className="absolute inset-0 rounded-2xl pointer-events-none" style={{
-                  padding: 1.5,
+            <div className="w-full">
+              <label className="text-xs font-semibold block mb-1.5" style={{ color: "#888" }}>Como podemos te chamar?</label>
+              <div className="relative">
+                <input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Seu nome"
+                  autoFocus
+                  className="w-full px-4 py-3.5 rounded-2xl text-base outline-none transition-all duration-300 peer"
+                  style={{
+                    background: "#fff",
+                    border: "1px solid #E5E5E5",
+                    boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.border = "1px solid transparent";
+                    e.currentTarget.style.boxShadow = "0 0 0 2px rgba(123,47,247,0.12)";
+                    const gb = e.currentTarget.parentElement?.querySelector('.focus-grad') as HTMLElement;
+                    if (gb) gb.style.opacity = "1";
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.border = "1px solid #E5E5E5";
+                    e.currentTarget.style.boxShadow = "0 1px 4px rgba(0,0,0,0.04)";
+                    const gb = e.currentTarget.parentElement?.querySelector('.focus-grad') as HTMLElement;
+                    if (gb) gb.style.opacity = "0";
+                  }}
+                />
+                <div className="focus-grad absolute inset-0 rounded-2xl pointer-events-none transition-opacity duration-300" style={{
+                  opacity: 0, padding: 1.5,
                   background: "linear-gradient(135deg, #7B2FF7 0%, #F857A6 100%)",
                   WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                  WebkitMaskComposite: "xor",
-                  maskComposite: "exclude" as any,
+                  WebkitMaskComposite: "xor", maskComposite: "exclude" as any,
                 }} />
-              )}
-              <p className="text-xs mt-2" style={{ color: "#bbb" }}>Usaremos isso para personalizar sua experiência</p>
+              </div>
+              <p className="text-xs mt-1.5" style={{ color: "#bbb" }}>Usaremos isso para personalizar sua experiência</p>
             </div>
             <style>{`@keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }`}</style>
           </div>
