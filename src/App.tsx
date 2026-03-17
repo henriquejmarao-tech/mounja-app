@@ -138,6 +138,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <PwaUpdater />
+      <InstallPrompt />
       <BrowserRouter>
         <AuthProvider>
           <ApplicationDataProvider>
