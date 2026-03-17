@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { Scale, Camera, ClipboardList, Lightbulb, Bell, Sparkles, Check, ChevronRight } from "lucide-react";
-import mascotSitting from "@/assets/mascot-sitting.png";
+
 import { cn, localDateStr, diffCalendarDays } from "@/lib/utils";
 import { toast } from "sonner";
 import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
@@ -369,10 +369,6 @@ const Dashboard = () => {
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[300px] h-[200px] rounded-full opacity-20 pointer-events-none"
                   style={{ background: "radial-gradient(circle, white 0%, transparent 70%)", filter: "blur(40px)" }} />
                 
-                {/* Mascot */}
-                <div className="flex justify-center mb-2 relative">
-                  <img src={mascotSitting} alt="" className="w-12 h-12 drop-shadow-lg" />
-                </div>
 
                 {/* Badge */}
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full mb-3"
@@ -421,10 +417,6 @@ const Dashboard = () => {
           </div>
         ) : (
           <>
-            {/* Mascot — light touch */}
-            <div className="flex justify-center -mb-2 animate-mascot-float">
-              <img src={mascotSitting} alt="" className="w-12 h-12 opacity-60" />
-            </div>
 
             {/* Normal Hero content */}
             <div className="relative animate-fade-in-up pb-10">
