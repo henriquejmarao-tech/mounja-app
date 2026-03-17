@@ -104,10 +104,27 @@ const ScrollPicker = ({
   return (
     <div className="relative flex items-center justify-center gap-2">
       <div className="relative" style={{ height: containerHeight }}>
-        {/* Selection highlight */}
+        {/* Selection highlight — gradient border, white bg */}
         <div
-          className="absolute left-0 right-0 bg-triage-action/15 rounded-xl z-0 pointer-events-none"
-          style={{ top: padCount * itemHeight, height: itemHeight }}
+          className="absolute left-0 right-0 rounded-xl z-0 pointer-events-none"
+          style={{
+            top: padCount * itemHeight,
+            height: itemHeight,
+            background: "#fff",
+            boxShadow: "0 1px 6px rgba(0,0,0,0.06)",
+          }}
+        />
+        <div
+          className="absolute left-0 right-0 rounded-xl z-0 pointer-events-none"
+          style={{
+            top: padCount * itemHeight,
+            height: itemHeight,
+            padding: 1.5,
+            background: "linear-gradient(135deg, #7B2FF7 0%, #F857A6 100%)",
+            WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+            WebkitMaskComposite: "xor",
+            maskComposite: "exclude" as any,
+          }}
         />
         {/* Gradient masks */}
         <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-background to-transparent z-10 pointer-events-none" />
@@ -618,20 +635,36 @@ const Triage = () => {
         return <AlternateSitesStep value={alternatesSites} onChange={setAlternatesSites} />;
 
       // ===== 12: Frequency =====
-      case 12:
+      case 12: {
+        const SGRAD = "linear-gradient(135deg, #7B2FF7 0%, #F857A6 100%)";
         return (
           <div className="flex-1 flex flex-col px-6 overflow-y-auto">
-            <h1 className="text-2xl font-bold text-foreground text-center mb-6 mt-4">Quando você aplica {medication || "seu medicamento"}?</h1>
+            <h1 className="text-xl font-extrabold text-foreground text-center mb-6 mt-4">Quando você aplica {medication || "seu medicamento"}?</h1>
             <div className="mb-5">
               <p className="text-sm font-semibold text-foreground mb-2">Frequência</p>
-              <div className="flex bg-muted rounded-xl p-1">
-                {(["daily", "weekly", "custom"] as const).map((f) => (
-                  <button key={f} onClick={() => setFrequency(f)}
-                    className={cn("flex-1 py-2.5 rounded-lg text-sm font-medium transition-all",
-                      frequency === f ? "bg-card text-triage-action shadow-sm font-bold" : "text-muted-foreground")}>
-                    {f === "daily" ? "Diário" : f === "weekly" ? "Semanal" : "Personalizado"}
-                  </button>
-                ))}
+              <div className="flex rounded-xl p-1" style={{ background: "#F5F5F5" }}>
+                {(["daily", "weekly", "custom"] as const).map((f) => {
+                  const isSel = frequency === f;
+                  return (
+                    <button key={f} onClick={() => setFrequency(f)}
+                      className="flex-1 py-2.5 rounded-lg text-sm font-medium transition-all relative"
+                      style={{
+                        color: isSel ? "#222" : "#999",
+                        fontWeight: isSel ? 700 : 500,
+                        background: isSel ? "#fff" : "transparent",
+                        boxShadow: isSel ? "0 1px 4px rgba(0,0,0,0.06)" : "none",
+                      }}>
+                      {isSel && (
+                        <div className="absolute inset-0 rounded-lg pointer-events-none" style={{
+                          padding: 1.5, background: SGRAD,
+                          WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                          WebkitMaskComposite: "xor", maskComposite: "exclude" as any,
+                        }} />
+                      )}
+                      <span className="relative z-10">{f === "daily" ? "Diário" : f === "weekly" ? "Semanal" : "Personalizado"}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
             <div className="border-t border-border/50 mb-5" />
@@ -639,13 +672,29 @@ const Triage = () => {
               <div className="mb-5">
                 <p className="text-sm font-semibold text-foreground mb-3">Dia da aplicação</p>
                 <div className="flex gap-2 justify-center">
-                  {weekDays.map((d, i) => (
-                    <button key={i} onClick={() => setApplicationDay(i)}
-                      className={cn("w-10 h-10 rounded-full text-sm font-semibold transition-all",
-                        applicationDay === i ? "bg-triage-action text-white" : "text-muted-foreground")}>
-                      {d.short}
-                    </button>
-                  ))}
+                  {weekDays.map((d, i) => {
+                    const isSel = applicationDay === i;
+                    return (
+                      <button key={i} onClick={() => setApplicationDay(i)}
+                        className="w-10 h-10 rounded-full text-sm font-semibold transition-all relative"
+                        style={{
+                          background: "#fff",
+                          border: isSel ? "none" : "1.5px solid #E5E5E5",
+                          color: isSel ? "#222" : "#999",
+                          transform: isSel ? "scale(1.05)" : "scale(1)",
+                          boxShadow: isSel ? "0 0 0 2px rgba(123,47,247,0.15)" : "none",
+                        }}>
+                        {isSel && (
+                          <div className="absolute inset-0 rounded-full pointer-events-none" style={{
+                            padding: 2, background: SGRAD,
+                            WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                            WebkitMaskComposite: "xor", maskComposite: "exclude" as any,
+                          }} />
+                        )}
+                        <span className="relative z-10">{d.short}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -661,7 +710,7 @@ const Triage = () => {
               </div>
             )}
             <div className="border-t border-border/50 mb-5" />
-            <div className="mb-5">
+            <div className="mb-3">
               <p className="text-sm font-semibold text-foreground mb-3">Horário da aplicação</p>
               <div className="flex items-center justify-center gap-2">
                 <ScrollPicker
@@ -677,8 +726,10 @@ const Triage = () => {
                 />
               </div>
             </div>
+            <p className="text-xs text-center" style={{ color: "#aaa" }}>Você pode ajustar esse horário depois</p>
           </div>
         );
+      }
 
       // ===== 13: Last application date =====
       case 13:
