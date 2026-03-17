@@ -378,15 +378,19 @@ const ProgressPage = () => {
 
               {photos.length > 0 ? (
                 <div className="grid grid-cols-2 gap-3">
-                  {photos.slice(0, 4).map((photo) => (
-                    <div key={photo.id} className="flex flex-col gap-1">
+                  {photos.slice(0, 4).map((photo, idx) => (
+                    <button
+                      key={photo.id}
+                      onClick={() => { setGalleryInitialIndex(idx); setGalleryOpen(true); }}
+                      className="flex flex-col gap-1 active:scale-[0.97] transition-transform"
+                    >
                       <div className="rounded-2xl overflow-hidden aspect-[3/4] bg-muted">
                         <img src={photo.url} alt="Progresso" className="w-full h-full object-cover" />
                       </div>
                       <p className="text-[10px] text-muted-foreground text-center font-medium">
                         {new Date(photo.date + "T12:00:00").toLocaleDateString("pt-BR", { day: "numeric", month: "short" })}
                       </p>
-                    </div>
+                    </button>
                   ))}
                 </div>
               ) : (
