@@ -280,7 +280,7 @@ const PlanCard = ({
 
       <div
         className={cn(
-          "rounded-[21px] p-5 flex flex-col",
+          "rounded-[21px] p-5 flex flex-col min-h-[320px]",
           plan.muted ? "bg-muted/80" : "bg-card"
         )}
       >
