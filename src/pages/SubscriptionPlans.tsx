@@ -140,7 +140,7 @@ const SubscriptionPlans = () => {
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background overflow-hidden">
       {/* Header */}
-      <div className="pt-14 pb-1 px-6 text-center relative z-10">
+      <div className="pt-12 pb-0 px-6 text-center relative z-10">
         <h1 className="text-xl font-bold text-foreground">
           Escolha seu plano
         </h1>
