@@ -246,7 +246,9 @@ const MealsPage = () => {
             <ProgressRing
               value={caloriesCurrent}
               goal={caloriesGoal}
-              gradientId="ring-cal"
+              color="hsl(15, 65%, 65%)"
+              iconColor="hsl(15, 65%, 60%)"
+              icon={<Flame className="w-3.5 h-3.5" />}
               label="Calorias"
               unit=""
               size={100}
@@ -255,7 +257,9 @@ const MealsPage = () => {
             <ProgressRing
               value={proteinCurrent}
               goal={proteinGoal}
-              gradientId="ring-pro"
+              color="hsl(295, 45%, 50%)"
+              iconColor="hsl(295, 45%, 50%)"
+              icon={<Beef className="w-3.5 h-3.5" />}
               label="Proteína"
               unit="g"
               size={88}
@@ -264,7 +268,9 @@ const MealsPage = () => {
             <ProgressRing
               value={fiberCurrent}
               goal={fiberGoal}
-              gradientId="ring-fib"
+              color="hsl(160, 40%, 50%)"
+              iconColor="hsl(160, 40%, 50%)"
+              icon={<Leaf className="w-3.5 h-3.5" />}
               label="Fibra"
               unit="g"
               size={88}
