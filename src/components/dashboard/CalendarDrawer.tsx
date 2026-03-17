@@ -24,7 +24,7 @@ interface DayData {
 
 const CalendarDrawer = ({ open, onOpenChange }: CalendarDrawerProps) => {
   const { user } = useAuth();
-  const { setConfirmedApplication, refresh } = useApplicationData();
+  const { setConfirmedApplication, refresh, dose } = useApplicationData();
   const navigate = useNavigate();
 
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
