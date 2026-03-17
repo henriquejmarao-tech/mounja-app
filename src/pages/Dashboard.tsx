@@ -430,7 +430,7 @@ const Dashboard = () => {
                     ? "border-transparent"
                     : "border-border/60 bg-transparent"
                 )}
-                style={item.done ? { background: "hsl(15, 75%, 75%)" } : undefined}
+                style={item.done ? { background: "linear-gradient(135deg, hsl(270, 80%, 60%), hsl(330, 80%, 65%))" } : undefined}
               >
                 {item.done && <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />}
               </div>
