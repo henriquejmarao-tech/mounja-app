@@ -69,6 +69,7 @@ const TriageGuard = ({ children }: { children: React.ReactNode }) => {
     );
   }
   if (profile && !profile.triage_completed) return <Navigate to="/triagem" replace />;
+  if (profile && !profile.subscription_seen) return <Navigate to="/planos" replace />;
   return <>{children}</>;
 };
 
