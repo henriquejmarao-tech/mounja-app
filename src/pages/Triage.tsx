@@ -1044,7 +1044,7 @@ const Triage = () => {
           <div className="fixed inset-0 z-50 overflow-y-auto" style={{ background: "#FAFAFA" }}>
             <div className="min-h-full flex flex-col px-6 pt-6 pb-10">
               {/* Back button */}
-              <button onClick={back} className="self-start mb-4 text-muted-foreground">
+              <button onClick={() => setStep(23)} className="self-start mb-4 text-muted-foreground">
                 <ArrowLeft className="w-5 h-5" />
               </button>
               {/* Hero with mascot */}
