@@ -20,6 +20,7 @@ import mascotPointingImg from "@/assets/mascot-pointing.png";
 import WelcomeStep from "@/components/triage/WelcomeStep";
 import PrivacyStep from "@/components/triage/PrivacyStep";
 import MedicationStep from "@/components/triage/MedicationStep";
+import ExperienceStep from "@/components/triage/ExperienceStep";
 
 /* ─── Scroll Picker Component ─── */
 const ScrollPicker = ({
@@ -450,24 +451,15 @@ const Triage = () => {
           />
         );
 
-      // ===== 3: Experience (auto-advance) =====
+      // ===== 3: Experience =====
       case 3:
         return (
-          <div className="flex-1 flex flex-col px-6">
-            <h1 className="text-2xl font-bold text-foreground text-center mb-8 mt-4">
-              Há quanto tempo você usa {medication || "seu medicamento"}?
-            </h1>
-            <div className="space-y-3">
-              {experienceOptions.map((opt) => (
-                <button key={opt.value}
-                  onClick={() => { setExperience(opt.value); }}
-                  className={cn("w-full py-4 px-5 rounded-2xl text-base font-medium transition-all text-left",
-                    experience === opt.value ? "bg-triage-action text-white" : "bg-muted text-foreground")}>
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-          </div>
+          <ExperienceStep
+            medication={medication || "seu medicamento"}
+            options={experienceOptions}
+            selected={experience}
+            onSelect={(v) => setExperience(v)}
+          />
         );
 
       // ===== 4: Motivation =====
@@ -1035,7 +1027,7 @@ const Triage = () => {
           <button onClick={next} disabled={!canAdvance() || saving}
             className={cn("w-full font-bold py-4 rounded-[28px] flex items-center justify-center gap-2 transition-all duration-300 active:scale-[0.98]",
               canAdvance()
-                ? (step <= 2)
+                ? (step <= 3)
                   ? "gradient-hero text-primary-foreground shadow-elevated"
                   : "bg-triage-action text-white shadow-elevated"
                 : "bg-muted text-muted-foreground")}>
