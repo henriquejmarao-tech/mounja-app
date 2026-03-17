@@ -980,9 +980,7 @@ const Triage = () => {
           <button onClick={next} disabled={!canAdvance() || saving}
             className={cn("w-full font-bold py-4 rounded-[28px] flex items-center justify-center gap-2 transition-all duration-300 active:scale-[0.98]",
               canAdvance()
-                ? (step <= 4)
-                  ? "gradient-hero text-primary-foreground shadow-elevated"
-                  : "bg-triage-action text-white shadow-elevated"
+                ? "gradient-hero text-primary-foreground shadow-elevated"
                 : "bg-muted text-muted-foreground")}>
             {buttonLabel}
           </button>
