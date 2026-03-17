@@ -83,7 +83,9 @@ const ProgressRing = ({ value, goal, size = 100, stroke = 8, label, unit, color,
 const MealsPage = () => {
   const { user, profile, refreshProfile } = useAuth();
   const { latestWeight } = useApplicationData();
+  const { isFree } = usePlan();
   const navigate = useNavigate();
+  const [premiumModalOpen, setPremiumModalOpen] = useState(false);
 
   const [currentDate] = useState(new Date());
   const [waterGlasses, setWaterGlasses] = useState(0);
