@@ -167,34 +167,6 @@ const Auth = () => {
           </h1>
           <p className="text-xs text-center" style={{ color: "#999" }}>
             Seu plano já está pronto. Crie uma conta para não perder seus dados.
-          </p>
-
-          {/* Mini plan summary */}
-          <p className="text-[11px] font-bold uppercase tracking-wider mt-5 mb-2 self-start" style={{ color: "#BBB" }}>
-            Seu plano na prática
-          </p>
-          <div className="flex flex-col gap-2 w-full">
-            {[
-              { icon: TrendingDown, title: "Déficit diário ideal para você", value: "1700 kcal", subtitle: "Para perder gordura com consistência", accent: "#7B2FF7" },
-              { icon: Dumbbell, title: "Quantidade ideal de proteína diária", value: "112g por dia", subtitle: "Para preservar sua massa muscular", accent: "#F857A6" },
-              { icon: Utensils, title: "Dia da sua aplicação semanal", value: "Segunda-feira", subtitle: "Para manter o efeito do tratamento", accent: "#34B89A" },
-            ].map((item, i) => (
-              <div
-                key={i}
-                className="flex items-start gap-3 p-3 rounded-2xl"
-                style={{ background: "#fff", border: "1px solid #F0F0F0" }}
-              >
-                <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5" style={{ background: `${item.accent}12` }}>
-                  <item.icon className="w-4 h-4" style={{ color: item.accent }} />
-                </div>
-                <div className="flex flex-col min-w-0">
-                  <span className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: "#AAA" }}>{item.title}</span>
-                  <span className="text-base font-extrabold leading-tight" style={{ color: "#1A1A1A" }}>{item.value}</span>
-                  <span className="text-[11px] leading-snug mt-0.5" style={{ color: "#999" }}>{item.subtitle}</span>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       ) : (
         /* ── Default hero: logo ── */
