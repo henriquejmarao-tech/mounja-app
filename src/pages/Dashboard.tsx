@@ -24,6 +24,8 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { user, profile } = useAuth();
   const { dose, latestWeight } = useApplicationData();
+  const { isFree } = usePlan();
+  const [premiumModalOpen, setPremiumModalOpen] = useState(false);
 
   const [todayLog, setTodayLog] = useState<any>(null);
   const [weightHistory, setWeightHistory] = useState<{ date: string; peso: number }[]>([]);
