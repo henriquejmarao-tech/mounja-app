@@ -87,10 +87,9 @@ const MilestonesCard = ({ initialWeight, currentWeight, goalWeight }: Milestones
           <div className="flex-1">
             <div className="h-3 bg-muted/60 rounded-full overflow-hidden">
               <div
-                className="h-full rounded-full transition-all duration-500"
+                className="h-full rounded-full transition-all duration-500 gradient-hero"
                 style={{
                   width: `${milestoneData.progress}%`,
-                  background: "linear-gradient(90deg, hsl(250, 58%, 68%), hsl(250, 58%, 52%))",
                 }}
               />
             </div>

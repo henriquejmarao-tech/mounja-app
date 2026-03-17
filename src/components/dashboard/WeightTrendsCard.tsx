@@ -1,11 +1,12 @@
 import { useState, useMemo } from "react";
 import { AreaChart, Area, ResponsiveContainer, YAxis, XAxis, CartesianGrid } from "recharts";
 import { cn } from "@/lib/utils";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Scale } from "lucide-react";
 
 interface WeightTrendsCardProps {
   weightHistory: { date: string; peso: number }[];
   onExpand?: () => void;
+  onRegisterWeight?: () => void;
 }
 
 const periods = [
@@ -15,7 +16,7 @@ const periods = [
   { label: "All", days: 9999 },
 ];
 
-const WeightTrendsCard = ({ weightHistory, onExpand }: WeightTrendsCardProps) => {
+const WeightTrendsCard = ({ weightHistory, onExpand, onRegisterWeight }: WeightTrendsCardProps) => {
   const [activePeriod, setActivePeriod] = useState(0);
 
   const filteredData = useMemo(() => {
@@ -42,26 +43,32 @@ const WeightTrendsCard = ({ weightHistory, onExpand }: WeightTrendsCardProps) =>
         <h2 className="text-lg font-bold text-foreground">Tendência de peso</h2>
         <button
           onClick={() => onExpand?.()}
-          className="text-xs text-primary font-semibold flex items-center gap-0.5"
+          className="text-[11px] text-muted-foreground/50 font-semibold flex items-center gap-0.5"
         >
-          Ver mais <ChevronRight className="w-3.5 h-3.5" />
+          Ver mais <ChevronRight className="w-3 h-3" />
         </button>
       </div>
 
       {/* Period tabs */}
-      <div className="flex gap-0 mb-5 border-b border-border/50">
+      <div className="flex gap-0 mb-5 relative">
         {periods.map((p, i) => (
           <button
             key={p.label}
             onClick={() => setActivePeriod(i)}
             className={cn(
-              "flex-1 pb-2.5 text-sm font-semibold transition-all",
+              "flex-1 pb-2.5 text-sm font-semibold transition-all border-b",
               activePeriod === i
-                ? "text-primary border-b-2 border-primary"
-                : "text-muted-foreground"
+                ? "text-foreground border-transparent"
+                : "text-muted-foreground border-border/50"
             )}
           >
             {p.label}
+            {activePeriod === i && (
+              <div className="absolute bottom-0 tab-underline-gradient transition-all duration-300" style={{
+                left: `${(i / periods.length) * 100}%`,
+                width: `${100 / periods.length}%`,
+              }} />
+            )}
           </button>
         ))}
       </div>
@@ -78,15 +85,15 @@ const WeightTrendsCard = ({ weightHistory, onExpand }: WeightTrendsCardProps) =>
         </div>
       )}
 
-      {/* Chart */}
+      {/* Chart or Empty State */}
       {filteredData.length >= 2 ? (
         <div className="h-48 -mx-2">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={filteredData}>
               <defs>
                 <linearGradient id="weightGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="hsl(250, 58%, 58%)" stopOpacity={0.15} />
-                  <stop offset="100%" stopColor="hsl(250, 58%, 58%)" stopOpacity={0.02} />
+                  <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.15} />
+                  <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0.02} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.4} vertical={false} />
@@ -109,18 +116,34 @@ const WeightTrendsCard = ({ weightHistory, onExpand }: WeightTrendsCardProps) =>
               <Area
                 type="monotone"
                 dataKey="peso"
-                stroke="hsl(250, 58%, 58%)"
+                stroke="hsl(var(--primary))"
                 strokeWidth={2.5}
                 fill="url(#weightGradient)"
                 dot={false}
-                activeDot={{ r: 5, fill: "hsl(250, 58%, 58%)", stroke: "#fff", strokeWidth: 2 }}
+                activeDot={{ r: 5, fill: "hsl(var(--primary))", stroke: "#fff", strokeWidth: 2 }}
               />
             </AreaChart>
           </ResponsiveContainer>
         </div>
       ) : (
-        <div className="h-48 flex items-center justify-center text-sm text-muted-foreground">
-          Registre seu peso para ver o gráfico
+        <div className="h-48 flex flex-col items-center justify-center text-center px-4">
+          <div className="w-12 h-12 rounded-2xl bg-muted/40 flex items-center justify-center mb-3">
+            <Scale className="w-5 h-5 text-muted-foreground/40" />
+          </div>
+          <p className="text-sm font-semibold text-foreground/70 mb-1">
+            Registre seu peso hoje
+          </p>
+          <p className="text-xs text-muted-foreground mb-4">
+            para começar a visualizar sua evolução
+          </p>
+          {onRegisterWeight && (
+            <button
+              onClick={onRegisterWeight}
+              className="gradient-hero text-primary-foreground px-5 py-2 rounded-full text-xs font-bold active:scale-95 transition-transform"
+            >
+              Registrar peso
+            </button>
+          )}
         </div>
       )}
     </div>
