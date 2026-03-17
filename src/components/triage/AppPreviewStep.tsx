@@ -87,8 +87,11 @@ const AppPreviewStep = () => {
           {["D", "S", "T", "Q", "Q", "S", "S"].map((d, i) => (
             <div key={i} className="text-center">
               <span className="text-[10px] text-muted-foreground">{d}</span>
-              <div className={cn("w-8 h-8 rounded-full flex items-center justify-center text-xs mt-1",
-                i === 3 ? "bg-triage-action text-white font-bold" : "text-muted-foreground")}>
+              <div
+                className={cn("w-8 h-8 rounded-full flex items-center justify-center text-xs mt-1",
+                  i === 3 ? "text-primary-foreground font-bold" : "text-muted-foreground")}
+                style={i === 3 ? { background: "linear-gradient(135deg, hsl(295 55% 42%), hsl(340 65% 62%), hsl(15 75% 75%))" } : undefined}
+              >
                 {new Date().getDate() - 3 + i}
               </div>
             </div>
