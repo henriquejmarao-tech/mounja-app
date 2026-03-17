@@ -476,7 +476,7 @@ const Dashboard = () => {
 
 
       {/* ── Side Effect History ── */}
-      <div className="px-5 mb-4 animate-fade-in-up" style={{ animationDelay: "240ms" }}>
+      <div className="px-5 mb-6 animate-fade-in-up" style={{ animationDelay: "240ms" }}>
         <SideEffectHistoryCard selectedDate={selectedDateStr} />
       </div>
 
