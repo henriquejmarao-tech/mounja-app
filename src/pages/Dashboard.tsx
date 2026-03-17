@@ -94,6 +94,20 @@ const Dashboard = () => {
     return today.toLocaleDateString("en-US", { month: "long", day: "numeric" });
   }, []);
 
+  // Refetch todayLog + hasPhotoToday when selected date changes
+  useEffect(() => {
+    if (!user) return;
+    const fetchForDate = async () => {
+      const [logRes, photoRes] = await Promise.all([
+        supabase.from("daily_logs").select("*").eq("user_id", user.id).eq("date", selectedDateStr).limit(1),
+        supabase.from("progress_photos").select("id").eq("user_id", user.id).eq("date", selectedDateStr).limit(1),
+      ]);
+      setTodayLog((logRes.data as any[])?.[0] || null);
+      setHasPhotoToday(((photoRes.data as any[]) || []).length > 0);
+    };
+    fetchForDate();
+  }, [user, selectedDateStr]);
+
   useEffect(() => {
     if (!user) return;
     const fetchData = async () => {
@@ -107,13 +121,10 @@ const Dashboard = () => {
       const sunday = new Date(monday);
       sunday.setDate(monday.getDate() + 6);
 
-      const [logRes, weightRes, injRes, photoRes] = await Promise.all([
-        supabase.from("daily_logs").select("*").eq("user_id", user.id).eq("date", today).limit(1),
+      const [weightRes, injRes] = await Promise.all([
         supabase.from("daily_logs").select("date, weight").eq("user_id", user.id).not("weight", "is", null).order("date", { ascending: true }).limit(30),
         supabase.from("injections").select("date").eq("user_id", user.id).gte("date", localDateStr(monday)).lte("date", localDateStr(sunday)),
-        supabase.from("progress_photos").select("id").eq("user_id", user.id).eq("date", today).limit(1),
       ]);
-      setTodayLog((logRes.data as any[])?.[0] || null);
       // Deduplicate by date — keep last entry per day
       const wRaw = ((weightRes.data as any[]) || []).map((l) => ({ date: l.date, peso: Number(l.weight) }));
       const byDate = new Map<string, number>();
@@ -121,7 +132,6 @@ const Dashboard = () => {
       const wData = Array.from(byDate, ([date, peso]) => ({ date, peso })).sort((a, b) => a.date.localeCompare(b.date));
       setWeightHistory(wData);
       setWeekInjections(new Set(((injRes.data as any[]) || []).map((i) => i.date)));
-      setHasPhotoToday(((photoRes.data as any[]) || []).length > 0);
 
       if (wData.length >= 3) {
         const diff = wData[0].peso - wData[wData.length - 1].peso;
