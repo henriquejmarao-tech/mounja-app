@@ -450,16 +450,22 @@ const Dashboard = () => {
       </div>
 
       {/* ── Análise de Medicação ── */}
-      <div className="px-5 mb-4 animate-fade-in-up" style={{ animationDelay: "140ms" }}>
+      <div className="px-5 mb-6 animate-fade-in-up" style={{ animationDelay: "140ms" }}>
         <button
           onClick={() => navigate("/analise-medicacao")}
           className="w-full bg-card rounded-2xl p-5 border border-border/50 shadow-card active:scale-[0.98] transition-transform text-left"
         >
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-base font-bold text-foreground">Análise de Medicação</h3>
-            <Sparkles className="w-5 h-5 text-primary" />
+            <h3 className="text-base font-bold text-foreground" style={{ color: "hsl(0 0% 12%)" }}>Análise de Medicação</h3>
+            <div className="w-8 h-8 rounded-xl gradient-hero flex items-center justify-center">
+              <Sparkles className="w-4 h-4 text-white" />
+            </div>
           </div>
           <p className="text-sm text-muted-foreground">Análise inteligente da evolução do seu tratamento com sugestões de dose e comportamento</p>
+          <div className="flex items-center gap-1 mt-3">
+            <span className="text-xs font-semibold text-muted-foreground/50">Ver análise</span>
+            <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/50" />
+          </div>
         </button>
       </div>
 
