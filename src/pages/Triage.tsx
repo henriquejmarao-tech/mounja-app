@@ -1102,8 +1102,8 @@ const Triage = () => {
               {/* Summary - 3 items */}
               <div className="grid grid-cols-3 gap-3 mb-5 animate-fade-in" style={{ animationDelay: "0.2s" }}>
                 {[
-                  { icon: Utensils, label: "META DE CALORIAS", value: "1700 kcal", sub: "Déficit ideal para você", accent: "#E8475F", accentBg: "rgba(232,71,95,0.08)" },
-                  { icon: Trophy, label: "PROTEÍNA DIÁRIA", value: "112g por dia", sub: "Para preservar massa magra", accent: "#E8863C", accentBg: "rgba(232,134,60,0.08)" },
+                  { icon: Utensils, label: "META DE CALORIAS", value: `${calorieTarget} kcal`, sub: "Déficit ideal para você", accent: "#E8475F", accentBg: "rgba(232,71,95,0.08)" },
+                  { icon: Trophy, label: "PROTEÍNA DIÁRIA", value: `${proteinTarget}g por dia`, sub: "Para preservar massa magra", accent: "#E8863C", accentBg: "rgba(232,134,60,0.08)" },
                   { icon: CalendarCheck, label: "DIA DA APLICAÇÃO", value: `${dayLabel}-feira`, sub: "Consistência semanal", accent: "#7B2FF7", accentBg: "rgba(123,47,247,0.08)" },
                 ].map((item, i) => (
                   <div key={i} className="rounded-2xl p-3 text-center flex flex-col items-center" style={{ background: "#fff", border: "1px solid #F0F0F0" }}>
