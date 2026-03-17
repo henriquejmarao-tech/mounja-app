@@ -149,30 +149,30 @@ const SubscriptionPlans = () => {
         </p>
       </div>
 
-      {/* Mascot area */}
-      <div className="relative flex justify-center items-end h-[140px] z-20 overflow-visible">
-        {/* Pointing mascot — large, feet resting on card */}
+      {/* Mascot area — compact, mascots overlap card top edge */}
+      <div className="relative flex justify-center items-end h-[120px] z-20 overflow-visible">
+        {/* Pointing mascot — standing on card top edge */}
         <img
           src={mascotPointingImg}
           alt="Mounjá apontando"
           style={{ filter: "drop-shadow(0px 8px 20px rgba(0,0,0,0.12))", background: "transparent" }}
           className={cn(
-            "absolute bottom-0 w-[200px] h-auto object-contain transition-all duration-500 ease-out",
+            "absolute bottom-0 w-[180px] h-auto object-contain transition-all duration-500 ease-out",
             revealStage >= 1 && showPointingMascot
-              ? "opacity-100 translate-y-[28px]"
-              : "opacity-0 translate-y-[40px] pointer-events-none"
+              ? "opacity-100 translate-y-[55px]"
+              : "opacity-0 translate-y-[70px] pointer-events-none"
           )}
         />
-        {/* Sitting mascot — smaller, seated on card edge */}
+        {/* Sitting mascot — seated on card top edge */}
         <img
           src={mascotSittingImg}
           alt="Mounjá sentado"
           style={{ filter: "drop-shadow(0px 8px 20px rgba(0,0,0,0.12))", background: "transparent" }}
           className={cn(
-            "absolute bottom-0 w-[130px] h-auto object-contain transition-all duration-500 ease-out",
+            "absolute bottom-0 w-[120px] h-auto object-contain transition-all duration-500 ease-out",
             sittingLoaded && showSittingMascot
-              ? "opacity-100 translate-y-[22px]"
-              : "opacity-0 translate-y-[34px] pointer-events-none"
+              ? "opacity-100 translate-y-[45px]"
+              : "opacity-0 translate-y-[60px] pointer-events-none"
           )}
         />
       </div>
