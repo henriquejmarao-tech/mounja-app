@@ -8,6 +8,7 @@ import { ApplicationDataProvider } from "@/hooks/useApplicationData";
 import { TutorialProvider } from "@/hooks/useTutorial";
 import BottomNav from "./components/BottomNav";
 import PwaUpdater from "./components/pwa/PwaUpdater";
+import InstallPrompt from "./components/pwa/InstallPrompt";
 
 // Pages
 import Welcome from "./pages/Welcome";
@@ -137,6 +138,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <PwaUpdater />
+      <InstallPrompt />
       <BrowserRouter>
         <AuthProvider>
           <ApplicationDataProvider>
