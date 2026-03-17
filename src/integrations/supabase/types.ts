@@ -404,9 +404,11 @@ export type Database = {
           protein_goal: number | null
           routine_completed: boolean | null
           satiety_effect: number | null
+          selected_plan: string | null
           sex: string | null
           side_effects_improvement: string | null
           side_effects_worsening: string | null
+          subscription_seen: boolean | null
           tracking_preference: string | null
           triage_completed: boolean | null
           tutorial_hints_seen: Json | null
@@ -454,9 +456,11 @@ export type Database = {
           protein_goal?: number | null
           routine_completed?: boolean | null
           satiety_effect?: number | null
+          selected_plan?: string | null
           sex?: string | null
           side_effects_improvement?: string | null
           side_effects_worsening?: string | null
+          subscription_seen?: boolean | null
           tracking_preference?: string | null
           triage_completed?: boolean | null
           tutorial_hints_seen?: Json | null
@@ -504,9 +508,11 @@ export type Database = {
           protein_goal?: number | null
           routine_completed?: boolean | null
           satiety_effect?: number | null
+          selected_plan?: string | null
           sex?: string | null
           side_effects_improvement?: string | null
           side_effects_worsening?: string | null
+          subscription_seen?: boolean | null
           tracking_preference?: string | null
           triage_completed?: boolean | null
           tutorial_hints_seen?: Json | null
