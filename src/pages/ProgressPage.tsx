@@ -164,6 +164,21 @@ const ProgressPage = () => {
     toast.success("Peso meta atualizado");
   };
 
+  const saveLogWeight = async (weight: number) => {
+    if (!user) return;
+    const today = localDateStr(new Date());
+    const { data: existing } = await supabase.from("daily_logs").select("id").eq("user_id", user.id).eq("date", today).limit(1);
+    if (existing && existing.length > 0) {
+      await supabase.from("daily_logs").update({ weight }).eq("id", existing[0].id);
+    } else {
+      await supabase.from("daily_logs").insert({ user_id: user.id, date: today, weight });
+    }
+    toast.success("Peso registrado ✓");
+    await refreshProfile();
+    await refreshAppData();
+    await fetchData();
+  };
+
   return (
     <div className="min-h-screen pb-nav bg-background">
       {/* ── Weight Summary Hero ── */}
