@@ -77,6 +77,7 @@ const TreatmentSite = () => {
   const handleSave = async () => {
     if (!selected) return;
     const site = sites.find((s) => s.id === selected);
+    await refresh();
     toast.success(`Local: ${site?.label}`);
     navigate(-1);
   };
