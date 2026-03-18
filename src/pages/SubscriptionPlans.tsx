@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { usePlan } from "@/hooks/usePlan";
-import { Check, Crown, Sparkles, Gift, CreditCard } from "lucide-react";
+import { Check, Crown, Sparkles, Gift, CreditCard, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import useEmblaCarousel from "embla-carousel-react";
@@ -255,10 +255,18 @@ const SubscriptionPlans = () => {
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background overflow-hidden">
       {/* Header */}
-      <div className="pt-12 pb-4 px-6 text-center relative z-30">
-        <h1 className="text-xl font-bold text-foreground">
-          {isPremium ? "Você é Premium! 👑" : "Escolha seu plano"}
-        </h1>
+      <div className="pt-12 pb-4 px-6 relative z-30">
+        <div className="relative flex items-center justify-center">
+          <button
+            onClick={() => navigate(-1)}
+            className="absolute left-0 w-9 h-9 rounded-full bg-muted/50 flex items-center justify-center active:scale-90 transition-transform"
+          >
+            <ArrowLeft className="w-5 h-5 text-foreground" />
+          </button>
+          <h1 className="text-xl font-bold text-foreground">
+            {isPremium ? "Você é Premium! 👑" : "Escolha seu plano"}
+          </h1>
+        </div>
       </div>
 
       {/* Premium status banner */}
@@ -414,7 +422,7 @@ const SubscriptionPlans = () => {
               type="text"
               value={couponCode}
               onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-              placeholder="Ex: FOUNDER-H"
+              placeholder="Ex: PROMO-2025"
               className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border text-base text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/30 tracking-widest font-mono font-bold text-center"
               maxLength={20}
               autoFocus
