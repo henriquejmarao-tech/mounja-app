@@ -69,6 +69,7 @@ const Dashboard = () => {
       setWeightHistory(Array.from(byDate, ([date, peso]) => ({ date, peso })).sort((a, b) => a.date.localeCompare(b.date)));
     }
     await refreshTodayLog();
+    await refreshAppData();
   }, [user, selectedDateStr, refreshTodayLog]);
 
 
