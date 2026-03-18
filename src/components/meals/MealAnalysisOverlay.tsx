@@ -198,7 +198,7 @@ const MealAnalysisOverlay = ({ photoPreview, analyzing, result, onClose }: MealA
           )}
 
           {/* Result */}
-          {result && showResult && (
+          {result && saveReady && (
             <div className="space-y-5 animate-fade-in">
               {/* Description + Insight */}
               {result.description && (
