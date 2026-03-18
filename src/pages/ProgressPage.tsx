@@ -211,7 +211,7 @@ const ProgressPage = () => {
           className="w-full bg-card rounded-2xl py-3 px-5 text-center shadow-elevated border border-border/30 active:scale-[0.98] transition-transform"
         >
           <p className="text-sm font-bold text-foreground">
-            {dose.currentDose ? `${dose.currentDose} de Mounjaro®` : "Nenhum tratamento registrado"}
+            {dose.currentDose ? `${dose.currentDose} de ${profile?.medication || "Mounjaro®"}` : "Nenhum tratamento registrado"}
           </p>
         </button>
       </div>

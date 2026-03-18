@@ -374,7 +374,7 @@ const Dashboard = () => {
                           Aplicação registrada ✓
                         </p>
                         <p className="text-muted-foreground text-sm mt-1 font-medium">
-                          {dose.currentDose} de Mounjaro®
+                          {dose.currentDose} de {profile?.medication || "Mounjaro®"}
                         </p>
                         <button
                           onClick={() => navigate("/plano-tratamento")}

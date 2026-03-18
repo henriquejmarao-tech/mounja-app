@@ -66,12 +66,12 @@ const Profile = () => {
       }
       setStreak(s);
 
-      // Weight lost
+      // Weight lost — use profiles.current_weight as baseline (same as ProgressPage)
       const withWeight = logs.filter((l: any) => l.weight);
-      if (withWeight.length >= 2) {
-        const first = withWeight[withWeight.length - 1].weight;
-        const last = withWeight[0].weight;
-        if (first > last) setWeightLost(+(first - last).toFixed(1));
+      const initialW = profile?.current_weight ? Number(profile.current_weight) : null;
+      const latestW = withWeight.length > 0 ? Number(withWeight[0].weight) : null;
+      if (initialW && latestW && initialW > latestW) {
+        setWeightLost(+(initialW - latestW).toFixed(1));
       }
 
       setLoading(false);

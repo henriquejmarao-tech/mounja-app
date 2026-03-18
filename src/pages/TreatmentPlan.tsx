@@ -28,6 +28,7 @@ const TreatmentPlan = () => {
       return;
     }
     await refreshProfile();
+    await refreshAppData();
     toast.success(weightDrawer === "start" ? "Peso inicial atualizado" : "Peso meta atualizado");
     setWeightDrawer(null);
   };

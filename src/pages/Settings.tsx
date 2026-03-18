@@ -71,6 +71,7 @@ const Settings = () => {
     const value = heightInt + heightDec / 10;
     const { error } = await supabase.from("profiles").update({ height_cm: value }).eq("id", user.id);
     if (error) { toast.error("Erro ao salvar"); return; }
+    await refreshProfile();
     toast.success("Altura atualizada");
     setShowHeight(false);
   };
