@@ -11,3 +11,12 @@ verify_jwt = false
 
 [functions.nutrition-goals]
 verify_jwt = false
+
+[functions.check-subscription]
+verify_jwt = false
+
+[functions.create-checkout]
+verify_jwt = false
+
+[functions.redeem-promo-code]
+verify_jwt = false

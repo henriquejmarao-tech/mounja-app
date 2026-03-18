@@ -1,5 +1,6 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
+import PremiumRoute from "@/components/PremiumRoute";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
@@ -124,7 +125,7 @@ const AppRoutes = () => {
         <Route path="/tratamento/dosagem" element={<ProtectedRoute><TriageGuard><DosageInput /></TriageGuard></ProtectedRoute>} />
         <Route path="/tratamento/local" element={<ProtectedRoute><TriageGuard><TreatmentSite /></TriageGuard></ProtectedRoute>} />
         <Route path="/tratamento/agenda" element={<ProtectedRoute><TriageGuard><SchedulePage /></TriageGuard></ProtectedRoute>} />
-        <Route path="/analise-medicacao" element={<ProtectedRoute><TriageGuard><MedicationAnalysis /></TriageGuard></ProtectedRoute>} />
+        <Route path="/analise-medicacao" element={<ProtectedRoute><TriageGuard><PremiumRoute><MedicationAnalysis /></PremiumRoute></TriageGuard></ProtectedRoute>} />
         <Route path="/historico-efeitos" element={<ProtectedRoute><TriageGuard><SideEffectHistory /></TriageGuard></ProtectedRoute>} />
         <Route path="/como-usar" element={<ProtectedRoute><TriageGuard><HowToUse /></TriageGuard></ProtectedRoute>} />
 
