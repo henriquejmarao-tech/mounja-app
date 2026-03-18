@@ -13,6 +13,7 @@ type WeightDrawer = "start" | "goal" | null;
 const TreatmentPlan = () => {
   const navigate = useNavigate();
   const { user, profile, refreshProfile } = useAuth();
+  const { refresh: refreshAppData } = useApplicationData();
   const [weightDrawer, setWeightDrawer] = useState<WeightDrawer>(null);
 
   const saveWeight = async (weight: number) => {
