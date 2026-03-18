@@ -251,7 +251,7 @@ const Tutorial = () => {
               boxShadow: `0 6px 24px -4px hsl(${slide.color} / 0.3)`,
             }}
           >
-            {isLast ? "Entrar no app" : idx === 0 ? "Começar" : "Próximo"}
+            {isLast ? "Entrar no app" : selectedIndex === 0 ? "Começar" : "Próximo"}
             <ChevronRight className="w-4 h-4" />
           </button>
 
