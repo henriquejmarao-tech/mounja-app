@@ -155,17 +155,26 @@ const HowToUse = () => {
         </div>
 
         {/* CTA */}
-        <div className="px-1 mb-8">
+        <div className="px-1 mb-4">
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/tutorial")}
             className="w-full py-4 rounded-2xl text-[15px] font-bold text-white active:scale-[0.97] transition-all flex items-center justify-center gap-2"
             style={{
               background: "linear-gradient(to right, #7B2FF7, #F857A6)",
               boxShadow: "0 6px 20px rgba(123, 47, 247, 0.2)",
             }}
           >
-            Ir para hoje
+            Ver tutorial completo
             <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+
+        <div className="px-1 mb-8">
+          <button
+            onClick={() => navigate("/")}
+            className="w-full py-3.5 rounded-2xl text-[14px] font-semibold text-muted-foreground border border-border/50 bg-card active:scale-[0.97] transition-all flex items-center justify-center gap-2"
+          >
+            Voltar ao app
           </button>
         </div>
       </div>
