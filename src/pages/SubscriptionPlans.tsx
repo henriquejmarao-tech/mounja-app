@@ -80,15 +80,34 @@ const SubscriptionPlans = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user, refreshProfile } = useAuth();
-  const { isPremium, refresh: refreshPlan } = usePlan();
+  const { isPremium, source, plan: currentPlan, refresh: refreshPlan, loading: planLoading } = usePlan();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
+  const [portalLoading, setPortalLoading] = useState(false);
 
   // Coupon drawer state
   const [couponDrawerOpen, setCouponDrawerOpen] = useState(false);
   const [couponCode, setCouponCode] = useState("");
   const [couponLoading, setCouponLoading] = useState(false);
+
+  const handleManageSubscription = async () => {
+    setPortalLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("customer-portal");
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url;
+      } else if (data?.error) {
+        toast.error(data.error);
+      }
+    } catch (err: any) {
+      console.error("Portal error:", err);
+      toast.error("Erro ao abrir gerenciamento de assinatura");
+    } finally {
+      setPortalLoading(false);
+    }
+  };
 
   // Image preloading
   const [pointingLoaded, setPointingLoaded] = useState(false);
