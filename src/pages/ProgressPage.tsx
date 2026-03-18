@@ -49,7 +49,7 @@ const ProgressPage = () => {
 
     const [logsRes, photosRes] = await Promise.all([
       logsQ,
-      supabase.from("progress_photos").select("id, photo_url, date").eq("user_id", user.id).order("date", { ascending: false }).limit(20),
+      supabase.from("progress_photos").select("id, photo_url, date, created_at").eq("user_id", user.id).order("created_at", { ascending: false }).limit(100),
     ]);
 
     const byDate = new Map<string, number>();
@@ -62,9 +62,18 @@ const ProgressPage = () => {
       })).sort((a, b) => a.date.localeCompare(b.date))
     );
 
+    // Deduplicate photos: keep only the latest (most recent created_at) per date
     const rawPhotos = (photosRes.data as any[]) || [];
+    const photoByDate = new Map<string, any>();
+    for (const p of rawPhotos) {
+      if (!photoByDate.has(p.date)) {
+        photoByDate.set(p.date, p); // already sorted by created_at desc, so first is latest
+      }
+    }
+    const uniquePhotos = Array.from(photoByDate.values());
+
     const photosWithUrls = await Promise.all(
-      rawPhotos.map(async (p) => {
+      uniquePhotos.map(async (p) => {
         const { data } = await supabase.storage.from("progress-photos").createSignedUrl(p.photo_url, 3600);
         return { id: p.id, url: data?.signedUrl || "", date: p.date };
       })
