@@ -284,9 +284,7 @@ const Dashboard = () => {
           </button>
           {showApplicationDayMode && !applicationDayCompleted ? (
             <div className="flex flex-col items-center">
-              <p className="text-sm font-bold text-foreground">
-                {isSelectedToday ? "Hoje é dia de aplicação" : `${selectedDate.toLocaleDateString("pt-BR", { day: "numeric", month: "short" })} — Dia de aplicação`}
-              </p>
+              <p className="text-sm font-bold text-foreground">Hoje é dia de aplicação</p>
               <p className="text-[10px] text-muted-foreground font-medium">Mantenha sua consistência semanal</p>
             </div>
           ) : (
