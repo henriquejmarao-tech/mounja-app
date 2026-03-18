@@ -25,6 +25,7 @@ const L2 = "Isso me ajuda a personalizar melhor suas recomendações.";
 const TreatmentSite = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { refresh } = useApplicationData();
   const [selected, setSelected] = useState<string | null>(null);
 
   // Mascot animation
