@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useApplicationData } from "@/hooks/useApplicationData";
 import WeightPickerDrawer from "@/components/WeightPickerDrawer";
 import mascotImg from "@/assets/mascot-pointing.png";
 
