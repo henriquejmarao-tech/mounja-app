@@ -15,7 +15,8 @@ const GRADIENT = "linear-gradient(135deg, hsl(295 55% 42%), hsl(340 65% 62%), hs
 
 const DosageInput = () => {
   const navigate = useNavigate();
-  const { user, profile } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
+  const { refresh } = useApplicationData();
   const currentDose = profile?.current_dose?.replace(/[^\d.]/g, "") || "";
   const [selectedPreset, setSelectedPreset] = useState<string | null>(
     DOSES.includes(currentDose) ? currentDose : null
