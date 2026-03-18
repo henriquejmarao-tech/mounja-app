@@ -124,11 +124,14 @@ export const ApplicationDataProvider = ({ children }: { children: ReactNode }) =
       nextApplicationAt = nextDate.toISOString();
     }
 
+    // Use profile.current_dose as SSOT (updated by Treatment Plan),
+    // fall back to last injection dose if profile dose is not set
+    const profileDose = (profile as any)?.current_dose || null;
     const canonicalDose: CanonicalDose = {
-      currentDose: lastConfirmed?.dose ?? null,
+      currentDose: profileDose ?? lastConfirmed?.dose ?? null,
       unit: "mg",
       lastApplicationAt: lastConfirmed ? new Date(lastConfirmed.date + "T12:00:00").toISOString() : null,
-      nextPlannedDose: lastConfirmed?.dose ?? null,
+      nextPlannedDose: profileDose ?? lastConfirmed?.dose ?? null,
       nextApplicationAt,
       applicationIntervalDays: intervalDays,
     };
