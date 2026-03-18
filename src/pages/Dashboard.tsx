@@ -178,6 +178,7 @@ const Dashboard = () => {
   const isInjectionDayVisual = selectedDayHasInjection || isScheduledInjectionDay;
 
   // ── APPLICATION DAY MODE ──
+  // Only activate the special hero for TODAY when it's an application day
   const todayStr = localDateStr(new Date());
   const isTodayApplicationDay = useMemo(() => {
     if (!dose.nextApplicationAt) return false;
@@ -187,18 +188,16 @@ const Dashboard = () => {
 
   const todayHasInjection = weekInjections.has(todayStr);
   
-  // Show application day mode for ANY selected date that has/is an injection day
-  const isSelectedApplicationDay = selectedDayHasInjection || isScheduledInjectionDay;
-  const showApplicationDayMode = isSelectedApplicationDay || ((isTodayApplicationDay || todayHasInjection) && isSelectedToday);
-  const applicationDayCompleted = selectedDayHasInjection;
+  // Application day mode ONLY for today
+  const showApplicationDayMode = isSelectedToday && (isTodayApplicationDay || todayHasInjection);
+  const applicationDayCompleted = isSelectedToday && todayHasInjection;
 
+  // Background: only special gradient when today is application day AND viewing today
   const heroGradient = showApplicationDayMode
     ? applicationDayCompleted
       ? "linear-gradient(180deg, hsl(150, 20%, 96%) 0%, hsl(150, 15%, 97%) 40%, hsl(36, 20%, 97%) 100%)"
       : "linear-gradient(180deg, hsl(20, 40%, 96%) 0%, hsl(340, 20%, 96%) 40%, hsl(36, 25%, 97%) 100%)"
-    : isInjectionDayVisual
-      ? "linear-gradient(160deg, hsl(314, 16%, 42%) 0%, hsl(11, 40%, 62%) 50%, hsl(11, 55%, 70%) 100%)"
-      : "linear-gradient(180deg, hsl(36, 30%, 96%) 0%, hsl(36, 25%, 97%) 40%, hsl(36, 33%, 95%) 100%)";
+    : "linear-gradient(180deg, hsl(36, 30%, 96%) 0%, hsl(36, 25%, 97%) 40%, hsl(36, 33%, 95%) 100%)";
 
   if (loading) {
     return (
