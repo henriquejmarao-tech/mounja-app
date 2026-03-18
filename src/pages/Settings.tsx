@@ -14,7 +14,7 @@ import mascotThinking from "@/assets/mascot-thinking-v2.png";
 
 const Settings = () => {
   const navigate = useNavigate();
-  const { profile, signOut, user } = useAuth();
+  const { profile, signOut, user, refreshProfile } = useAuth();
   const [showSuggestion, setShowSuggestion] = useState(false);
   const [showRating, setShowRating] = useState(false);
   const [rating, setRating] = useState(0);
