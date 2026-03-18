@@ -30,6 +30,7 @@ const ProgressPage = () => {
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [galleryInitialIndex, setGalleryInitialIndex] = useState(0);
   const [uploading, setUploading] = useState(false);
+  const [logWeightDrawer, setLogWeightDrawer] = useState(false);
 
   const periodDays: Record<Period, number | null> = { "30d": 30, "90d": 90, "180d": 180, all: null };
 
