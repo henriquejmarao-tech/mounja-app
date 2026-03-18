@@ -178,19 +178,19 @@ const Dashboard = () => {
   const isInjectionDayVisual = selectedDayHasInjection || isScheduledInjectionDay;
 
   // ── APPLICATION DAY MODE ──
-  // True when TODAY (real today, not selected) is an application day
   const todayStr = localDateStr(new Date());
   const isTodayApplicationDay = useMemo(() => {
     if (!dose.nextApplicationAt) return false;
     const nextDateStr = localDateStr(new Date(dose.nextApplicationAt));
-    // Exact match OR overdue (nextApplicationAt is in the past/today = user should apply)
     return todayStr === nextDateStr || nextDateStr <= todayStr;
   }, [dose.nextApplicationAt, todayStr]);
 
   const todayHasInjection = weekInjections.has(todayStr);
-  // Application day mode: today IS the day AND user is viewing today
-  const showApplicationDayMode = (isTodayApplicationDay || todayHasInjection) && isSelectedToday;
-  const applicationDayCompleted = todayHasInjection;
+  
+  // Show application day mode for ANY selected date that has/is an injection day
+  const isSelectedApplicationDay = selectedDayHasInjection || isScheduledInjectionDay;
+  const showApplicationDayMode = isSelectedApplicationDay || ((isTodayApplicationDay || todayHasInjection) && isSelectedToday);
+  const applicationDayCompleted = selectedDayHasInjection;
 
   const heroGradient = showApplicationDayMode
     ? applicationDayCompleted
