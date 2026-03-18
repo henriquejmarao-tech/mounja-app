@@ -16,7 +16,7 @@ type Period = "30d" | "90d" | "180d" | "all";
 
 const ProgressPage = () => {
   const { user, profile, refreshProfile } = useAuth();
-  const { dose } = useApplicationData();
+  const { dose, refresh: refreshAppData } = useApplicationData();
   const navigate = useNavigate();
 
   const [period, setPeriod] = useState<Period>("30d");
@@ -141,6 +141,7 @@ const ProgressPage = () => {
     const { error } = await supabase.from("profiles").update({ current_weight: weight }).eq("id", user.id);
     if (error) { toast.error("Erro ao salvar"); return; }
     await refreshProfile();
+    await refreshAppData();
     toast.success("Peso inicial atualizado");
   };
 
@@ -149,6 +150,7 @@ const ProgressPage = () => {
     const { error } = await supabase.from("profiles").update({ weight_goal: weight }).eq("id", user.id);
     if (error) { toast.error("Erro ao salvar"); return; }
     await refreshProfile();
+    await refreshAppData();
     toast.success("Peso meta atualizado");
   };
 
@@ -209,7 +211,7 @@ const ProgressPage = () => {
           className="w-full bg-card rounded-2xl py-3 px-5 text-center shadow-elevated border border-border/30 active:scale-[0.98] transition-transform"
         >
           <p className="text-sm font-bold text-foreground">
-            {dose.currentDose ? `${dose.currentDose} de Mounjaro®` : "Nenhum tratamento registrado"}
+            {dose.currentDose ? `${dose.currentDose} de ${profile?.medication || "Mounjaro®"}` : "Nenhum tratamento registrado"}
           </p>
         </button>
       </div>

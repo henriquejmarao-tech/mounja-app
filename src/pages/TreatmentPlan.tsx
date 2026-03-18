@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useApplicationData } from "@/hooks/useApplicationData";
 import WeightPickerDrawer from "@/components/WeightPickerDrawer";
 import mascotImg from "@/assets/mascot-pointing.png";
 
@@ -12,6 +13,7 @@ type WeightDrawer = "start" | "goal" | null;
 const TreatmentPlan = () => {
   const navigate = useNavigate();
   const { user, profile, refreshProfile } = useAuth();
+  const { refresh: refreshAppData } = useApplicationData();
   const [weightDrawer, setWeightDrawer] = useState<WeightDrawer>(null);
 
   const saveWeight = async (weight: number) => {
@@ -26,6 +28,7 @@ const TreatmentPlan = () => {
       return;
     }
     await refreshProfile();
+    await refreshAppData();
     toast.success(weightDrawer === "start" ? "Peso inicial atualizado" : "Peso meta atualizado");
     setWeightDrawer(null);
   };

@@ -14,7 +14,7 @@ import mascotThinking from "@/assets/mascot-thinking-v2.png";
 
 const Settings = () => {
   const navigate = useNavigate();
-  const { profile, signOut, user } = useAuth();
+  const { profile, signOut, user, refreshProfile } = useAuth();
   const [showSuggestion, setShowSuggestion] = useState(false);
   const [showRating, setShowRating] = useState(false);
   const [rating, setRating] = useState(0);
@@ -71,6 +71,7 @@ const Settings = () => {
     const value = heightInt + heightDec / 10;
     const { error } = await supabase.from("profiles").update({ height_cm: value }).eq("id", user.id);
     if (error) { toast.error("Erro ao salvar"); return; }
+    await refreshProfile();
     toast.success("Altura atualizada");
     setShowHeight(false);
   };

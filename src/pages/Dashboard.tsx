@@ -23,7 +23,7 @@ import WeightTrendsDrawer from "@/components/dashboard/WeightTrendsDrawer";
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, profile } = useAuth();
-  const { dose, latestWeight } = useApplicationData();
+  const { dose, latestWeight, refresh: refreshAppData } = useApplicationData();
   const { isFree } = usePlan();
   const [premiumModalOpen, setPremiumModalOpen] = useState(false);
 
@@ -69,6 +69,7 @@ const Dashboard = () => {
       setWeightHistory(Array.from(byDate, ([date, peso]) => ({ date, peso })).sort((a, b) => a.date.localeCompare(b.date)));
     }
     await refreshTodayLog();
+    await refreshAppData();
   }, [user, selectedDateStr, refreshTodayLog]);
 
 
@@ -329,7 +330,7 @@ const Dashboard = () => {
                 <div className="mt-3 inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full"
                   style={{ background: "rgba(255,255,255,0.15)" }}>
                   <span className="text-[13px] font-bold text-white">
-                    {dose.currentDose} de Mounjaro®
+                    {dose.currentDose} de {profile?.medication || "Mounjaro®"}
                   </span>
                 </div>
 
@@ -373,7 +374,7 @@ const Dashboard = () => {
                           Aplicação registrada ✓
                         </p>
                         <p className="text-muted-foreground text-sm mt-1 font-medium">
-                          {dose.currentDose} de Mounjaro®
+                          {dose.currentDose} de {profile?.medication || "Mounjaro®"}
                         </p>
                         <button
                           onClick={() => navigate("/plano-tratamento")}
