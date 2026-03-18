@@ -27,7 +27,8 @@ const MealAnalysisOverlay = ({ photoPreview, analyzing, result, onClose }: MealA
   const [statusIdx, setStatusIdx] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [counters, setCounters] = useState({ cal: 0, prot: 0, fib: 0 });
-  
+  const [saveReady, setSaveReady] = useState(false);
+
 
   // Cycle status messages
   useEffect(() => {
@@ -42,6 +43,7 @@ const MealAnalysisOverlay = ({ photoPreview, analyzing, result, onClose }: MealA
     if (!result) {
       setShowResult(false);
       setCounters({ cal: 0, prot: 0, fib: 0 });
+      setSaveReady(false);
       return;
     }
 
@@ -65,7 +67,11 @@ const MealAnalysisOverlay = ({ photoPreview, analyzing, result, onClose }: MealA
         prot: Math.round(targetProt * ease),
         fib: Math.round(targetFib * ease),
       });
-      if (progress < 1) rafId = requestAnimationFrame(animate);
+      if (progress < 1) {
+        rafId = requestAnimationFrame(animate);
+      } else {
+        setSaveReady(true);
+      }
     };
 
     rafId = requestAnimationFrame(animate);
@@ -266,11 +272,20 @@ const MealAnalysisOverlay = ({ photoPreview, analyzing, result, onClose }: MealA
         {result && showResult && (
           <div className="shrink-0 px-5 pt-2" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 16px)" }}>
             <button
-              onClick={onClose}
-              className="w-full py-4 rounded-2xl font-bold text-base text-white shadow-elevated active:scale-[0.98] transition-all touch-manipulation"
-              style={{ background: "linear-gradient(to right, hsl(295 55% 42%), hsl(340 65% 62%))" }}
+              onClick={saveReady ? onClose : undefined}
+              disabled={!saveReady}
+              className={`w-full py-4 rounded-2xl font-bold text-base shadow-elevated transition-all touch-manipulation ${
+                saveReady
+                  ? "text-white active:scale-[0.98]"
+                  : "text-muted-foreground opacity-60 cursor-not-allowed"
+              }`}
+              style={{
+                background: saveReady
+                  ? "linear-gradient(to right, hsl(295 55% 42%), hsl(340 65% 62%))"
+                  : "hsl(var(--muted))",
+              }}
             >
-              Salvar refeição ✓
+              {saveReady ? "Salvar refeição ✓" : "Carregando…"}
             </button>
           </div>
         )}
