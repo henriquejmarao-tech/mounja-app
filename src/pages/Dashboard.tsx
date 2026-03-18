@@ -23,7 +23,7 @@ import WeightTrendsDrawer from "@/components/dashboard/WeightTrendsDrawer";
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, profile } = useAuth();
-  const { dose, latestWeight } = useApplicationData();
+  const { dose, latestWeight, refresh: refreshAppData } = useApplicationData();
   const { isFree } = usePlan();
   const [premiumModalOpen, setPremiumModalOpen] = useState(false);
 
