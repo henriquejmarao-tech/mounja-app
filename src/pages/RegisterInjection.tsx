@@ -220,25 +220,20 @@ const RegisterInjection = () => {
         </button>
 
         {/* Dose */}
-        <div className="bg-card rounded-2xl border border-border/40 shadow-card px-5 py-4 flex items-center gap-4">
+        <button
+          onClick={() => setShowDosePicker(true)}
+          className="w-full bg-card rounded-2xl border border-border/40 shadow-card px-5 py-4 flex items-center gap-4 active:scale-[0.98] transition-transform"
+        >
           <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
             style={{ background: "linear-gradient(135deg, hsl(30,50%,95%), hsl(15,45%,95%))" }}>
             <Gauge className="w-5 h-5" style={{ color: "hsl(20,50%,50%)" }} />
           </div>
-          <div className="flex-1">
+          <div className="flex-1 text-left">
             <p className="text-[11px] font-semibold text-muted-foreground/70 uppercase tracking-wide">Dose</p>
-            <div className="flex items-center gap-1.5 mt-0.5">
-              <input
-                type="number"
-                step="0.5"
-                value={doseValue}
-                onChange={(e) => setDoseValue(e.target.value)}
-                className="w-16 text-[15px] font-semibold bg-transparent outline-none text-foreground tabular-nums"
-              />
-              <span className="text-[15px] font-medium text-muted-foreground">mg</span>
-            </div>
+            <p className="text-[15px] font-semibold text-foreground mt-0.5">{doseValue} mg</p>
           </div>
-        </div>
+          <ChevronDown className="w-4 h-4 text-muted-foreground/40" />
+        </button>
       </div>
 
       {/* ── CTA Button ── */}
