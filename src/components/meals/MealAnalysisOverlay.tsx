@@ -171,8 +171,8 @@ const MealAnalysisOverlay = ({ photoPreview, analyzing, result, onClose }: MealA
           className="flex-1 overflow-y-auto overscroll-contain px-5 pt-6 pb-2"
           style={{ WebkitOverflowScrolling: "touch", touchAction: "pan-y" } as React.CSSProperties}
         >
-          {/* Analyzing skeleton */}
-          {analyzing && !result && (
+          {/* Analyzing / loading skeleton — show until scroll is ready */}
+          {(analyzing || (result && !saveReady)) && (
             <div className="space-y-4 animate-fade-in">
               <div className="flex gap-3">
                 {[
@@ -191,7 +191,9 @@ const MealAnalysisOverlay = ({ photoPreview, analyzing, result, onClose }: MealA
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-muted-foreground/50 text-center">Analisando sua refeição…</p>
+              <p className="text-xs text-muted-foreground/50 text-center">
+                {result ? "Preparando visualização…" : "Analisando sua refeição…"}
+              </p>
             </div>
           )}
 
