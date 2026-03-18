@@ -379,7 +379,7 @@ const ProgressPage = () => {
                   </div>
                   <p className="text-sm text-muted-foreground">Seu gráfico aparecerá aqui</p>
                   <button
-                    onClick={() => setWeightDrawerOpen(true)}
+                    onClick={() => setLogWeightDrawer(true)}
                     className="px-5 py-2 rounded-xl text-xs font-bold text-white active:scale-95 transition-transform"
                     style={{ background: "linear-gradient(to right, hsl(295 55% 42%), hsl(340 65% 62%))" }}
                   >
