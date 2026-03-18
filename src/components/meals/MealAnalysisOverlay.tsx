@@ -43,6 +43,7 @@ const MealAnalysisOverlay = ({ photoPreview, analyzing, result, onClose }: MealA
     if (!result) {
       setShowResult(false);
       setCounters({ cal: 0, prot: 0, fib: 0 });
+      setSaveReady(false);
       return;
     }
 
