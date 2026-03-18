@@ -16,7 +16,7 @@ type Period = "30d" | "90d" | "180d" | "all";
 
 const ProgressPage = () => {
   const { user, profile, refreshProfile } = useAuth();
-  const { dose } = useApplicationData();
+  const { dose, refresh: refreshAppData } = useApplicationData();
   const navigate = useNavigate();
 
   const [period, setPeriod] = useState<Period>("30d");
