@@ -67,7 +67,11 @@ const MealAnalysisOverlay = ({ photoPreview, analyzing, result, onClose }: MealA
         prot: Math.round(targetProt * ease),
         fib: Math.round(targetFib * ease),
       });
-      if (progress < 1) rafId = requestAnimationFrame(animate);
+      if (progress < 1) {
+        rafId = requestAnimationFrame(animate);
+      } else {
+        setSaveReady(true);
+      }
     };
 
     rafId = requestAnimationFrame(animate);
