@@ -11,7 +11,8 @@ type Freq = "daily" | "weekly" | "custom";
 
 const SchedulePage = () => {
   const navigate = useNavigate();
-  const { user, profile } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
+  const { refresh } = useApplicationData();
 
   const [freq, setFreq] = useState<Freq>(
     profile?.application_frequency === "daily"
