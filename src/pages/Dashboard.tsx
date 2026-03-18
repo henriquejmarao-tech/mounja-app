@@ -384,10 +384,10 @@ const Dashboard = () => {
                 </div>
 
                 <p className="text-white text-[22px] font-extrabold tracking-tight leading-tight">
-                  Hoje é dia de{"\n"}aplicação
+                  {isSelectedToday ? "Hoje é dia de\naplicação" : `Dia de aplicação`}
                 </p>
                 <p className="text-white/70 text-[13px] mt-1.5 font-medium">
-                  Mantenha sua rotina em dia e registre sua dose
+                  {isSelectedToday ? "Mantenha sua rotina em dia e registre sua dose" : selectedDate.toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" })}
                 </p>
 
                 {/* Dose */}
