@@ -89,7 +89,9 @@ const RegisterInjection = () => {
 
   const [selectedSite, setSelectedSite] = useState<string | null>(null);
   const [medication, setMedication] = useState("Mounjaro®");
-  const [doseValue, setDoseValue] = useState(profile?.current_dose?.replace(/[^0-9.]/g, "") || "5.0");
+  const initialDose = profile?.current_dose?.replace(/[^0-9.]/g, "") || "5.0";
+  const [doseInt, setDoseInt] = useState(String(Math.floor(parseFloat(initialDose) || 5)));
+  const [doseDec, setDoseDec] = useState(String(Math.round(((parseFloat(initialDose) || 5) % 1) * 10)));
   const [saving, setSaving] = useState(false);
   const [showSiteMap, setShowSiteMap] = useState(false);
 
@@ -99,6 +101,11 @@ const RegisterInjection = () => {
 
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [showMedPicker, setShowMedPicker] = useState(false);
+  const [showDosePicker, setShowDosePicker] = useState(false);
+
+  const doseInts = Array.from({ length: 20 }, (_, i) => String(i));
+  const doseDecimals = Array.from({ length: 10 }, (_, i) => String(i));
+  const doseValue = `${doseInt}.${doseDec}`;
 
   const today = new Date();
   const dateLabel = today.toLocaleDateString("pt-BR", { day: "numeric", month: "long", year: "numeric" });
