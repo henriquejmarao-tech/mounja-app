@@ -261,6 +261,62 @@ const SubscriptionPlans = () => {
         </h1>
       </div>
 
+      {/* Premium status banner */}
+      {isPremium && !planLoading && (
+        <div className="px-6 pb-4 z-30 animate-fade-in">
+          <div className="rounded-2xl p-4 border border-border/30 bg-card shadow-card">
+            <div className="flex items-center gap-3 mb-3">
+              <div
+                className="w-10 h-10 rounded-full flex items-center justify-center"
+                style={{
+                  background: "linear-gradient(135deg, hsl(270,80%,60%) 0%, hsl(330,80%,65%) 100%)",
+                }}
+              >
+                <Crown className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <p className="text-sm font-bold text-foreground">
+                  {source === "stripe"
+                    ? currentPlan === "trimestral" ? "Plano Trimestral" : "Plano Mensal"
+                    : "Acesso Promocional"}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {source === "stripe" ? "Assinatura ativa via Stripe" : "Ativado por código promocional"}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-2">
+              {source === "stripe" && (
+                <button
+                  onClick={handleManageSubscription}
+                  disabled={portalLoading}
+                  className="flex-1 py-2.5 rounded-xl text-xs font-bold border border-border/50 bg-muted/30 text-foreground active:scale-[0.97] transition-all flex items-center justify-center gap-1.5"
+                >
+                  {portalLoading ? (
+                    <div className="w-3.5 h-3.5 border-2 border-foreground/20 border-t-foreground rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <CreditCard className="w-3.5 h-3.5" />
+                      Gerenciar assinatura
+                    </>
+                  )}
+                </button>
+              )}
+              <button
+                onClick={() => navigate("/")}
+                className="flex-1 py-2.5 rounded-xl text-xs font-bold text-white active:scale-[0.97] transition-all"
+                style={{
+                  background: "linear-gradient(135deg, hsl(270,80%,60%) 0%, hsl(330,80%,65%) 100%)",
+                }}
+              >
+                Voltar ao app
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Mascot area */}
       <div className="relative flex justify-center items-end h-[140px] z-20 overflow-visible">
         <img
