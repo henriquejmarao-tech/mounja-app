@@ -330,7 +330,7 @@ const Dashboard = () => {
                 <div className="mt-3 inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full"
                   style={{ background: "rgba(255,255,255,0.15)" }}>
                   <span className="text-[13px] font-bold text-white">
-                    {dose.currentDose} de Mounjaro®
+                    {dose.currentDose} de {profile?.medication || "Mounjaro®"}
                   </span>
                 </div>
 
