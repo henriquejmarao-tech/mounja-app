@@ -425,27 +425,56 @@ const Dashboard = () => {
             <div className="relative animate-fade-in-up pb-10">
               <div className="flex flex-col items-center justify-center text-center px-6 py-10">
                 {hasTreatment ? (
-                  isInjectionDayVisual ? (
-                    <>
-                      <p className="text-primary-foreground/90 text-base font-semibold tracking-wide">Mounjaro®</p>
-                      <p className="text-primary-foreground text-5xl font-extrabold mt-1 tracking-tight">
-                        {dose.currentDose}
-                      </p>
-                      <button
-                        onClick={() => selectedDayHasInjection ? navigate("/plano-tratamento") : navigate("/registrar-aplicacao")}
-                        className="mt-6 gradient-hero text-primary-foreground px-10 py-3.5 rounded-full text-[15px] font-bold active:scale-95 transition-transform animate-cta-entrance"
-                        style={{ boxShadow: "0px 8px 20px rgba(128, 0, 128, 0.15)" }}
-                      >
-                        {selectedDayHasInjection ? "Editar Tratamento" : "Registrar aplicação"}
-                      </button>
-                    </>
-                  ) : selectedIsInPast ? (
+                  selectedIsInPast ? (
+                    selectedDayHasInjection ? (
+                      <>
+                        <p className="text-foreground/40 text-base font-semibold tracking-wide">
+                          {selectedDate.toLocaleDateString("pt-BR", { day: "numeric", month: "long" })}
+                        </p>
+                        <p className="text-foreground text-2xl font-extrabold mt-2 leading-tight">
+                          Aplicação registrada ✓
+                        </p>
+                        <p className="text-muted-foreground text-sm mt-1 font-medium">
+                          {dose.currentDose} de Mounjaro®
+                        </p>
+                        <button
+                          onClick={() => navigate("/plano-tratamento")}
+                          className="mt-6 gradient-hero text-primary-foreground px-10 py-3.5 rounded-full text-[15px] font-bold active:scale-95 transition-transform animate-cta-entrance"
+                          style={{ boxShadow: "0px 8px 20px rgba(128, 0, 128, 0.15)" }}
+                        >
+                          Ver plano de tratamento
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-foreground/40 text-base font-semibold tracking-wide">
+                          {selectedDate.toLocaleDateString("pt-BR", { day: "numeric", month: "long" })}
+                        </p>
+                        <p className="text-foreground text-2xl font-extrabold mt-2 leading-tight">
+                          Sem aplicação registrada
+                        </p>
+                        <button
+                          onClick={() => navigate("/registrar-aplicacao")}
+                          className="mt-6 gradient-hero text-primary-foreground px-10 py-3.5 rounded-full text-[15px] font-bold active:scale-95 transition-transform animate-cta-entrance"
+                          style={{ boxShadow: "0px 8px 20px rgba(128, 0, 128, 0.15)" }}
+                        >
+                          Registrar aplicação
+                        </button>
+                      </>
+                    )
+                  ) : isSelectedToday ? (
                     <>
                       <p className="text-foreground/40 text-base font-semibold tracking-wide">
-                        {selectedDate.toLocaleDateString("pt-BR", { day: "numeric", month: "long" })}
+                        Próxima aplicação
                       </p>
-                      <p className="text-foreground text-2xl font-extrabold mt-2 leading-tight">
-                        Sem aplicação registrada
+                      <p className="text-foreground text-5xl font-extrabold mt-1 tracking-tight">
+                        {daysUntilNextFromSelected !== null
+                          ? daysUntilNextFromSelected === 0
+                            ? "Hoje"
+                            : daysUntilNextFromSelected === 1
+                            ? "Amanhã"
+                            : `${daysUntilNextFromSelected} dias`
+                          : "—"}
                       </p>
                       <button
                         onClick={() => navigate("/registrar-aplicacao")}
@@ -456,25 +485,18 @@ const Dashboard = () => {
                       </button>
                     </>
                   ) : (
+                    /* Future day */
                     <>
                       <p className="text-foreground/40 text-base font-semibold tracking-wide">
-                        {isAfterNextApplication ? "Última aplicação" : "Próxima aplicação"}
+                        Última aplicação
                       </p>
                       <p className="text-foreground text-5xl font-extrabold mt-1 tracking-tight">
-                        {isAfterNextApplication
-                          ? daysSinceLastApplication !== null
-                            ? daysSinceLastApplication === 0
-                              ? "Hoje"
-                              : daysSinceLastApplication === 1
-                              ? "Ontem"
-                              : `${daysSinceLastApplication} dias atrás`
-                            : "—"
-                          : daysUntilNextFromSelected !== null
-                          ? daysUntilNextFromSelected === 0
+                        {daysSinceLastApplication !== null
+                          ? daysSinceLastApplication === 0
                             ? "Hoje"
-                            : daysUntilNextFromSelected === 1
-                            ? "Amanhã"
-                            : `${daysUntilNextFromSelected} dias`
+                            : daysSinceLastApplication === 1
+                            ? "Ontem"
+                            : `${daysSinceLastApplication} dias atrás`
                           : "—"}
                       </p>
                       <button
