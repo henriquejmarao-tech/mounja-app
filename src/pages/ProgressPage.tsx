@@ -141,6 +141,7 @@ const ProgressPage = () => {
     const { error } = await supabase.from("profiles").update({ current_weight: weight }).eq("id", user.id);
     if (error) { toast.error("Erro ao salvar"); return; }
     await refreshProfile();
+    await refreshAppData();
     toast.success("Peso inicial atualizado");
   };
 
@@ -149,6 +150,7 @@ const ProgressPage = () => {
     const { error } = await supabase.from("profiles").update({ weight_goal: weight }).eq("id", user.id);
     if (error) { toast.error("Erro ao salvar"); return; }
     await refreshProfile();
+    await refreshAppData();
     toast.success("Peso meta atualizado");
   };
 
