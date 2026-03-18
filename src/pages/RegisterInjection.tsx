@@ -371,6 +371,31 @@ const RegisterInjection = () => {
           </div>
         </DrawerContent>
       </Drawer>
+
+      {/* Dose Picker Drawer */}
+      <Drawer open={showDosePicker} onOpenChange={setShowDosePicker}>
+        <DrawerContent className="pb-safe">
+          <div className="mx-auto w-full max-w-md px-6 pb-6">
+            <h3 className="text-lg font-bold text-foreground text-center pt-2 mb-2">Dose (mg)</h3>
+            <div className="flex items-center justify-center gap-2 py-4">
+              <ScrollColumn items={doseInts} selected={doseInt} onChange={(v) => setDoseInt(v as string)} />
+              <span className="text-3xl font-bold text-foreground">,</span>
+              <ScrollColumn items={doseDecimals} selected={doseDec} onChange={(v) => setDoseDec(v as string)} />
+              <span className="text-xl font-semibold text-muted-foreground ml-2">mg</span>
+            </div>
+            <button
+              onClick={() => setShowDosePicker(false)}
+              className="w-full py-3.5 rounded-2xl text-[15px] font-bold text-white active:scale-[0.97] transition-transform"
+              style={{
+                background: "linear-gradient(to right, #7B2FF7, #F857A6)",
+                boxShadow: "0 4px 16px hsl(300 60% 50% / 0.2)",
+              }}
+            >
+              Confirmar
+            </button>
+          </div>
+        </DrawerContent>
+      </Drawer>
     </div>
   );
 };
