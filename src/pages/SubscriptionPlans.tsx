@@ -255,10 +255,18 @@ const SubscriptionPlans = () => {
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background overflow-hidden">
       {/* Header */}
-      <div className="pt-12 pb-4 px-6 text-center relative z-30">
-        <h1 className="text-xl font-bold text-foreground">
-          {isPremium ? "Você é Premium! 👑" : "Escolha seu plano"}
-        </h1>
+      <div className="pt-12 pb-4 px-6 relative z-30">
+        <div className="relative flex items-center justify-center">
+          <button
+            onClick={() => navigate(-1)}
+            className="absolute left-0 w-9 h-9 rounded-full bg-muted/50 flex items-center justify-center active:scale-90 transition-transform"
+          >
+            <ArrowLeft className="w-5 h-5 text-foreground" />
+          </button>
+          <h1 className="text-xl font-bold text-foreground">
+            {isPremium ? "Você é Premium! 👑" : "Escolha seu plano"}
+          </h1>
+        </div>
       </div>
 
       {/* Premium status banner */}
