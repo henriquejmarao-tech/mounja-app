@@ -178,19 +178,19 @@ const Dashboard = () => {
   const isInjectionDayVisual = selectedDayHasInjection || isScheduledInjectionDay;
 
   // ── APPLICATION DAY MODE ──
-  // True when TODAY (real today, not selected) is an application day
   const todayStr = localDateStr(new Date());
   const isTodayApplicationDay = useMemo(() => {
     if (!dose.nextApplicationAt) return false;
     const nextDateStr = localDateStr(new Date(dose.nextApplicationAt));
-    // Exact match OR overdue (nextApplicationAt is in the past/today = user should apply)
     return todayStr === nextDateStr || nextDateStr <= todayStr;
   }, [dose.nextApplicationAt, todayStr]);
 
   const todayHasInjection = weekInjections.has(todayStr);
-  // Application day mode: today IS the day AND user is viewing today
-  const showApplicationDayMode = (isTodayApplicationDay || todayHasInjection) && isSelectedToday;
-  const applicationDayCompleted = todayHasInjection;
+  
+  // Show application day mode for ANY selected date that has/is an injection day
+  const isSelectedApplicationDay = selectedDayHasInjection || isScheduledInjectionDay;
+  const showApplicationDayMode = isSelectedApplicationDay || ((isTodayApplicationDay || todayHasInjection) && isSelectedToday);
+  const applicationDayCompleted = selectedDayHasInjection;
 
   const heroGradient = showApplicationDayMode
     ? applicationDayCompleted
@@ -285,7 +285,9 @@ const Dashboard = () => {
           </button>
           {showApplicationDayMode && !applicationDayCompleted ? (
             <div className="flex flex-col items-center">
-              <p className="text-sm font-bold text-foreground">Hoje é dia de aplicação</p>
+              <p className="text-sm font-bold text-foreground">
+                {isSelectedToday ? "Hoje é dia de aplicação" : `${selectedDate.toLocaleDateString("pt-BR", { day: "numeric", month: "short" })} — Dia de aplicação`}
+              </p>
               <p className="text-[10px] text-muted-foreground font-medium">Mantenha sua consistência semanal</p>
             </div>
           ) : (
@@ -382,10 +384,10 @@ const Dashboard = () => {
                 </div>
 
                 <p className="text-white text-[22px] font-extrabold tracking-tight leading-tight">
-                  Hoje é dia de{"\n"}aplicação
+                  {isSelectedToday ? "Hoje é dia de\naplicação" : `Dia de aplicação`}
                 </p>
                 <p className="text-white/70 text-[13px] mt-1.5 font-medium">
-                  Mantenha sua rotina em dia e registre sua dose
+                  {isSelectedToday ? "Mantenha sua rotina em dia e registre sua dose" : selectedDate.toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" })}
                 </p>
 
                 {/* Dose */}
