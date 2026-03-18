@@ -414,7 +414,7 @@ const SubscriptionPlans = () => {
               type="text"
               value={couponCode}
               onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-              placeholder="Ex: FOUNDER-H"
+              placeholder="Ex: PROMO-2025"
               className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border text-base text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/30 tracking-widest font-mono font-bold text-center"
               maxLength={20}
               autoFocus
