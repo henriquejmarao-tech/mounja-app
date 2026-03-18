@@ -30,6 +30,7 @@ const ProgressPage = () => {
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [galleryInitialIndex, setGalleryInitialIndex] = useState(0);
   const [uploading, setUploading] = useState(false);
+  const [logWeightDrawer, setLogWeightDrawer] = useState(false);
 
   const periodDays: Record<Period, number | null> = { "30d": 30, "90d": 90, "180d": 180, all: null };
 
@@ -161,6 +162,21 @@ const ProgressPage = () => {
     await refreshProfile();
     await refreshAppData();
     toast.success("Peso meta atualizado");
+  };
+
+  const saveLogWeight = async (weight: number) => {
+    if (!user) return;
+    const today = localDateStr(new Date());
+    const { data: existing } = await supabase.from("daily_logs").select("id").eq("user_id", user.id).eq("date", today).limit(1);
+    if (existing && existing.length > 0) {
+      await supabase.from("daily_logs").update({ weight }).eq("id", existing[0].id);
+    } else {
+      await supabase.from("daily_logs").insert({ user_id: user.id, date: today, weight });
+    }
+    toast.success("Peso registrado ✓");
+    await refreshProfile();
+    await refreshAppData();
+    await fetchData();
   };
 
   return (
@@ -363,7 +379,7 @@ const ProgressPage = () => {
                   </div>
                   <p className="text-sm text-muted-foreground">Seu gráfico aparecerá aqui</p>
                   <button
-                    onClick={() => navigate("/registrar")}
+                    onClick={() => setLogWeightDrawer(true)}
                     className="px-5 py-2 rounded-xl text-xs font-bold text-white active:scale-95 transition-transform"
                     style={{ background: "linear-gradient(to right, hsl(295 55% 42%), hsl(340 65% 62%))" }}
                   >
@@ -425,6 +441,7 @@ const ProgressPage = () => {
       <WeightTrendsDrawer open={weightDrawerOpen} onOpenChange={setWeightDrawerOpen} weightHistory={weightData.map(({ date, peso }) => ({ date, peso }))} />
       <WeightPickerDrawer open={startWeightDrawer} onOpenChange={setStartWeightDrawer} initialWeight={initialWeight ? Number(initialWeight) : 74} onSave={saveStartWeight} />
       <WeightPickerDrawer open={goalWeightDrawer} onOpenChange={setGoalWeightDrawer} initialWeight={goalWeight ?? 65} onSave={saveGoalWeight} />
+      <WeightPickerDrawer open={logWeightDrawer} onOpenChange={setLogWeightDrawer} initialWeight={currentWeight ?? 74} onSave={saveLogWeight} />
       <PhotoGalleryDrawer open={galleryOpen} onOpenChange={setGalleryOpen} initialIndex={galleryInitialIndex} onPhotosChanged={fetchData} />
     </div>
   );
