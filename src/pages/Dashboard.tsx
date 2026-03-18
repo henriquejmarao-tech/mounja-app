@@ -178,6 +178,7 @@ const Dashboard = () => {
   const isInjectionDayVisual = selectedDayHasInjection || isScheduledInjectionDay;
 
   // ── APPLICATION DAY MODE ──
+  // Only activate the special hero for TODAY when it's an application day
   const todayStr = localDateStr(new Date());
   const isTodayApplicationDay = useMemo(() => {
     if (!dose.nextApplicationAt) return false;
@@ -187,18 +188,16 @@ const Dashboard = () => {
 
   const todayHasInjection = weekInjections.has(todayStr);
   
-  // Show application day mode for ANY selected date that has/is an injection day
-  const isSelectedApplicationDay = selectedDayHasInjection || isScheduledInjectionDay;
-  const showApplicationDayMode = isSelectedApplicationDay || ((isTodayApplicationDay || todayHasInjection) && isSelectedToday);
-  const applicationDayCompleted = selectedDayHasInjection;
+  // Application day mode ONLY for today
+  const showApplicationDayMode = isSelectedToday && (isTodayApplicationDay || todayHasInjection);
+  const applicationDayCompleted = isSelectedToday && todayHasInjection;
 
+  // Background: only special gradient when today is application day AND viewing today
   const heroGradient = showApplicationDayMode
     ? applicationDayCompleted
       ? "linear-gradient(180deg, hsl(150, 20%, 96%) 0%, hsl(150, 15%, 97%) 40%, hsl(36, 20%, 97%) 100%)"
       : "linear-gradient(180deg, hsl(20, 40%, 96%) 0%, hsl(340, 20%, 96%) 40%, hsl(36, 25%, 97%) 100%)"
-    : isInjectionDayVisual
-      ? "linear-gradient(160deg, hsl(314, 16%, 42%) 0%, hsl(11, 40%, 62%) 50%, hsl(11, 55%, 70%) 100%)"
-      : "linear-gradient(180deg, hsl(36, 30%, 96%) 0%, hsl(36, 25%, 97%) 40%, hsl(36, 33%, 95%) 100%)";
+    : "linear-gradient(180deg, hsl(36, 30%, 96%) 0%, hsl(36, 25%, 97%) 40%, hsl(36, 33%, 95%) 100%)";
 
   if (loading) {
     return (
@@ -213,68 +212,6 @@ const Dashboard = () => {
       className="min-h-screen pb-nav relative transition-all duration-500 overflow-hidden"
       style={{ background: heroGradient }}
     >
-      {/* ── Animated floating blobs — only on injection days ── */}
-      {isInjectionDayVisual && !showApplicationDayMode && (
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {/* Top-center glow */}
-          <div
-            className="absolute -top-32 left-1/2 -translate-x-1/2 w-[420px] h-[420px] rounded-full opacity-30 animate-[blob-breathe_12s_ease-in-out_infinite]"
-            style={{
-              background: "radial-gradient(circle, hsl(11, 55%, 60%) 0%, hsl(314, 20%, 50%) 40%, transparent 70%)",
-              filter: "blur(30px)",
-            }}
-          />
-          {/* Top-left aurora streak */}
-          <div
-            className="absolute -top-10 -left-16 w-[300px] h-[200px] rounded-full opacity-25 animate-[blob-drift_18s_ease-in-out_infinite]"
-            style={{
-              background: "radial-gradient(ellipse 70% 50%, hsl(340, 30%, 55%) 0%, transparent 70%)",
-              filter: "blur(25px)",
-            }}
-          />
-          {/* Top-right warm accent */}
-          <div
-            className="absolute -top-6 -right-10 w-[260px] h-[220px] rounded-full opacity-20 animate-[blob-orbit_22s_ease-in-out_infinite_reverse]"
-            style={{
-              background: "radial-gradient(ellipse 60% 70%, hsl(25, 50%, 58%) 0%, transparent 70%)",
-              filter: "blur(28px)",
-            }}
-          />
-          {/* Mid-left floating blob */}
-          <div
-            className="absolute top-[35%] -left-8 w-[200px] h-[200px] rounded-full opacity-12 animate-[blob-float_15s_ease-in-out_infinite_2s]"
-            style={{
-              background: "radial-gradient(circle, hsl(25, 55%, 60%) 0%, transparent 70%)",
-              filter: "blur(30px)",
-            }}
-          />
-          {/* Bottom-right cool accent */}
-          <div
-            className="absolute top-[55%] -right-16 w-[280px] h-[280px] rounded-full opacity-10 animate-[blob-drift_20s_ease-in-out_infinite_4s]"
-            style={{
-              background: "radial-gradient(circle, hsl(340, 20%, 50%) 0%, transparent 70%)",
-              filter: "blur(45px)",
-            }}
-          />
-          {/* Bottom shimmer */}
-          <div
-            className="absolute bottom-[10%] left-[20%] w-[180px] h-[180px] rounded-full opacity-8 animate-[blob-orbit_25s_ease-in-out_infinite_6s]"
-            style={{
-              background: "radial-gradient(circle, hsl(11, 45%, 70%) 0%, transparent 70%)",
-              filter: "blur(35px)",
-            }}
-          />
-          {/* Noise texture */}
-          <div
-            className="absolute inset-0 opacity-[0.03]"
-            style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-              backgroundSize: "128px 128px",
-            }}
-          />
-        </div>
-      )}
-
         {/* ── Header ── */}
         <div className="relative pt-safe px-5 pb-1 flex items-center justify-between">
           <button
@@ -285,9 +222,7 @@ const Dashboard = () => {
           </button>
           {showApplicationDayMode && !applicationDayCompleted ? (
             <div className="flex flex-col items-center">
-              <p className="text-sm font-bold text-foreground">
-                {isSelectedToday ? "Hoje é dia de aplicação" : `${selectedDate.toLocaleDateString("pt-BR", { day: "numeric", month: "short" })} — Dia de aplicação`}
-              </p>
+              <p className="text-sm font-bold text-foreground">Hoje é dia de aplicação</p>
               <p className="text-[10px] text-muted-foreground font-medium">Mantenha sua consistência semanal</p>
             </div>
           ) : (
@@ -384,10 +319,10 @@ const Dashboard = () => {
                 </div>
 
                 <p className="text-white text-[22px] font-extrabold tracking-tight leading-tight">
-                  {isSelectedToday ? "Hoje é dia de\naplicação" : `Dia de aplicação`}
+                  Hoje é dia de{"\n"}aplicação
                 </p>
                 <p className="text-white/70 text-[13px] mt-1.5 font-medium">
-                  {isSelectedToday ? "Mantenha sua rotina em dia e registre sua dose" : selectedDate.toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" })}
+                  Mantenha sua rotina em dia e registre sua dose
                 </p>
 
                 {/* Dose */}
@@ -428,27 +363,56 @@ const Dashboard = () => {
             <div className="relative animate-fade-in-up pb-10">
               <div className="flex flex-col items-center justify-center text-center px-6 py-10">
                 {hasTreatment ? (
-                  isInjectionDayVisual ? (
-                    <>
-                      <p className="text-primary-foreground/90 text-base font-semibold tracking-wide">Mounjaro®</p>
-                      <p className="text-primary-foreground text-5xl font-extrabold mt-1 tracking-tight">
-                        {dose.currentDose}
-                      </p>
-                      <button
-                        onClick={() => selectedDayHasInjection ? navigate("/plano-tratamento") : navigate("/registrar-aplicacao")}
-                        className="mt-6 gradient-hero text-primary-foreground px-10 py-3.5 rounded-full text-[15px] font-bold active:scale-95 transition-transform animate-cta-entrance"
-                        style={{ boxShadow: "0px 8px 20px rgba(128, 0, 128, 0.15)" }}
-                      >
-                        {selectedDayHasInjection ? "Editar Tratamento" : "Registrar aplicação"}
-                      </button>
-                    </>
-                  ) : selectedIsInPast ? (
+                  selectedIsInPast ? (
+                    selectedDayHasInjection ? (
+                      <>
+                        <p className="text-foreground/40 text-base font-semibold tracking-wide">
+                          {selectedDate.toLocaleDateString("pt-BR", { day: "numeric", month: "long" })}
+                        </p>
+                        <p className="text-foreground text-2xl font-extrabold mt-2 leading-tight">
+                          Aplicação registrada ✓
+                        </p>
+                        <p className="text-muted-foreground text-sm mt-1 font-medium">
+                          {dose.currentDose} de Mounjaro®
+                        </p>
+                        <button
+                          onClick={() => navigate("/plano-tratamento")}
+                          className="mt-6 gradient-hero text-primary-foreground px-10 py-3.5 rounded-full text-[15px] font-bold active:scale-95 transition-transform animate-cta-entrance"
+                          style={{ boxShadow: "0px 8px 20px rgba(128, 0, 128, 0.15)" }}
+                        >
+                          Ver plano de tratamento
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-foreground/40 text-base font-semibold tracking-wide">
+                          {selectedDate.toLocaleDateString("pt-BR", { day: "numeric", month: "long" })}
+                        </p>
+                        <p className="text-foreground text-2xl font-extrabold mt-2 leading-tight">
+                          Sem aplicação registrada
+                        </p>
+                        <button
+                          onClick={() => navigate("/registrar-aplicacao")}
+                          className="mt-6 gradient-hero text-primary-foreground px-10 py-3.5 rounded-full text-[15px] font-bold active:scale-95 transition-transform animate-cta-entrance"
+                          style={{ boxShadow: "0px 8px 20px rgba(128, 0, 128, 0.15)" }}
+                        >
+                          Registrar aplicação
+                        </button>
+                      </>
+                    )
+                  ) : isSelectedToday ? (
                     <>
                       <p className="text-foreground/40 text-base font-semibold tracking-wide">
-                        {selectedDate.toLocaleDateString("pt-BR", { day: "numeric", month: "long" })}
+                        Próxima aplicação
                       </p>
-                      <p className="text-foreground text-2xl font-extrabold mt-2 leading-tight">
-                        Sem aplicação registrada
+                      <p className="text-foreground text-5xl font-extrabold mt-1 tracking-tight">
+                        {daysUntilNextFromSelected !== null
+                          ? daysUntilNextFromSelected === 0
+                            ? "Hoje"
+                            : daysUntilNextFromSelected === 1
+                            ? "Amanhã"
+                            : `${daysUntilNextFromSelected} dias`
+                          : "—"}
                       </p>
                       <button
                         onClick={() => navigate("/registrar-aplicacao")}
@@ -459,25 +423,18 @@ const Dashboard = () => {
                       </button>
                     </>
                   ) : (
+                    /* Future day */
                     <>
                       <p className="text-foreground/40 text-base font-semibold tracking-wide">
-                        {isAfterNextApplication ? "Última aplicação" : "Próxima aplicação"}
+                        Última aplicação
                       </p>
                       <p className="text-foreground text-5xl font-extrabold mt-1 tracking-tight">
-                        {isAfterNextApplication
-                          ? daysSinceLastApplication !== null
-                            ? daysSinceLastApplication === 0
-                              ? "Hoje"
-                              : daysSinceLastApplication === 1
-                              ? "Ontem"
-                              : `${daysSinceLastApplication} dias atrás`
-                            : "—"
-                          : daysUntilNextFromSelected !== null
-                          ? daysUntilNextFromSelected === 0
+                        {daysSinceLastApplication !== null
+                          ? daysSinceLastApplication === 0
                             ? "Hoje"
-                            : daysUntilNextFromSelected === 1
-                            ? "Amanhã"
-                            : `${daysUntilNextFromSelected} dias`
+                            : daysSinceLastApplication === 1
+                            ? "Ontem"
+                            : `${daysSinceLastApplication} dias atrás`
                           : "—"}
                       </p>
                       <button
