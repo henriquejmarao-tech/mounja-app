@@ -93,6 +93,8 @@ const DosageInput = () => {
       .update({ current_dose: doseStr })
       .eq("id", user.id);
     if (error) { toast.error("Erro ao salvar"); return; }
+    await refreshProfile();
+    await refresh();
     toast.success("Dosagem atualizada");
     navigate(-1);
   };

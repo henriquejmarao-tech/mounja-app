@@ -39,6 +39,8 @@ const SchedulePage = () => {
       toast.error("Erro ao salvar");
       return;
     }
+    await refreshProfile();
+    await refresh();
     toast.success("Agenda atualizada");
     navigate(-1);
   };
