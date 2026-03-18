@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useApplicationData } from "@/hooks/useApplicationData";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
@@ -14,7 +15,8 @@ const GRADIENT = "linear-gradient(135deg, hsl(295 55% 42%), hsl(340 65% 62%), hs
 
 const DosageInput = () => {
   const navigate = useNavigate();
-  const { user, profile } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
+  const { refresh } = useApplicationData();
   const currentDose = profile?.current_dose?.replace(/[^\d.]/g, "") || "";
   const [selectedPreset, setSelectedPreset] = useState<string | null>(
     DOSES.includes(currentDose) ? currentDose : null
@@ -91,6 +93,8 @@ const DosageInput = () => {
       .update({ current_dose: doseStr })
       .eq("id", user.id);
     if (error) { toast.error("Erro ao salvar"); return; }
+    await refreshProfile();
+    await refresh();
     toast.success("Dosagem atualizada");
     navigate(-1);
   };

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useApplicationData } from "@/hooks/useApplicationData";
 import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
 import mascotImg from "@/assets/mascot-pointing.png";
@@ -24,6 +25,7 @@ const L2 = "Isso me ajuda a personalizar melhor suas recomendações.";
 const TreatmentSite = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { refresh } = useApplicationData();
   const [selected, setSelected] = useState<string | null>(null);
 
   // Mascot animation
@@ -75,6 +77,7 @@ const TreatmentSite = () => {
   const handleSave = async () => {
     if (!selected) return;
     const site = sites.find((s) => s.id === selected);
+    await refresh();
     toast.success(`Local: ${site?.label}`);
     navigate(-1);
   };

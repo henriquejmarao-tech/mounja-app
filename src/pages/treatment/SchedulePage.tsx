@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useApplicationData } from "@/hooks/useApplicationData";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -10,7 +11,8 @@ type Freq = "daily" | "weekly" | "custom";
 
 const SchedulePage = () => {
   const navigate = useNavigate();
-  const { user, profile } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
+  const { refresh } = useApplicationData();
 
   const [freq, setFreq] = useState<Freq>(
     profile?.application_frequency === "daily"
@@ -37,6 +39,8 @@ const SchedulePage = () => {
       toast.error("Erro ao salvar");
       return;
     }
+    await refreshProfile();
+    await refresh();
     toast.success("Agenda atualizada");
     navigate(-1);
   };

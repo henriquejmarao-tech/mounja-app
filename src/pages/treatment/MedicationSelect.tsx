@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useApplicationData } from "@/hooks/useApplicationData";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -19,11 +20,14 @@ const medications = [
 
 const MedicationSelect = () => {
   const navigate = useNavigate();
-  const { profile } = useAuth();
-  // We don't have a medication field yet, so we'll just navigate back on select
-  // For now, medication name is implicit (Mounjaro)
+  const { profile, user, refreshProfile } = useAuth();
+  const { refresh } = useApplicationData();
 
   const handleSelect = async (med: string) => {
+    if (!user) return;
+    await supabase.from("profiles").update({ medication: med } as any).eq("id", user.id);
+    await refreshProfile();
+    await refresh();
     toast.success(`${med} selecionado`);
     navigate(-1);
   };
