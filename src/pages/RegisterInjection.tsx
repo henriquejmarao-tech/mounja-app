@@ -89,7 +89,9 @@ const RegisterInjection = () => {
 
   const [selectedSite, setSelectedSite] = useState<string | null>(null);
   const [medication, setMedication] = useState("Mounjaro®");
-  const [doseValue, setDoseValue] = useState(profile?.current_dose?.replace(/[^0-9.]/g, "") || "5.0");
+  const initialDose = profile?.current_dose?.replace(/[^0-9.]/g, "") || "5.0";
+  const [doseInt, setDoseInt] = useState(String(Math.floor(parseFloat(initialDose) || 5)));
+  const [doseDec, setDoseDec] = useState(String(Math.round(((parseFloat(initialDose) || 5) % 1) * 10)));
   const [saving, setSaving] = useState(false);
   const [showSiteMap, setShowSiteMap] = useState(false);
 
@@ -99,6 +101,11 @@ const RegisterInjection = () => {
 
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [showMedPicker, setShowMedPicker] = useState(false);
+  const [showDosePicker, setShowDosePicker] = useState(false);
+
+  const doseInts = Array.from({ length: 20 }, (_, i) => String(i));
+  const doseDecimals = Array.from({ length: 10 }, (_, i) => String(i));
+  const doseValue = `${doseInt}.${doseDec}`;
 
   const today = new Date();
   const dateLabel = today.toLocaleDateString("pt-BR", { day: "numeric", month: "long", year: "numeric" });
@@ -213,25 +220,20 @@ const RegisterInjection = () => {
         </button>
 
         {/* Dose */}
-        <div className="bg-card rounded-2xl border border-border/40 shadow-card px-5 py-4 flex items-center gap-4">
+        <button
+          onClick={() => setShowDosePicker(true)}
+          className="w-full bg-card rounded-2xl border border-border/40 shadow-card px-5 py-4 flex items-center gap-4 active:scale-[0.98] transition-transform"
+        >
           <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
             style={{ background: "linear-gradient(135deg, hsl(30,50%,95%), hsl(15,45%,95%))" }}>
             <Gauge className="w-5 h-5" style={{ color: "hsl(20,50%,50%)" }} />
           </div>
-          <div className="flex-1">
+          <div className="flex-1 text-left">
             <p className="text-[11px] font-semibold text-muted-foreground/70 uppercase tracking-wide">Dose</p>
-            <div className="flex items-center gap-1.5 mt-0.5">
-              <input
-                type="number"
-                step="0.5"
-                value={doseValue}
-                onChange={(e) => setDoseValue(e.target.value)}
-                className="w-16 text-[15px] font-semibold bg-transparent outline-none text-foreground tabular-nums"
-              />
-              <span className="text-[15px] font-medium text-muted-foreground">mg</span>
-            </div>
+            <p className="text-[15px] font-semibold text-foreground mt-0.5">{doseValue} mg</p>
           </div>
-        </div>
+          <ChevronDown className="w-4 h-4 text-muted-foreground/40" />
+        </button>
       </div>
 
       {/* ── CTA Button ── */}
@@ -366,6 +368,31 @@ const RegisterInjection = () => {
                 </button>
               ))}
             </div>
+          </div>
+        </DrawerContent>
+      </Drawer>
+
+      {/* Dose Picker Drawer */}
+      <Drawer open={showDosePicker} onOpenChange={setShowDosePicker}>
+        <DrawerContent className="pb-safe">
+          <div className="mx-auto w-full max-w-md px-6 pb-6">
+            <h3 className="text-lg font-bold text-foreground text-center pt-2 mb-2">Dose (mg)</h3>
+            <div className="flex items-center justify-center gap-2 py-4">
+              <ScrollColumn items={doseInts} selected={doseInt} onChange={(v) => setDoseInt(v as string)} />
+              <span className="text-3xl font-bold text-foreground">,</span>
+              <ScrollColumn items={doseDecimals} selected={doseDec} onChange={(v) => setDoseDec(v as string)} />
+              <span className="text-xl font-semibold text-muted-foreground ml-2">mg</span>
+            </div>
+            <button
+              onClick={() => setShowDosePicker(false)}
+              className="w-full py-3.5 rounded-2xl text-[15px] font-bold text-white active:scale-[0.97] transition-transform"
+              style={{
+                background: "linear-gradient(to right, #7B2FF7, #F857A6)",
+                boxShadow: "0 4px 16px hsl(300 60% 50% / 0.2)",
+              }}
+            >
+              Confirmar
+            </button>
           </div>
         </DrawerContent>
       </Drawer>
