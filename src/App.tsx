@@ -44,6 +44,7 @@ import MedicationAnalysis from "./pages/MedicationAnalysis";
 import SideEffectHistory from "./pages/SideEffectHistory";
 import HowToUse from "./pages/HowToUse";
 import SubscriptionPlans from "./pages/SubscriptionPlans";
+import Analytics from "./pages/Analytics";
 
 const queryClient = new QueryClient();
 
