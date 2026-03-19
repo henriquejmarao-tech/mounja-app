@@ -44,6 +44,7 @@ import MedicationAnalysis from "./pages/MedicationAnalysis";
 import SideEffectHistory from "./pages/SideEffectHistory";
 import HowToUse from "./pages/HowToUse";
 import SubscriptionPlans from "./pages/SubscriptionPlans";
+import Analytics from "./pages/Analytics";
 
 const queryClient = new QueryClient();
 
@@ -129,6 +130,7 @@ const AppRoutes = () => {
         <Route path="/analise-medicacao" element={<ProtectedRoute><TriageGuard><PremiumRoute><MedicationAnalysis /></PremiumRoute></TriageGuard></ProtectedRoute>} />
         <Route path="/historico-efeitos" element={<ProtectedRoute><TriageGuard><SideEffectHistory /></TriageGuard></ProtectedRoute>} />
         <Route path="/como-usar" element={<ProtectedRoute><TriageGuard><HowToUse /></TriageGuard></ProtectedRoute>} />
+        <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>
