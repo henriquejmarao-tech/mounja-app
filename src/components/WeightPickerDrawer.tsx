@@ -65,6 +65,23 @@ const WeightPickerDrawer = ({ open, onOpenChange, initialWeight = 74, onSave }: 
   const intPicker = useScrollPicker(integerRange, intPart);
   const decPicker = useScrollPicker(decimalRange, decPart);
 
+  useEffect(() => {
+    if (!open) return;
+    const timer = setTimeout(() => {
+      const intIdx = integerRange.indexOf(intPart);
+      const decIdx = decimalRange.indexOf(decPart);
+      if (intIdx >= 0) {
+        intPicker.setSelected(intPart);
+        intPicker.scrollToIndex(intIdx, false);
+      }
+      if (decIdx >= 0) {
+        decPicker.setSelected(decPart);
+        decPicker.scrollToIndex(decIdx, false);
+      }
+    }, 80);
+    return () => clearTimeout(timer);
+  }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const handleDone = () => {
     const weight = intPicker.selected + decPicker.selected / 10;
     onSave(weight);
