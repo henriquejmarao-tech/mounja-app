@@ -34,7 +34,7 @@ function useScrollPicker(items: number[], initial: number) {
   useEffect(() => {
     const idx = items.indexOf(initial);
     if (idx >= 0) {
-      // Small delay to ensure element is rendered
+      setSelected(items[idx]);
       requestAnimationFrame(() => scrollToIndex(idx, false));
     }
   }, [initial, items, scrollToIndex]);
