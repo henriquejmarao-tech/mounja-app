@@ -55,7 +55,7 @@ function useScrollPicker(items: number[], initial: number) {
     }, 100);
   }, [items, scrollToIndex]);
 
-  return { ref, selected, handleScroll, scrollToIndex, items };
+  return { ref, selected, setSelected, handleScroll, scrollToIndex, items };
 }
 
 const WeightPickerDrawer = ({ open, onOpenChange, initialWeight = 74, onSave }: WeightPickerDrawerProps) => {
