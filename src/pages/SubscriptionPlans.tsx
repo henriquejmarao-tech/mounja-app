@@ -135,7 +135,8 @@ const SubscriptionPlans = () => {
       }
     }
     if (searchParams.get("canceled") === "true") {
-      toast.info("Checkout cancelado");
+      toast.info("Checkout cancelado. Escolha outro plano.");
+      navigate("/planos", { replace: true });
     }
   }, [searchParams]);
 
