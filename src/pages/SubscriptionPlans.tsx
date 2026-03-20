@@ -135,7 +135,8 @@ const SubscriptionPlans = () => {
       }
     }
     if (searchParams.get("canceled") === "true") {
-      toast.info("Checkout cancelado");
+      toast.info("Checkout cancelado. Escolha outro plano.");
+      navigate("/planos", { replace: true });
     }
   }, [searchParams]);
 
@@ -197,11 +198,6 @@ const SubscriptionPlans = () => {
       });
       if (error) throw error;
       if (data?.url) {
-        // Mark subscription_seen before redirecting
-        await supabase
-          .from("profiles")
-          .update({ subscription_seen: true } as any)
-          .eq("id", user.id);
         window.location.href = data.url;
       } else {
         throw new Error("No checkout URL returned");
