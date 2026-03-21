@@ -15,6 +15,13 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 /* ─── plan data ─── */
 interface Plan {
@@ -22,21 +29,20 @@ interface Plan {
   title: string;
   price: string;
   badge?: string;
-  discount?: string;
   benefits: string[];
   cta: string;
   highlighted: boolean;
   muted: boolean;
   subtitle?: string;
+  hasBillingSelector?: boolean;
 }
 
 const plans: Plan[] = [
   {
-    id: "trimestral",
-    title: "Plano Trimestral",
+    id: "premium",
+    title: "Plano Premium",
     price: "R$ 49,99",
-    badge: "Mais escolhido",
-    discount: "Economize 33%",
+    badge: "Recomendado",
     benefits: [
       "Registrar refeições com IA",
       "Acompanhar insights de aplicação",
@@ -45,19 +51,7 @@ const plans: Plan[] = [
     cta: "Escolher plano",
     highlighted: true,
     muted: false,
-  },
-  {
-    id: "mensal",
-    title: "Plano Mensal",
-    price: "R$ 24,99",
-    benefits: [
-      "Registrar refeições",
-      "Acompanhar progresso",
-      "Insights básicos",
-    ],
-    cta: "Continuar com mensal",
-    highlighted: false,
-    muted: false,
+    hasBillingSelector: true,
   },
   {
     id: "gratuito",
@@ -75,6 +69,8 @@ const plans: Plan[] = [
   },
 ];
 
+type BillingPeriod = "trimestral" | "mensal";
+
 /* ─── main page ─── */
 const SubscriptionPlans = () => {
   const navigate = useNavigate();
@@ -85,6 +81,7 @@ const SubscriptionPlans = () => {
   const [loading, setLoading] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const [portalLoading, setPortalLoading] = useState(false);
+  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>("trimestral");
 
   // Coupon drawer state
   const [couponDrawerOpen, setCouponDrawerOpen] = useState(false);
@@ -125,7 +122,6 @@ const SubscriptionPlans = () => {
     if (searchParams.get("success") === "true") {
       toast.success("Assinatura ativada com sucesso! 🎉");
       refreshPlan();
-      // Mark subscription_seen and navigate
       if (user) {
         supabase
           .from("profiles")
@@ -175,7 +171,6 @@ const SubscriptionPlans = () => {
     if (!user || loading || checkoutLoading) return;
 
     if (planId === "gratuito") {
-      // Free plan — just mark as seen
       setLoading(true);
       try {
         await supabase
@@ -190,11 +185,12 @@ const SubscriptionPlans = () => {
       return;
     }
 
-    // Paid plan — create Stripe checkout
-    setCheckoutLoading(planId);
+    // Premium plan — use the selected billing period
+    const stripePlanId = billingPeriod;
+    setCheckoutLoading(stripePlanId);
     try {
       const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: { planId },
+        body: { planId: stripePlanId },
       });
       if (error) throw error;
       if (data?.url) {
@@ -227,7 +223,6 @@ const SubscriptionPlans = () => {
       setCouponDrawerOpen(false);
       setCouponCode("");
 
-      // Mark subscription_seen and refresh
       if (user) {
         await supabase
           .from("profiles")
@@ -369,8 +364,10 @@ const SubscriptionPlans = () => {
                   plan={plan}
                   active={idx === selectedIndex}
                   onSelect={() => handleSelectPlan(plan.id)}
-                  loading={loading || checkoutLoading === plan.id}
+                  loading={loading || checkoutLoading !== null}
                   showCta={revealStage >= 3}
+                  billingPeriod={billingPeriod}
+                  onBillingChange={setBillingPeriod}
                 />
               </div>
             ))}
@@ -460,13 +457,25 @@ const PlanCard = ({
   onSelect,
   loading,
   showCta,
+  billingPeriod,
+  onBillingChange,
 }: {
   plan: Plan;
   active: boolean;
   onSelect: () => void;
   loading: boolean;
   showCta: boolean;
+  billingPeriod: BillingPeriod;
+  onBillingChange: (v: BillingPeriod) => void;
 }) => {
+  const displayPrice = plan.hasBillingSelector
+    ? billingPeriod === "trimestral" ? "R$ 49,99" : "R$ 24,99"
+    : plan.price;
+
+  const displayPeriod = plan.hasBillingSelector
+    ? billingPeriod === "trimestral" ? "/trimestre" : "/mês"
+    : "";
+
   return (
     <div className={cn(
       "relative rounded-[22px] p-[1.5px] transition-all duration-300",
@@ -501,18 +510,18 @@ const PlanCard = ({
               ? "bg-gradient-to-r from-[hsl(270,80%,60%)] to-[hsl(330,80%,65%)] bg-clip-text text-transparent"
               : plan.muted ? "text-muted-foreground" : "text-foreground"
           )}>
-            {plan.price}
+            {displayPrice}
           </span>
           {plan.id !== "gratuito" && (
             <span className="text-xs text-muted-foreground">
-              /{plan.id === "trimestral" ? "trimestre" : "mês"}
+              {displayPeriod}
             </span>
           )}
         </div>
-        {plan.discount && (
+        {plan.hasBillingSelector && billingPeriod === "trimestral" && (
           <div className="mt-2 inline-flex self-start items-center gap-1 px-2 py-0.5 rounded-md bg-[hsl(270,80%,60%)/0.08] text-[hsl(270,80%,55%)] text-xs font-semibold">
             <Sparkles className="w-3 h-3" />
-            {plan.discount}
+            Economize 33%
           </div>
         )}
         <div className="mt-4 space-y-2.5">
@@ -539,11 +548,35 @@ const PlanCard = ({
           ))}
         </div>
         <div className="flex-1" />
+
+        {/* Billing period selector */}
+        {plan.hasBillingSelector && (
+          <div className={cn(
+            "mt-4 transition-all duration-300",
+            showCta ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
+          )}>
+            <Select value={billingPeriod} onValueChange={(v) => onBillingChange(v as BillingPeriod)}>
+              <SelectTrigger className="w-full rounded-xl border-border/50 bg-muted/30 text-sm font-semibold h-11">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="trimestral">
+                  <span className="flex items-center gap-2">
+                    Trimestral — R$ 49,99
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[hsl(270,80%,60%)/0.12] text-[hsl(270,80%,55%)]">-33%</span>
+                  </span>
+                </SelectItem>
+                <SelectItem value="mensal">Mensal — R$ 24,99</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
         <button
           onClick={onSelect}
           disabled={loading}
           className={cn(
-            "mt-4 w-full py-3 rounded-2xl font-bold text-sm transition-all duration-300 active:scale-[0.97] flex items-center justify-center gap-2",
+            "mt-3 w-full py-3 rounded-2xl font-bold text-sm transition-all duration-300 active:scale-[0.97] flex items-center justify-center gap-2",
             plan.highlighted
               ? "text-white shadow-lg"
               : plan.muted
