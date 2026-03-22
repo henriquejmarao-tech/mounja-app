@@ -88,6 +88,7 @@ const MealsPage = () => {
   const { isFree } = usePlan();
   const navigate = useNavigate();
   const [premiumModalOpen, setPremiumModalOpen] = useState(false);
+  const [limitSheetOpen, setLimitSheetOpen] = useState(false);
 
   const [currentDate] = useState(new Date());
   const [waterGlasses, setWaterGlasses] = useState(0);
@@ -97,6 +98,10 @@ const MealsPage = () => {
   const [goalsOpen, setGoalsOpen] = useState(false);
   const [addMealOpen, setAddMealOpen] = useState(false);
   const [meals, setMeals] = useState<any[]>([]);
+
+  // Credits state
+  const [creditsUsed, setCreditsUsed] = useState(0);
+  const [creditsMax, setCreditsMax] = useState(2);
 
   const dateStr = localDateStr(currentDate);
 
