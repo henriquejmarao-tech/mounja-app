@@ -490,17 +490,17 @@ const MealsPage = () => {
 
       {/* ── Floating Action Button ── */}
       <button
-        onClick={() => isFree ? setPremiumModalOpen(true) : setAddMealOpen(true)}
+        onClick={handleAddMealClick}
         className={cn(
           "fixed right-5 z-40 w-14 h-14 rounded-full flex items-center justify-center active:scale-90 transition-transform touch-manipulation animate-cta-entrance",
-          isFree ? "bg-muted/80 text-muted-foreground" : "gradient-hero text-primary-foreground"
+          atLimit ? "bg-muted/80 text-muted-foreground" : "gradient-hero text-primary-foreground"
         )}
         style={{
           bottom: "calc(env(safe-area-inset-bottom, 0px) + 80px)",
-          boxShadow: isFree ? "0px 4px 12px rgba(0,0,0,0.08)" : "0px 8px 24px rgba(128, 0, 128, 0.2)",
+          boxShadow: atLimit ? "0px 4px 12px rgba(0,0,0,0.08)" : "0px 8px 24px rgba(128, 0, 128, 0.2)",
         }}
       >
-        {isFree ? <Lock className="w-5 h-5" /> : <Plus className="w-6 h-6" />}
+        {atLimit ? <Lock className="w-5 h-5" /> : <Plus className="w-6 h-6" />}
       </button>
 
       {/* ── Drawers ── */}
@@ -516,9 +516,15 @@ const MealsPage = () => {
           onOpenChange={setAddMealOpen}
           userId={user.id}
           date={dateStr}
-          onMealAdded={fetchData}
+          onMealAdded={handleMealAdded}
         />
       )}
+
+      {/* Limit Reached Sheet */}
+      <LimitReachedSheet
+        open={limitSheetOpen}
+        onOpenChange={setLimitSheetOpen}
+      />
 
       {/* Premium Gate Modal */}
       <PremiumGateModal
