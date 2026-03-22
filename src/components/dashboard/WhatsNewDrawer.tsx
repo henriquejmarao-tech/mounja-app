@@ -14,6 +14,12 @@ const WhatsNewDrawer = ({ open, onOpenChange }: WhatsNewDrawerProps) => {
 
           <ul className="space-y-4">
             <li className="flex items-start gap-3">
+              <span className="mt-1.5 w-2 h-2 rounded-full bg-primary shrink-0 animate-pulse" />
+              <p className="text-[15px] text-foreground leading-relaxed">
+                <strong>Novidade! 2 registros grátis por dia</strong>: Agora você pode registrar até 2 refeições por dia gratuitamente. Experimente na aba Refeições!
+              </p>
+            </li>
+            <li className="flex items-start gap-3">
               <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-foreground shrink-0" />
               <p className="text-[15px] text-foreground leading-relaxed">
                 <strong>Tela de Refeições redesenhada</strong>: Gráficos nutricionais semanais, controle de água e sequência diária para manter sua motivação.
