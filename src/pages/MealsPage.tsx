@@ -170,9 +170,41 @@ const MealsPage = () => {
     setMeals((mealsRes.data as any[]) || []);
   }, [user, dateStr, weekStartStr]);
 
+  // Fetch / upsert credits for today
+  const fetchCredits = useCallback(async () => {
+    if (!user) return;
+    // Upsert so the row exists
+    const { data } = await supabase
+      .from("daily_meal_credits" as any)
+      .upsert(
+        { user_id: user.id, date: dateStr, credits_used: 0, credits_max: 2 },
+        { onConflict: "user_id,date", ignoreDuplicates: true }
+      )
+      .select()
+      .single();
+    if (data) {
+      setCreditsUsed((data as any).credits_used);
+      setCreditsMax((data as any).credits_max);
+    } else {
+      // Fallback: read existing
+      const { data: existing } = await supabase
+        .from("daily_meal_credits" as any)
+        .select("credits_used, credits_max")
+        .eq("user_id", user.id)
+        .eq("date", dateStr)
+        .limit(1)
+        .single();
+      if (existing) {
+        setCreditsUsed((existing as any).credits_used);
+        setCreditsMax((existing as any).credits_max);
+      }
+    }
+  }, [user, dateStr]);
+
   useEffect(() => {
     fetchData();
-  }, [fetchData]);
+    fetchCredits();
+  }, [fetchData, fetchCredits]);
 
   // Debounced water save
   const waterRef = useRef(waterGlasses);
