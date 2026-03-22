@@ -36,6 +36,7 @@ const Dashboard = () => {
   const [symptomDrawerOpen, setSymptomDrawerOpen] = useState(false);
   const [calendarDrawerOpen, setCalendarDrawerOpen] = useState(false);
   const [whatsNewOpen, setWhatsNewOpen] = useState(false);
+  const [bellRead, setBellRead] = useState(() => localStorage.getItem("bell_free_meals_read") === "1");
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [weekInjections, setWeekInjections] = useState<Set<string>>(new Set());
   const [hasPhotoToday, setHasPhotoToday] = useState(false);
