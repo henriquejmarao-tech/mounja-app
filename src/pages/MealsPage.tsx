@@ -273,8 +273,11 @@ const MealsPage = () => {
         <p className="text-sm text-muted-foreground mt-0.5">Vamos manter a consistência hoje</p>
       </div>
 
+      {/* ── Credits Bar (free users) ── */}
+      {isFree && <MealCreditsBar creditsUsed={creditsUsed} creditsMax={creditsMax} />}
+
       {/* ── Daily Target Card ── */}
-      <div className="px-5 mt-5 animate-fade-in-up">
+      <div className="px-5 mt-4 animate-fade-in-up">
         <div className="bg-card rounded-[22px] border border-border/50 shadow-card p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-bold text-foreground">Sua meta do dia</h2>
