@@ -10,6 +10,8 @@ import { useNavigate } from "react-router-dom";
 import EditGoalsDrawer from "@/components/meals/EditGoalsDrawer";
 import AddMealDrawer from "@/components/meals/AddMealDrawer";
 import MealCard from "@/components/meals/MealCard";
+import MealCreditsBar from "@/components/meals/MealCreditsBar";
+import LimitReachedSheet from "@/components/meals/LimitReachedSheet";
 import PremiumGateModal from "@/components/PremiumGateModal";
 
 const DAYS_LABELS = ["S", "T", "Q", "Q", "S", "S", "D"];
