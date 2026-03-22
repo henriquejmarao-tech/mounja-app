@@ -424,11 +424,7 @@ const MealsPage = () => {
               <MealCard
                 key={meal.id}
                 meal={meal}
-                onDelete={async (id) => {
-                  await supabase.from("meal_logs").delete().eq("id", id);
-                  toast.success("Refeição removida");
-                  fetchData();
-                }}
+                onDelete={handleDeleteMeal}
               />
             ))}
           </div>
@@ -438,15 +434,17 @@ const MealsPage = () => {
             <p className="text-base font-bold text-foreground mb-1">Nenhuma refeição registrada</p>
             <p className="text-sm text-muted-foreground mb-5">Comece sua sequência hoje</p>
             <button
-              onClick={() => isFree ? setPremiumModalOpen(true) : setAddMealOpen(true)}
+              onClick={handleAddMealClick}
+              disabled={atLimit}
               className={cn(
                 "px-6 py-2.5 rounded-full text-sm font-bold active:scale-95 transition-transform inline-flex items-center gap-2",
-                isFree ? "bg-muted text-muted-foreground" : "gradient-hero text-primary-foreground"
+                atLimit
+                  ? "bg-muted text-muted-foreground"
+                  : "gradient-hero text-primary-foreground"
               )}
-              style={!isFree ? { boxShadow: "0px 6px 16px rgba(128, 0, 128, 0.12)" } : undefined}
+              style={!atLimit ? { boxShadow: "0px 6px 16px rgba(128, 0, 128, 0.12)" } : undefined}
             >
-              {isFree && <Lock className="w-3.5 h-3.5" />}
-              Registrar primeira refeição
+              {atLimit ? "Limite atingido · volta amanhã" : "Registrar primeira refeição"}
             </button>
           </div>
         )}
