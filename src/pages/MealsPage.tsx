@@ -264,6 +264,42 @@ const MealsPage = () => {
   };
 
   const waterPct = Math.min(waterGlasses / (glassesGoal || 1), 1);
+  const atLimit = isFree && creditsUsed >= creditsMax;
+
+  const handleAddMealClick = () => {
+    if (isFree && atLimit) {
+      setLimitSheetOpen(true);
+    } else {
+      setAddMealOpen(true);
+    }
+  };
+
+  const handleMealAdded = async () => {
+    if (isFree && user) {
+      // Increment credits_used
+      await supabase
+        .from("daily_meal_credits" as any)
+        .update({ credits_used: creditsUsed + 1 })
+        .eq("user_id", user.id)
+        .eq("date", dateStr);
+      setCreditsUsed((prev) => prev + 1);
+    }
+    await fetchData();
+  };
+
+  const handleDeleteMeal = async (id: string) => {
+    await supabase.from("meal_logs").delete().eq("id", id);
+    if (isFree && user && creditsUsed > 0) {
+      await supabase
+        .from("daily_meal_credits" as any)
+        .update({ credits_used: Math.max(0, creditsUsed - 1) })
+        .eq("user_id", user.id)
+        .eq("date", dateStr);
+      setCreditsUsed((prev) => Math.max(0, prev - 1));
+    }
+    toast.success("Refeição removida");
+    fetchData();
+  };
 
   return (
     <div className="min-h-screen pb-nav bg-background">
