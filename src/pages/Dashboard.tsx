@@ -36,6 +36,7 @@ const Dashboard = () => {
   const [symptomDrawerOpen, setSymptomDrawerOpen] = useState(false);
   const [calendarDrawerOpen, setCalendarDrawerOpen] = useState(false);
   const [whatsNewOpen, setWhatsNewOpen] = useState(false);
+  const [bellRead, setBellRead] = useState(() => localStorage.getItem("bell_free_meals_read") === "1");
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [weekInjections, setWeekInjections] = useState<Set<string>>(new Set());
   const [hasPhotoToday, setHasPhotoToday] = useState(false);
@@ -235,10 +236,19 @@ const Dashboard = () => {
             </button>
           )}
           <button
-            onClick={() => setWhatsNewOpen(true)}
-            className="p-2 -mr-2 active:scale-90 transition-transform"
+            onClick={() => {
+              setBellRead(true);
+              localStorage.setItem("bell_free_meals_read", "1");
+              setWhatsNewOpen(true);
+            }}
+            className="p-2 -mr-2 active:scale-90 transition-transform relative"
           >
             <Bell className="w-[22px] h-[22px] text-foreground/60" />
+            {!bellRead && (
+              <span className="absolute top-1 right-0 w-4 h-4 rounded-full bg-primary text-[10px] font-bold text-primary-foreground flex items-center justify-center">
+                1
+              </span>
+            )}
           </button>
         </div>
 
