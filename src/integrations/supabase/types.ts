@@ -224,6 +224,33 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_meal_credits: {
+        Row: {
+          created_at: string
+          credits_max: number
+          credits_used: number
+          date: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          credits_max?: number
+          credits_used?: number
+          date?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          credits_max?: number
+          credits_used?: number
+          date?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       diet_suggestions: {
         Row: {
           breakfast: string | null
