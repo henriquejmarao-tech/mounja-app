@@ -11,11 +11,26 @@ import {
 import {
   Users, Activity, Crown, TrendingUp, Syringe, Camera, Utensils,
   Dumbbell, ClipboardList, Bot, Shield, Globe, Mail, Sparkles, AlertTriangle,
+  RotateCcw, CalendarCheck, CreditCard, Lock, ToggleLeft, ToggleRight,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const ADMIN_EMAIL = "henriquejmarao@gmail.com";
+
+interface RetentionData {
+  pct: number;
+  eligible: number;
+  retained: number;
+}
+
+interface CreditsData {
+  totalCreditsToday: number;
+  limitHitToday: number;
+  creditsLast7: { date: string; credits: number }[];
+  limitLast7: { date: string; users: number }[];
+  limitUsers: { id: string; name: string; email: string; timesHitLimit: number; daysSinceSignup: number }[];
+}
 
 interface AnalyticsData {
   totalUsers: number;
@@ -23,12 +38,15 @@ interface AnalyticsData {
   premiumCount: number;
   freeCount: number;
   todayActiveUsers: number;
+  yesterdayActiveUsers: number;
   premiumBySource: Record<string, number>;
   premiumByPromo: Record<string, number>;
   signupsByProvider: Record<string, number>;
   signupsByMonth: Record<string, number>;
   botSuspectsCount: number;
-  featureUsage: Record<string, { total: number; today?: number }>;
+  retention: { d1: RetentionData | null; d7: RetentionData | null };
+  featureUsage: Record<string, { total: number; today?: number; uniqueUsers?: number }>;
+  credits: CreditsData | null;
   last7Days: { date: string; logs: number; injections: number; meals: number; workouts: number }[];
   users: {
     id: string; name: string; email: string; medication: string | null; dose: string | null;
@@ -47,6 +65,7 @@ const CHART_COLORS = {
   rose: "#fb7185",
   purple: "#a78bfa",
   slate: "#94a3b8",
+  orange: "#f97316",
 };
 
 const Analytics = () => {
@@ -54,6 +73,7 @@ const Analytics = () => {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showPerUser, setShowPerUser] = useState(false);
 
   useEffect(() => {
     if (authLoading || !user) return;
@@ -96,12 +116,26 @@ const Analytics = () => {
           <GlowKpi icon={<Activity className="w-5 h-5" />} label="Ativos Hoje" value={data.todayActiveUsers} color="cyan" />
           <GlowKpi icon={<Crown className="w-5 h-5" />} label="Premium" value={data.premiumCount} color="amber" />
           <GlowKpi icon={<TrendingUp className="w-5 h-5" />} label="Triagem Completa" value={data.triageCompleted} color="green" />
+          <GlowKpi icon={<CalendarCheck className="w-5 h-5" />} label="Voltaram Ontem" value={data.yesterdayActiveUsers} color="indigo" />
+          <GlowKpiText
+            icon={<RotateCcw className="w-5 h-5" />}
+            label="Retenção"
+            value={data.retention.d1 ? `D1: ${data.retention.d1.pct}%` : "D1: —"}
+            subValue={data.retention.d7 ? `D7: ${data.retention.d7.pct}%` : "D7: —"}
+            tooltip={
+              !data.retention.d1 && !data.retention.d7
+                ? "Dados insuficientes"
+                : `D1: ${data.retention.d1?.retained ?? 0}/${data.retention.d1?.eligible ?? 0} · D7: ${data.retention.d7?.retained ?? 0}/${data.retention.d7?.eligible ?? 0}`
+            }
+            color="rose"
+          />
         </div>
 
         {/* Tabs */}
         <Tabs defaultValue="overview" className="w-full">
           <TabsList className="w-full bg-slate-800/60 border border-slate-700/50">
             <TabsTrigger value="overview" className="text-xs flex-1 data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Visão Geral</TabsTrigger>
+            <TabsTrigger value="credits" className="text-xs flex-1 data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Créditos</TabsTrigger>
             <TabsTrigger value="leads" className="text-xs flex-1 data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Leads</TabsTrigger>
             <TabsTrigger value="premium" className="text-xs flex-1 data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Premium</TabsTrigger>
             <TabsTrigger value="security" className="text-xs flex-1 data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Segurança</TabsTrigger>
@@ -111,16 +145,37 @@ const Analytics = () => {
           <TabsContent value="overview" className="space-y-4 mt-4">
             {/* Feature usage */}
             <GlassCard title="Uso por Funcionalidade">
+              <div className="flex items-center justify-end gap-2 mb-2">
+                <button
+                  onClick={() => setShowPerUser(!showPerUser)}
+                  className="flex items-center gap-1.5 text-[10px] text-slate-400 hover:text-white transition-colors bg-slate-800/50 rounded-lg px-2.5 py-1.5"
+                >
+                  {showPerUser ? <ToggleRight className="w-3.5 h-3.5 text-indigo-400" /> : <ToggleLeft className="w-3.5 h-3.5" />}
+                  {showPerUser ? "Média/Usuário" : "Volume Total"}
+                </button>
+              </div>
               <ResponsiveContainer width="100%" height={220}>
-                <BarChart data={buildFeatureData(data)}>
+                <BarChart data={buildFeatureData(data, showPerUser)}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                   <XAxis dataKey="name" fontSize={11} tick={{ fill: "#94a3b8" }} />
                   <YAxis fontSize={11} tick={{ fill: "#94a3b8" }} />
-                  <Tooltip contentStyle={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 8, color: "#fff" }} />
-                  <Bar dataKey="total" fill={CHART_COLORS.primary} name="Total" radius={[6, 6, 0, 0]} />
-                  <Bar dataKey="hoje" fill={CHART_COLORS.secondary} name="Hoje" radius={[6, 6, 0, 0]} />
+                  <Tooltip
+                    contentStyle={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 8, color: "#fff" }}
+                    formatter={(value: number) => showPerUser ? value.toFixed(1) : value}
+                  />
+                  <Bar dataKey="total" fill={CHART_COLORS.primary} name={showPerUser ? "Média/Usuário" : "Total"} radius={[6, 6, 0, 0]} />
+                  {!showPerUser && <Bar dataKey="hoje" fill={CHART_COLORS.secondary} name="Hoje" radius={[6, 6, 0, 0]} />}
                 </BarChart>
               </ResponsiveContainer>
+              {showPerUser && (
+                <div className="grid grid-cols-2 gap-2 mt-3 text-[10px]">
+                  {buildFeatureData(data, false).map((f) => (
+                    <div key={f.name} className="bg-slate-800/40 rounded-lg px-2.5 py-1.5 text-slate-400">
+                      {f.name}: <span className="text-white font-medium">{f.total}</span> total / <span className="text-indigo-300">{f.uniqueUsers}</span> usuários
+                    </div>
+                  ))}
+                </div>
+              )}
             </GlassCard>
 
             {/* 7-day trend */}
@@ -150,6 +205,81 @@ const Analytics = () => {
             </GlassCard>
           </TabsContent>
 
+          {/* CREDITS TAB */}
+          <TabsContent value="credits" className="space-y-4 mt-4">
+            {data.credits ? (
+              <>
+                <div className="grid grid-cols-2 gap-3">
+                  <GlowKpi icon={<Utensils className="w-5 h-5" />} label="Créditos Hoje" value={data.credits.totalCreditsToday} color="indigo" />
+                  <GlowKpi icon={<Lock className="w-5 h-5" />} label="No Limite Hoje" value={data.credits.limitHitToday} color="rose" />
+                </div>
+
+                <GlassCard title="Créditos Consumidos — 7 Dias">
+                  <ResponsiveContainer width="100%" height={200}>
+                    <BarChart data={formatCredits7(data.credits.creditsLast7)}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                      <XAxis dataKey="date" fontSize={10} tick={{ fill: "#94a3b8" }} />
+                      <YAxis fontSize={11} tick={{ fill: "#94a3b8" }} />
+                      <Tooltip contentStyle={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 8, color: "#fff" }} />
+                      <Bar dataKey="credits" fill={CHART_COLORS.purple} name="Créditos" radius={[6, 6, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </GlassCard>
+
+                <GlassCard title="Usuários no Limite — 7 Dias (Intenção de Compra)">
+                  <ResponsiveContainer width="100%" height={200}>
+                    <LineChart data={formatCredits7(data.credits.limitLast7)}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                      <XAxis dataKey="date" fontSize={10} tick={{ fill: "#94a3b8" }} />
+                      <YAxis fontSize={11} tick={{ fill: "#94a3b8" }} />
+                      <Tooltip contentStyle={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 8, color: "#fff" }} />
+                      <Line type="monotone" dataKey="users" stroke={CHART_COLORS.orange} name="Usuários" strokeWidth={2} dot={{ r: 3, fill: CHART_COLORS.orange }} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </GlassCard>
+
+                <GlassCard title="Usuários que Bateram no Limite (3 dias)">
+                  {data.credits.limitUsers.length > 0 ? (
+                    <div className="overflow-auto max-h-[400px] -mx-4">
+                      <Table>
+                        <TableHeader>
+                          <TableRow className="border-slate-700/50 hover:bg-transparent">
+                            <TableHead className="text-[10px] text-slate-400 font-medium">Usuário</TableHead>
+                            <TableHead className="text-[10px] text-slate-400 font-medium text-center">Vezes</TableHead>
+                            <TableHead className="text-[10px] text-slate-400 font-medium text-center">Dias no App</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {data.credits.limitUsers.map((u) => (
+                            <TableRow key={u.id} className="border-slate-700/30 hover:bg-slate-800/40">
+                              <TableCell className="py-2">
+                                <div className="text-[11px] font-medium text-white truncate max-w-[120px]">{u.name}</div>
+                                <div className="text-[9px] text-slate-500 truncate max-w-[120px]">{u.email}</div>
+                              </TableCell>
+                              <TableCell className="text-center text-xs py-2">
+                                <Badge className="bg-orange-500/20 text-orange-300 border-orange-500/30 text-[10px]">{u.timesHitLimit}x</Badge>
+                              </TableCell>
+                              <TableCell className="text-center text-xs py-2 text-slate-300">{u.daysSinceSignup}d</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-slate-500 text-center py-6">Nenhum usuário atingiu o limite nos últimos 3 dias</p>
+                  )}
+                </GlassCard>
+              </>
+            ) : (
+              <GlassCard title="Créditos de Refeição">
+                <div className="flex flex-col items-center justify-center py-10 text-slate-500">
+                  <CreditCard className="w-8 h-8 mb-3 opacity-40" />
+                  <p className="text-sm">Aguardando implementação dos créditos diários</p>
+                </div>
+              </GlassCard>
+            )}
+          </TabsContent>
+
           {/* LEADS TAB */}
           <TabsContent value="leads" className="space-y-4 mt-4">
             {/* Signup Provider */}
@@ -165,7 +295,7 @@ const Analytics = () => {
                     labelLine={{ stroke: "#64748b" }}
                   >
                     {buildProviderData(data).map((_, i) => (
-                      <Cell key={i} fill={Object.values(CHART_COLORS)[i % 7]} />
+                      <Cell key={i} fill={Object.values(CHART_COLORS)[i % 8]} />
                     ))}
                   </Pie>
                   <Legend wrapperStyle={{ fontSize: 12, color: "#94a3b8" }} />
@@ -208,7 +338,6 @@ const Analytics = () => {
 
           {/* PREMIUM TAB */}
           <TabsContent value="premium" className="space-y-4 mt-4">
-            {/* Premium vs Free */}
             <GlassCard title="Assinantes vs Gratuitos">
               <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
@@ -229,7 +358,6 @@ const Analytics = () => {
               </ResponsiveContainer>
             </GlassCard>
 
-            {/* Premium Source Breakdown */}
             <GlassCard title="Origem do Premium">
               <div className="space-y-2">
                 {Object.entries(data.premiumBySource).map(([source, count]) => (
@@ -245,7 +373,6 @@ const Analytics = () => {
               </div>
             </GlassCard>
 
-            {/* Promo Code Usage */}
             {Object.keys(data.premiumByPromo).length > 0 && (
               <GlassCard title="Códigos Promocionais Usados">
                 <div className="space-y-2">
@@ -259,7 +386,6 @@ const Analytics = () => {
               </GlassCard>
             )}
 
-            {/* Premium Users List */}
             <GlassCard title="Usuários Premium">
               <div className="space-y-2 max-h-[400px] overflow-auto">
                 {data.users.filter(u => u.isPremium).map(u => (
@@ -327,14 +453,21 @@ const Analytics = () => {
 
 // ── Helpers ──
 
-function buildFeatureData(data: AnalyticsData) {
-  return [
-    { name: "Registros", total: data.featureUsage.daily_logs?.total || 0, hoje: data.featureUsage.daily_logs?.today || 0 },
-    { name: "Aplicações", total: data.featureUsage.injections?.total || 0, hoje: data.featureUsage.injections?.today || 0 },
-    { name: "Refeições", total: data.featureUsage.meals?.total || 0, hoje: data.featureUsage.meals?.today || 0 },
-    { name: "Treinos", total: data.featureUsage.workouts?.total || 0, hoje: data.featureUsage.workouts?.today || 0 },
-    { name: "Fotos", total: data.featureUsage.photos?.total || 0, hoje: data.featureUsage.photos?.today || 0 },
+function buildFeatureData(data: AnalyticsData, perUser: boolean) {
+  const items = [
+    { name: "Registros", total: data.featureUsage.daily_logs?.total || 0, hoje: data.featureUsage.daily_logs?.today || 0, uniqueUsers: data.featureUsage.daily_logs?.uniqueUsers || 0 },
+    { name: "Aplicações", total: data.featureUsage.injections?.total || 0, hoje: data.featureUsage.injections?.today || 0, uniqueUsers: data.featureUsage.injections?.uniqueUsers || 0 },
+    { name: "Refeições", total: data.featureUsage.meals?.total || 0, hoje: data.featureUsage.meals?.today || 0, uniqueUsers: data.featureUsage.meals?.uniqueUsers || 0 },
+    { name: "Treinos", total: data.featureUsage.workouts?.total || 0, hoje: data.featureUsage.workouts?.today || 0, uniqueUsers: data.featureUsage.workouts?.uniqueUsers || 0 },
+    { name: "Fotos", total: data.featureUsage.photos?.total || 0, hoje: data.featureUsage.photos?.today || 0, uniqueUsers: data.featureUsage.photos?.uniqueUsers || 0 },
   ];
+  if (perUser) {
+    return items.map(i => ({
+      ...i,
+      total: i.uniqueUsers > 0 ? parseFloat((i.total / i.uniqueUsers).toFixed(1)) : 0,
+    }));
+  }
+  return items;
 }
 
 function buildLast7(data: AnalyticsData) {
@@ -362,6 +495,13 @@ function buildMonthlyData(data: AnalyticsData) {
     });
 }
 
+function formatCredits7(items: { date: string; [key: string]: any }[]) {
+  return items.map(d => ({
+    ...d,
+    date: new Date(d.date + "T12:00:00").toLocaleDateString("pt-BR", { weekday: "short", day: "2-digit" }),
+  }));
+}
+
 // ── Sub-components ──
 
 const colorMap: Record<string, string> = {
@@ -378,6 +518,17 @@ const GlowKpi = ({ icon, label, value, color }: { icon: React.ReactNode; label: 
     <div>
       <p className="text-2xl font-bold text-white">{value}</p>
       <p className="text-[11px] text-slate-400">{label}</p>
+    </div>
+  </div>
+);
+
+const GlowKpiText = ({ icon, label, value, subValue, tooltip, color }: { icon: React.ReactNode; label: string; value: string; subValue: string; tooltip: string; color: string }) => (
+  <div className={`rounded-xl border bg-gradient-to-br ${colorMap[color]} p-4 flex items-center gap-3`} title={tooltip}>
+    <div className={colorMap[color].split(" ").pop()}>{icon}</div>
+    <div>
+      <p className="text-sm font-bold text-white">{value}</p>
+      <p className="text-xs font-medium text-white/70">{subValue}</p>
+      <p className="text-[10px] text-slate-400">{label}</p>
     </div>
   </div>
 );
