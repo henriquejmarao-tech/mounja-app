@@ -29,6 +29,7 @@ Deno.serve(async (req) => {
 
     const sb = createClient(supabaseUrl, serviceRoleKey);
     const today = new Date().toISOString().split("T")[0];
+    const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
 
     // Total users
     const { count: totalUsers } = await sb.from("profiles").select("id", { count: "exact", head: true });
@@ -60,6 +61,17 @@ Deno.serve(async (req) => {
     const { data: todayWorkouts } = await sb.from("workouts").select("user_id").eq("date", today);
     (todayWorkouts || []).forEach((w: any) => todayActiveIds.add(w.user_id));
 
+    // Yesterday's active users
+    const yesterdayActiveIds = new Set<string>();
+    const { data: yLogs } = await sb.from("daily_logs").select("user_id").eq("date", yesterday);
+    (yLogs || []).forEach((l: any) => yesterdayActiveIds.add(l.user_id));
+    const { data: yInj } = await sb.from("injections").select("user_id").eq("date", yesterday);
+    (yInj || []).forEach((i: any) => yesterdayActiveIds.add(i.user_id));
+    const { data: yMeals } = await sb.from("meal_logs").select("user_id").eq("date", yesterday);
+    (yMeals || []).forEach((m: any) => yesterdayActiveIds.add(m.user_id));
+    const { data: yWorkouts } = await sb.from("workouts").select("user_id").eq("date", yesterday);
+    (yWorkouts || []).forEach((w: any) => yesterdayActiveIds.add(w.user_id));
+
     // Feature usage totals
     const { count: totalLogs } = await sb.from("daily_logs").select("id", { count: "exact", head: true });
     const { count: totalInjections } = await sb.from("injections").select("id", { count: "exact", head: true });
@@ -75,6 +87,19 @@ Deno.serve(async (req) => {
     const { count: todayWorkoutsCount } = await sb.from("workouts").select("id", { count: "exact", head: true }).eq("date", today);
     const { count: todayPhotosCount } = await sb.from("progress_photos").select("id", { count: "exact", head: true }).eq("date", today);
 
+    // Unique users per feature (for per-user averages)
+    const { data: logUsers } = await sb.from("daily_logs").select("user_id");
+    const { data: injUsers } = await sb.from("injections").select("user_id");
+    const { data: mealUsers } = await sb.from("meal_logs").select("user_id");
+    const { data: workoutUsers } = await sb.from("workouts").select("user_id");
+    const { data: photoUsers } = await sb.from("progress_photos").select("user_id");
+
+    const uniqueLogUsers = new Set((logUsers || []).map((r: any) => r.user_id)).size;
+    const uniqueInjUsers = new Set((injUsers || []).map((r: any) => r.user_id)).size;
+    const uniqueMealUsers = new Set((mealUsers || []).map((r: any) => r.user_id)).size;
+    const uniqueWorkoutUsers = new Set((workoutUsers || []).map((r: any) => r.user_id)).size;
+    const uniquePhotoUsers = new Set((photoUsers || []).map((r: any) => r.user_id)).size;
+
     // Last 7 days activity
     const last7 = [];
     for (let i = 6; i >= 0; i--) {
@@ -88,9 +113,111 @@ Deno.serve(async (req) => {
       last7.push({ date: dateStr, logs: logs || 0, injections: inj || 0, meals: meals || 0, workouts: wk || 0 });
     }
 
-    // Per-user breakdown
+    // Retention D1 and D7
     const { data: allProfiles } = await sb.from("profiles").select("id, name, current_dose, medication, triage_completed, created_at").order("created_at", { ascending: false }).limit(200);
 
+    // Build sets of active dates per user for retention
+    const allActivityByUser: Record<string, Set<string>> = {};
+    const addActivity = (rows: any[] | null) => {
+      (rows || []).forEach((r: any) => {
+        if (!allActivityByUser[r.user_id]) allActivityByUser[r.user_id] = new Set();
+        if (r.date) allActivityByUser[r.user_id].add(r.date);
+      });
+    };
+    // Fetch all dates for retention calc
+    const { data: allLogs } = await sb.from("daily_logs").select("user_id, date");
+    const { data: allInj } = await sb.from("injections").select("user_id, date");
+    const { data: allMealsAll } = await sb.from("meal_logs").select("user_id, date");
+    const { data: allWorkoutsAll } = await sb.from("workouts").select("user_id, date");
+    addActivity(allLogs);
+    addActivity(allInj);
+    addActivity(allMealsAll);
+    addActivity(allWorkoutsAll);
+
+    let d1Eligible = 0, d1Retained = 0, d7Eligible = 0, d7Retained = 0;
+    for (const p of (allProfiles || [])) {
+      if (!p.created_at) continue;
+      const signupDate = new Date(p.created_at);
+      const signupDateStr = signupDate.toISOString().split("T")[0];
+      const daysSince = Math.floor((Date.now() - signupDate.getTime()) / 86400000);
+      const userDates = allActivityByUser[p.id];
+
+      if (daysSince >= 1) {
+        d1Eligible++;
+        const d1Date = new Date(signupDate.getTime() + 86400000).toISOString().split("T")[0];
+        if (userDates?.has(d1Date)) d1Retained++;
+      }
+      if (daysSince >= 7) {
+        d7Eligible++;
+        const d7Date = new Date(signupDate.getTime() + 7 * 86400000).toISOString().split("T")[0];
+        if (userDates?.has(d7Date)) d7Retained++;
+      }
+    }
+
+    // Credits data
+    let creditsData: any = null;
+    try {
+      // Today credits
+      const { data: todayCredits } = await sb.from("daily_meal_credits").select("*").eq("date", today);
+      const totalCreditsToday = (todayCredits || []).reduce((s: number, r: any) => s + (r.credits_used || 0), 0);
+      const limitHitToday = (todayCredits || []).filter((r: any) => r.credits_used >= r.credits_max).length;
+
+      // Last 7 days credits
+      const creditsLast7 = [];
+      const limitLast7 = [];
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        const dateStr = d.toISOString().split("T")[0];
+        const { data: dayCredits } = await sb.from("daily_meal_credits").select("*").eq("date", dateStr);
+        const dayTotal = (dayCredits || []).reduce((s: number, r: any) => s + (r.credits_used || 0), 0);
+        const dayLimit = (dayCredits || []).filter((r: any) => r.credits_used >= r.credits_max).length;
+        creditsLast7.push({ date: dateStr, credits: dayTotal });
+        limitLast7.push({ date: dateStr, users: dayLimit });
+      }
+
+      // Users who hit limit in last 3 days
+      const threeDaysAgo = new Date(Date.now() - 3 * 86400000).toISOString().split("T")[0];
+      const { data: recentLimitRows } = await sb.from("daily_meal_credits").select("*").gte("date", threeDaysAgo);
+      const limitUserMap: Record<string, { count: number; userId: string }> = {};
+      (recentLimitRows || []).forEach((r: any) => {
+        if (r.credits_used >= r.credits_max) {
+          if (!limitUserMap[r.user_id]) limitUserMap[r.user_id] = { count: 0, userId: r.user_id };
+          limitUserMap[r.user_id].count++;
+        }
+      });
+
+      // Enrich with user info
+      const limitUsers = [];
+      for (const entry of Object.values(limitUserMap)) {
+        const profile = (allProfiles || []).find((p: any) => p.id === entry.userId);
+        let email = "—";
+        try {
+          const { data: { user: authUser } } = await sb.auth.admin.getUserById(entry.userId);
+          email = authUser?.email || "—";
+        } catch {}
+        const daysSinceSignup = profile?.created_at ? Math.floor((Date.now() - new Date(profile.created_at).getTime()) / 86400000) : 0;
+        limitUsers.push({
+          id: entry.userId,
+          name: profile?.name || "Sem nome",
+          email,
+          timesHitLimit: entry.count,
+          daysSinceSignup,
+        });
+      }
+
+      creditsData = {
+        totalCreditsToday,
+        limitHitToday,
+        creditsLast7,
+        limitLast7,
+        limitUsers,
+      };
+    } catch {
+      creditsData = null;
+    }
+
+    // Per-user breakdown
     const premiumUserIds = new Set((premiumRows || []).map((r: any) => r.user_id));
     const premiumSourceMap: Record<string, { source: string; promo_code: string | null }> = {};
     (premiumRows || []).forEach((r: any) => {
@@ -109,17 +236,14 @@ Deno.serve(async (req) => {
       const { count: uWorkouts } = await sb.from("workouts").select("id", { count: "exact", head: true }).eq("user_id", p.id);
       const { count: uPhotos } = await sb.from("progress_photos").select("id", { count: "exact", head: true }).eq("user_id", p.id);
 
-      // Get auth info
       const { data: { user: authUser } } = await sb.auth.admin.getUserById(p.id);
       const provider = authUser?.app_metadata?.provider || "email";
       const email = authUser?.email || "—";
 
-      // Count signups by provider
       signupsByProvider[provider] = (signupsByProvider[provider] || 0) + 1;
 
-      // Count signups by month
       if (p.created_at) {
-        const month = p.created_at.substring(0, 7); // YYYY-MM
+        const month = p.created_at.substring(0, 7);
         signupsByMonth[month] = (signupsByMonth[month] || 0) + 1;
       }
 
@@ -127,7 +251,6 @@ Deno.serve(async (req) => {
       const isPremium = premiumUserIds.has(p.id);
       const premiumInfo = premiumSourceMap[p.id] || null;
 
-      // Bot detection heuristics
       const daysSinceSignup = p.created_at ? Math.floor((Date.now() - new Date(p.created_at).getTime()) / 86400000) : 0;
       const isBot = (
         !p.name &&
@@ -168,19 +291,25 @@ Deno.serve(async (req) => {
       premiumCount,
       freeCount: (totalUsers || 0) - premiumCount,
       todayActiveUsers: todayActiveIds.size,
+      yesterdayActiveUsers: yesterdayActiveIds.size,
       premiumBySource,
       premiumByPromo,
       signupsByProvider,
       signupsByMonth,
       botSuspectsCount: botSuspects.length,
+      retention: {
+        d1: d1Eligible > 0 ? { pct: Math.round((d1Retained / d1Eligible) * 100), eligible: d1Eligible, retained: d1Retained } : null,
+        d7: d7Eligible > 0 ? { pct: Math.round((d7Retained / d7Eligible) * 100), eligible: d7Eligible, retained: d7Retained } : null,
+      },
       featureUsage: {
-        daily_logs: { total: totalLogs || 0, today: todayLogsCount || 0 },
-        injections: { total: totalInjections || 0, today: todayInjectionsCount || 0 },
-        meals: { total: totalMeals || 0, today: todayMealsCount || 0 },
-        workouts: { total: totalWorkouts || 0, today: todayWorkoutsCount || 0 },
-        photos: { total: totalPhotos || 0, today: todayPhotosCount || 0 },
+        daily_logs: { total: totalLogs || 0, today: todayLogsCount || 0, uniqueUsers: uniqueLogUsers },
+        injections: { total: totalInjections || 0, today: todayInjectionsCount || 0, uniqueUsers: uniqueInjUsers },
+        meals: { total: totalMeals || 0, today: todayMealsCount || 0, uniqueUsers: uniqueMealUsers },
+        workouts: { total: totalWorkouts || 0, today: todayWorkoutsCount || 0, uniqueUsers: uniqueWorkoutUsers },
+        photos: { total: totalPhotos || 0, today: todayPhotosCount || 0, uniqueUsers: uniquePhotoUsers },
         feedback: { total: totalFeedback || 0 },
       },
+      credits: creditsData,
       last7Days: last7,
       users: userBreakdown,
     }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
