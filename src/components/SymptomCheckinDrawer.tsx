@@ -64,9 +64,10 @@ interface SymptomCheckinDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   date?: Date;
+  onCheckinSaved?: () => void;
 }
 
-const SymptomCheckinDrawer = ({ open, onOpenChange, date }: SymptomCheckinDrawerProps) => {
+const SymptomCheckinDrawer = ({ open, onOpenChange, date, onCheckinSaved }: SymptomCheckinDrawerProps) => {
   const { user } = useAuth();
   const [selected, setSelected] = useState<Record<string, boolean>>({});
   const [saving, setSaving] = useState(false);
@@ -161,6 +162,7 @@ const SymptomCheckinDrawer = ({ open, onOpenChange, date }: SymptomCheckinDrawer
 
       toast.success("Check-in salvo ✓");
       setSelected({});
+      onCheckinSaved?.();
       onOpenChange(false);
     } catch {
       toast.error("Erro ao salvar");
