@@ -234,9 +234,26 @@ const Dashboard = () => {
         <div className="relative pt-safe px-5 pb-1 flex items-center justify-between">
           <button
             onClick={() => navigate("/perfil")}
-            className="text-base font-bold text-foreground/60 active:scale-90 transition-transform"
+            className="text-base font-bold text-foreground/60 active:scale-90 transition-transform relative"
           >
             {(profile?.username?.[0] || profile?.name?.[0] || "U").toUpperCase()}
+            {/* Streak badge */}
+            {streakActive && streakCount > 0 && (
+              <div
+                className="absolute flex items-center gap-0.5 px-1 py-0.5 rounded-full"
+                style={{
+                  bottom: "-3px",
+                  right: "-8px",
+                  background: "white",
+                  border: "2px solid hsl(var(--background))",
+                  fontSize: "9px",
+                  lineHeight: 1,
+                }}
+              >
+                <FireIcon width={9} height={11} opacity={checkedInToday ? 1 : 0.4} />
+                <span className="font-bold text-foreground" style={{ fontSize: "9px" }}>{streakCount}</span>
+              </div>
+            )}
           </button>
           {showApplicationDayMode && !applicationDayCompleted ? (
             <div className="flex flex-col items-center">
