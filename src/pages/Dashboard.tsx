@@ -4,8 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { usePlan } from "@/hooks/usePlan";
+import { useStreak } from "@/hooks/useStreak";
 import { Scale, Camera, ClipboardList, Lightbulb, Bell, Sparkles, Check, ChevronRight, Lock } from "lucide-react";
 import PremiumGateModal from "@/components/PremiumGateModal";
+import FireIcon from "@/components/FireIcon";
+import StreakModal from "@/components/StreakModal";
 
 import { cn, localDateStr, diffCalendarDays } from "@/lib/utils";
 import { toast } from "sonner";
@@ -25,7 +28,9 @@ const Dashboard = () => {
   const { user, profile } = useAuth();
   const { dose, latestWeight, refresh: refreshAppData } = useApplicationData();
   const { isFree } = usePlan();
+  const { streakCount, checkedInToday, isActive: streakActive, markCheckedIn, refresh: refreshStreak } = useStreak();
   const [premiumModalOpen, setPremiumModalOpen] = useState(false);
+  const [streakModalOpen, setStreakModalOpen] = useState(false);
 
   const [todayLog, setTodayLog] = useState<any>(null);
   const [weightHistory, setWeightHistory] = useState<{ date: string; peso: number }[]>([]);
@@ -148,6 +153,17 @@ const Dashboard = () => {
     fetchData();
   }, [user]);
 
+  // Show streak modal once per day
+  useEffect(() => {
+    if (!streakActive || checkedInToday || loading) return;
+    const key = `streak_modal_shown_${localDateStr(new Date())}`;
+    if (localStorage.getItem(key)) return;
+    localStorage.setItem(key, "1");
+    // Small delay so dashboard renders first
+    const t = setTimeout(() => setStreakModalOpen(true), 600);
+    return () => clearTimeout(t);
+  }, [streakActive, checkedInToday, loading]);
+
   const hasTreatment = !!dose.currentDose;
   const selectedDayHasInjection = weekInjections.has(selectedDateStr);
   const selectedIsInPast = selectedDateStr < localDateStr(new Date());
@@ -218,9 +234,26 @@ const Dashboard = () => {
         <div className="relative pt-safe px-5 pb-1 flex items-center justify-between">
           <button
             onClick={() => navigate("/perfil")}
-            className="text-base font-bold text-foreground/60 active:scale-90 transition-transform"
+            className="text-base font-bold text-foreground/60 active:scale-90 transition-transform relative"
           >
             {(profile?.username?.[0] || profile?.name?.[0] || "U").toUpperCase()}
+            {/* Streak badge */}
+            {streakActive && streakCount > 0 && (
+              <div
+                className="absolute flex items-center gap-0.5 px-1 py-0.5 rounded-full"
+                style={{
+                  bottom: "-3px",
+                  right: "-8px",
+                  background: "white",
+                  border: "2px solid hsl(var(--background))",
+                  fontSize: "9px",
+                  lineHeight: 1,
+                }}
+              >
+                <FireIcon width={9} height={11} opacity={checkedInToday ? 1 : 0.4} />
+                <span className="font-bold text-foreground" style={{ fontSize: "9px" }}>{streakCount}</span>
+              </div>
+            )}
           </button>
           {showApplicationDayMode && !applicationDayCompleted ? (
             <div className="flex flex-col items-center">
@@ -616,6 +649,10 @@ const Dashboard = () => {
           if (!open) refreshTodayLog();
         }}
         date={selectedDate}
+        onCheckinSaved={async () => {
+          await markCheckedIn();
+          await refreshStreak();
+        }}
       />
       <PhotoDrawer
         open={photoDrawerOpen}
@@ -634,6 +671,15 @@ const Dashboard = () => {
         open={weightDrawerOpen}
         onOpenChange={setWeightDrawerOpen}
         weightHistory={weightHistory}
+      />
+      <StreakModal
+        open={streakModalOpen}
+        onClose={() => setStreakModalOpen(false)}
+        streakCount={streakCount}
+        onCheckin={() => {
+          setStreakModalOpen(false);
+          setSymptomDrawerOpen(true);
+        }}
       />
     </div>
   );
