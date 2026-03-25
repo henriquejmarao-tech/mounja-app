@@ -617,6 +617,33 @@ export type Database = {
         }
         Relationships: []
       }
+      symptom_streaks: {
+        Row: {
+          checked_in: boolean
+          created_at: string
+          date: string
+          id: string
+          streak_count: number
+          user_id: string
+        }
+        Insert: {
+          checked_in?: boolean
+          created_at?: string
+          date: string
+          id?: string
+          streak_count?: number
+          user_id: string
+        }
+        Update: {
+          checked_in?: boolean
+          created_at?: string
+          date?: string
+          id?: string
+          streak_count?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       workout_suggestions: {
         Row: {
           context_note: string | null
