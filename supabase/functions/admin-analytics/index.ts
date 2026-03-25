@@ -282,6 +282,7 @@ Deno.serve(async (req) => {
         photos: uPhotos || 0,
         totalActivity,
         isSuspectBot: isBot,
+        isActiveToday: todayActiveIds.has(p.id),
       });
     }
 

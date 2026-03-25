@@ -53,7 +53,7 @@ interface AnalyticsData {
     triageCompleted: boolean; createdAt: string; isPremium: boolean; premiumSource: string | null;
     premiumPromo: string | null; provider: string;
     logs: number; injections: number; meals: number; workouts: number; photos: number;
-    totalActivity: number; isSuspectBot: boolean;
+    totalActivity: number; isSuspectBot: boolean; isActiveToday?: boolean;
   }[];
 }
 
@@ -573,9 +573,10 @@ const UsersTable = ({ users }: { users: AnalyticsData["users"] }) => (
       </TableHeader>
       <TableBody>
         {users.map((u) => (
-          <TableRow key={u.id} className={`border-slate-700/30 ${u.isSuspectBot ? "bg-rose-950/20" : "hover:bg-slate-800/40"}`}>
+          <TableRow key={u.id} className={`border-slate-700/30 ${u.isSuspectBot ? "bg-rose-950/20" : u.isActiveToday ? "bg-emerald-950/25" : "hover:bg-slate-800/40"}`}>
             <TableCell className="py-2">
               <div className="flex items-center gap-1.5">
+                {u.isActiveToday && <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0 animate-pulse" />}
                 {u.isSuspectBot && <Bot className="w-3 h-3 text-rose-400 shrink-0" />}
                 <div>
                   <div className="text-[11px] font-medium text-white truncate max-w-[100px]">{u.name}</div>
