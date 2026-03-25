@@ -153,6 +153,17 @@ const Dashboard = () => {
     fetchData();
   }, [user]);
 
+  // Show streak modal once per day
+  useEffect(() => {
+    if (!streakActive || checkedInToday || loading) return;
+    const key = `streak_modal_shown_${localDateStr(new Date())}`;
+    if (localStorage.getItem(key)) return;
+    localStorage.setItem(key, "1");
+    // Small delay so dashboard renders first
+    const t = setTimeout(() => setStreakModalOpen(true), 600);
+    return () => clearTimeout(t);
+  }, [streakActive, checkedInToday, loading]);
+
   const hasTreatment = !!dose.currentDose;
   const selectedDayHasInjection = weekInjections.has(selectedDateStr);
   const selectedIsInPast = selectedDateStr < localDateStr(new Date());
