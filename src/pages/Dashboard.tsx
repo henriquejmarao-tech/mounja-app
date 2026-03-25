@@ -28,7 +28,9 @@ const Dashboard = () => {
   const { user, profile } = useAuth();
   const { dose, latestWeight, refresh: refreshAppData } = useApplicationData();
   const { isFree } = usePlan();
+  const { streakCount, checkedInToday, isActive: streakActive, markCheckedIn, refresh: refreshStreak } = useStreak();
   const [premiumModalOpen, setPremiumModalOpen] = useState(false);
+  const [streakModalOpen, setStreakModalOpen] = useState(false);
 
   const [todayLog, setTodayLog] = useState<any>(null);
   const [weightHistory, setWeightHistory] = useState<{ date: string; peso: number }[]>([]);
