@@ -4,8 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { usePlan } from "@/hooks/usePlan";
+import { useStreak } from "@/hooks/useStreak";
 import { Scale, Camera, ClipboardList, Lightbulb, Bell, Sparkles, Check, ChevronRight, Lock } from "lucide-react";
 import PremiumGateModal from "@/components/PremiumGateModal";
+import FireIcon from "@/components/FireIcon";
+import StreakModal from "@/components/StreakModal";
 
 import { cn, localDateStr, diffCalendarDays } from "@/lib/utils";
 import { toast } from "sonner";
