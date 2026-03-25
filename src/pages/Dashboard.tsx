@@ -649,6 +649,10 @@ const Dashboard = () => {
           if (!open) refreshTodayLog();
         }}
         date={selectedDate}
+        onCheckinSaved={async () => {
+          await markCheckedIn();
+          await refreshStreak();
+        }}
       />
       <PhotoDrawer
         open={photoDrawerOpen}
@@ -667,6 +671,15 @@ const Dashboard = () => {
         open={weightDrawerOpen}
         onOpenChange={setWeightDrawerOpen}
         weightHistory={weightHistory}
+      />
+      <StreakModal
+        open={streakModalOpen}
+        onClose={() => setStreakModalOpen(false)}
+        streakCount={streakCount}
+        onCheckin={() => {
+          setStreakModalOpen(false);
+          setSymptomDrawerOpen(true);
+        }}
       />
     </div>
   );
