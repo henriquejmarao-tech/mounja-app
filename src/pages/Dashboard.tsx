@@ -76,8 +76,26 @@ const Dashboard = () => {
     }
     await refreshTodayLog();
     await refreshAppData();
+    await checkAndMarkStreak();
   }, [user, selectedDateStr, refreshTodayLog]);
 
+  // Check if all 3 daily actions are done, then mark streak
+  const checkAndMarkStreak = useCallback(async () => {
+    if (!user || !streakActive || checkedInToday) return;
+    const todayStr = localDateStr(new Date());
+    const [logRes, photoRes] = await Promise.all([
+      supabase.from("daily_logs").select("weight, symptom_nausea").eq("user_id", user.id).eq("date", todayStr).limit(1),
+      supabase.from("progress_photos").select("id").eq("user_id", user.id).eq("date", todayStr).limit(1),
+    ]);
+    const log = (logRes.data as any[])?.[0];
+    const hasSymptoms = log?.symptom_nausea !== null && log?.symptom_nausea !== undefined;
+    const hasWeight = !!log?.weight;
+    const hasPhoto = ((photoRes.data as any[]) || []).length > 0;
+    if (hasSymptoms && hasWeight && hasPhoto) {
+      await markCheckedIn();
+      await refreshStreak();
+    }
+  }, [user, streakActive, checkedInToday, markCheckedIn, refreshStreak]);
 
   // Week strip data
   const weekDays = useMemo(() => {
@@ -650,13 +668,24 @@ const Dashboard = () => {
         }}
         date={selectedDate}
         onCheckinSaved={async () => {
-          await markCheckedIn();
-          await refreshStreak();
+          await refreshTodayLog();
+          await checkAndMarkStreak();
         }}
       />
       <PhotoDrawer
         open={photoDrawerOpen}
-        onOpenChange={setPhotoDrawerOpen}
+        onOpenChange={async (open) => {
+          setPhotoDrawerOpen(open);
+          if (!open) {
+            // Re-check photo status after closing
+            if (user) {
+              const { data } = await supabase.from("progress_photos").select("id").eq("user_id", user.id).eq("date", selectedDateStr).limit(1);
+              const hasPhoto = ((data as any[]) || []).length > 0;
+              setHasPhotoToday(hasPhoto);
+              await checkAndMarkStreak();
+            }
+          }
+        }}
         date={selectedDate}
       />
       <CalendarDrawer
