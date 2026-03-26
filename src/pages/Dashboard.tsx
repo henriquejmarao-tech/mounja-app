@@ -77,7 +77,7 @@ const Dashboard = () => {
     await refreshTodayLog();
     await refreshAppData();
     await checkAndMarkStreak();
-  }, [user, selectedDateStr, refreshTodayLog]);
+  }, [user, selectedDateStr, refreshTodayLog, refreshAppData, checkAndMarkStreak]);
 
   // Check if all 3 daily actions are done, then mark streak
   const checkAndMarkStreak = useCallback(async () => {
