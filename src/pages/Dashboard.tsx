@@ -249,29 +249,20 @@ const Dashboard = () => {
     >
         {/* ── Header ── */}
         <div className="relative pt-safe px-5 pb-1 flex items-center justify-between">
+        <div className="flex items-center gap-1.5">
           <button
             onClick={() => navigate("/perfil")}
-            className="text-base font-bold text-foreground/60 active:scale-90 transition-transform relative"
+            className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-sm font-bold text-foreground/60 active:scale-90 transition-transform"
           >
             {(profile?.username?.[0] || profile?.name?.[0] || "U").toUpperCase()}
-            {/* Streak badge */}
-            {streakActive && streakCount > 0 && (
-              <div
-                className="absolute flex items-center gap-0.5 px-1 py-0.5 rounded-full"
-                style={{
-                  bottom: "-3px",
-                  right: "-8px",
-                  background: "white",
-                  border: "2px solid hsl(var(--background))",
-                  fontSize: "9px",
-                  lineHeight: 1,
-                }}
-              >
-                <FireIcon width={9} height={11} opacity={checkedInToday ? 1 : 0.4} />
-                <span className="font-bold text-foreground" style={{ fontSize: "9px" }}>{streakCount}</span>
-              </div>
-            )}
           </button>
+          {streakActive && streakCount > 0 && (
+            <div className="flex items-center gap-0.5">
+              <FireIcon width={13} height={15} opacity={checkedInToday ? 1 : 0.4} />
+              <span className="text-xs font-bold text-foreground">{streakCount}</span>
+            </div>
+          )}
+        </div>
           {showApplicationDayMode && !applicationDayCompleted ? (
             <div className="flex flex-col items-center">
               <p className="text-sm font-bold text-foreground">Hoje é dia de aplicação</p>
