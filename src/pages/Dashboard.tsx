@@ -76,6 +76,7 @@ const Dashboard = () => {
     }
     await refreshTodayLog();
     await refreshAppData();
+    await checkAndMarkStreak();
   }, [user, selectedDateStr, refreshTodayLog]);
 
 
@@ -650,13 +651,24 @@ const Dashboard = () => {
         }}
         date={selectedDate}
         onCheckinSaved={async () => {
-          await markCheckedIn();
-          await refreshStreak();
+          await refreshTodayLog();
+          await checkAndMarkStreak();
         }}
       />
       <PhotoDrawer
         open={photoDrawerOpen}
-        onOpenChange={setPhotoDrawerOpen}
+        onOpenChange={async (open) => {
+          setPhotoDrawerOpen(open);
+          if (!open) {
+            // Re-check photo status after closing
+            if (user) {
+              const { data } = await supabase.from("progress_photos").select("id").eq("user_id", user.id).eq("date", selectedDateStr).limit(1);
+              const hasPhoto = ((data as any[]) || []).length > 0;
+              setHasPhotoToday(hasPhoto);
+              await checkAndMarkStreak();
+            }
+          }
+        }}
         date={selectedDate}
       />
       <CalendarDrawer
