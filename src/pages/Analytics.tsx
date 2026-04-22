@@ -133,7 +133,7 @@ const Analytics = () => {
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="overview" className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="w-full bg-slate-800/60 border border-slate-700/50">
             <TabsTrigger value="overview" className="text-xs flex-1 data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Visão Geral</TabsTrigger>
             <TabsTrigger value="credits" className="text-xs flex-1 data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Créditos</TabsTrigger>
