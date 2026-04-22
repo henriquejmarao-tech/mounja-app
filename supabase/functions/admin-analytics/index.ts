@@ -28,6 +28,195 @@ Deno.serve(async (req) => {
     if (user.email !== ADMIN_EMAIL) throw new Error("Forbidden");
 
     const sb = createClient(supabaseUrl, serviceRoleKey);
+
+    // Parse action (default = "overview")
+    let action = "overview";
+    let payload: any = {};
+    if (req.method === "POST") {
+      try {
+        const body = await req.json();
+        action = body.action || "overview";
+        payload = body;
+      } catch {}
+    } else {
+      const url = new URL(req.url);
+      action = url.searchParams.get("action") || "overview";
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    // ACTION: user-timeline → drill-down de um único usuário
+    // ──────────────────────────────────────────────────────────────
+    if (action === "user-timeline") {
+      const userId = payload.userId;
+      if (!userId) throw new Error("userId required");
+
+      const [logsRes, injRes, mealsRes, workoutsRes, photosRes, profileRes] = await Promise.all([
+        sb.from("daily_logs").select("id, date, created_at, weight, symptom_nausea, notes").eq("user_id", userId).order("date", { ascending: false }),
+        sb.from("injections").select("id, date, created_at, dose, site, notes").eq("user_id", userId).order("date", { ascending: false }),
+        sb.from("meal_logs").select("id, date, meal_time, created_at, description, calories").eq("user_id", userId).order("meal_time", { ascending: false }),
+        sb.from("workouts").select("id, date, created_at, workout_type, duration_minutes, intensity").eq("user_id", userId).order("date", { ascending: false }),
+        sb.from("progress_photos").select("id, date, created_at, notes").eq("user_id", userId).order("date", { ascending: false }),
+        sb.from("profiles").select("*").eq("id", userId).maybeSingle(),
+      ]);
+
+      const events: any[] = [];
+      (logsRes.data || []).forEach((r: any) => events.push({
+        kind: "log", date: r.date, ts: r.created_at,
+        label: r.weight ? `Check-in (peso ${r.weight}kg)` : "Check-in diário",
+        meta: r.notes || null,
+      }));
+      (injRes.data || []).forEach((r: any) => events.push({
+        kind: "injection", date: r.date, ts: r.created_at,
+        label: `Aplicou caneta${r.dose ? ` · ${r.dose}` : ""}${r.site ? ` (${r.site})` : ""}`,
+        meta: r.notes || null,
+      }));
+      (mealsRes.data || []).forEach((r: any) => events.push({
+        kind: "meal", date: r.date, ts: r.meal_time || r.created_at,
+        label: `Refeição${r.calories ? ` · ${r.calories} kcal` : ""}`,
+        meta: r.description || null,
+      }));
+      (workoutsRes.data || []).forEach((r: any) => events.push({
+        kind: "workout", date: r.date, ts: r.created_at,
+        label: `Treino · ${r.workout_type}${r.duration_minutes ? ` (${r.duration_minutes}min)` : ""}`,
+        meta: r.intensity || null,
+      }));
+      (photosRes.data || []).forEach((r: any) => events.push({
+        kind: "photo", date: r.date, ts: r.created_at,
+        label: "Foto de progresso",
+        meta: r.notes || null,
+      }));
+
+      // Sort desc by ts (fallback date)
+      events.sort((a, b) => {
+        const ta = new Date(a.ts || a.date + "T00:00:00").getTime();
+        const tb = new Date(b.ts || b.date + "T00:00:00").getTime();
+        return tb - ta;
+      });
+
+      let email = "—";
+      try {
+        const { data: { user: au } } = await sb.auth.admin.getUserById(userId);
+        email = au?.email || "—";
+      } catch {}
+
+      return new Response(JSON.stringify({ profile: profileRes.data, email, events }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    // ACTION: inbox → lista enxuta agregada para a aba Inbox
+    // ──────────────────────────────────────────────────────────────
+    if (action === "inbox") {
+      const todayStr = new Date().toISOString().split("T")[0];
+
+      // Premium map
+      const { data: premiumRows } = await sb.from("premium_access").select("user_id, source, promo_code, status").eq("status", "active");
+      const premiumMap: Record<string, { source: string; promo_code: string | null }> = {};
+      (premiumRows || []).forEach((r: any) => {
+        premiumMap[r.user_id] = { source: r.source, promo_code: r.promo_code };
+      });
+
+      // Fetch ALL profiles
+      const { data: profiles } = await sb.from("profiles").select("id, name, triage_completed, created_at, current_dose, medication").order("created_at", { ascending: false });
+
+      // Fetch all activity rows (date + user + kind) in parallel
+      const [logs, inj, meals, workouts, photos] = await Promise.all([
+        sb.from("daily_logs").select("user_id, date, created_at"),
+        sb.from("injections").select("user_id, date, created_at"),
+        sb.from("meal_logs").select("user_id, date, meal_time"),
+        sb.from("workouts").select("user_id, date, created_at"),
+        sb.from("progress_photos").select("user_id, date, created_at"),
+      ]);
+
+      type Counts = { logs: number; injections: number; meals: number; workouts: number; photos: number };
+      const counts: Record<string, Counts> = {};
+      const lastByUser: Record<string, { date: string; ts: string; kind: string }> = {};
+
+      const consider = (rows: any[] | null, kind: keyof Counts, kindLabel: string) => {
+        (rows || []).forEach((r: any) => {
+          const uid = r.user_id;
+          if (!counts[uid]) counts[uid] = { logs: 0, injections: 0, meals: 0, workouts: 0, photos: 0 };
+          counts[uid][kind]++;
+          const ts = r.meal_time || r.created_at || r.date;
+          const cur = lastByUser[uid];
+          if (!cur || (r.date && r.date > cur.date) || (r.date === cur.date && ts > cur.ts)) {
+            lastByUser[uid] = { date: r.date, ts, kind: kindLabel };
+          }
+        });
+      };
+      consider(logs.data, "logs", "log");
+      consider(inj.data, "injections", "injection");
+      consider(meals.data, "meals", "meal");
+      consider(workouts.data, "workouts", "workout");
+      consider(photos.data, "photos", "photo");
+
+      // Build rows
+      const rows = (profiles || []).map((p: any) => {
+        const c = counts[p.id] || { logs: 0, injections: 0, meals: 0, workouts: 0, photos: 0 };
+        const total = c.logs + c.injections + c.meals + c.workouts + c.photos;
+        const last = lastByUser[p.id] || null;
+        const premium = premiumMap[p.id] || null;
+        const signupDate = p.created_at ? p.created_at.split("T")[0] : null;
+
+        // Bucket de frescor
+        let freshness: "today" | "yesterday" | "week" | "two_weeks" | "stale" | "never" = "never";
+        if (last) {
+          const diffDays = Math.floor((Date.parse(todayStr) - Date.parse(last.date)) / 86400000);
+          if (diffDays <= 0) freshness = "today";
+          else if (diffDays === 1) freshness = "yesterday";
+          else if (diffDays <= 7) freshness = "week";
+          else if (diffDays <= 14) freshness = "two_weeks";
+          else freshness = "stale";
+        }
+
+        // Group classification (ordem importa)
+        let group: "power" | "courtesy" | "warm" | "ghost" | "zero" | "other" = "other";
+        const hasMealOrPhoto = c.meals > 0 || c.photos > 0;
+        const hasInjOrLog = c.injections > 0 || c.logs > 0;
+        const lastEqualsSignup = signupDate && last && last.date === signupDate;
+
+        if (total >= 15 && hasMealOrPhoto) group = "power";
+        else if (premium && premium.source !== "stripe" && premium.source !== "paid" && total < 10) group = "courtesy";
+        else if (total >= 6 && total <= 14) group = "warm";
+        else if (p.triage_completed && hasInjOrLog && lastEqualsSignup) group = "ghost";
+        else if (total === 0) group = "zero";
+
+        return {
+          id: p.id,
+          name: p.name,
+          createdAt: p.created_at,
+          isPremium: !!premium,
+          premiumSource: premium?.source || null,
+          premiumPromo: premium?.promo_code || null,
+          counts: c,
+          total,
+          lastActivity: last,
+          freshness,
+          group,
+        };
+      });
+
+      // Enrich with emails (single batch via admin.listUsers — paginate)
+      const emailMap: Record<string, string> = {};
+      let page = 1;
+      while (page <= 10) {
+        const { data, error } = await sb.auth.admin.listUsers({ page, perPage: 1000 });
+        if (error) break;
+        (data?.users || []).forEach((u: any) => { emailMap[u.id] = u.email || ""; });
+        if (!data || (data.users?.length || 0) < 1000) break;
+        page++;
+      }
+      rows.forEach((r: any) => { r.email = emailMap[r.id] || "—"; });
+
+      return new Response(JSON.stringify({ rows, generatedAt: new Date().toISOString() }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    // ACTION: overview (default) — comportamento original
+    // ──────────────────────────────────────────────────────────────
     const today = new Date().toISOString().split("T")[0];
     const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
 
