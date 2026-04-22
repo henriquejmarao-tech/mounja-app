@@ -626,4 +626,27 @@ const LoadingSpinner = () => (
   </div>
 );
 
+// Local error boundary so a failure in Inbox never breaks the rest of /analytics
+class InboxErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
+  state = { hasError: false };
+  static getDerivedStateFromError() { return { hasError: true }; }
+  componentDidCatch(err: unknown) { console.error("[InboxTab] error:", err); }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="rounded-xl border border-rose-500/30 bg-rose-950/30 p-6 text-center">
+          <p className="text-sm text-rose-200">Falha ao carregar inbox — tente recarregar.</p>
+          <button
+            onClick={() => this.setState({ hasError: false })}
+            className="mt-3 text-xs text-rose-300 underline"
+          >
+            Tentar novamente
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export default Analytics;
