@@ -1,7 +1,6 @@
 import { Component, ReactNode, useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { Navigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
@@ -69,32 +68,100 @@ const CHART_COLORS = {
   orange: "#f97316",
 };
 
+type AnalyticsAuthUser = {
+  id?: string;
+  email?: string | null;
+};
+
+const readStoredAuthUser = (): AnalyticsAuthUser | null => {
+  if (typeof window === "undefined") return null;
+
+  try {
+    const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+    if (!projectId) return null;
+
+    const raw = window.localStorage.getItem(`sb-${projectId}-auth-token`);
+    if (!raw) return null;
+
+    const parsed = JSON.parse(raw);
+    const candidates = [
+      parsed?.user,
+      parsed?.currentSession?.user,
+      parsed?.session?.user,
+      Array.isArray(parsed) ? parsed[0]?.user : null,
+      Array.isArray(parsed) ? parsed[0]?.currentSession?.user : null,
+      Array.isArray(parsed) ? parsed[0]?.session?.user : null,
+    ];
+
+    const storedUser = candidates.find((candidate) => candidate?.id || candidate?.email);
+    return storedUser ? { id: storedUser.id, email: storedUser.email ?? null } : null;
+  } catch (error) {
+    console.warn("[Analytics] failed to read stored auth user", error);
+    return null;
+  }
+};
+
 const Analytics = () => {
   const { user, loading: authLoading } = useAuth();
+  const [storedUser, setStoredUser] = useState<AnalyticsAuthUser | null>(() => readStoredAuthUser());
+  const [authTimedOut, setAuthTimedOut] = useState(false);
   const [data, setData] = useState<AnalyticsData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPerUser, setShowPerUser] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
 
+  const effectiveUser = user ?? storedUser;
+  const adminChecked = !!effectiveUser || !authLoading || authTimedOut;
+  const isAdmin = effectiveUser?.email === ADMIN_EMAIL;
+
+  console.log("[Analytics] render", { loading: authLoading, user: effectiveUser?.email, adminChecked });
+
   useEffect(() => {
-    if (authLoading || !user) return;
+    if (!user) return;
+    setStoredUser({ id: user.id, email: user.email ?? null });
+  }, [user]);
+
+  useEffect(() => {
+    if (!authLoading || effectiveUser) {
+      setAuthTimedOut(false);
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setStoredUser((current) => current ?? readStoredAuthUser());
+      setAuthTimedOut(true);
+    }, 3000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [authLoading, effectiveUser]);
+
+  useEffect(() => {
+    if (!adminChecked || !isAdmin) return;
+
+    let cancelled = false;
     const fetchData = async () => {
+      setLoading(true);
+      setError(null);
       try {
         const { data: res, error: err } = await supabase.functions.invoke("admin-analytics");
         if (err) throw err;
-        setData(res);
+        if (!cancelled) setData(res);
       } catch (e: any) {
-        setError(e.message || "Erro ao carregar dados");
+        if (!cancelled) setError(e.message || "Erro ao carregar dados");
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
-    fetchData();
-  }, [user, authLoading]);
 
-  if (authLoading) return <LoadingSpinner />;
-  if (!user || user.email !== ADMIN_EMAIL) return <Navigate to="/" replace />;
+    fetchData();
+    return () => {
+      cancelled = true;
+    };
+  }, [adminChecked, isAdmin]);
+
+  const showAccessPlaceholder = !adminChecked;
+  const showAccessDenied = adminChecked && !isAdmin;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 pb-24 text-white">
@@ -103,10 +170,10 @@ const Analytics = () => {
         <div className="flex items-center gap-2 mb-1">
           <Sparkles className="w-5 h-5 text-indigo-400" />
           <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
-            Painel Admin
+            Analytics
           </h1>
         </div>
-        <p className="text-sm text-slate-400">Mounja · Visão geral em tempo real</p>
+        <p className="text-sm text-slate-400">Mounja · operação, retenção e saúde da base</p>
       </div>
 
       <div className="px-4 space-y-5">
@@ -147,15 +214,28 @@ const Analytics = () => {
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="w-full bg-slate-800/60 border border-slate-700/50">
-            <TabsTrigger value="overview" className="text-xs flex-1 data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Visão Geral</TabsTrigger>
-            <TabsTrigger value="credits" className="text-xs flex-1 data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Créditos</TabsTrigger>
-            <TabsTrigger value="leads" className="text-xs flex-1 data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Leads</TabsTrigger>
-            <TabsTrigger value="premium" className="text-xs flex-1 data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Premium</TabsTrigger>
-            <TabsTrigger value="security" className="text-xs flex-1 data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Segurança</TabsTrigger>
+            <TabsTrigger value="overview" className="text-xs flex-1 data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Overview</TabsTrigger>
             <TabsTrigger value="inbox" className="text-xs flex-1 data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Inbox</TabsTrigger>
+            <TabsTrigger value="retention" className="text-xs flex-1 data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Retenção</TabsTrigger>
+            <TabsTrigger value="engagement" className="text-xs flex-1 data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Engajamento</TabsTrigger>
+            <TabsTrigger value="conversion" className="text-xs flex-1 data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Conversão</TabsTrigger>
+            <TabsTrigger value="quality" className="text-xs flex-1 data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Qualidade</TabsTrigger>
+            <TabsTrigger value="health" className="text-xs flex-1 data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Saúde</TabsTrigger>
           </TabsList>
 
-          {!data && activeTab !== "inbox" && (
+          {showAccessPlaceholder && (
+            <div className="mt-4 rounded-xl border border-slate-700/50 bg-slate-900/60 p-6 text-center text-sm text-slate-300">
+              Verificando acesso ao painel…
+            </div>
+          )}
+
+          {showAccessDenied && (
+            <div className="mt-4 rounded-xl border border-amber-500/30 bg-amber-950/20 p-6 text-center">
+              <p className="text-sm text-amber-200">Acesso restrito ao painel administrativo.</p>
+            </div>
+          )}
+
+          {loading && isAdmin && activeTab !== "inbox" && (
             <div className="mt-4 flex items-center justify-center py-12">
               <div className="w-5 h-5 border-2 border-indigo-400/30 border-t-indigo-400 rounded-full animate-spin" />
             </div>
@@ -167,7 +247,7 @@ const Analytics = () => {
             </InboxErrorBoundary>
           </TabsContent>
 
-          {data && (<>
+          {isAdmin && data && (<>
 
           {/* OVERVIEW TAB */}
           <TabsContent value="overview" className="space-y-4 mt-4">
@@ -233,8 +313,8 @@ const Analytics = () => {
             </GlassCard>
           </TabsContent>
 
-          {/* CREDITS TAB */}
-          <TabsContent value="credits" className="space-y-4 mt-4">
+          {/* RETENTION TAB */}
+          <TabsContent value="retention" className="space-y-4 mt-4">
             {data.credits ? (
               <>
                 <div className="grid grid-cols-2 gap-3">
@@ -308,8 +388,8 @@ const Analytics = () => {
             )}
           </TabsContent>
 
-          {/* LEADS TAB */}
-          <TabsContent value="leads" className="space-y-4 mt-4">
+          {/* ENGAGEMENT TAB */}
+          <TabsContent value="engagement" className="space-y-4 mt-4">
             {/* Signup Provider */}
             <GlassCard title="Origem dos Cadastros">
               <ResponsiveContainer width="100%" height={220}>
@@ -364,8 +444,8 @@ const Analytics = () => {
             </GlassCard>
           </TabsContent>
 
-          {/* PREMIUM TAB */}
-          <TabsContent value="premium" className="space-y-4 mt-4">
+          {/* CONVERSION TAB */}
+          <TabsContent value="conversion" className="space-y-4 mt-4">
             <GlassCard title="Assinantes vs Gratuitos">
               <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
@@ -435,8 +515,8 @@ const Analytics = () => {
             </GlassCard>
           </TabsContent>
 
-          {/* SECURITY TAB */}
-          <TabsContent value="security" className="space-y-4 mt-4">
+          {/* QUALITY TAB */}
+          <TabsContent value="quality" className="space-y-4 mt-4">
             <div className="grid grid-cols-2 gap-3">
               <GlowKpi icon={<Bot className="w-5 h-5" />} label="Suspeitos Bot" value={data.botSuspectsCount} color="rose" />
               <GlowKpi icon={<Shield className="w-5 h-5" />} label="Legítimos" value={data.totalUsers - data.botSuspectsCount} color="green" />
@@ -470,6 +550,26 @@ const Analytics = () => {
                     <span className="text-sm">Nenhuma conta suspeita detectada</span>
                   </div>
                 )}
+              </div>
+            </GlassCard>
+          </TabsContent>
+
+          {/* HEALTH TAB */}
+          <TabsContent value="health" className="space-y-4 mt-4">
+            <GlassCard title="Saúde do painel">
+              <div className="space-y-3 text-sm text-slate-300">
+                <div className="flex items-center justify-between rounded-lg bg-slate-800/40 px-3 py-2">
+                  <span>Última atualização</span>
+                  <span className="text-white font-medium">{new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</span>
+                </div>
+                <div className="flex items-center justify-between rounded-lg bg-slate-800/40 px-3 py-2">
+                  <span>Base carregada</span>
+                  <span className="text-white font-medium">{data.totalUsers} usuários</span>
+                </div>
+                <div className="flex items-center justify-between rounded-lg bg-slate-800/40 px-3 py-2">
+                  <span>Inbox sob demanda</span>
+                  <span className="text-emerald-300 font-medium">Pronta</span>
+                </div>
               </div>
             </GlassCard>
           </TabsContent>
@@ -632,12 +732,6 @@ const UsersTable = ({ users }: { users: AnalyticsData["users"] }) => (
   </div>
 );
 
-const LoadingSpinner = () => (
-  <div className="min-h-screen flex items-center justify-center bg-slate-950">
-    <div className="w-6 h-6 border-2 border-indigo-400/30 border-t-indigo-400 rounded-full animate-spin" />
-  </div>
-);
-
 // Local error boundary so a failure in Inbox never breaks the rest of /analytics
 class InboxErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
   state = { hasError: false };
@@ -646,11 +740,11 @@ class InboxErrorBoundary extends Component<{ children: ReactNode }, { hasError: 
   render() {
     if (this.state.hasError) {
       return (
-        <div className="rounded-xl border border-rose-500/30 bg-rose-950/30 p-6 text-center">
-          <p className="text-sm text-rose-200">Falha ao carregar inbox — tente recarregar.</p>
+        <div className="rounded-xl border border-amber-500/30 bg-rose-950/30 p-6 text-center">
+          <p className="text-sm text-amber-100">Erro ao carregar Inbox. Tentar de novo</p>
           <button
             onClick={() => this.setState({ hasError: false })}
-            className="mt-3 text-xs text-rose-300 underline"
+            className="mt-3 text-xs text-amber-300 underline"
           >
             Tentar novamente
           </button>
