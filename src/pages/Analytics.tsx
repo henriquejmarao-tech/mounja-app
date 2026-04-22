@@ -109,7 +109,6 @@ const Analytics = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPerUser, setShowPerUser] = useState(false);
-  const [activeTab, setActiveTab] = useState("overview");
 
   const effectiveUser = user ?? storedUser;
   const adminChecked = !!effectiveUser || !authLoading || authTimedOut;
@@ -164,26 +163,27 @@ const Analytics = () => {
   const showAccessDenied = adminChecked && !isAdmin;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 pb-24 text-white">
+    <div className="fixed inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 overflow-auto z-40 text-white">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-6 pb-24">
       {/* Header */}
-      <div className="px-4 pt-6 pb-4">
+      <div className="pt-2 pb-4">
         <div className="flex items-center gap-2 mb-1">
           <Sparkles className="w-5 h-5 text-indigo-400" />
-          <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
             Analytics
           </h1>
         </div>
         <p className="text-sm text-slate-400">Mounja · operação, retenção e saúde da base</p>
       </div>
 
-      <div className="px-4 space-y-5">
+      <div className="space-y-5">
         {error && (
           <div className="rounded-xl border border-rose-500/30 bg-rose-950/30 p-4 text-sm text-rose-200 text-center">
             {error}
           </div>
         )}
         {/* KPI Cards */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 lg:grid-cols-6 gap-3">
           {data ? (
             <>
               <GlowKpi icon={<Users className="w-5 h-5" />} label="Total Usuários" value={data.totalUsers} color="indigo" />
@@ -212,7 +212,7 @@ const Analytics = () => {
         </div>
 
         {/* Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <Tabs defaultValue="overview" className="w-full">
           <TabsList className="w-full bg-slate-800/60 border border-slate-700/50">
             <TabsTrigger value="overview" className="text-xs flex-1 data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Overview</TabsTrigger>
             <TabsTrigger value="inbox" className="text-xs flex-1 data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Inbox</TabsTrigger>
