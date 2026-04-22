@@ -553,6 +553,26 @@ const Analytics = () => {
               </div>
             </GlassCard>
           </TabsContent>
+
+          {/* HEALTH TAB */}
+          <TabsContent value="health" className="space-y-4 mt-4">
+            <GlassCard title="Saúde do painel">
+              <div className="space-y-3 text-sm text-slate-300">
+                <div className="flex items-center justify-between rounded-lg bg-slate-800/40 px-3 py-2">
+                  <span>Última atualização</span>
+                  <span className="text-white font-medium">{new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</span>
+                </div>
+                <div className="flex items-center justify-between rounded-lg bg-slate-800/40 px-3 py-2">
+                  <span>Base carregada</span>
+                  <span className="text-white font-medium">{data.totalUsers} usuários</span>
+                </div>
+                <div className="flex items-center justify-between rounded-lg bg-slate-800/40 px-3 py-2">
+                  <span>Inbox sob demanda</span>
+                  <span className="text-emerald-300 font-medium">Pronta</span>
+                </div>
+              </div>
+            </GlassCard>
+          </TabsContent>
           </>)}
         </Tabs>
       </div>
@@ -712,12 +732,6 @@ const UsersTable = ({ users }: { users: AnalyticsData["users"] }) => (
   </div>
 );
 
-const LoadingSpinner = () => (
-  <div className="min-h-screen flex items-center justify-center bg-slate-950">
-    <div className="w-6 h-6 border-2 border-indigo-400/30 border-t-indigo-400 rounded-full animate-spin" />
-  </div>
-);
-
 // Local error boundary so a failure in Inbox never breaks the rest of /analytics
 class InboxErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
   state = { hasError: false };
@@ -726,11 +740,11 @@ class InboxErrorBoundary extends Component<{ children: ReactNode }, { hasError: 
   render() {
     if (this.state.hasError) {
       return (
-        <div className="rounded-xl border border-rose-500/30 bg-rose-950/30 p-6 text-center">
-          <p className="text-sm text-rose-200">Falha ao carregar inbox — tente recarregar.</p>
+        <div className="rounded-xl border border-amber-500/30 bg-rose-950/30 p-6 text-center">
+          <p className="text-sm text-amber-100">Erro ao carregar Inbox. Tentar de novo</p>
           <button
             onClick={() => this.setState({ hasError: false })}
-            className="mt-3 text-xs text-rose-300 underline"
+            className="mt-3 text-xs text-amber-300 underline"
           >
             Tentar novamente
           </button>
