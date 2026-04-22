@@ -323,6 +323,39 @@ export type Database = {
         }
         Relationships: []
       }
+      founder_user_metadata: {
+        Row: {
+          contacted_by: string | null
+          created_at: string
+          instagram_handle: string | null
+          notes: string | null
+          talked_at: string | null
+          updated_at: string
+          user_id: string
+          whatsapp: string | null
+        }
+        Insert: {
+          contacted_by?: string | null
+          created_at?: string
+          instagram_handle?: string | null
+          notes?: string | null
+          talked_at?: string | null
+          updated_at?: string
+          user_id: string
+          whatsapp?: string | null
+        }
+        Update: {
+          contacted_by?: string | null
+          created_at?: string
+          instagram_handle?: string | null
+          notes?: string | null
+          talked_at?: string | null
+          updated_at?: string
+          user_id?: string
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
       injections: {
         Row: {
           created_at: string | null

@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Search, Copy, Check, Inbox as InboxIcon, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, Copy, Check, Inbox as InboxIcon, ChevronLeft, ChevronRight, Instagram, Phone, StickyNote, MessageCircle } from "lucide-react";
 import { InboxUserSheet } from "./InboxUserSheet";
 
 type Freshness = "today" | "yesterday" | "week" | "two_weeks" | "stale" | "never";
@@ -21,6 +21,10 @@ interface InboxRow {
   lastActivity: { date: string; ts: string; kind: string } | null;
   freshness: Freshness;
   group: Group;
+  instagramHandle?: string | null;
+  whatsapp?: string | null;
+  talkedAt?: string | null;
+  hasNotes?: boolean;
 }
 
 interface InboxResp {
@@ -92,9 +96,9 @@ export const InboxTab = () => {
   const [openUserId, setOpenUserId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  useEffect(() => {
+  const fetchInbox = useCallback(() => {
     setLoading(true);
-    supabase.functions
+    return supabase.functions
       .invoke("admin-analytics", { body: { action: "inbox" } })
       .then(({ data, error }) => {
         if (error) setError(error.message);
@@ -102,6 +106,10 @@ export const InboxTab = () => {
       })
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    fetchInbox();
+  }, [fetchInbox]);
 
   const filtered = useMemo(() => {
     if (!data) return [];
@@ -291,10 +299,37 @@ export const InboxTab = () => {
                     <td className="px-3 py-2">
                       <div className="flex items-center gap-1.5 min-w-0">
                         <div className="min-w-0">
-                          <div className="text-[11px] font-medium text-white truncate max-w-[140px]">
-                            {r.name || "Sem nome"}
+                          <div className="text-[11px] font-medium text-white truncate max-w-[160px] flex items-center gap-1">
+                            <span className="truncate">{r.name || "Sem nome"}</span>
+                            {r.instagramHandle && (
+                              <Instagram className="w-3 h-3 text-pink-300 shrink-0" aria-label="Tem Instagram" />
+                            )}
+                            {r.whatsapp && (
+                              <Phone className="w-3 h-3 text-emerald-300 shrink-0" aria-label="Tem WhatsApp" />
+                            )}
+                            {r.hasNotes && (
+                              <StickyNote className="w-3 h-3 text-amber-300 shrink-0" aria-label="Tem notas" />
+                            )}
                           </div>
-                          <div className="text-[9px] text-slate-500 truncate max-w-[140px]">{r.email}</div>
+                          <div className="text-[9px] text-slate-500 truncate max-w-[160px]">{r.email}</div>
+                          {r.talkedAt && (() => {
+                            const days = Math.floor((Date.now() - new Date(r.talkedAt).getTime()) / 86400000);
+                            const recent = days <= 7;
+                            return (
+                              <div className="mt-0.5 flex items-center gap-1">
+                                <MessageCircle className="w-2.5 h-2.5" />
+                                <span
+                                  className={`text-[9px] px-1.5 py-0 rounded-full border ${
+                                    recent
+                                      ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
+                                      : "bg-slate-700/50 text-slate-300 border-slate-600/40"
+                                  }`}
+                                >
+                                  {recent ? "falei recente" : `falei há ${days}d`}
+                                </span>
+                              </div>
+                            );
+                          })()}
                         </div>
                         <button
                           onClick={(e) => copyEmail(r.id, r.email, e)}
@@ -364,7 +399,11 @@ export const InboxTab = () => {
         )}
       </div>
 
-      <InboxUserSheet userId={openUserId} onClose={() => setOpenUserId(null)} />
+      <InboxUserSheet
+        userId={openUserId}
+        onClose={() => setOpenUserId(null)}
+        onMetadataChanged={fetchInbox}
+      />
     </div>
   );
 };

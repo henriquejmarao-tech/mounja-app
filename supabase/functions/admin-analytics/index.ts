@@ -127,7 +127,7 @@ Deno.serve(async (req) => {
       })();
 
       // Fetch everything in parallel
-      const [premiumRes, profilesRes, logs, inj, meals, workouts, photos, emailMap] = await Promise.all([
+      const [premiumRes, profilesRes, logs, inj, meals, workouts, photos, metaRes, emailMap] = await Promise.all([
         sb.from("premium_access").select("user_id, source, promo_code, status").eq("status", "active"),
         sb.from("profiles").select("id, name, triage_completed, created_at, current_dose, medication").order("created_at", { ascending: false }),
         sb.from("daily_logs").select("user_id, date, created_at"),
@@ -135,6 +135,7 @@ Deno.serve(async (req) => {
         sb.from("meal_logs").select("user_id, date, meal_time"),
         sb.from("workouts").select("user_id, date, created_at"),
         sb.from("progress_photos").select("user_id, date, created_at"),
+        sb.from("founder_user_metadata").select("user_id, instagram_handle, whatsapp, talked_at, notes"),
         emailsPromise,
       ]);
 
@@ -143,6 +144,22 @@ Deno.serve(async (req) => {
       const premiumMap: Record<string, { source: string; promo_code: string | null }> = {};
       (premiumRows || []).forEach((r: any) => {
         premiumMap[r.user_id] = { source: r.source, promo_code: r.promo_code };
+      });
+
+      // Founder metadata map (admin-only contact info)
+      const metaMap: Record<string, {
+        instagram_handle: string | null;
+        whatsapp: string | null;
+        talked_at: string | null;
+        has_notes: boolean;
+      }> = {};
+      (metaRes.data || []).forEach((r: any) => {
+        metaMap[r.user_id] = {
+          instagram_handle: r.instagram_handle || null,
+          whatsapp: r.whatsapp || null,
+          talked_at: r.talked_at || null,
+          has_notes: !!(r.notes && String(r.notes).trim() !== ""),
+        };
       });
       console.log(`[inbox] data fetched in ${Date.now() - inboxStart}ms`);
 
@@ -199,6 +216,7 @@ Deno.serve(async (req) => {
         else if (p.triage_completed && hasInjOrLog && lastEqualsSignup) group = "ghost";
         else if (total === 0) group = "zero";
 
+        const meta = metaMap[p.id] || null;
         return {
           id: p.id,
           name: p.name,
@@ -211,6 +229,10 @@ Deno.serve(async (req) => {
           lastActivity: last,
           freshness,
           group,
+          instagramHandle: meta?.instagram_handle || null,
+          whatsapp: meta?.whatsapp || null,
+          talkedAt: meta?.talked_at || null,
+          hasNotes: meta?.has_notes || false,
         };
       });
 
