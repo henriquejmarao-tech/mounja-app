@@ -235,22 +235,11 @@ const Analytics = () => {
             </div>
           )}
 
-          {loading && isAdmin && activeTab !== "inbox" && (
-            <div className="mt-4 flex items-center justify-center py-12">
-              <div className="w-5 h-5 border-2 border-indigo-400/30 border-t-indigo-400 rounded-full animate-spin" />
-            </div>
-          )}
-
-          <TabsContent value="inbox" className="mt-4">
-            <InboxErrorBoundary>
-              <InboxTab />
-            </InboxErrorBoundary>
-          </TabsContent>
-
-          {isAdmin && data && (<>
-
           {/* OVERVIEW TAB */}
           <TabsContent value="overview" className="space-y-4 mt-4">
+            {!data ? (
+              <TabSkeleton />
+            ) : (<>
             {/* Feature usage */}
             <GlassCard title="Uso por Funcionalidade">
               <div className="flex items-center justify-end gap-2 mb-2">
@@ -311,11 +300,21 @@ const Analytics = () => {
             <GlassCard title="Detalhamento por Usuário">
               <UsersTable users={data.users} />
             </GlassCard>
+            </>)}
+          </TabsContent>
+
+          {/* INBOX TAB */}
+          <TabsContent value="inbox" className="mt-4">
+            <InboxErrorBoundary>
+              <InboxTab />
+            </InboxErrorBoundary>
           </TabsContent>
 
           {/* RETENTION TAB */}
           <TabsContent value="retention" className="space-y-4 mt-4">
-            {data.credits ? (
+            {!data ? (
+              <TabSkeleton />
+            ) : data.credits ? (
               <>
                 <div className="grid grid-cols-2 gap-3">
                   <GlowKpi icon={<Utensils className="w-5 h-5" />} label="Créditos Hoje" value={data.credits.totalCreditsToday} color="indigo" />
@@ -390,6 +389,9 @@ const Analytics = () => {
 
           {/* ENGAGEMENT TAB */}
           <TabsContent value="engagement" className="space-y-4 mt-4">
+            {!data ? (
+              <TabSkeleton />
+            ) : (<>
             {/* Signup Provider */}
             <GlassCard title="Origem dos Cadastros">
               <ResponsiveContainer width="100%" height={220}>
@@ -442,10 +444,14 @@ const Analytics = () => {
                 <FunnelBar label="Premium" value={data.premiumCount} max={data.totalUsers} color="bg-amber-500" />
               </div>
             </GlassCard>
+            </>)}
           </TabsContent>
 
           {/* CONVERSION TAB */}
           <TabsContent value="conversion" className="space-y-4 mt-4">
+            {!data ? (
+              <TabSkeleton />
+            ) : (<>
             <GlassCard title="Assinantes vs Gratuitos">
               <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
@@ -513,10 +519,14 @@ const Analytics = () => {
                 )}
               </div>
             </GlassCard>
+            </>)}
           </TabsContent>
 
           {/* QUALITY TAB */}
           <TabsContent value="quality" className="space-y-4 mt-4">
+            {!data ? (
+              <TabSkeleton />
+            ) : (<>
             <div className="grid grid-cols-2 gap-3">
               <GlowKpi icon={<Bot className="w-5 h-5" />} label="Suspeitos Bot" value={data.botSuspectsCount} color="rose" />
               <GlowKpi icon={<Shield className="w-5 h-5" />} label="Legítimos" value={data.totalUsers - data.botSuspectsCount} color="green" />
@@ -552,6 +562,7 @@ const Analytics = () => {
                 )}
               </div>
             </GlassCard>
+            </>)}
           </TabsContent>
 
           {/* HEALTH TAB */}
@@ -564,7 +575,7 @@ const Analytics = () => {
                 </div>
                 <div className="flex items-center justify-between rounded-lg bg-slate-800/40 px-3 py-2">
                   <span>Base carregada</span>
-                  <span className="text-white font-medium">{data.totalUsers} usuários</span>
+                  <span className="text-white font-medium">{data ? `${data.totalUsers} usuários` : "—"}</span>
                 </div>
                 <div className="flex items-center justify-between rounded-lg bg-slate-800/40 px-3 py-2">
                   <span>Inbox sob demanda</span>
@@ -573,7 +584,6 @@ const Analytics = () => {
               </div>
             </GlassCard>
           </TabsContent>
-          </>)}
         </Tabs>
       </div>
     </div>
