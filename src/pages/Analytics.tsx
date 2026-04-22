@@ -473,15 +473,7 @@ const Analytics = () => {
               </div>
             </GlassCard>
           </TabsContent>
-
-          {/* INBOX TAB — lazy-loaded on first click */}
-          <TabsContent value="inbox" className="mt-4">
-            {inboxMounted ? (
-              <InboxErrorBoundary>
-                <InboxTab />
-              </InboxErrorBoundary>
-            ) : null}
-          </TabsContent>
+          </>)}
         </Tabs>
       </div>
     </div>
