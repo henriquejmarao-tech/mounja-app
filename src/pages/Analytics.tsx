@@ -110,25 +110,38 @@ const Analytics = () => {
       </div>
 
       <div className="px-4 space-y-5">
+        {error && (
+          <div className="rounded-xl border border-rose-500/30 bg-rose-950/30 p-4 text-sm text-rose-200 text-center">
+            {error}
+          </div>
+        )}
         {/* KPI Cards */}
         <div className="grid grid-cols-2 gap-3">
-          <GlowKpi icon={<Users className="w-5 h-5" />} label="Total Usuários" value={data.totalUsers} color="indigo" />
-          <GlowKpi icon={<Activity className="w-5 h-5" />} label="Ativos Hoje" value={data.todayActiveUsers} color="cyan" />
-          <GlowKpi icon={<Crown className="w-5 h-5" />} label="Premium" value={data.premiumCount} color="amber" />
-          <GlowKpi icon={<TrendingUp className="w-5 h-5" />} label="Triagem Completa" value={data.triageCompleted} color="green" />
-          <GlowKpi icon={<CalendarCheck className="w-5 h-5" />} label="Voltaram Ontem" value={data.yesterdayActiveUsers} color="indigo" />
-          <GlowKpiText
-            icon={<RotateCcw className="w-5 h-5" />}
-            label="Retenção"
-            value={data.retention.d1 ? `D1: ${data.retention.d1.pct}%` : "D1: —"}
-            subValue={data.retention.d7 ? `D7: ${data.retention.d7.pct}%` : "D7: —"}
-            tooltip={
-              !data.retention.d1 && !data.retention.d7
-                ? "Dados insuficientes"
-                : `D1: ${data.retention.d1?.retained ?? 0}/${data.retention.d1?.eligible ?? 0} · D7: ${data.retention.d7?.retained ?? 0}/${data.retention.d7?.eligible ?? 0}`
-            }
-            color="rose"
-          />
+          {data ? (
+            <>
+              <GlowKpi icon={<Users className="w-5 h-5" />} label="Total Usuários" value={data.totalUsers} color="indigo" />
+              <GlowKpi icon={<Activity className="w-5 h-5" />} label="Ativos Hoje" value={data.todayActiveUsers} color="cyan" />
+              <GlowKpi icon={<Crown className="w-5 h-5" />} label="Premium" value={data.premiumCount} color="amber" />
+              <GlowKpi icon={<TrendingUp className="w-5 h-5" />} label="Triagem Completa" value={data.triageCompleted} color="green" />
+              <GlowKpi icon={<CalendarCheck className="w-5 h-5" />} label="Voltaram Ontem" value={data.yesterdayActiveUsers} color="indigo" />
+              <GlowKpiText
+                icon={<RotateCcw className="w-5 h-5" />}
+                label="Retenção"
+                value={data.retention.d1 ? `D1: ${data.retention.d1.pct}%` : "D1: —"}
+                subValue={data.retention.d7 ? `D7: ${data.retention.d7.pct}%` : "D7: —"}
+                tooltip={
+                  !data.retention.d1 && !data.retention.d7
+                    ? "Dados insuficientes"
+                    : `D1: ${data.retention.d1?.retained ?? 0}/${data.retention.d1?.eligible ?? 0} · D7: ${data.retention.d7?.retained ?? 0}/${data.retention.d7?.eligible ?? 0}`
+                }
+                color="rose"
+              />
+            </>
+          ) : (
+            Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="h-20 rounded-xl bg-slate-800/40 border border-slate-700/40 animate-pulse" />
+            ))
+          )}
         </div>
 
         {/* Tabs */}
@@ -141,6 +154,20 @@ const Analytics = () => {
             <TabsTrigger value="security" className="text-xs flex-1 data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Segurança</TabsTrigger>
             <TabsTrigger value="inbox" className="text-xs flex-1 data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Inbox</TabsTrigger>
           </TabsList>
+
+          {!data && activeTab !== "inbox" && (
+            <div className="mt-4 flex items-center justify-center py-12">
+              <div className="w-5 h-5 border-2 border-indigo-400/30 border-t-indigo-400 rounded-full animate-spin" />
+            </div>
+          )}
+
+          <TabsContent value="inbox" className="mt-4">
+            <InboxErrorBoundary>
+              <InboxTab />
+            </InboxErrorBoundary>
+          </TabsContent>
+
+          {data && (<>
 
           {/* OVERVIEW TAB */}
           <TabsContent value="overview" className="space-y-4 mt-4">
