@@ -75,6 +75,12 @@ const Analytics = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showPerUser, setShowPerUser] = useState(false);
+  const [activeTab, setActiveTab] = useState("overview");
+  const [inboxMounted, setInboxMounted] = useState(false);
+
+  useEffect(() => {
+    if (activeTab === "inbox") setInboxMounted(true);
+  }, [activeTab]);
 
   useEffect(() => {
     if (authLoading || !user) return;
