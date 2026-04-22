@@ -216,6 +216,7 @@ Deno.serve(async (req) => {
         else if (p.triage_completed && hasInjOrLog && lastEqualsSignup) group = "ghost";
         else if (total === 0) group = "zero";
 
+        const meta = metaMap[p.id] || null;
         return {
           id: p.id,
           name: p.name,
@@ -228,6 +229,10 @@ Deno.serve(async (req) => {
           lastActivity: last,
           freshness,
           group,
+          instagramHandle: meta?.instagram_handle || null,
+          whatsapp: meta?.whatsapp || null,
+          talkedAt: meta?.talked_at || null,
+          hasNotes: meta?.has_notes || false,
         };
       });
 
