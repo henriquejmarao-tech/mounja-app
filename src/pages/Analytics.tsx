@@ -247,7 +247,7 @@ const Analytics = () => {
             </InboxErrorBoundary>
           </TabsContent>
 
-          {data && (<>
+          {isAdmin && data && (<>
 
           {/* OVERVIEW TAB */}
           <TabsContent value="overview" className="space-y-4 mt-4">
@@ -313,8 +313,8 @@ const Analytics = () => {
             </GlassCard>
           </TabsContent>
 
-          {/* CREDITS TAB */}
-          <TabsContent value="credits" className="space-y-4 mt-4">
+          {/* RETENTION TAB */}
+          <TabsContent value="retention" className="space-y-4 mt-4">
             {data.credits ? (
               <>
                 <div className="grid grid-cols-2 gap-3">
@@ -388,8 +388,8 @@ const Analytics = () => {
             )}
           </TabsContent>
 
-          {/* LEADS TAB */}
-          <TabsContent value="leads" className="space-y-4 mt-4">
+          {/* ENGAGEMENT TAB */}
+          <TabsContent value="engagement" className="space-y-4 mt-4">
             {/* Signup Provider */}
             <GlassCard title="Origem dos Cadastros">
               <ResponsiveContainer width="100%" height={220}>
@@ -444,8 +444,8 @@ const Analytics = () => {
             </GlassCard>
           </TabsContent>
 
-          {/* PREMIUM TAB */}
-          <TabsContent value="premium" className="space-y-4 mt-4">
+          {/* CONVERSION TAB */}
+          <TabsContent value="conversion" className="space-y-4 mt-4">
             <GlassCard title="Assinantes vs Gratuitos">
               <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
@@ -515,8 +515,8 @@ const Analytics = () => {
             </GlassCard>
           </TabsContent>
 
-          {/* SECURITY TAB */}
-          <TabsContent value="security" className="space-y-4 mt-4">
+          {/* QUALITY TAB */}
+          <TabsContent value="quality" className="space-y-4 mt-4">
             <div className="grid grid-cols-2 gap-3">
               <GlowKpi icon={<Bot className="w-5 h-5" />} label="Suspeitos Bot" value={data.botSuspectsCount} color="rose" />
               <GlowKpi icon={<Shield className="w-5 h-5" />} label="Legítimos" value={data.totalUsers - data.botSuspectsCount} color="green" />
