@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { InboxTab } from "@/components/analytics/InboxTab";
 
 const ADMIN_EMAIL = "henriquejmarao@gmail.com";
 
@@ -139,6 +140,7 @@ const Analytics = () => {
             <TabsTrigger value="leads" className="text-xs flex-1 data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Leads</TabsTrigger>
             <TabsTrigger value="premium" className="text-xs flex-1 data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Premium</TabsTrigger>
             <TabsTrigger value="security" className="text-xs flex-1 data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Segurança</TabsTrigger>
+            <TabsTrigger value="inbox" className="text-xs flex-1 data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Inbox</TabsTrigger>
           </TabsList>
 
           {/* OVERVIEW TAB */}
@@ -444,6 +446,11 @@ const Analytics = () => {
                 )}
               </div>
             </GlassCard>
+          </TabsContent>
+
+          {/* INBOX TAB */}
+          <TabsContent value="inbox" className="mt-4">
+            <InboxTab />
           </TabsContent>
         </Tabs>
       </div>
