@@ -108,26 +108,43 @@ Deno.serve(async (req) => {
     // ACTION: inbox → lista enxuta agregada para a aba Inbox
     // ──────────────────────────────────────────────────────────────
     if (action === "inbox") {
+      const inboxStart = Date.now();
+      console.log("[inbox] start");
       const todayStr = new Date().toISOString().split("T")[0];
 
-      // Premium map
-      const { data: premiumRows } = await sb.from("premium_access").select("user_id, source, promo_code, status").eq("status", "active");
-      const premiumMap: Record<string, { source: string; promo_code: string | null }> = {};
-      (premiumRows || []).forEach((r: any) => {
-        premiumMap[r.user_id] = { source: r.source, promo_code: r.promo_code };
-      });
+      // Pre-fetch emails first page in parallel with everything else.
+      const emailsPromise = (async () => {
+        const map: Record<string, string> = {};
+        let page = 1;
+        while (page <= 10) {
+          const { data, error } = await sb.auth.admin.listUsers({ page, perPage: 1000 });
+          if (error) break;
+          (data?.users || []).forEach((u: any) => { map[u.id] = u.email || ""; });
+          if (!data || (data.users?.length || 0) < 1000) break;
+          page++;
+        }
+        return map;
+      })();
 
-      // Fetch ALL profiles
-      const { data: profiles } = await sb.from("profiles").select("id, name, triage_completed, created_at, current_dose, medication").order("created_at", { ascending: false });
-
-      // Fetch all activity rows (date + user + kind) in parallel
-      const [logs, inj, meals, workouts, photos] = await Promise.all([
+      // Fetch everything in parallel
+      const [premiumRes, profilesRes, logs, inj, meals, workouts, photos, emailMap] = await Promise.all([
+        sb.from("premium_access").select("user_id, source, promo_code, status").eq("status", "active"),
+        sb.from("profiles").select("id, name, triage_completed, created_at, current_dose, medication").order("created_at", { ascending: false }),
         sb.from("daily_logs").select("user_id, date, created_at"),
         sb.from("injections").select("user_id, date, created_at"),
         sb.from("meal_logs").select("user_id, date, meal_time"),
         sb.from("workouts").select("user_id, date, created_at"),
         sb.from("progress_photos").select("user_id, date, created_at"),
+        emailsPromise,
       ]);
+
+      const premiumRows = premiumRes.data;
+      const profiles = profilesRes.data;
+      const premiumMap: Record<string, { source: string; promo_code: string | null }> = {};
+      (premiumRows || []).forEach((r: any) => {
+        premiumMap[r.user_id] = { source: r.source, promo_code: r.promo_code };
+      });
+      console.log(`[inbox] data fetched in ${Date.now() - inboxStart}ms`);
 
       type Counts = { logs: number; injections: number; meals: number; workouts: number; photos: number };
       const counts: Record<string, Counts> = {};
@@ -197,19 +214,19 @@ Deno.serve(async (req) => {
         };
       });
 
-      // Enrich with emails (single batch via admin.listUsers — paginate)
-      const emailMap: Record<string, string> = {};
-      let page = 1;
-      while (page <= 10) {
-        const { data, error } = await sb.auth.admin.listUsers({ page, perPage: 1000 });
-        if (error) break;
-        (data?.users || []).forEach((u: any) => { emailMap[u.id] = u.email || ""; });
-        if (!data || (data.users?.length || 0) < 1000) break;
-        page++;
-      }
       rows.forEach((r: any) => { r.email = emailMap[r.id] || "—"; });
 
+      console.log(`[inbox] done in ${Date.now() - inboxStart}ms · ${rows.length} rows`);
       return new Response(JSON.stringify({ rows, generatedAt: new Date().toISOString() }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Default for unknown explicit actions (overview is implicit fallthrough)
+    if (action !== "overview") {
+      console.warn(`[admin-analytics] unknown action: ${action}`);
+      return new Response(JSON.stringify({ error: `Unknown action: ${action}` }), {
+        status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }

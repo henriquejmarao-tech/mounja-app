@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Component, ReactNode, useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Navigate } from "react-router-dom";
@@ -75,6 +75,12 @@ const Analytics = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showPerUser, setShowPerUser] = useState(false);
+  const [activeTab, setActiveTab] = useState("overview");
+  const [inboxMounted, setInboxMounted] = useState(false);
+
+  useEffect(() => {
+    if (activeTab === "inbox") setInboxMounted(true);
+  }, [activeTab]);
 
   useEffect(() => {
     if (authLoading || !user) return;
@@ -133,7 +139,7 @@ const Analytics = () => {
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="overview" className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="w-full bg-slate-800/60 border border-slate-700/50">
             <TabsTrigger value="overview" className="text-xs flex-1 data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Visão Geral</TabsTrigger>
             <TabsTrigger value="credits" className="text-xs flex-1 data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Créditos</TabsTrigger>
@@ -448,9 +454,13 @@ const Analytics = () => {
             </GlassCard>
           </TabsContent>
 
-          {/* INBOX TAB */}
+          {/* INBOX TAB — lazy-loaded on first click */}
           <TabsContent value="inbox" className="mt-4">
-            <InboxTab />
+            {inboxMounted ? (
+              <InboxErrorBoundary>
+                <InboxTab />
+              </InboxErrorBoundary>
+            ) : null}
           </TabsContent>
         </Tabs>
       </div>
@@ -615,5 +625,28 @@ const LoadingSpinner = () => (
     <div className="w-6 h-6 border-2 border-indigo-400/30 border-t-indigo-400 rounded-full animate-spin" />
   </div>
 );
+
+// Local error boundary so a failure in Inbox never breaks the rest of /analytics
+class InboxErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
+  state = { hasError: false };
+  static getDerivedStateFromError() { return { hasError: true }; }
+  componentDidCatch(err: unknown) { console.error("[InboxTab] error:", err); }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="rounded-xl border border-rose-500/30 bg-rose-950/30 p-6 text-center">
+          <p className="text-sm text-rose-200">Falha ao carregar inbox — tente recarregar.</p>
+          <button
+            onClick={() => this.setState({ hasError: false })}
+            className="mt-3 text-xs text-rose-300 underline"
+          >
+            Tentar novamente
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 export default Analytics;
