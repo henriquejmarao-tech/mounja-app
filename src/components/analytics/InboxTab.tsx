@@ -299,10 +299,37 @@ export const InboxTab = () => {
                     <td className="px-3 py-2">
                       <div className="flex items-center gap-1.5 min-w-0">
                         <div className="min-w-0">
-                          <div className="text-[11px] font-medium text-white truncate max-w-[140px]">
-                            {r.name || "Sem nome"}
+                          <div className="text-[11px] font-medium text-white truncate max-w-[160px] flex items-center gap-1">
+                            <span className="truncate">{r.name || "Sem nome"}</span>
+                            {r.instagramHandle && (
+                              <Instagram className="w-3 h-3 text-pink-300 shrink-0" aria-label="Tem Instagram" />
+                            )}
+                            {r.whatsapp && (
+                              <Phone className="w-3 h-3 text-emerald-300 shrink-0" aria-label="Tem WhatsApp" />
+                            )}
+                            {r.hasNotes && (
+                              <StickyNote className="w-3 h-3 text-amber-300 shrink-0" aria-label="Tem notas" />
+                            )}
                           </div>
-                          <div className="text-[9px] text-slate-500 truncate max-w-[140px]">{r.email}</div>
+                          <div className="text-[9px] text-slate-500 truncate max-w-[160px]">{r.email}</div>
+                          {r.talkedAt && (() => {
+                            const days = Math.floor((Date.now() - new Date(r.talkedAt).getTime()) / 86400000);
+                            const recent = days <= 7;
+                            return (
+                              <div className="mt-0.5 flex items-center gap-1">
+                                <MessageCircle className="w-2.5 h-2.5" />
+                                <span
+                                  className={`text-[9px] px-1.5 py-0 rounded-full border ${
+                                    recent
+                                      ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
+                                      : "bg-slate-700/50 text-slate-300 border-slate-600/40"
+                                  }`}
+                                >
+                                  {recent ? "falei recente" : `falei há ${days}d`}
+                                </span>
+                              </div>
+                            );
+                          })()}
                         </div>
                         <button
                           onClick={(e) => copyEmail(r.id, r.email, e)}
@@ -372,7 +399,11 @@ export const InboxTab = () => {
         )}
       </div>
 
-      <InboxUserSheet userId={openUserId} onClose={() => setOpenUserId(null)} />
+      <InboxUserSheet
+        userId={openUserId}
+        onClose={() => setOpenUserId(null)}
+        onMetadataChanged={fetchInbox}
+      />
     </div>
   );
 };
