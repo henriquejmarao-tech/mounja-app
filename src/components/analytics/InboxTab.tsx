@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Search, Copy, Check, Inbox as InboxIcon, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, Copy, Check, Inbox as InboxIcon, ChevronLeft, ChevronRight, Instagram, Phone, StickyNote, MessageCircle } from "lucide-react";
 import { InboxUserSheet } from "./InboxUserSheet";
 
 type Freshness = "today" | "yesterday" | "week" | "two_weeks" | "stale" | "never";
@@ -21,6 +21,10 @@ interface InboxRow {
   lastActivity: { date: string; ts: string; kind: string } | null;
   freshness: Freshness;
   group: Group;
+  instagramHandle?: string | null;
+  whatsapp?: string | null;
+  talkedAt?: string | null;
+  hasNotes?: boolean;
 }
 
 interface InboxResp {
