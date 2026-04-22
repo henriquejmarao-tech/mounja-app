@@ -214,16 +214,6 @@ Deno.serve(async (req) => {
         };
       });
 
-      // Enrich with emails (single batch via admin.listUsers — paginate)
-      const emailMap: Record<string, string> = {};
-      let page = 1;
-      while (page <= 10) {
-        const { data, error } = await sb.auth.admin.listUsers({ page, perPage: 1000 });
-        if (error) break;
-        (data?.users || []).forEach((u: any) => { emailMap[u.id] = u.email || ""; });
-        if (!data || (data.users?.length || 0) < 1000) break;
-        page++;
-      }
       rows.forEach((r: any) => { r.email = emailMap[r.id] || "—"; });
 
       console.log(`[inbox] done in ${Date.now() - inboxStart}ms · ${rows.length} rows`);
