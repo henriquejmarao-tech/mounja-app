@@ -681,6 +681,14 @@ const GlassCard = ({ title, children }: { title: string; children: React.ReactNo
   </div>
 );
 
+const TabSkeleton = () => (
+  <div className="space-y-3">
+    {Array.from({ length: 3 }).map((_, i) => (
+      <div key={i} className="h-32 rounded-xl border border-slate-700/40 bg-slate-800/30 animate-pulse" />
+    ))}
+  </div>
+);
+
 const FunnelBar = ({ label, value, max, color }: { label: string; value: number; max: number; color: string }) => {
   const pct = max > 0 ? Math.round((value / max) * 100) : 0;
   return (
