@@ -76,11 +76,6 @@ const Analytics = () => {
   const [error, setError] = useState<string | null>(null);
   const [showPerUser, setShowPerUser] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
-  const [inboxMounted, setInboxMounted] = useState(false);
-
-  useEffect(() => {
-    if (activeTab === "inbox") setInboxMounted(true);
-  }, [activeTab]);
 
   useEffect(() => {
     if (authLoading || !user) return;
@@ -98,10 +93,8 @@ const Analytics = () => {
     fetchData();
   }, [user, authLoading]);
 
-  if (authLoading || loading) return <LoadingSpinner />;
+  if (authLoading) return <LoadingSpinner />;
   if (!user || user.email !== ADMIN_EMAIL) return <Navigate to="/" replace />;
-  if (error) return <div className="p-6 text-destructive text-center">{error}</div>;
-  if (!data) return null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 pb-24 text-white">
