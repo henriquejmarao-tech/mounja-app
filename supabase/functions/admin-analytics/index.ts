@@ -226,7 +226,17 @@ Deno.serve(async (req) => {
       }
       rows.forEach((r: any) => { r.email = emailMap[r.id] || "—"; });
 
+      console.log(`[inbox] done in ${Date.now() - inboxStart}ms · ${rows.length} rows`);
       return new Response(JSON.stringify({ rows, generatedAt: new Date().toISOString() }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Default for unknown explicit actions (overview is implicit fallthrough)
+    if (action !== "overview") {
+      console.warn(`[admin-analytics] unknown action: ${action}`);
+      return new Response(JSON.stringify({ error: `Unknown action: ${action}` }), {
+        status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
