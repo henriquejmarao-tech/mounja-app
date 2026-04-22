@@ -96,9 +96,9 @@ export const InboxTab = () => {
   const [openUserId, setOpenUserId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  useEffect(() => {
+  const fetchInbox = useCallback(() => {
     setLoading(true);
-    supabase.functions
+    return supabase.functions
       .invoke("admin-analytics", { body: { action: "inbox" } })
       .then(({ data, error }) => {
         if (error) setError(error.message);
@@ -106,6 +106,10 @@ export const InboxTab = () => {
       })
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    fetchInbox();
+  }, [fetchInbox]);
 
   const filtered = useMemo(() => {
     if (!data) return [];
