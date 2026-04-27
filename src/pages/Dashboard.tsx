@@ -11,7 +11,7 @@ import FireIcon from "@/components/FireIcon";
 import StreakModal from "@/components/StreakModal";
 import { usePushPermission } from "@/hooks/usePushPermission";
 
-import { cn, localDateStr, diffCalendarDays } from "@/lib/utils";
+import { cn, localDateStr, diffCalendarDays, saoPauloDateStr, saoPauloTimeStr, diffSaoPauloCalendarDays } from "@/lib/utils";
 import { toast } from "sonner";
 import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
 import WeightTrendsCard from "@/components/dashboard/WeightTrendsCard";
@@ -247,14 +247,13 @@ const Dashboard = () => {
   // Calculate days until next injection from selected date perspective
   const daysUntilNextFromSelected = useMemo(() => {
     if (!dose.nextApplicationAt) return null;
-    return diffCalendarDays(selectedDate, new Date(dose.nextApplicationAt));
+    return diffSaoPauloCalendarDays(selectedDate, new Date(dose.nextApplicationAt));
   }, [dose.nextApplicationAt, selectedDate]);
 
   const nextApplicationTimeLabel = useMemo(() => {
-    if ((dose as any).preferredApplicationTime) return (dose as any).preferredApplicationTime;
     if (!dose.nextApplicationAt) return null;
-    return new Date(dose.nextApplicationAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", hour12: false });
-  }, [dose]);
+    return saoPauloTimeStr(new Date(dose.nextApplicationAt));
+  }, [dose.nextApplicationAt]);
 
   // Days since last application
   const daysSinceLastApplication = useMemo(() => {
@@ -267,7 +266,7 @@ const Dashboard = () => {
   // Check if selected future/today date IS the scheduled injection day
   const isScheduledInjectionDay = useMemo(() => {
     if (!dose.nextApplicationAt) return false;
-    const nextDateStr = localDateStr(new Date(dose.nextApplicationAt));
+    const nextDateStr = saoPauloDateStr(new Date(dose.nextApplicationAt));
     return selectedDateStr === nextDateStr;
   }, [dose.nextApplicationAt, selectedDateStr]);
 
@@ -279,8 +278,8 @@ const Dashboard = () => {
   const todayStr = localDateStr(new Date());
   const isTodayApplicationDay = useMemo(() => {
     if (!dose.nextApplicationAt) return false;
-    const nextDateStr = localDateStr(new Date(dose.nextApplicationAt));
-    return todayStr === nextDateStr || nextDateStr <= todayStr;
+    const nextDateStr = saoPauloDateStr(new Date(dose.nextApplicationAt));
+    return todayStr === nextDateStr;
   }, [dose.nextApplicationAt, todayStr]);
 
   const todayHasInjection = weekInjections.has(todayStr);
