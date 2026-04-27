@@ -78,8 +78,11 @@ self.addEventListener("push", (event) => {
     body: payload.body || "Hora de cuidar do seu tratamento.",
     icon: payload.icon || "/pwa-192x192.png",
     badge: payload.badge || "/pwa-192x192.png",
+    tag: payload.tag || payload.data?.tag || "mounja-notification",
+    actions: payload.actions || [],
     data: {
       url: payload.url || "/",
+      ...(payload.data || {}),
     },
   };
 
