@@ -11,6 +11,7 @@ export interface CanonicalDose {
   nextPlannedDose: string | null;
   nextApplicationAt: string | null; // ISO UTC
   applicationIntervalDays: number;
+  preferredApplicationTime: string | null;
 }
 
 export interface RecentSymptoms {
@@ -27,6 +28,7 @@ export interface ApplicationInjection {
   dose: string;
   site: string | null;
   notes: string | null;
+  created_at?: string | null;
 }
 
 export interface ApplicationWorkout {
@@ -63,6 +65,7 @@ const defaultDose: CanonicalDose = {
   nextPlannedDose: null,
   nextApplicationAt: null,
   applicationIntervalDays: 7,
+  preferredApplicationTime: null,
 };
 
 const ApplicationDataContext = createContext<ApplicationDataContextType>({
@@ -108,7 +111,7 @@ export const ApplicationDataProvider = ({ children }: { children: ReactNode }) =
 
     // ── Injections & Dose SSOT ──
     const allInj = ((injRes.data as any[]) || []).map((i: any) => ({
-      id: i.id, date: i.date, dose: i.dose, site: i.site, notes: i.notes,
+      id: i.id, date: i.date, dose: i.dose, site: i.site, notes: i.notes, created_at: i.created_at,
     })) as ApplicationInjection[];
 
     setInjections(allInj);
@@ -116,10 +119,15 @@ export const ApplicationDataProvider = ({ children }: { children: ReactNode }) =
     const lastConfirmed = allInj[0] || null;
     // Use application_interval_days from profile (default 7)
     const intervalDays = (profile as any)?.application_interval_days || 7;
+    const preferredApplicationTime = ((profile as any)?.preferred_application_time as string | null)?.slice(0, 5) || null;
+    const fallbackLastApplicationTime = lastConfirmed?.created_at
+      ? new Date(lastConfirmed.created_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", hour12: false })
+      : "12:00";
+    const applicationTime = preferredApplicationTime || fallbackLastApplicationTime || "12:00";
 
     let nextApplicationAt: string | null = null;
     if (lastConfirmed) {
-      const lastDate = new Date(lastConfirmed.date + "T12:00:00");
+      const lastDate = new Date(`${lastConfirmed.date}T${applicationTime}:00`);
       const nextDate = new Date(lastDate.getTime() + intervalDays * 86400000);
       nextApplicationAt = nextDate.toISOString();
     }
@@ -130,10 +138,11 @@ export const ApplicationDataProvider = ({ children }: { children: ReactNode }) =
     const canonicalDose: CanonicalDose = {
       currentDose: profileDose ?? lastConfirmed?.dose ?? null,
       unit: "mg",
-      lastApplicationAt: lastConfirmed ? new Date(lastConfirmed.date + "T12:00:00").toISOString() : null,
+      lastApplicationAt: lastConfirmed ? new Date(`${lastConfirmed.date}T${applicationTime}:00`).toISOString() : null,
       nextPlannedDose: profileDose ?? lastConfirmed?.dose ?? null,
       nextApplicationAt,
       applicationIntervalDays: intervalDays,
+      preferredApplicationTime,
     };
 
     setDose(canonicalDose);

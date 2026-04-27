@@ -88,11 +88,18 @@ const SchedulePage = () => {
   const [intervalDays, setIntervalDays] = useState(String(profile?.application_interval_days || 7));
 
   const now = new Date();
-  const [hour, setHour] = useState(String(now.getHours()).padStart(2, "0"));
-  const [minute, setMinute] = useState(String(now.getMinutes()).padStart(2, "0"));
+  const savedTime = ((profile as any)?.preferred_application_time as string | null)?.slice(0, 5);
+  const [hour, setHour] = useState(savedTime?.slice(0, 2) || String(now.getHours()).padStart(2, "0"));
+  const [minute, setMinute] = useState(savedTime?.slice(3, 5) || String(now.getMinutes()).padStart(2, "0"));
 
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [showIntervalPicker, setShowIntervalPicker] = useState(false);
+
+  React.useEffect(() => {
+    if (!savedTime) return;
+    setHour(savedTime.slice(0, 2));
+    setMinute(savedTime.slice(3, 5));
+  }, [savedTime]);
 
   const freqLabel = freq === "daily" ? "Diário" : freq === "weekly" ? "Semanal" : `A cada ${intervalDays} dias`;
   const timeLabel = `${hour}:${minute}`;
@@ -105,7 +112,8 @@ const SchedulePage = () => {
       .update({
         application_frequency: freq,
         application_interval_days: intDays,
-      })
+        preferred_application_time: timeLabel,
+      } as any)
       .eq("id", user.id);
 
     if (error) {
