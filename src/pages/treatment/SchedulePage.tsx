@@ -95,6 +95,12 @@ const SchedulePage = () => {
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [showIntervalPicker, setShowIntervalPicker] = useState(false);
 
+  React.useEffect(() => {
+    if (!savedTime) return;
+    setHour(savedTime.slice(0, 2));
+    setMinute(savedTime.slice(3, 5));
+  }, [savedTime]);
+
   const freqLabel = freq === "daily" ? "Diário" : freq === "weekly" ? "Semanal" : `A cada ${intervalDays} dias`;
   const timeLabel = `${hour}:${minute}`;
 
