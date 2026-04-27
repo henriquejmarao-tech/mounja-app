@@ -56,8 +56,11 @@ export const usePushPermission = () => {
 
         const registration = await navigator.serviceWorker.ready;
         const existing = await registration.pushManager.getSubscription();
-        if (existing) await existing.unsubscribe();
-        const subscription = existing ?? await registration.pushManager.subscribe({
+        if (existing) {
+          await supabase.from("push_subscriptions" as any).update({ active: false } as any).eq("endpoint", existing.endpoint);
+          await existing.unsubscribe();
+        }
+        const subscription = await registration.pushManager.subscribe({
           userVisibleOnly: true,
           applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
         });
