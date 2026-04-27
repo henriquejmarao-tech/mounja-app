@@ -4,7 +4,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
-import { localDateStr, cn } from "@/lib/utils";
+import { localDateStr, cn, saoPauloDateStr } from "@/lib/utils";
 import { toast } from "sonner";
 import { X, ChevronDown, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -104,8 +104,7 @@ const CalendarDrawer = ({ open, onOpenChange }: CalendarDrawerProps) => {
   // Build list of application days (past injections + next planned)
   const applicationDayDates = [...injectionDays];
   if (dose.nextApplicationAt) {
-    const nextDate = new Date(dose.nextApplicationAt);
-    applicationDayDates.push(new Date(localDateStr(nextDate) + "T12:00:00"));
+    applicationDayDates.push(new Date(saoPauloDateStr(new Date(dose.nextApplicationAt)) + "T12:00:00"));
   }
 
   // Check if selected date is an application day
