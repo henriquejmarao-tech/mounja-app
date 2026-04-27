@@ -65,6 +65,9 @@ Deno.serve(async (req) => {
     const windowStart = new Date(now.getTime() + 55 * 60 * 1000).toISOString();
     const windowEnd = new Date(now.getTime() + 65 * 60 * 1000).toISOString();
 
+    const { data: autoAdvanced, error: autoAdvanceError } = await sb.rpc("advance_missed_dose_schedules");
+    if (autoAdvanceError) throw autoAdvanceError;
+
     const { data: candidates, error } = await sb
       .from("scheduled_dose_reminder_candidates")
       .select("user_id, dose, medication, scheduled_dose_at")
@@ -177,6 +180,7 @@ Deno.serve(async (req) => {
       ok: true,
       window_start: windowStart,
       window_end: windowEnd,
+      auto_advanced: autoAdvanced ?? 0,
       candidates: candidates?.length ?? 0,
       sent,
       failures,
