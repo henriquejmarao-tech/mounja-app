@@ -1,11 +1,7 @@
 /// <reference lib="webworker" />
 
-import { clientsClaim } from "workbox-core";
-import { precacheAndRoute } from "workbox-precaching";
-
 self.skipWaiting();
-clientsClaim();
-precacheAndRoute(self.__WB_MANIFEST || []);
+self.__WB_MANIFEST;
 
 self.addEventListener("push", (event) => {
   let payload = {};
