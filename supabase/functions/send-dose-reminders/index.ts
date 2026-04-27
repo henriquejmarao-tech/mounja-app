@@ -14,12 +14,14 @@ type Candidate = {
   dose: string | null;
   medication: string | null;
   scheduled_dose_at: string;
-  push_subscriptions: Array<{
-    id: string;
-    endpoint: string;
-    p256dh: string;
-    auth: string;
-  }> | null;
+};
+
+type PushSubscriptionRow = {
+  id: string;
+  user_id: string;
+  endpoint: string;
+  p256dh: string;
+  auth: string;
 };
 
 const normalizeDoseMg = (dose: string | null) => {
@@ -61,19 +63,31 @@ Deno.serve(async (req) => {
 
     const { data: candidates, error } = await sb
       .from("scheduled_dose_reminder_candidates")
-      .select(`
-        user_id,
-        dose,
-        medication,
-        scheduled_dose_at,
-        push_subscriptions!inner(id, endpoint, p256dh, auth)
-      `)
+      .select("user_id, dose, medication, scheduled_dose_at")
       .gte("scheduled_dose_at", windowStart)
       .lte("scheduled_dose_at", windowEnd)
-      .eq("push_subscriptions.active", true)
       .returns<Candidate[]>();
 
     if (error) throw error;
+
+    const userIds = [...new Set((candidates ?? []).map((candidate) => candidate.user_id))];
+    const { data: subscriptions, error: subscriptionsError } = userIds.length
+      ? await sb
+          .from("push_subscriptions")
+          .select("id, user_id, endpoint, p256dh, auth")
+          .in("user_id", userIds)
+          .eq("active", true)
+          .returns<PushSubscriptionRow[]>()
+      : { data: [] as PushSubscriptionRow[], error: null };
+
+    if (subscriptionsError) throw subscriptionsError;
+
+    const subscriptionsByUser = new Map<string, PushSubscriptionRow[]>();
+    for (const subscription of subscriptions ?? []) {
+      const rows = subscriptionsByUser.get(subscription.user_id) ?? [];
+      rows.push(subscription);
+      subscriptionsByUser.set(subscription.user_id, rows);
+    }
 
     let sent = 0;
     let failures = 0;
@@ -95,7 +109,7 @@ Deno.serve(async (req) => {
       }
 
       if (existingReminder) {
-        skippedAlreadySent += candidate.push_subscriptions?.length || 1;
+        skippedAlreadySent += subscriptionsByUser.get(candidate.user_id)?.length || 1;
         continue;
       }
 
@@ -119,7 +133,7 @@ Deno.serve(async (req) => {
       });
 
       let deliveredForDose = false;
-      for (const subscription of candidate.push_subscriptions ?? []) {
+      for (const subscription of subscriptionsByUser.get(candidate.user_id) ?? []) {
         try {
           await webpush.sendNotification(
             {
