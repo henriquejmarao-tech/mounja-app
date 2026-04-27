@@ -761,6 +761,37 @@ const Dashboard = () => {
           setSymptomDrawerOpen(true);
         }}
       />
+      {showPushModal && (
+        <div className="fixed inset-0 z-50 bg-foreground/35 backdrop-blur-sm flex items-end justify-center px-4 pb-safe animate-fade-in">
+          <div className="w-full max-w-md bg-background rounded-t-3xl p-6 shadow-elevated animate-slide-up">
+            <div className="w-12 h-12 rounded-2xl gradient-hero flex items-center justify-center mb-4">
+              <Bell className="w-6 h-6 text-primary-foreground" />
+            </div>
+            <h2 className="text-xl font-extrabold text-foreground tracking-tight leading-tight">
+              Quer que eu te lembre da próxima dose?
+            </h2>
+            <p className="text-sm text-muted-foreground font-medium mt-2 leading-relaxed">
+              Eu te aviso 1 hora antes de aplicar. Você nunca esquece.
+            </p>
+            <div className="mt-6 space-y-3">
+              <button
+                onClick={handlePushAccept}
+                disabled={pushLoading}
+                className="w-full py-4 rounded-2xl gradient-hero text-primary-foreground text-sm font-bold shadow-elevated disabled:opacity-60 active:scale-[0.98] transition-transform"
+              >
+                Quero ser lembrada
+              </button>
+              <button
+                onClick={handlePushDismiss}
+                disabled={pushLoading}
+                className="w-full py-3 rounded-2xl bg-muted text-foreground text-sm font-bold disabled:opacity-60 active:scale-[0.98] transition-transform"
+              >
+                Agora não
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
