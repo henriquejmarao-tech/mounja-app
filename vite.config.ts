@@ -17,8 +17,14 @@ export default defineConfig(({ mode }) => ({
     react(),
     mode === "development" && componentTagger(),
     VitePWA({
+      strategies: "injectManifest",
+      srcDir: "public",
+      filename: "sw.js",
       registerType: "autoUpdate",
       includeAssets: ["favicon.png", "favicon.ico", "placeholder.svg"],
+      injectManifest: {
+        globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
+      },
       workbox: {
         navigateFallbackDenylist: [/^\/~oauth/],
         clientsClaim: true,
@@ -60,5 +66,8 @@ export default defineConfig(({ mode }) => ({
   },
   optimizeDeps: {
     include: ["react", "react-dom", "@tanstack/react-query"],
+  },
+  define: {
+    "import.meta.env.VITE_VAPID_PUBLIC_KEY": JSON.stringify("BHjhzSzRegdxVpuoRyQgdiVV-3Qgitl_H038L9BF35idYrydlmVF54ha1cfV3SMm6x3vUVqFPI_Oib6HlHG_WYQ"),
   },
 }));
