@@ -11,7 +11,7 @@ import FireIcon from "@/components/FireIcon";
 import StreakModal from "@/components/StreakModal";
 import { usePushPermission } from "@/hooks/usePushPermission";
 
-import { cn, localDateStr, diffCalendarDays, saoPauloDateStr, saoPauloTimeStr, diffSaoPauloCalendarDays } from "@/lib/utils";
+import { cn, localDateStr, diffCalendarDays, saoPauloDateStr, saoPauloTimeStr } from "@/lib/utils";
 import { toast } from "sonner";
 import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
 import WeightTrendsCard from "@/components/dashboard/WeightTrendsCard";
