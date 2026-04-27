@@ -108,7 +108,7 @@ const CalendarDrawer = ({ open, onOpenChange }: CalendarDrawerProps) => {
   }
 
   const isTodayApplicationDay = nextApplicationDayDates.some(
-    (d) => localDateStr(d) === localDateStr(new Date())
+    (d) => localDateStr(d) === saoPauloDateStr(new Date())
   );
 
   return (
