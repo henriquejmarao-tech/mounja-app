@@ -296,6 +296,27 @@ export type Database = {
         }
         Relationships: []
       }
+      dose_reminders_sent: {
+        Row: {
+          id: string
+          scheduled_dose_at: string
+          sent_at: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          scheduled_dose_at: string
+          sent_at?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          scheduled_dose_at?: string
+          sent_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       feedback: {
         Row: {
           created_at: string
@@ -799,7 +820,16 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      scheduled_dose_reminder_candidates: {
+        Row: {
+          dose: string | null
+          last_dose_at: string | null
+          medication: string | null
+          scheduled_dose_at: string | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       find_group_by_code: { Args: { _code: string }; Returns: string }
