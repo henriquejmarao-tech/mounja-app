@@ -247,8 +247,11 @@ const Dashboard = () => {
   // Calculate days until next injection from selected date perspective
   const daysUntilNextFromSelected = useMemo(() => {
     if (!dose.nextApplicationAt) return null;
-    return diffSaoPauloCalendarDays(selectedDate, new Date(dose.nextApplicationAt));
-  }, [dose.nextApplicationAt, selectedDate]);
+    return diffCalendarDays(
+      new Date(`${selectedDateStr}T12:00:00`),
+      new Date(`${saoPauloDateStr(new Date(dose.nextApplicationAt))}T12:00:00`)
+    );
+  }, [dose.nextApplicationAt, selectedDateStr]);
 
   const nextApplicationTimeLabel = useMemo(() => {
     if (!dose.nextApplicationAt) return null;
@@ -275,7 +278,7 @@ const Dashboard = () => {
 
   // ── APPLICATION DAY MODE ──
   // Only activate the special hero for TODAY when it's an application day
-  const todayStr = localDateStr(new Date());
+  const todayStr = saoPauloDateStr(new Date());
   const isTodayApplicationDay = useMemo(() => {
     if (!dose.nextApplicationAt) return false;
     const nextDateStr = saoPauloDateStr(new Date(dose.nextApplicationAt));
