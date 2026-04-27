@@ -120,11 +120,6 @@ export const ApplicationDataProvider = ({ children }: { children: ReactNode }) =
     // Use application_interval_days from profile (default 7)
     const intervalDays = (profile as any)?.application_interval_days || 7;
     const preferredApplicationTime = ((profile as any)?.preferred_application_time as string | null)?.slice(0, 5) || null;
-    const fallbackLastApplicationTime = lastConfirmed?.created_at
-      ? new Date(lastConfirmed.created_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", hour12: false })
-      : "12:00";
-    const applicationTime = preferredApplicationTime || fallbackLastApplicationTime || "12:00";
-
     const nextApplicationAt = ((profile as any)?.next_dose_scheduled_at as string | null) || null;
 
     // Use profile.current_dose as SSOT (updated by Treatment Plan),
@@ -133,7 +128,7 @@ export const ApplicationDataProvider = ({ children }: { children: ReactNode }) =
     const canonicalDose: CanonicalDose = {
       currentDose: profileDose ?? lastConfirmed?.dose ?? null,
       unit: "mg",
-      lastApplicationAt: lastConfirmed ? new Date(`${lastConfirmed.date}T${applicationTime}:00`).toISOString() : null,
+      lastApplicationAt: lastConfirmed?.created_at ?? (lastConfirmed ? new Date(`${lastConfirmed.date}T12:00:00`).toISOString() : null),
       nextPlannedDose: profileDose ?? lastConfirmed?.dose ?? null,
       nextApplicationAt,
       applicationIntervalDays: intervalDays,
