@@ -33,7 +33,9 @@ const normalizeDoseMg = (dose: string | null) => {
 const assertServiceRoleCall = (req: Request, serviceRoleKey: string) => {
   const authHeader = req.headers.get("Authorization") || "";
   const token = authHeader.replace(/^Bearer\s+/i, "").trim();
-  return Boolean(serviceRoleKey && token && token === serviceRoleKey);
+  const cronSecret = Deno.env.get("DOSE_REMINDERS_CRON_SECRET") ?? "";
+  const cronHeader = req.headers.get("x-cron-secret") ?? "";
+  return Boolean((serviceRoleKey && token && token === serviceRoleKey) || (cronSecret && cronHeader === cronSecret));
 };
 
 Deno.serve(async (req) => {
