@@ -18,11 +18,12 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
     VitePWA({
       strategies: "injectManifest",
-      srcDir: "public",
+      srcDir: "src",
       filename: "sw.js",
       registerType: "autoUpdate",
       includeAssets: ["favicon.png", "favicon.ico", "placeholder.svg"],
       injectManifest: {
+        injectionPoint: undefined,
         globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
       },
       workbox: {

@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { usePlan } from "@/hooks/usePlan";
 import { useStreak } from "@/hooks/useStreak";
-import { Scale, Camera, ClipboardList, Lightbulb, Bell, Sparkles, Check, ChevronRight, Lock, X } from "lucide-react";
+import { Scale, Camera, ClipboardList, Lightbulb, Bell, Sparkles, Check, ChevronRight, Lock } from "lucide-react";
 import PremiumGateModal from "@/components/PremiumGateModal";
 import FireIcon from "@/components/FireIcon";
 import StreakModal from "@/components/StreakModal";
@@ -23,6 +23,7 @@ import PhotoDrawer from "@/components/PhotoDrawer";
 import CalendarDrawer from "@/components/dashboard/CalendarDrawer";
 import WhatsNewDrawer from "@/components/dashboard/WhatsNewDrawer";
 import WeightTrendsDrawer from "@/components/dashboard/WeightTrendsDrawer";
+import PushRequestBanner from "@/components/notifications/PushRequestBanner";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -48,7 +49,7 @@ const Dashboard = () => {
   const [weekInjections, setWeekInjections] = useState<Set<string>>(new Set());
   const [hasPhotoToday, setHasPhotoToday] = useState(false);
   const [weightDrawerOpen, setWeightDrawerOpen] = useState(false);
-  const [hasAnyInjection, setHasAnyInjection] = useState(false);
+  const [injectionsCount, setInjectionsCount] = useState(0);
   const [showPushModal, setShowPushModal] = useState(false);
   const [showPushBanner, setShowPushBanner] = useState(false);
 
@@ -192,11 +193,26 @@ const Dashboard = () => {
       .from("injections")
       .select("id", { count: "exact", head: true })
       .eq("user_id", user.id)
-      .then(({ count }) => setHasAnyInjection((count ?? 0) > 0));
+        .then(({ count }) => setInjectionsCount(count ?? 0));
   }, [user]);
 
   useEffect(() => {
-    if (loading || hasAskedPush) return;
+    const hasServiceWorkerSupport = "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
+    const notificationPermission = "Notification" in window ? Notification.permission : "unsupported";
+    const shouldShowBanner = !loading && !hasAskedPush && injectionsCount > 0;
+
+    console.log("[PushPermissionBanner] condition", {
+      push_permission_asked_at: (profile as any)?.push_permission_asked_at ?? null,
+      injections_count: injectionsCount,
+      notification_permission: notificationPermission,
+      hasServiceWorkerSupport,
+      shouldShowBanner,
+    });
+
+    if (loading || hasAskedPush) {
+      setShowPushBanner(false);
+      return;
+    }
     const shouldShowFirstInjectionModal = sessionStorage.getItem("mounja_show_first_injection_push_prompt") === "1";
     if (shouldShowFirstInjectionModal) {
       setShowPushModal(true);
@@ -204,8 +220,8 @@ const Dashboard = () => {
       return;
     }
 
-    setShowPushBanner(hasAnyInjection);
-  }, [hasAnyInjection, hasAskedPush, loading]);
+    setShowPushBanner(shouldShowBanner);
+  }, [injectionsCount, hasAskedPush, loading, profile]);
 
   const handlePushAccept = useCallback(async () => {
     await askPermission();
@@ -334,24 +350,11 @@ const Dashboard = () => {
         </div>
 
         {showPushBanner && (
-          <div className="mx-5 mb-4 rounded-2xl bg-card border border-border/50 shadow-card p-4 flex items-start gap-3 animate-fade-in-up">
-            <Bell className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-foreground leading-snug">
-                Novidade: a gente te avisa 1h antes de aplicar a próxima dose. Quer ativar?
-              </p>
-              <button
-                onClick={handlePushAccept}
-                disabled={pushLoading}
-                className="mt-3 px-4 py-2 rounded-full gradient-hero text-primary-foreground text-xs font-bold disabled:opacity-60 active:scale-95 transition-transform"
-              >
-                Ativar lembrete
-              </button>
-            </div>
-            <button onClick={handlePushDismiss} className="p-1 -mr-1 -mt-1 text-muted-foreground active:scale-90 transition-transform" aria-label="Fechar lembrete">
-              <X className="w-4 h-4" />
-            </button>
-          </div>
+          <PushRequestBanner
+            loading={pushLoading}
+            onAccept={handlePushAccept}
+            onDismiss={handlePushDismiss}
+          />
         )}
 
         {/* Week strip */}
