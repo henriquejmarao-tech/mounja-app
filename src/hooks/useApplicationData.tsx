@@ -190,15 +190,19 @@ export const ApplicationDataProvider = ({ children }: { children: ReactNode }) =
 
   const setConfirmedApplication = useCallback(async (injection: Omit<ApplicationInjection, "id">) => {
     if (!user) return;
+    const shouldPromptPush = injections.length === 0 && !(profile as any)?.push_permission_asked_at;
     const { error } = await supabase.from("injections").insert({
       user_id: user.id, date: injection.date, dose: injection.dose,
       site: injection.site || null, notes: injection.notes || null,
     });
     if (error) throw error;
+    if (shouldPromptPush) {
+      sessionStorage.setItem("mounja_show_first_injection_push_prompt", "1");
+    }
     await supabase.from("profiles").update({ current_dose: injection.dose } as any).eq("id", user.id);
     await refreshProfile();
     await fetchAll();
-  }, [user, refreshProfile, fetchAll]);
+  }, [user, injections.length, profile, refreshProfile, fetchAll]);
 
   const updateApplication = useCallback(async (id: string, data: Partial<Omit<ApplicationInjection, "id">>) => {
     if (!user) return;
