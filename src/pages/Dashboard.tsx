@@ -23,6 +23,7 @@ import PhotoDrawer from "@/components/PhotoDrawer";
 import CalendarDrawer from "@/components/dashboard/CalendarDrawer";
 import WhatsNewDrawer from "@/components/dashboard/WhatsNewDrawer";
 import WeightTrendsDrawer from "@/components/dashboard/WeightTrendsDrawer";
+import PushRequestBanner from "@/components/notifications/PushRequestBanner";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -48,7 +49,7 @@ const Dashboard = () => {
   const [weekInjections, setWeekInjections] = useState<Set<string>>(new Set());
   const [hasPhotoToday, setHasPhotoToday] = useState(false);
   const [weightDrawerOpen, setWeightDrawerOpen] = useState(false);
-  const [hasAnyInjection, setHasAnyInjection] = useState(false);
+  const [injectionsCount, setInjectionsCount] = useState(0);
   const [showPushModal, setShowPushModal] = useState(false);
   const [showPushBanner, setShowPushBanner] = useState(false);
 
@@ -192,11 +193,26 @@ const Dashboard = () => {
       .from("injections")
       .select("id", { count: "exact", head: true })
       .eq("user_id", user.id)
-      .then(({ count }) => setHasAnyInjection((count ?? 0) > 0));
+        .then(({ count }) => setInjectionsCount(count ?? 0));
   }, [user]);
 
   useEffect(() => {
-    if (loading || hasAskedPush) return;
+    const hasServiceWorkerSupport = "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
+    const notificationPermission = "Notification" in window ? Notification.permission : "unsupported";
+    const shouldShowBanner = !loading && !hasAskedPush && injectionsCount > 0;
+
+    console.log("[PushPermissionBanner] condition", {
+      push_permission_asked_at: (profile as any)?.push_permission_asked_at ?? null,
+      injections_count: injectionsCount,
+      notification_permission: notificationPermission,
+      hasServiceWorkerSupport,
+      shouldShowBanner,
+    });
+
+    if (loading || hasAskedPush) {
+      setShowPushBanner(false);
+      return;
+    }
     const shouldShowFirstInjectionModal = sessionStorage.getItem("mounja_show_first_injection_push_prompt") === "1";
     if (shouldShowFirstInjectionModal) {
       setShowPushModal(true);
@@ -204,8 +220,8 @@ const Dashboard = () => {
       return;
     }
 
-    setShowPushBanner(hasAnyInjection);
-  }, [hasAnyInjection, hasAskedPush, loading]);
+    setShowPushBanner(shouldShowBanner);
+  }, [injectionsCount, hasAskedPush, loading, profile]);
 
   const handlePushAccept = useCallback(async () => {
     await askPermission();
