@@ -264,17 +264,12 @@ const Dashboard = () => {
     return diffCalendarDays(new Date(dose.lastApplicationAt), selectedDate);
   }, [dose.lastApplicationAt, selectedDate]);
 
-  const isAfterNextApplication = daysUntilNextFromSelected !== null && daysUntilNextFromSelected < 0;
-
   // Check if selected future/today date IS the scheduled injection day
   const isScheduledInjectionDay = useMemo(() => {
     if (!dose.nextApplicationAt) return false;
     const nextDateStr = saoPauloDateStr(new Date(dose.nextApplicationAt));
     return selectedDateStr === nextDateStr;
   }, [dose.nextApplicationAt, selectedDateStr]);
-
-  // Vibrant state: recorded injection OR scheduled injection day
-  const isInjectionDayVisual = selectedDayHasInjection || isScheduledInjectionDay;
 
   // ── APPLICATION DAY MODE ──
   // Only activate the special hero for TODAY when it's an application day
