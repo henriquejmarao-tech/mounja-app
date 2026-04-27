@@ -20,7 +20,11 @@ export default defineConfig(({ mode }) => ({
       strategies: "injectManifest",
       srcDir: "src",
       filename: "sw.js",
+      injectRegister: false,
       registerType: "autoUpdate",
+      devOptions: {
+        enabled: false,
+      },
       includeAssets: ["favicon.png", "favicon.ico", "placeholder.svg"],
       injectManifest: {
         injectionPoint: undefined,
