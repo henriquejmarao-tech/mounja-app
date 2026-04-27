@@ -1,32 +1,60 @@
 import { useEffect } from "react";
-import { useRegisterSW } from "virtual:pwa-register/react";
-import { toast } from "sonner";
+
+const RELOAD_FLAG = "mounja-sw-reload-once";
+
+const reloadOnceForUpdate = () => {
+  if (sessionStorage.getItem(RELOAD_FLAG) === "1") return;
+  sessionStorage.setItem(RELOAD_FLAG, "1");
+  window.location.reload();
+};
 
 const PwaUpdater = () => {
-  const {
-    needRefresh: [needRefresh],
-    updateServiceWorker,
-  } = useRegisterSW({
-    onRegisteredSW(swUrl, registration) {
-      if (registration) {
-        // Check for updates every 60 seconds
-        setInterval(() => {
-          registration.update();
-        }, 60 * 1000);
-      }
-    },
-    onRegisterError(error) {
-      console.error("SW registration error:", error);
-    },
-  });
-
   useEffect(() => {
-    if (needRefresh) {
-      // Auto-update silently
-      updateServiceWorker(true);
-      toast.info("App atualizado!", { duration: 2000 });
-    }
-  }, [needRefresh, updateServiceWorker]);
+    if (!("serviceWorker" in navigator)) return;
+
+    let registration: ServiceWorkerRegistration | undefined;
+    let intervalId: number | undefined;
+
+    const watchForActivatedUpdate = (worker: ServiceWorker | null) => {
+      if (!worker) return;
+
+      worker.addEventListener("statechange", () => {
+        if (worker.state === "activated" && navigator.serviceWorker.controller) {
+          reloadOnceForUpdate();
+        }
+      });
+    };
+
+    const checkForUpdate = () =>
+      registration?.update().catch((error) => console.error("SW update check error:", error));
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") checkForUpdate();
+    };
+
+    const handleControllerChange = () => reloadOnceForUpdate();
+
+    navigator.serviceWorker
+      .register("/sw.js", { updateViaCache: "none" })
+      .then((registered) => {
+        registration = registered;
+        sessionStorage.removeItem(RELOAD_FLAG);
+
+        registration.addEventListener("updatefound", () => watchForActivatedUpdate(registration?.installing ?? null));
+        document.addEventListener("visibilitychange", handleVisibilityChange);
+        navigator.serviceWorker.addEventListener("controllerchange", handleControllerChange);
+
+        checkForUpdate();
+        intervalId = window.setInterval(checkForUpdate, 60 * 1000);
+      })
+      .catch((error) => console.error("SW registration error:", error));
+
+    return () => {
+      if (intervalId) window.clearInterval(intervalId);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      navigator.serviceWorker.removeEventListener("controllerchange", handleControllerChange);
+    };
+  }, []);
 
   return null;
 };
