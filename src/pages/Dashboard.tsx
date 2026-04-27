@@ -250,6 +250,12 @@ const Dashboard = () => {
     return diffCalendarDays(selectedDate, new Date(dose.nextApplicationAt));
   }, [dose.nextApplicationAt, selectedDate]);
 
+  const nextApplicationTimeLabel = useMemo(() => {
+    if ((dose as any).preferredApplicationTime) return (dose as any).preferredApplicationTime;
+    if (!dose.nextApplicationAt) return null;
+    return new Date(dose.nextApplicationAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", hour12: false });
+  }, [dose]);
+
   // Days since last application
   const daysSinceLastApplication = useMemo(() => {
     if (!dose.lastApplicationAt) return null;
@@ -445,7 +451,7 @@ const Dashboard = () => {
                 <div className="mt-3 inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full"
                   style={{ background: "rgba(255,255,255,0.15)" }}>
                   <span className="text-[13px] font-bold text-white">
-                    {dose.currentDose} de {profile?.medication || "Mounjaro®"}
+                    {dose.currentDose} de {profile?.medication || "Mounjaro®"}{nextApplicationTimeLabel ? ` às ${nextApplicationTimeLabel}` : ""}
                   </span>
                 </div>
 
@@ -530,6 +536,11 @@ const Dashboard = () => {
                             : `${daysUntilNextFromSelected} dias`
                           : "—"}
                       </p>
+                      {dose.currentDose && nextApplicationTimeLabel && (
+                        <p className="text-muted-foreground text-sm mt-2 font-semibold">
+                          {dose.currentDose} de {profile?.medication || "Mounjaro®"} às {nextApplicationTimeLabel}
+                        </p>
+                      )}
                       <button
                         onClick={() => navigate("/registrar-aplicacao")}
                         className="mt-6 gradient-hero text-primary-foreground px-10 py-3.5 rounded-full text-[15px] font-bold active:scale-95 transition-transform animate-cta-entrance"
