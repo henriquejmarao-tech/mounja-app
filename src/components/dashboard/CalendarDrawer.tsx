@@ -101,17 +101,13 @@ const CalendarDrawer = ({ open, onOpenChange }: CalendarDrawerProps) => {
   const injectionDays = Object.keys(injectionDates).map((d) => new Date(d + "T12:00:00"));
   const logDays = logDates.map((d) => new Date(d + "T12:00:00"));
 
-  // Build list of application days (past injections + next planned)
-  const applicationDayDates = [...injectionDays];
+  // SSOT: only the persisted next scheduled dose marks the next application day
+  const nextApplicationDayDates: Date[] = [];
   if (dose.nextApplicationAt) {
-    applicationDayDates.push(new Date(saoPauloDateStr(new Date(dose.nextApplicationAt)) + "T12:00:00"));
+    nextApplicationDayDates.push(new Date(saoPauloDateStr(new Date(dose.nextApplicationAt)) + "T12:00:00"));
   }
 
-  // Check if selected date is an application day
-  const isApplicationDay = applicationDayDates.some(
-    (d) => localDateStr(d) === dateStr
-  );
-  const isTodayApplicationDay = applicationDayDates.some(
+  const isTodayApplicationDay = nextApplicationDayDates.some(
     (d) => localDateStr(d) === localDateStr(new Date())
   );
 
@@ -150,7 +146,7 @@ const CalendarDrawer = ({ open, onOpenChange }: CalendarDrawerProps) => {
               modifiers={{
                 hasInjection: injectionDays,
                 hasLog: logDays,
-                applicationDay: applicationDayDates,
+                applicationDay: nextApplicationDayDates,
               }}
               modifiersClassNames={{
                 applicationDay: "cal-application-day",
