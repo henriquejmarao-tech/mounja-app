@@ -11,7 +11,7 @@ import FireIcon from "@/components/FireIcon";
 import StreakModal from "@/components/StreakModal";
 import { usePushPermission } from "@/hooks/usePushPermission";
 
-import { cn, localDateStr, diffCalendarDays } from "@/lib/utils";
+import { cn, localDateStr, diffCalendarDays, saoPauloDateStr, saoPauloTimeStr } from "@/lib/utils";
 import { toast } from "sonner";
 import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
 import WeightTrendsCard from "@/components/dashboard/WeightTrendsCard";
@@ -247,14 +247,16 @@ const Dashboard = () => {
   // Calculate days until next injection from selected date perspective
   const daysUntilNextFromSelected = useMemo(() => {
     if (!dose.nextApplicationAt) return null;
-    return diffCalendarDays(selectedDate, new Date(dose.nextApplicationAt));
-  }, [dose.nextApplicationAt, selectedDate]);
+    return diffCalendarDays(
+      new Date(`${selectedDateStr}T12:00:00`),
+      new Date(`${saoPauloDateStr(new Date(dose.nextApplicationAt))}T12:00:00`)
+    );
+  }, [dose.nextApplicationAt, selectedDateStr]);
 
   const nextApplicationTimeLabel = useMemo(() => {
-    if ((dose as any).preferredApplicationTime) return (dose as any).preferredApplicationTime;
     if (!dose.nextApplicationAt) return null;
-    return new Date(dose.nextApplicationAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", hour12: false });
-  }, [dose]);
+    return saoPauloTimeStr(new Date(dose.nextApplicationAt));
+  }, [dose.nextApplicationAt]);
 
   // Days since last application
   const daysSinceLastApplication = useMemo(() => {
@@ -262,25 +264,20 @@ const Dashboard = () => {
     return diffCalendarDays(new Date(dose.lastApplicationAt), selectedDate);
   }, [dose.lastApplicationAt, selectedDate]);
 
-  const isAfterNextApplication = daysUntilNextFromSelected !== null && daysUntilNextFromSelected < 0;
-
   // Check if selected future/today date IS the scheduled injection day
   const isScheduledInjectionDay = useMemo(() => {
     if (!dose.nextApplicationAt) return false;
-    const nextDateStr = localDateStr(new Date(dose.nextApplicationAt));
+    const nextDateStr = saoPauloDateStr(new Date(dose.nextApplicationAt));
     return selectedDateStr === nextDateStr;
   }, [dose.nextApplicationAt, selectedDateStr]);
 
-  // Vibrant state: recorded injection OR scheduled injection day
-  const isInjectionDayVisual = selectedDayHasInjection || isScheduledInjectionDay;
-
   // ── APPLICATION DAY MODE ──
   // Only activate the special hero for TODAY when it's an application day
-  const todayStr = localDateStr(new Date());
+  const todayStr = saoPauloDateStr(new Date());
   const isTodayApplicationDay = useMemo(() => {
     if (!dose.nextApplicationAt) return false;
-    const nextDateStr = localDateStr(new Date(dose.nextApplicationAt));
-    return todayStr === nextDateStr || nextDateStr <= todayStr;
+    const nextDateStr = saoPauloDateStr(new Date(dose.nextApplicationAt));
+    return todayStr === nextDateStr;
   }, [dose.nextApplicationAt, todayStr]);
 
   const todayHasInjection = weekInjections.has(todayStr);
@@ -536,7 +533,7 @@ const Dashboard = () => {
                             : `${daysUntilNextFromSelected} dias`
                           : "—"}
                       </p>
-                      {dose.currentDose && nextApplicationTimeLabel && (
+                      {isScheduledInjectionDay && dose.currentDose && nextApplicationTimeLabel && (
                         <p className="text-muted-foreground text-sm mt-2 font-semibold">
                           {dose.currentDose} de {profile?.medication || "Mounjaro®"} às {nextApplicationTimeLabel}
                         </p>

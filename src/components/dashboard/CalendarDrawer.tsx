@@ -4,7 +4,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
-import { localDateStr, cn } from "@/lib/utils";
+import { localDateStr, cn, saoPauloDateStr } from "@/lib/utils";
 import { toast } from "sonner";
 import { X, ChevronDown, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -101,19 +101,14 @@ const CalendarDrawer = ({ open, onOpenChange }: CalendarDrawerProps) => {
   const injectionDays = Object.keys(injectionDates).map((d) => new Date(d + "T12:00:00"));
   const logDays = logDates.map((d) => new Date(d + "T12:00:00"));
 
-  // Build list of application days (past injections + next planned)
-  const applicationDayDates = [...injectionDays];
+  // SSOT: only the persisted next scheduled dose marks the next application day
+  const nextApplicationDayDates: Date[] = [];
   if (dose.nextApplicationAt) {
-    const nextDate = new Date(dose.nextApplicationAt);
-    applicationDayDates.push(new Date(localDateStr(nextDate) + "T12:00:00"));
+    nextApplicationDayDates.push(new Date(saoPauloDateStr(new Date(dose.nextApplicationAt)) + "T12:00:00"));
   }
 
-  // Check if selected date is an application day
-  const isApplicationDay = applicationDayDates.some(
-    (d) => localDateStr(d) === dateStr
-  );
-  const isTodayApplicationDay = applicationDayDates.some(
-    (d) => localDateStr(d) === localDateStr(new Date())
+  const isTodayApplicationDay = nextApplicationDayDates.some(
+    (d) => localDateStr(d) === saoPauloDateStr(new Date())
   );
 
   return (
@@ -151,7 +146,7 @@ const CalendarDrawer = ({ open, onOpenChange }: CalendarDrawerProps) => {
               modifiers={{
                 hasInjection: injectionDays,
                 hasLog: logDays,
-                applicationDay: applicationDayDates,
+                applicationDay: nextApplicationDayDates,
               }}
               modifiersClassNames={{
                 applicationDay: "cal-application-day",

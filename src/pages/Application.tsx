@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { cn, localDateStr, diffCalendarDays } from "@/lib/utils";
+import { cn, localDateStr, diffSaoPauloCalendarDays, saoPauloDateStr } from "@/lib/utils";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { toast } from "sonner";
 import DoseTimeline from "@/components/history/DoseTimeline";
@@ -84,7 +84,7 @@ const Application = () => {
   // Settings form state — next dose
   const [editDose, setEditDose] = useState(dose.currentDose || "2.5 mg");
   const [editInterval, setEditInterval] = useState(dose.applicationIntervalDays || 7);
-  const [editNextDate, setEditNextDate] = useState(dose.nextApplicationAt ? localDateStr(new Date(dose.nextApplicationAt)) : "");
+  const [editNextDate, setEditNextDate] = useState(dose.nextApplicationAt ? saoPauloDateStr(new Date(dose.nextApplicationAt)) : "");
   const [saving, setSaving] = useState(false);
 
   const injections = getApplicationTimeline();
@@ -98,7 +98,7 @@ const Application = () => {
 
   const daysUntilNext = useMemo(() => {
     if (!dose.nextApplicationAt) return null;
-    return Math.max(0, diffCalendarDays(new Date(), new Date(dose.nextApplicationAt)));
+    return Math.max(0, diffSaoPauloCalendarDays(new Date(), new Date(dose.nextApplicationAt)));
   }, [dose.nextApplicationAt]);
 
   const weekNumber = useMemo(() => {
@@ -152,27 +152,20 @@ const Application = () => {
     if (!user) return;
     setSaving(true);
     try {
-      // Save dose and interval to profile
+      const currentScheduled = dose.nextApplicationAt ? new Date(dose.nextApplicationAt) : null;
+      const scheduledTime = currentScheduled
+        ? currentScheduled.toLocaleTimeString("en-GB", { timeZone: "America/Sao_Paulo", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false })
+        : "12:00:00";
+
       const updates: any = {
         current_dose: editDose,
         application_interval_days: editInterval,
+        next_dose_scheduled_at: editNextDate
+          ? new Date(`${editNextDate}T${scheduledTime}-03:00`).toISOString()
+          : dose.nextApplicationAt,
       };
       const { error } = await supabase.from("profiles").update(updates).eq("id", user.id);
       if (error) throw error;
-
-      // If date was changed manually, update the last injection's date to back-calculate
-      // Or create a virtual anchor by updating the latest injection date
-      if (editNextDate && injections.length > 0) {
-        const nextDate = new Date(editNextDate + "T12:00:00");
-        const newLastDate = new Date(nextDate.getTime() - editInterval * 86400000);
-        const newLastDateStr = localDateStr(newLastDate);
-        const today = localDateStr();
-        
-        // Only adjust if the back-calculated date is not in the future
-        if (newLastDateStr <= today) {
-          await supabase.from("injections").update({ date: newLastDateStr }).eq("id", injections[0].id).eq("user_id", user.id);
-        }
-      }
 
       await refreshProfile();
       await refresh();
@@ -211,7 +204,7 @@ const Application = () => {
                 onClick={() => {
                   setEditDose(dose.currentDose || "2.5 mg");
                   setEditInterval(dose.applicationIntervalDays || 7);
-                  setEditNextDate(dose.nextApplicationAt ? localDateStr(new Date(dose.nextApplicationAt)) : "");
+                  setEditNextDate(dose.nextApplicationAt ? saoPauloDateStr(new Date(dose.nextApplicationAt)) : "");
                   setShowSettings(true);
                 }}
                 className="w-8 h-8 rounded-xl bg-muted/40 flex items-center justify-center active:scale-95 transition-transform"
