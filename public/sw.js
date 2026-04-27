@@ -1,7 +1,12 @@
 /// <reference lib="webworker" />
 
 self.skipWaiting();
-self.__WB_MANIFEST;
+const precacheManifest = self.__WB_MANIFEST || [];
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil(self.clients.claim());
+  void precacheManifest;
+});
 
 self.addEventListener("push", (event) => {
   let payload = {};
