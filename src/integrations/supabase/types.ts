@@ -518,6 +518,7 @@ export type Database = {
           medications: string | null
           mounjaro_start_date: string | null
           name: string | null
+          preferred_application_time: string | null
           protein_goal: number | null
           push_permission_asked_at: string | null
           routine_completed: boolean | null
@@ -571,6 +572,7 @@ export type Database = {
           medications?: string | null
           mounjaro_start_date?: string | null
           name?: string | null
+          preferred_application_time?: string | null
           protein_goal?: number | null
           push_permission_asked_at?: string | null
           routine_completed?: boolean | null
@@ -624,6 +626,7 @@ export type Database = {
           medications?: string | null
           mounjaro_start_date?: string | null
           name?: string | null
+          preferred_application_time?: string | null
           protein_goal?: number | null
           push_permission_asked_at?: string | null
           routine_completed?: boolean | null
