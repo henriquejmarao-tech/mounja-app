@@ -125,12 +125,7 @@ export const ApplicationDataProvider = ({ children }: { children: ReactNode }) =
       : "12:00";
     const applicationTime = preferredApplicationTime || fallbackLastApplicationTime || "12:00";
 
-    let nextApplicationAt: string | null = null;
-    if (lastConfirmed) {
-      const lastDate = new Date(`${lastConfirmed.date}T${applicationTime}:00`);
-      const nextDate = new Date(lastDate.getTime() + intervalDays * 86400000);
-      nextApplicationAt = nextDate.toISOString();
-    }
+    const nextApplicationAt = ((profile as any)?.next_dose_scheduled_at as string | null) || null;
 
     // Use profile.current_dose as SSOT (updated by Treatment Plan),
     // fall back to last injection dose if profile dose is not set

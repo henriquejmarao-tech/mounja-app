@@ -518,6 +518,7 @@ export type Database = {
           medications: string | null
           mounjaro_start_date: string | null
           name: string | null
+          next_dose_scheduled_at: string | null
           preferred_application_time: string | null
           protein_goal: number | null
           push_permission_asked_at: string | null
@@ -572,6 +573,7 @@ export type Database = {
           medications?: string | null
           mounjaro_start_date?: string | null
           name?: string | null
+          next_dose_scheduled_at?: string | null
           preferred_application_time?: string | null
           protein_goal?: number | null
           push_permission_asked_at?: string | null
@@ -626,6 +628,7 @@ export type Database = {
           medications?: string | null
           mounjaro_start_date?: string | null
           name?: string | null
+          next_dose_scheduled_at?: string | null
           preferred_application_time?: string | null
           protein_goal?: number | null
           push_permission_asked_at?: string | null
@@ -835,11 +838,20 @@ export type Database = {
       }
     }
     Functions: {
+      advance_missed_dose_schedules: { Args: never; Returns: number }
+      compute_next_dose_scheduled_at: {
+        Args: { _auto_advance?: boolean; _from?: string; _user_id: string }
+        Returns: string
+      }
       find_group_by_code: { Args: { _code: string }; Returns: string }
       generate_invite_code: { Args: never; Returns: string }
       is_group_member: {
         Args: { _group_id: string; _user_id: string }
         Returns: boolean
+      }
+      next_preferred_dose_at: {
+        Args: { _from?: string; _preferred_time: string }
+        Returns: string
       }
     }
     Enums: {

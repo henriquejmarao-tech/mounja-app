@@ -1,0 +1,1 @@
+GRANT EXECUTE ON FUNCTION public.advance_missed_dose_schedules() TO service_role;
