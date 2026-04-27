@@ -8,6 +8,7 @@ const corsHeaders = {
 
 const VAPID_SUBJECT = "mailto:contato@mounjaapp.com.br";
 const ICON_PATH = "/pwa-192x192.png";
+const VAPID_PUBLIC_KEY = "BHjhzSzRegdxVpuoRyQgdiVV-3Qgitl_H038L9BF35idYrydlmVF54ha1cfV3SMm6x3vUVqFPI_Oib6HlHG_WYQ";
 
 type Candidate = {
   user_id: string;
@@ -42,7 +43,7 @@ Deno.serve(async (req) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
     const vapidPrivateKey = Deno.env.get("VAPID_PRIVATE_KEY") ?? "";
-    const vapidPublicKey = Deno.env.get("VITE_VAPID_PUBLIC_KEY") ?? Deno.env.get("VAPID_PUBLIC_KEY") ?? "";
+    const vapidPublicKey = Deno.env.get("VITE_VAPID_PUBLIC_KEY") ?? Deno.env.get("VAPID_PUBLIC_KEY") ?? VAPID_PUBLIC_KEY;
 
     if (!assertServiceRoleCall(req, serviceRoleKey)) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
