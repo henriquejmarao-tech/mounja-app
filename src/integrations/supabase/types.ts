@@ -498,6 +498,7 @@ export type Database = {
           mounjaro_start_date: string | null
           name: string | null
           protein_goal: number | null
+          push_permission_asked_at: string | null
           routine_completed: boolean | null
           satiety_effect: number | null
           selected_plan: string | null
@@ -550,6 +551,7 @@ export type Database = {
           mounjaro_start_date?: string | null
           name?: string | null
           protein_goal?: number | null
+          push_permission_asked_at?: string | null
           routine_completed?: boolean | null
           satiety_effect?: number | null
           selected_plan?: string | null
@@ -602,6 +604,7 @@ export type Database = {
           mounjaro_start_date?: string | null
           name?: string | null
           protein_goal?: number | null
+          push_permission_asked_at?: string | null
           routine_completed?: boolean | null
           satiety_effect?: number | null
           selected_plan?: string | null
@@ -646,6 +649,42 @@ export type Database = {
           id?: string
           notes?: string | null
           photo_url?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      push_subscriptions: {
+        Row: {
+          active: boolean
+          auth: string
+          created_at: string
+          endpoint: string
+          id: string
+          last_used_at: string
+          p256dh: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          auth: string
+          created_at?: string
+          endpoint: string
+          id?: string
+          last_used_at?: string
+          p256dh: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          auth?: string
+          created_at?: string
+          endpoint?: string
+          id?: string
+          last_used_at?: string
+          p256dh?: string
+          user_agent?: string | null
           user_id?: string
         }
         Relationships: []
