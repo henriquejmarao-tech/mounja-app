@@ -28,6 +28,7 @@ export interface ApplicationInjection {
   dose: string;
   site: string | null;
   notes: string | null;
+  created_at?: string | null;
 }
 
 export interface ApplicationWorkout {
@@ -110,7 +111,7 @@ export const ApplicationDataProvider = ({ children }: { children: ReactNode }) =
 
     // ── Injections & Dose SSOT ──
     const allInj = ((injRes.data as any[]) || []).map((i: any) => ({
-      id: i.id, date: i.date, dose: i.dose, site: i.site, notes: i.notes,
+      id: i.id, date: i.date, dose: i.dose, site: i.site, notes: i.notes, created_at: i.created_at,
     })) as ApplicationInjection[];
 
     setInjections(allInj);
@@ -119,7 +120,9 @@ export const ApplicationDataProvider = ({ children }: { children: ReactNode }) =
     // Use application_interval_days from profile (default 7)
     const intervalDays = (profile as any)?.application_interval_days || 7;
     const preferredApplicationTime = ((profile as any)?.preferred_application_time as string | null)?.slice(0, 5) || null;
-    const fallbackLastApplicationTime = lastConfirmed?.date && lastConfirmed?.id ? null : "12:00";
+    const fallbackLastApplicationTime = lastConfirmed?.created_at
+      ? new Date(lastConfirmed.created_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", hour12: false })
+      : "12:00";
     const applicationTime = preferredApplicationTime || fallbackLastApplicationTime || "12:00";
 
     let nextApplicationAt: string | null = null;
