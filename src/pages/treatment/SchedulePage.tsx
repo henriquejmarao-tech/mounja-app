@@ -107,7 +107,7 @@ const SchedulePage = () => {
         application_frequency: freq,
         application_interval_days: intDays,
         preferred_application_time: timeLabel,
-      })
+      } as any)
       .eq("id", user.id);
 
     if (error) {
