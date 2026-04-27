@@ -538,7 +538,7 @@ const Dashboard = () => {
                             : `${daysUntilNextFromSelected} dias`
                           : "—"}
                       </p>
-                      {dose.currentDose && nextApplicationTimeLabel && (
+                      {isScheduledInjectionDay && dose.currentDose && nextApplicationTimeLabel && (
                         <p className="text-muted-foreground text-sm mt-2 font-semibold">
                           {dose.currentDose} de {profile?.medication || "Mounjaro®"} às {nextApplicationTimeLabel}
                         </p>
