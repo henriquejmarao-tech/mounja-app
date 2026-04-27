@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
-const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+const FALLBACK_VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY;
 
 const urlBase64ToUint8Array = (base64String: string) => {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
@@ -15,6 +15,13 @@ export const usePushPermission = () => {
   const { user, profile, refreshProfile } = useAuth();
   const [askedAt, setAskedAt] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const getVapidPublicKey = useCallback(async () => {
+    const { data } = await supabase.functions.invoke("send-dose-reminders", {
+      body: { action: "vapid-public-key" },
+    });
+    return (data as { publicKey?: string } | null)?.publicKey || FALLBACK_VAPID_PUBLIC_KEY;
+  }, []);
 
   useEffect(() => {
     setAskedAt((profile as any)?.push_permission_asked_at ?? null);
@@ -33,7 +40,7 @@ export const usePushPermission = () => {
     setLoading(true);
 
     try {
-      if (!("Notification" in window) || !("serviceWorker" in navigator) || !("PushManager" in window) || !VAPID_PUBLIC_KEY) {
+      if (!("Notification" in window) || !("serviceWorker" in navigator) || !("PushManager" in window)) {
         await markAsked();
         return "denied" as NotificationPermission;
       }
@@ -41,11 +48,18 @@ export const usePushPermission = () => {
       const permission = await Notification.requestPermission();
 
       if (permission === "granted") {
+        const vapidPublicKey = await getVapidPublicKey();
+        if (!vapidPublicKey) {
+          await markAsked();
+          return "denied" as NotificationPermission;
+        }
+
         const registration = await navigator.serviceWorker.ready;
         const existing = await registration.pushManager.getSubscription();
+        if (existing) await existing.unsubscribe();
         const subscription = existing ?? await registration.pushManager.subscribe({
           userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+          applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
         });
         const json = subscription.toJSON();
 
