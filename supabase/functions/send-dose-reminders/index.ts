@@ -199,7 +199,7 @@ Deno.serve(async (req) => {
         }
       }
 
-      if (deliveredForDose) {
+      if (deliveredForDose && !isTestMode) {
         const { error: insertError } = await sb.from("dose_reminders_sent").insert({
           user_id: candidate.user_id,
           scheduled_dose_at: candidate.scheduled_dose_at,
