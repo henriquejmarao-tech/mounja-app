@@ -64,6 +64,14 @@ Deno.serve(async (req) => {
     const vapidPrivateKey = Deno.env.get("VAPID_PRIVATE_KEY") ?? "";
     const configuredPublicKey = Deno.env.get("VAPID_PUBLIC_KEY") ?? Deno.env.get("VITE_VAPID_PUBLIC_KEY") ?? "";
     const vapidPublicKey = configuredPublicKey || (vapidPrivateKey ? deriveVapidPublicKey(vapidPrivateKey) : VAPID_PUBLIC_KEY);
+    const requestBody = req.method === "GET" ? {} : await req.json().catch(() => ({}));
+
+    if (requestBody?.action === "vapid-public-key") {
+      return new Response(JSON.stringify({ publicKey: vapidPublicKey }), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     if (!assertServiceRoleCall(req, serviceRoleKey)) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
@@ -77,7 +85,6 @@ Deno.serve(async (req) => {
 
     webpush.setVapidDetails(VAPID_SUBJECT, vapidPublicKey, vapidPrivateKey);
 
-    const requestBody = req.method === "GET" ? {} : await req.json().catch(() => ({}));
     const testUserId = typeof requestBody?.test_user_id === "string" ? requestBody.test_user_id : null;
     const isTestMode = Boolean(testUserId);
 
