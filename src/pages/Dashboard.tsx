@@ -5,10 +5,11 @@ import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { usePlan } from "@/hooks/usePlan";
 import { useStreak } from "@/hooks/useStreak";
-import { Scale, Camera, ClipboardList, Lightbulb, Bell, Sparkles, Check, ChevronRight, Lock } from "lucide-react";
+import { Scale, Camera, ClipboardList, Lightbulb, Bell, Sparkles, Check, ChevronRight, Lock, X } from "lucide-react";
 import PremiumGateModal from "@/components/PremiumGateModal";
 import FireIcon from "@/components/FireIcon";
 import StreakModal from "@/components/StreakModal";
+import { usePushPermission } from "@/hooks/usePushPermission";
 
 import { cn, localDateStr, diffCalendarDays } from "@/lib/utils";
 import { toast } from "sonner";
@@ -27,6 +28,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { user, profile } = useAuth();
   const { dose, latestWeight, refresh: refreshAppData } = useApplicationData();
+  const { hasAsked: hasAskedPush, loading: pushLoading, askPermission, markAsked } = usePushPermission();
   const { isFree } = usePlan();
   const { streakCount, checkedInToday, isActive: streakActive, markCheckedIn, refresh: refreshStreak } = useStreak();
   const [premiumModalOpen, setPremiumModalOpen] = useState(false);
@@ -46,6 +48,9 @@ const Dashboard = () => {
   const [weekInjections, setWeekInjections] = useState<Set<string>>(new Set());
   const [hasPhotoToday, setHasPhotoToday] = useState(false);
   const [weightDrawerOpen, setWeightDrawerOpen] = useState(false);
+  const [hasAnyInjection, setHasAnyInjection] = useState(false);
+  const [showPushModal, setShowPushModal] = useState(false);
+  const [showPushBanner, setShowPushBanner] = useState(false);
 
   const selectedDateStr = localDateStr(selectedDate);
   const isSelectedToday = selectedDateStr === localDateStr(new Date());
@@ -180,6 +185,41 @@ const Dashboard = () => {
     const t = setTimeout(() => setStreakModalOpen(true), 600);
     return () => clearTimeout(t);
   }, [streakActive, checkedInToday, loading]);
+
+  useEffect(() => {
+    if (!user) return;
+    supabase
+      .from("injections")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .then(({ count }) => setHasAnyInjection((count ?? 0) > 0));
+  }, [user]);
+
+  useEffect(() => {
+    if (loading || hasAskedPush) return;
+    const shouldShowFirstInjectionModal = sessionStorage.getItem("mounja_show_first_injection_push_prompt") === "1";
+    if (shouldShowFirstInjectionModal) {
+      setShowPushModal(true);
+      setShowPushBanner(false);
+      return;
+    }
+
+    setShowPushBanner(hasAnyInjection);
+  }, [hasAnyInjection, hasAskedPush, loading]);
+
+  const handlePushAccept = useCallback(async () => {
+    await askPermission();
+    sessionStorage.removeItem("mounja_show_first_injection_push_prompt");
+    setShowPushModal(false);
+    setShowPushBanner(false);
+  }, [askPermission]);
+
+  const handlePushDismiss = useCallback(async () => {
+    await markAsked();
+    sessionStorage.removeItem("mounja_show_first_injection_push_prompt");
+    setShowPushModal(false);
+    setShowPushBanner(false);
+  }, [markAsked]);
 
   const hasTreatment = !!dose.currentDose;
   const selectedDayHasInjection = weekInjections.has(selectedDateStr);
