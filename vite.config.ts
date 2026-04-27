@@ -23,6 +23,7 @@ export default defineConfig(({ mode }) => ({
       registerType: "autoUpdate",
       includeAssets: ["favicon.png", "favicon.ico", "placeholder.svg"],
       injectManifest: {
+        injectionPoint: undefined,
         globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
       },
       workbox: {
