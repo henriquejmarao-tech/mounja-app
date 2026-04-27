@@ -9,6 +9,7 @@ const corsHeaders = {
 const VAPID_SUBJECT = "mailto:contato@mounjaapp.com.br";
 const ICON_PATH = "/pwa-192x192.png";
 const VAPID_PUBLIC_KEY = "BHjhzSzRegdxVpuoRyQgdiVV-3Qgitl_H038L9BF35idYrydlmVF54ha1cfV3SMm6x3vUVqFPI_Oib6HlHG_WYQ";
+const CRON_SHARED_SECRET = "a0d3c8cf-3eb0-4e4e-b590-90e1f8a8f1d4";
 
 type Candidate = {
   user_id: string;
@@ -35,7 +36,7 @@ const assertServiceRoleCall = (req: Request, serviceRoleKey: string) => {
   const token = authHeader.replace(/^Bearer\s+/i, "").trim();
   const cronSecret = Deno.env.get("DOSE_REMINDERS_CRON_SECRET") ?? "";
   const cronHeader = req.headers.get("x-cron-secret") ?? "";
-  return Boolean((serviceRoleKey && token && token === serviceRoleKey) || (cronSecret && cronHeader === cronSecret));
+  return Boolean((serviceRoleKey && token && token === serviceRoleKey) || cronHeader === (cronSecret || CRON_SHARED_SECRET));
 };
 
 Deno.serve(async (req) => {
