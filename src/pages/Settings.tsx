@@ -2,14 +2,16 @@ import { useState } from "react";
 import {
   ChevronRight, LogOut, MessageSquare, Star, Send, Bug, Lightbulb, X,
   Pill, Ruler, Share2, Star as StarOutline, HelpCircle, CreditCard,
-  Sparkles, Heart, Check,
+  Sparkles, Heart, Check, Bell, Loader2,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { usePushPermission } from "@/hooks/usePushPermission";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
+import { Switch } from "@/components/ui/switch";
 import mascotThinking from "@/assets/mascot-thinking-v2.png";
 
 const Settings = () => {
@@ -24,6 +26,16 @@ const Settings = () => {
   const [showHeight, setShowHeight] = useState(false);
   const [heightInt, setHeightInt] = useState(170);
   const [heightDec, setHeightDec] = useState(0);
+  const [testingPush, setTestingPush] = useState(false);
+  const [pushTestResult, setPushTestResult] = useState<string | null>(null);
+  const {
+    loading: pushLoading,
+    statusLoading: pushStatusLoading,
+    pushStatus,
+    enablePush,
+    disablePush,
+    sendTestPush,
+  } = usePushPermission();
 
   const handleLogout = async () => {
     await signOut();
@@ -86,6 +98,37 @@ const Settings = () => {
     }
   };
 
+  const handlePushToggle = async (enabled: boolean) => {
+    setPushTestResult(null);
+    try {
+      if (enabled) {
+        const ok = await enablePush();
+        ok ? toast.success("Notificações ativadas") : toast.error("Não foi possível ativar as notificações");
+      } else {
+        await disablePush();
+        toast.success("Notificações desativadas");
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Erro ao atualizar notificações");
+    }
+  };
+
+  const handleSendTestPush = async () => {
+    setTestingPush(true);
+    setPushTestResult(null);
+    try {
+      await sendTestPush();
+      setPushTestResult("Enviado");
+      toast.success("Push de teste enviado");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      setPushTestResult(`Falhou: ${message}`);
+      toast.error(`Falhou: ${message}`);
+    } finally {
+      setTestingPush(false);
+    }
+  };
+
   const ratingEmojis = [
     { score: 1, emoji: "😞", label: "Ruim" },
     { score: 2, emoji: "😕", label: "Regular" },
@@ -114,7 +157,17 @@ const Settings = () => {
           </div>
         </div>
 
-        {/* ── Section 2: Preferências e suporte ── */}
+        {/* ── Section 2: Notificações ── */}
+        <NotificationSettingsCard
+          status={pushStatus}
+          loading={pushLoading || pushStatusLoading}
+          testing={testingPush}
+          testResult={pushTestResult}
+          onToggle={handlePushToggle}
+          onTest={handleSendTestPush}
+        />
+
+        {/* ── Section 3: Preferências e suporte ── */}
         <div>
           <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/50 px-1 mb-2">
             Preferências e suporte
@@ -125,7 +178,7 @@ const Settings = () => {
           </div>
         </div>
 
-        {/* ── Section 3: Crescimento ── */}
+        {/* ── Section 4: Crescimento ── */}
         <div>
           <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/50 px-1 mb-2">
             Crescimento
@@ -345,6 +398,70 @@ const Settings = () => {
           </div>
         </DrawerContent>
       </Drawer>
+    </div>
+  );
+};
+
+type NotificationStatus = "enabled" | "disabled" | "needs_reactivation";
+
+interface NotificationSettingsCardProps {
+  status: NotificationStatus;
+  loading: boolean;
+  testing: boolean;
+  testResult: string | null;
+  onToggle: (enabled: boolean) => void;
+  onTest: () => void;
+}
+
+const NotificationSettingsCard = ({ status, loading, testing, testResult, onToggle, onTest }: NotificationSettingsCardProps) => {
+  const enabled = status === "enabled";
+  const statusCopy = status === "enabled"
+    ? { label: "Ativadas ✓", className: "bg-emerald-500/10 text-emerald-700 border-emerald-500/20" }
+    : status === "needs_reactivation"
+      ? { label: "Precisa reativar ⚠", className: "bg-amber-500/10 text-amber-700 border-amber-500/20" }
+      : { label: "Desativadas", className: "bg-muted text-muted-foreground border-border/40" };
+
+  return (
+    <div>
+      <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/50 px-1 mb-2">
+        Notificações
+      </p>
+      <div className="bg-card rounded-[20px] border border-border/30 shadow-card overflow-hidden">
+        <div className="px-5 py-4">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3.5 min-w-0">
+              <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-primary/10">
+                <Bell className="w-[18px] h-[18px] text-primary" />
+              </div>
+              <div className="min-w-0">
+                <span className="text-[15px] font-semibold text-foreground leading-tight block">Lembretes push</span>
+                <span className={cn("inline-flex mt-1 items-center rounded-full border px-2 py-0.5 text-[11px] font-bold", statusCopy.className)}>
+                  {loading ? "Verificando…" : statusCopy.label}
+                </span>
+              </div>
+            </div>
+            <Switch checked={enabled} disabled={loading} onCheckedChange={onToggle} />
+          </div>
+
+          {enabled && (
+            <div className="mt-4 pt-4 border-t border-border/30">
+              <button
+                onClick={onTest}
+                disabled={testing}
+                className="w-full h-11 rounded-2xl bg-secondary text-secondary-foreground text-sm font-bold flex items-center justify-center gap-2 active:scale-[0.98] transition-all disabled:opacity-50"
+              >
+                {testing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                Enviar push de teste
+              </button>
+              {testResult && (
+                <p className={cn("mt-2 text-xs font-semibold", testResult === "Enviado" ? "text-emerald-700" : "text-destructive")}>
+                  {testResult}
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
