@@ -157,7 +157,17 @@ const Settings = () => {
           </div>
         </div>
 
-        {/* ── Section 2: Preferências e suporte ── */}
+        {/* ── Section 2: Notificações ── */}
+        <NotificationSettingsCard
+          status={pushStatus}
+          loading={pushLoading || pushStatusLoading}
+          testing={testingPush}
+          testResult={pushTestResult}
+          onToggle={handlePushToggle}
+          onTest={handleSendTestPush}
+        />
+
+        {/* ── Section 3: Preferências e suporte ── */}
         <div>
           <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/50 px-1 mb-2">
             Preferências e suporte
@@ -168,7 +178,7 @@ const Settings = () => {
           </div>
         </div>
 
-        {/* ── Section 3: Crescimento ── */}
+        {/* ── Section 4: Crescimento ── */}
         <div>
           <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/50 px-1 mb-2">
             Crescimento
