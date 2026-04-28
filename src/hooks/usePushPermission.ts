@@ -39,7 +39,7 @@ export const usePushPermission = () => {
         .from("push_subscriptions" as any)
         .select("id, active")
         .eq("user_id", user.id);
-      const rows = (data ?? []) as Array<{ id: string; active: boolean }>;
+      const rows = (data ?? []) as unknown as Array<{ id: string; active: boolean }>;
       const activeCount = rows.filter((row) => row.active).length;
       const inactiveCount = rows.length - activeCount;
       const nextStatus: PushStatus = permission === "granted" && activeCount > 0
