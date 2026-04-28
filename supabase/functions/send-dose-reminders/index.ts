@@ -1,5 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import webpush from "npm:web-push@3.6.7";
+import { createECDH } from "node:crypto";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -31,6 +32,21 @@ const normalizeDoseMg = (dose: string | null) => {
   return dose.replace(/\s*mg\s*$/i, "").trim();
 };
 
+const base64UrlToBytes = (value: string) => {
+  const normalized = value.trim().replace(/-/g, "+").replace(/_/g, "/");
+  const padded = normalized + "=".repeat((4 - (normalized.length % 4)) % 4);
+  return Uint8Array.from(atob(padded), (char) => char.charCodeAt(0));
+};
+
+const bytesToBase64Url = (bytes: Uint8Array) =>
+  btoa(String.fromCharCode(...bytes)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+
+const deriveVapidPublicKey = (privateKey: string) => {
+  const ecdh = createECDH("prime256v1");
+  ecdh.setPrivateKey(base64UrlToBytes(privateKey));
+  return bytesToBase64Url(ecdh.getPublicKey(undefined, "uncompressed"));
+};
+
 const assertServiceRoleCall = (req: Request, serviceRoleKey: string) => {
   const authHeader = req.headers.get("Authorization") || "";
   const token = authHeader.replace(/^Bearer\s+/i, "").trim();
@@ -46,7 +62,16 @@ Deno.serve(async (req) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
     const vapidPrivateKey = Deno.env.get("VAPID_PRIVATE_KEY") ?? "";
-    const vapidPublicKey = Deno.env.get("VITE_VAPID_PUBLIC_KEY") ?? Deno.env.get("VAPID_PUBLIC_KEY") ?? VAPID_PUBLIC_KEY;
+    const configuredPublicKey = Deno.env.get("VAPID_PUBLIC_KEY") ?? Deno.env.get("VITE_VAPID_PUBLIC_KEY") ?? "";
+    const vapidPublicKey = configuredPublicKey || (vapidPrivateKey ? deriveVapidPublicKey(vapidPrivateKey) : VAPID_PUBLIC_KEY);
+    const requestBody = req.method === "GET" ? {} : await req.json().catch(() => ({}));
+
+    if (requestBody?.action === "vapid-public-key") {
+      return new Response(JSON.stringify({ publicKey: vapidPublicKey }), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     if (!assertServiceRoleCall(req, serviceRoleKey)) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
@@ -60,6 +85,9 @@ Deno.serve(async (req) => {
 
     webpush.setVapidDetails(VAPID_SUBJECT, vapidPublicKey, vapidPrivateKey);
 
+    const testUserId = typeof requestBody?.test_user_id === "string" ? requestBody.test_user_id : null;
+    const isTestMode = Boolean(testUserId);
+
     const sb = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
     const now = new Date();
     const windowStart = new Date(now.getTime() + 55 * 60 * 1000).toISOString();
@@ -68,12 +96,27 @@ Deno.serve(async (req) => {
     const { data: autoAdvanced, error: autoAdvanceError } = await sb.rpc("advance_missed_dose_schedules");
     if (autoAdvanceError) throw autoAdvanceError;
 
-    const { data: candidates, error } = await sb
-      .from("scheduled_dose_reminder_candidates")
-      .select("user_id, dose, medication, scheduled_dose_at")
-      .gte("scheduled_dose_at", windowStart)
-      .lte("scheduled_dose_at", windowEnd)
-      .returns<Candidate[]>();
+    const { data: candidates, error } = isTestMode
+      ? await sb
+          .from("profiles")
+          .select("id, current_dose, medication, next_dose_scheduled_at")
+          .eq("id", testUserId)
+          .limit(1)
+          .then(({ data, error }) => ({
+            error,
+            data: (data ?? []).map((profile) => ({
+              user_id: profile.id,
+              dose: profile.current_dose,
+              medication: profile.medication,
+              scheduled_dose_at: profile.next_dose_scheduled_at ?? now.toISOString(),
+            })) as Candidate[],
+          }))
+      : await sb
+          .from("scheduled_dose_reminder_candidates")
+          .select("user_id, dose, medication, scheduled_dose_at")
+          .gte("scheduled_dose_at", windowStart)
+          .lte("scheduled_dose_at", windowEnd)
+          .returns<Candidate[]>();
 
     if (error) throw error;
 
@@ -153,7 +196,10 @@ Deno.serve(async (req) => {
           deliveredForDose = true;
         } catch (sendError) {
           const statusCode = (sendError as { statusCode?: number })?.statusCode;
-          if (statusCode === 404 || statusCode === 410) {
+          const errorBody = (sendError as { body?: string })?.body ?? "";
+          const invalidVapidSubscription = statusCode === 400 && errorBody.includes("VapidPkHashMismatch");
+          const invalidJwtSubscription = statusCode === 403 && errorBody.includes("BadJwtToken");
+          if (statusCode === 404 || statusCode === 410 || invalidVapidSubscription || invalidJwtSubscription) {
             expired += 1;
             await sb.from("push_subscriptions").update({ active: false }).eq("id", subscription.id);
           } else {
@@ -163,7 +209,7 @@ Deno.serve(async (req) => {
         }
       }
 
-      if (deliveredForDose) {
+      if (deliveredForDose && !isTestMode) {
         const { error: insertError } = await sb.from("dose_reminders_sent").insert({
           user_id: candidate.user_id,
           scheduled_dose_at: candidate.scheduled_dose_at,
