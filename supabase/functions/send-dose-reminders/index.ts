@@ -27,6 +27,19 @@ type PushSubscriptionRow = {
   auth: string;
 };
 
+const getAuthenticatedUserId = async (req: Request, supabaseUrl: string, anonKey: string) => {
+  const authHeader = req.headers.get("Authorization") || "";
+  const token = authHeader.replace(/^Bearer\s+/i, "").trim();
+  if (!token || !anonKey) return null;
+  const client = createClient(supabaseUrl, anonKey, {
+    global: { headers: { Authorization: `Bearer ${token}` } },
+    auth: { persistSession: false },
+  });
+  const { data, error } = await client.auth.getUser(token);
+  if (error) return null;
+  return data.user?.id ?? null;
+};
+
 const normalizeDoseMg = (dose: string | null) => {
   if (!dose) return "";
   return dose.replace(/\s*mg\s*$/i, "").trim();
@@ -61,6 +74,7 @@ Deno.serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+    const anonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? Deno.env.get("SUPABASE_PUBLISHABLE_KEY") ?? "";
     const vapidPrivateKey = Deno.env.get("VAPID_PRIVATE_KEY") ?? "";
     const configuredPublicKey = Deno.env.get("VAPID_PUBLIC_KEY") ?? Deno.env.get("VITE_VAPID_PUBLIC_KEY") ?? "";
     const vapidPublicKey = configuredPublicKey || (vapidPrivateKey ? deriveVapidPublicKey(vapidPrivateKey) : VAPID_PUBLIC_KEY);
@@ -68,6 +82,69 @@ Deno.serve(async (req) => {
 
     if (requestBody?.action === "vapid-public-key") {
       return new Response(JSON.stringify({ publicKey: vapidPublicKey }), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    if (requestBody?.action === "test-push-self") {
+      if (!supabaseUrl || !serviceRoleKey) throw new Error("Backend credentials are not configured");
+      if (!vapidPrivateKey || !vapidPublicKey) throw new Error("VAPID keys are not configured");
+      const userId = await getAuthenticatedUserId(req, supabaseUrl, anonKey);
+      if (!userId) {
+        return new Response(JSON.stringify({ ok: false, error: "Usuário não autenticado" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      webpush.setVapidDetails(VAPID_SUBJECT, vapidPublicKey, vapidPrivateKey);
+      const sb = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
+      const { data: subscriptions, error: subscriptionsError } = await sb
+        .from("push_subscriptions")
+        .select("id, user_id, endpoint, p256dh, auth")
+        .eq("user_id", userId)
+        .eq("active", true)
+        .returns<PushSubscriptionRow[]>();
+
+      if (subscriptionsError) throw subscriptionsError;
+      if (!subscriptions?.length) {
+        return new Response(JSON.stringify({ ok: false, sent: 0, error: "Nenhuma subscription ativa encontrada" }), {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const payload = JSON.stringify({
+        title: "Mounjá",
+        body: "Notificações funcionando! 🎉",
+        icon: ICON_PATH,
+        badge: ICON_PATH,
+        tag: "push-test",
+        data: { url: "/ajustes", tag: "push-test" },
+      });
+
+      let sent = 0;
+      const errors: string[] = [];
+      for (const subscription of subscriptions) {
+        try {
+          await webpush.sendNotification(
+            { endpoint: subscription.endpoint, keys: { p256dh: subscription.p256dh, auth: subscription.auth } },
+            payload
+          );
+          sent += 1;
+        } catch (sendError) {
+          const statusCode = (sendError as { statusCode?: number })?.statusCode;
+          const errorBody = (sendError as { body?: string })?.body ?? "";
+          const message = errorBody || (sendError instanceof Error ? sendError.message : String(sendError));
+          errors.push(`${statusCode ?? "erro"}: ${message}`);
+          if (statusCode === 404 || statusCode === 410 || (statusCode === 400 && errorBody.includes("VapidPkHashMismatch")) || (statusCode === 403 && errorBody.includes("BadJwtToken"))) {
+            await sb.from("push_subscriptions").update({ active: false }).eq("id", subscription.id);
+          }
+        }
+      }
+
+      return new Response(JSON.stringify({ ok: sent > 0, sent, failed: errors.length, errors, error: sent > 0 ? null : errors[0] ?? "Falha desconhecida" }), {
         status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
