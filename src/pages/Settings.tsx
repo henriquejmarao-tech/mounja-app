@@ -402,6 +402,70 @@ const Settings = () => {
   );
 };
 
+type NotificationStatus = "enabled" | "disabled" | "needs_reactivation";
+
+interface NotificationSettingsCardProps {
+  status: NotificationStatus;
+  loading: boolean;
+  testing: boolean;
+  testResult: string | null;
+  onToggle: (enabled: boolean) => void;
+  onTest: () => void;
+}
+
+const NotificationSettingsCard = ({ status, loading, testing, testResult, onToggle, onTest }: NotificationSettingsCardProps) => {
+  const enabled = status === "enabled";
+  const statusCopy = status === "enabled"
+    ? { label: "Ativadas ✓", className: "bg-emerald-500/10 text-emerald-700 border-emerald-500/20" }
+    : status === "needs_reactivation"
+      ? { label: "Precisa reativar ⚠", className: "bg-amber-500/10 text-amber-700 border-amber-500/20" }
+      : { label: "Desativadas", className: "bg-muted text-muted-foreground border-border/40" };
+
+  return (
+    <div>
+      <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/50 px-1 mb-2">
+        Notificações
+      </p>
+      <div className="bg-card rounded-[20px] border border-border/30 shadow-card overflow-hidden">
+        <div className="px-5 py-4">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3.5 min-w-0">
+              <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-primary/10">
+                <Bell className="w-[18px] h-[18px] text-primary" />
+              </div>
+              <div className="min-w-0">
+                <span className="text-[15px] font-semibold text-foreground leading-tight block">Lembretes push</span>
+                <span className={cn("inline-flex mt-1 items-center rounded-full border px-2 py-0.5 text-[11px] font-bold", statusCopy.className)}>
+                  {loading ? "Verificando…" : statusCopy.label}
+                </span>
+              </div>
+            </div>
+            <Switch checked={enabled} disabled={loading} onCheckedChange={onToggle} />
+          </div>
+
+          {enabled && (
+            <div className="mt-4 pt-4 border-t border-border/30">
+              <button
+                onClick={onTest}
+                disabled={testing}
+                className="w-full h-11 rounded-2xl bg-secondary text-secondary-foreground text-sm font-bold flex items-center justify-center gap-2 active:scale-[0.98] transition-all disabled:opacity-50"
+              >
+                {testing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                Enviar push de teste
+              </button>
+              {testResult && (
+                <p className={cn("mt-2 text-xs font-semibold", testResult === "Enviado" ? "text-emerald-700" : "text-destructive")}>
+                  {testResult}
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 /* ── Menu Item ── */
 interface MenuItemProps {
   icon: any;
