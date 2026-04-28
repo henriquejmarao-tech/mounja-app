@@ -23,6 +23,43 @@ export const usePushPermission = () => {
     return (data as { publicKey?: string } | null)?.publicKey || FALLBACK_VAPID_PUBLIC_KEY;
   }, []);
 
+  const syncPushSubscription = useCallback(async () => {
+    if (!user || !("serviceWorker" in navigator) || !("PushManager" in window)) return false;
+
+    const vapidPublicKey = await getVapidPublicKey();
+    if (!vapidPublicKey) return false;
+
+    const registration = await navigator.serviceWorker.ready;
+    const existing = await registration.pushManager.getSubscription();
+    if (existing) {
+      await supabase.from("push_subscriptions" as any).update({ active: false } as any).eq("endpoint", existing.endpoint);
+      await existing.unsubscribe();
+    }
+
+    const subscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
+    });
+    const json = subscription.toJSON();
+
+    await supabase.from("push_subscriptions" as any).upsert({
+      user_id: user.id,
+      endpoint: subscription.endpoint,
+      p256dh: json.keys?.p256dh,
+      auth: json.keys?.auth,
+      user_agent: navigator.userAgent,
+      last_used_at: new Date().toISOString(),
+      active: true,
+    } as any, { onConflict: "user_id,endpoint" });
+
+    return true;
+  }, [getVapidPublicKey, user]);
+
+  useEffect(() => {
+    if (!user || !("Notification" in window) || Notification.permission !== "granted") return;
+    syncPushSubscription().catch((error) => console.error("[push] subscription sync failed", error));
+  }, [syncPushSubscription, user]);
+
   useEffect(() => {
     setAskedAt((profile as any)?.push_permission_asked_at ?? null);
   }, [profile]);
@@ -48,33 +85,11 @@ export const usePushPermission = () => {
       const permission = await Notification.requestPermission();
 
       if (permission === "granted") {
-        const vapidPublicKey = await getVapidPublicKey();
-        if (!vapidPublicKey) {
+        const synced = await syncPushSubscription();
+        if (!synced) {
           await markAsked();
           return "denied" as NotificationPermission;
         }
-
-        const registration = await navigator.serviceWorker.ready;
-        const existing = await registration.pushManager.getSubscription();
-        if (existing) {
-          await supabase.from("push_subscriptions" as any).update({ active: false } as any).eq("endpoint", existing.endpoint);
-          await existing.unsubscribe();
-        }
-        const subscription = await registration.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
-        });
-        const json = subscription.toJSON();
-
-        await supabase.from("push_subscriptions" as any).upsert({
-          user_id: user.id,
-          endpoint: subscription.endpoint,
-          p256dh: json.keys?.p256dh,
-          auth: json.keys?.auth,
-          user_agent: navigator.userAgent,
-          last_used_at: new Date().toISOString(),
-          active: true,
-        } as any, { onConflict: "user_id,endpoint" });
       }
 
       await markAsked();
@@ -82,7 +97,7 @@ export const usePushPermission = () => {
     } finally {
       setLoading(false);
     }
-  }, [loading, markAsked, user]);
+  }, [loading, markAsked, syncPushSubscription, user]);
 
   return {
     askedAt,
