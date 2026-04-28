@@ -2,14 +2,16 @@ import { useState } from "react";
 import {
   ChevronRight, LogOut, MessageSquare, Star, Send, Bug, Lightbulb, X,
   Pill, Ruler, Share2, Star as StarOutline, HelpCircle, CreditCard,
-  Sparkles, Heart, Check,
+  Sparkles, Heart, Check, Bell, Loader2,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { usePushPermission } from "@/hooks/usePushPermission";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
+import { Switch } from "@/components/ui/switch";
 import mascotThinking from "@/assets/mascot-thinking-v2.png";
 
 const Settings = () => {
@@ -24,6 +26,16 @@ const Settings = () => {
   const [showHeight, setShowHeight] = useState(false);
   const [heightInt, setHeightInt] = useState(170);
   const [heightDec, setHeightDec] = useState(0);
+  const [testingPush, setTestingPush] = useState(false);
+  const [pushTestResult, setPushTestResult] = useState<string | null>(null);
+  const {
+    loading: pushLoading,
+    statusLoading: pushStatusLoading,
+    pushStatus,
+    enablePush,
+    disablePush,
+    sendTestPush,
+  } = usePushPermission();
 
   const handleLogout = async () => {
     await signOut();
@@ -83,6 +95,37 @@ const Settings = () => {
     } else {
       await navigator.clipboard.writeText(shareUrl);
       toast.success("Link copiado!");
+    }
+  };
+
+  const handlePushToggle = async (enabled: boolean) => {
+    setPushTestResult(null);
+    try {
+      if (enabled) {
+        const ok = await enablePush();
+        ok ? toast.success("Notificações ativadas") : toast.error("Não foi possível ativar as notificações");
+      } else {
+        await disablePush();
+        toast.success("Notificações desativadas");
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Erro ao atualizar notificações");
+    }
+  };
+
+  const handleSendTestPush = async () => {
+    setTestingPush(true);
+    setPushTestResult(null);
+    try {
+      await sendTestPush();
+      setPushTestResult("Enviado");
+      toast.success("Push de teste enviado");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      setPushTestResult(`Falhou: ${message}`);
+      toast.error(`Falhou: ${message}`);
+    } finally {
+      setTestingPush(false);
     }
   };
 
