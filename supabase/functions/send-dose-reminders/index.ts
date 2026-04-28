@@ -196,7 +196,10 @@ Deno.serve(async (req) => {
           deliveredForDose = true;
         } catch (sendError) {
           const statusCode = (sendError as { statusCode?: number })?.statusCode;
-          if (statusCode === 404 || statusCode === 410) {
+          const errorBody = (sendError as { body?: string })?.body ?? "";
+          const invalidVapidSubscription = statusCode === 400 && errorBody.includes("VapidPkHashMismatch");
+          const invalidJwtSubscription = statusCode === 403 && errorBody.includes("BadJwtToken");
+          if (statusCode === 404 || statusCode === 410 || invalidVapidSubscription || invalidJwtSubscription) {
             expired += 1;
             await sb.from("push_subscriptions").update({ active: false }).eq("id", subscription.id);
           } else {
