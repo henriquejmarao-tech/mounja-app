@@ -145,13 +145,10 @@ const Dashboard = () => {
   useEffect(() => {
     if (!user) return;
     const fetchData = async () => {
-      const today = localDateStr();
-
       // Get week boundaries for injection dots
-      const todayDate = new Date();
-      const dayOfWeek = todayDate.getDay();
-      const monday = new Date(todayDate);
-      monday.setDate(todayDate.getDate() - ((dayOfWeek + 6) % 7));
+      const dayOfWeek = selectedDate.getDay();
+      const monday = new Date(selectedDate);
+      monday.setDate(selectedDate.getDate() - ((dayOfWeek + 6) % 7));
       const sunday = new Date(monday);
       sunday.setDate(monday.getDate() + 6);
 
@@ -174,7 +171,7 @@ const Dashboard = () => {
       setLoading(false);
     };
     fetchData();
-  }, [user]);
+  }, [user, selectedDate]);
 
   // Show streak modal once per day
   useEffect(() => {
