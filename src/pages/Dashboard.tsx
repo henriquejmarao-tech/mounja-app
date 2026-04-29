@@ -351,19 +351,13 @@ const Dashboard = () => {
             </div>
           )}
         </div>
-          {showApplicationDayMode && !applicationDayCompleted ? (
-            <div className="flex flex-col items-center">
-              <p className="text-sm font-bold text-foreground">Hoje é dia de aplicação</p>
-              <p className="text-[10px] text-muted-foreground font-medium">Mantenha sua consistência semanal</p>
-            </div>
-          ) : (
-            <button
-              onClick={() => setCalendarDrawerOpen(true)}
-              className="bg-muted/60 px-4 py-1.5 rounded-full active:scale-95 transition-all shadow-sm"
-            >
-              <p className="text-sm font-bold text-foreground">{monthLabel}</p>
-            </button>
-          )}
+          <button
+            onClick={() => setCalendarDrawerOpen(true)}
+            className="flex flex-col items-center active:scale-95 transition-transform"
+          >
+            <p className="text-sm font-bold text-foreground">{dashboardHeader.title}</p>
+            <p className="text-[10px] text-muted-foreground font-medium">{dashboardHeader.subtitle}</p>
+          </button>
           <button
             onClick={() => {
               setBellRead(true);
