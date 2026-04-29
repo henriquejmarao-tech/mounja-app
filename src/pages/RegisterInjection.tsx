@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { ChevronLeft, ChevronDown, MapPin, Clock, Pill, Gauge, Check } from "lucide-react";
 import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import mascotImg from "@/assets/mascot-pointing.png";
+import { useSelectedDate } from "@/contexts/SelectedDateContext";
 
 const injectionSites = [
   { id: "left_arm", label: "Braço esquerdo", x: 18, y: 38 },
@@ -86,6 +87,7 @@ const RegisterInjection = () => {
   const navigate = useNavigate();
   const { user, profile } = useAuth();
   const { setConfirmedApplication, refresh } = useApplicationData();
+  const { selectedDate, selectedDateStr } = useSelectedDate();
 
   const [selectedSite, setSelectedSite] = useState<string | null>(null);
   const [medication, setMedication] = useState("Mounjaro®");
@@ -107,8 +109,7 @@ const RegisterInjection = () => {
   const doseDecimals = Array.from({ length: 10 }, (_, i) => String(i));
   const doseValue = `${doseInt}.${doseDec}`;
 
-  const today = new Date();
-  const dateLabel = today.toLocaleDateString("pt-BR", { day: "numeric", month: "long", year: "numeric" });
+  const dateLabel = selectedDate.toLocaleDateString("pt-BR", { day: "numeric", month: "long", year: "numeric" });
   const timeLabel = `${hour}:${minute}`;
 
   const selectedSiteLabel = injectionSites.find((s) => s.id === selectedSite)?.label || "Selecionar local";
@@ -117,10 +118,12 @@ const RegisterInjection = () => {
     if (!user) return;
     setSaving(true);
     try {
+      if (selectedDateStr > localDateStr(new Date())) throw new Error("Você não pode registrar uma aplicação futura.");
+      if (profile?.mounjaro_start_date && selectedDateStr < profile.mounjaro_start_date) throw new Error("A data não pode ser anterior ao início do tratamento.");
       const dose = `${doseValue} mg`;
       await setConfirmedApplication({
-        date: localDateStr(today),
-        applied_at: new Date(`${localDateStr(today)}T${timeLabel}:00-03:00`).toISOString(),
+        date: selectedDateStr,
+        applied_at: new Date(`${selectedDateStr}T${timeLabel}:00-03:00`).toISOString(),
         medication,
         dose,
         site: selectedSiteLabel !== "Selecionar local" ? selectedSiteLabel : null,
@@ -129,8 +132,8 @@ const RegisterInjection = () => {
       await refresh();
       toast.success("Aplicação registrada ✓");
       navigate("/");
-    } catch {
-      toast.error("Erro ao registrar");
+    } catch (e: any) {
+      toast.error(e.message || "Erro ao registrar");
     }
     setSaving(false);
   };

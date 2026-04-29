@@ -68,7 +68,7 @@ interface SymptomCheckinDrawerProps {
 }
 
 const SymptomCheckinDrawer = ({ open, onOpenChange, date, onCheckinSaved }: SymptomCheckinDrawerProps) => {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [selected, setSelected] = useState<Record<string, boolean>>({});
   const [saving, setSaving] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -127,6 +127,8 @@ const SymptomCheckinDrawer = ({ open, onOpenChange, date, onCheckinSaved }: Symp
     setSaving(true);
     try {
       const dateStr = localDateStr(date || new Date());
+      if (dateStr > localDateStr(new Date())) throw new Error("Você não pode registrar check-in futuro.");
+      if (profile?.mounjaro_start_date && dateStr < profile.mounjaro_start_date) throw new Error("A data não pode ser anterior ao início do tratamento.");
       // Build payload with known DB columns — explicitly set all to 0 or 1
       const knownColumns = ["symptom_nausea", "symptom_constipation", "symptom_diarrhea", "symptom_headache", "symptom_fatigue", "symptom_injection_pain"];
       const dbFields: Record<string, number> = {};
@@ -164,11 +166,11 @@ const SymptomCheckinDrawer = ({ open, onOpenChange, date, onCheckinSaved }: Symp
       setSelected({});
       onCheckinSaved?.();
       onOpenChange(false);
-    } catch {
-      toast.error("Erro ao salvar");
+    } catch (e: any) {
+      toast.error(e.message || "Erro ao salvar");
     }
     setSaving(false);
-  }, [user, selected, onOpenChange]);
+  }, [user, selected, date, profile?.mounjaro_start_date, onCheckinSaved, onOpenChange]);
 
   const hasSelection = Object.values(selected).some(Boolean);
 

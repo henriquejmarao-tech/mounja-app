@@ -10,6 +10,7 @@ import PremiumGateModal from "@/components/PremiumGateModal";
 import FireIcon from "@/components/FireIcon";
 import StreakModal from "@/components/StreakModal";
 import { usePushPermission } from "@/hooks/usePushPermission";
+import { useSelectedDate } from "@/contexts/SelectedDateContext";
 
 import { cn, localDateStr, diffCalendarDays, saoPauloDateStr, saoPauloTimeStr } from "@/lib/utils";
 import { toast } from "sonner";
@@ -24,11 +25,13 @@ import CalendarDrawer from "@/components/dashboard/CalendarDrawer";
 import WhatsNewDrawer from "@/components/dashboard/WhatsNewDrawer";
 import WeightTrendsDrawer from "@/components/dashboard/WeightTrendsDrawer";
 import PushRequestBanner from "@/components/notifications/PushRequestBanner";
+import RetroactiveDateBanner from "@/components/RetroactiveDateBanner";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, profile } = useAuth();
   const { dose, latestWeight, refresh: refreshAppData } = useApplicationData();
+  const { selectedDate, selectedDateStr, setSelectedDate, isViewingToday } = useSelectedDate();
   const { hasAsked: hasAskedPush, loading: pushLoading, askPermission, markAsked } = usePushPermission();
   const { isFree } = usePlan();
   const { streakCount, checkedInToday, isActive: streakActive, markCheckedIn, refresh: refreshStreak } = useStreak();
@@ -45,7 +48,6 @@ const Dashboard = () => {
   const [calendarDrawerOpen, setCalendarDrawerOpen] = useState(false);
   const [whatsNewOpen, setWhatsNewOpen] = useState(false);
   const [bellRead, setBellRead] = useState(() => localStorage.getItem("bell_free_meals_read") === "1");
-  const [selectedDate, setSelectedDate] = useState(new Date());
   const [weekInjections, setWeekInjections] = useState<Set<string>>(new Set());
   const [hasPhotoToday, setHasPhotoToday] = useState(false);
   const [weightDrawerOpen, setWeightDrawerOpen] = useState(false);
@@ -53,8 +55,7 @@ const Dashboard = () => {
   const [showPushModal, setShowPushModal] = useState(false);
   const [showPushBanner, setShowPushBanner] = useState(false);
 
-  const selectedDateStr = localDateStr(selectedDate);
-  const isSelectedToday = selectedDateStr === localDateStr(new Date());
+  const isSelectedToday = isViewingToday;
 
   const refreshTodayLog = useCallback(async () => {
     if (!user) return;
@@ -83,6 +84,14 @@ const Dashboard = () => {
   const handleWeightSave = useCallback(async (weight: number) => {
     if (!user) return;
     const dateStr = selectedDateStr;
+    if (dateStr > localDateStr(new Date())) {
+      toast.error("Você não pode registrar peso futuro.");
+      return;
+    }
+    if (profile?.mounjaro_start_date && dateStr < profile.mounjaro_start_date) {
+      toast.error("A data não pode ser anterior ao início do tratamento.");
+      return;
+    }
     const { data } = await supabase.from("daily_logs").select("id").eq("user_id", user.id).eq("date", dateStr).limit(1);
     const existing = (data as any[])?.[0];
     if (existing) {
@@ -100,14 +109,14 @@ const Dashboard = () => {
     await refreshTodayLog();
     await refreshAppData();
     await checkAndMarkStreak();
-  }, [user, selectedDateStr, refreshTodayLog, refreshAppData, checkAndMarkStreak]);
+  }, [user, selectedDateStr, profile?.mounjaro_start_date, refreshTodayLog, refreshAppData, checkAndMarkStreak]);
 
   // Week strip data
   const weekDays = useMemo(() => {
     const today = new Date();
-    const dayOfWeek = today.getDay(); // 0=Sun
-    const monday = new Date(today);
-    monday.setDate(today.getDate() - ((dayOfWeek + 6) % 7));
+    const dayOfWeek = selectedDate.getDay(); // 0=Sun
+    const monday = new Date(selectedDate);
+    monday.setDate(selectedDate.getDate() - ((dayOfWeek + 6) % 7));
     const days = [];
     const labels = ["M", "T", "W", "T", "F", "S", "S"];
     for (let i = 0; i < 7; i++) {
@@ -121,12 +130,11 @@ const Dashboard = () => {
       });
     }
     return days;
-  }, []);
+  }, [selectedDate]);
 
   const monthLabel = useMemo(() => {
-    const today = new Date();
-    return today.toLocaleDateString("en-US", { month: "long", day: "numeric" });
-  }, []);
+    return selectedDate.toLocaleDateString("pt-BR", { month: "long", day: "numeric" });
+  }, [selectedDate]);
 
   // Refetch todayLog + hasPhotoToday when selected date changes
   useEffect(() => {
@@ -145,13 +153,10 @@ const Dashboard = () => {
   useEffect(() => {
     if (!user) return;
     const fetchData = async () => {
-      const today = localDateStr();
-
       // Get week boundaries for injection dots
-      const todayDate = new Date();
-      const dayOfWeek = todayDate.getDay();
-      const monday = new Date(todayDate);
-      monday.setDate(todayDate.getDate() - ((dayOfWeek + 6) % 7));
+      const dayOfWeek = selectedDate.getDay();
+      const monday = new Date(selectedDate);
+      monday.setDate(selectedDate.getDate() - ((dayOfWeek + 6) % 7));
       const sunday = new Date(monday);
       sunday.setDate(monday.getDate() + 6);
 
@@ -174,7 +179,7 @@ const Dashboard = () => {
       setLoading(false);
     };
     fetchData();
-  }, [user]);
+  }, [user, selectedDate]);
 
   // Show streak modal once per day
   useEffect(() => {
@@ -359,6 +364,8 @@ const Dashboard = () => {
             onDismiss={handlePushDismiss}
           />
         )}
+
+        <RetroactiveDateBanner />
 
         {/* Week strip */}
         <div className="relative px-5 mt-2 mb-4">

@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { ApplicationDataProvider } from "@/hooks/useApplicationData";
+import { SelectedDateProvider } from "@/contexts/SelectedDateContext";
 import { TutorialProvider } from "@/hooks/useTutorial";
 import BottomNav from "./components/BottomNav";
 import PwaUpdater from "./components/pwa/PwaUpdater";
@@ -150,13 +151,15 @@ const App = () => (
       <InstallPrompt />
       <BrowserRouter>
         <AuthProvider>
-          <ApplicationDataProvider>
-            <TutorialProvider>
-              <div className="max-w-lg mx-auto relative flex flex-col" style={{ minHeight: "100dvh" }}>
-                <AppRoutes />
-              </div>
-            </TutorialProvider>
-          </ApplicationDataProvider>
+          <SelectedDateProvider>
+            <ApplicationDataProvider>
+              <TutorialProvider>
+                <div className="max-w-lg mx-auto relative flex flex-col" style={{ minHeight: "100dvh" }}>
+                  <AppRoutes />
+                </div>
+              </TutorialProvider>
+            </ApplicationDataProvider>
+          </SelectedDateProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
