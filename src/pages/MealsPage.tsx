@@ -13,6 +13,8 @@ import MealCard from "@/components/meals/MealCard";
 import MealCreditsBar from "@/components/meals/MealCreditsBar";
 import LimitReachedSheet from "@/components/meals/LimitReachedSheet";
 import PremiumGateModal from "@/components/PremiumGateModal";
+import RetroactiveDateBanner from "@/components/RetroactiveDateBanner";
+import { useSelectedDate } from "@/contexts/SelectedDateContext";
 
 const DAYS_LABELS = ["S", "T", "Q", "Q", "S", "S", "D"];
 const ML_PER_GLASS = 250;
@@ -85,12 +87,12 @@ const ProgressRing = ({ value, goal, size = 100, stroke = 8, label, unit, color,
 const MealsPage = () => {
   const { user, profile, refreshProfile } = useAuth();
   const { latestWeight } = useApplicationData();
+  const { selectedDate, selectedDateStr } = useSelectedDate();
   const { isFree } = usePlan();
   const navigate = useNavigate();
   const [premiumModalOpen, setPremiumModalOpen] = useState(false);
   const [limitSheetOpen, setLimitSheetOpen] = useState(false);
 
-  const [currentDate] = useState(new Date());
   const [waterGlasses, setWaterGlasses] = useState(0);
   const [todayLog, setTodayLog] = useState<any>(null);
   const [weekLogs, setWeekLogs] = useState<any[]>([]);
@@ -103,7 +105,7 @@ const MealsPage = () => {
   const [creditsUsed, setCreditsUsed] = useState(0);
   const [creditsMax, setCreditsMax] = useState(2);
 
-  const dateStr = localDateStr(currentDate);
+  const dateStr = selectedDateStr;
 
   // Goals from profile
   const caloriesGoal = profile?.calories_goal || 1650;
@@ -116,7 +118,7 @@ const MealsPage = () => {
   const proteinCurrent = meals.reduce((sum, m) => sum + (Number(m.protein) || 0), 0);
   const fiberCurrent = meals.reduce((sum, m) => sum + (Number(m.fiber) || 0), 0);
 
-  const todayLabel = currentDate.toLocaleDateString("pt-BR", { day: "numeric", month: "long" });
+  const todayLabel = selectedDate.toLocaleDateString("pt-BR", { day: "numeric", month: "long" });
 
   const getWeekStart = (date: Date) => {
     const d = new Date(date);
@@ -127,12 +129,11 @@ const MealsPage = () => {
     return d;
   };
 
-  const weekStart = getWeekStart(currentDate);
+  const weekStart = getWeekStart(selectedDate);
   const weekStartStr = localDateStr(weekStart);
   const todayDayIndex = (() => {
-    const now = new Date();
-    const ws = getWeekStart(now);
-    return Math.floor((now.getTime() - ws.getTime()) / 86400000);
+    const ws = getWeekStart(selectedDate);
+    return Math.floor((selectedDate.getTime() - ws.getTime()) / 86400000);
   })();
 
   const fetchData = useCallback(async () => {
@@ -267,6 +268,14 @@ const MealsPage = () => {
   const atLimit = isFree && creditsUsed >= creditsMax;
 
   const handleAddMealClick = () => {
+    if (dateStr > localDateStr(new Date())) {
+      toast.error("Você não pode registrar refeição futura.");
+      return;
+    }
+    if (profile?.mounjaro_start_date && dateStr < profile.mounjaro_start_date) {
+      toast.error("A data não pode ser anterior ao início do tratamento.");
+      return;
+    }
     if (isFree && atLimit) {
       setLimitSheetOpen(true);
     } else {
@@ -305,9 +314,11 @@ const MealsPage = () => {
     <div className="min-h-screen pb-nav bg-background">
       {/* ── Header ── */}
       <div className="px-6 pt-safe pb-1">
-        <h1 className="text-xl font-bold text-foreground">Hoje • {todayLabel}</h1>
+        <h1 className="text-xl font-bold text-foreground">Refeições · {todayLabel}</h1>
         <p className="text-sm text-muted-foreground mt-0.5">Vamos manter a consistência hoje</p>
       </div>
+
+      <RetroactiveDateBanner />
 
       {/* ── Credits Bar (free users) ── */}
       {isFree && <MealCreditsBar creditsUsed={creditsUsed} creditsMax={creditsMax} />}
