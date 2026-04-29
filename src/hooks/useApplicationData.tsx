@@ -33,6 +33,11 @@ export interface ApplicationInjection {
   created_at?: string | null;
 }
 
+type ApplicationInput = Omit<ApplicationInjection, "id" | "created_at" | "applied_at" | "medication"> & {
+  applied_at?: string | null;
+  medication?: string | null;
+};
+
 export interface ApplicationWorkout {
   id: string;
   date: string;
@@ -47,7 +52,7 @@ interface ApplicationDataContextType {
   getCurrentDose: () => string | null;
   getLastConfirmedApplication: () => ApplicationInjection | null;
   getApplicationTimeline: () => ApplicationInjection[];
-  setConfirmedApplication: (injection: Omit<ApplicationInjection, "id" | "created_at">) => Promise<void>;
+  setConfirmedApplication: (injection: ApplicationInput) => Promise<void>;
   updateApplication: (id: string, data: Partial<Omit<ApplicationInjection, "id">>) => Promise<void>;
   deleteApplication: (id: string) => Promise<void>;
   recentSymptoms: RecentSymptoms;
@@ -130,7 +135,7 @@ export const ApplicationDataProvider = ({ children }: { children: ReactNode }) =
     const canonicalDose: CanonicalDose = {
       currentDose: profileDose ?? lastConfirmed?.dose ?? null,
       unit: "mg",
-      lastApplicationAt: lastConfirmed?.created_at ?? (lastConfirmed ? new Date(`${lastConfirmed.date}T12:00:00`).toISOString() : null),
+      lastApplicationAt: lastConfirmed?.applied_at ?? lastConfirmed?.created_at ?? (lastConfirmed ? new Date(`${lastConfirmed.date}T12:00:00`).toISOString() : null),
       nextPlannedDose: profileDose ?? lastConfirmed?.dose ?? null,
       nextApplicationAt,
       applicationIntervalDays: intervalDays,
@@ -189,7 +194,7 @@ export const ApplicationDataProvider = ({ children }: { children: ReactNode }) =
   const getLastConfirmedApplication = useCallback(() => injections[0] || null, [injections]);
   const getApplicationTimeline = useCallback(() => injections, [injections]);
 
-  const setConfirmedApplication = useCallback(async (injection: Omit<ApplicationInjection, "id" | "created_at">) => {
+  const setConfirmedApplication = useCallback(async (injection: ApplicationInput) => {
     if (!user) return;
     const shouldPromptPush = injections.length === 0 && !(profile as any)?.push_permission_asked_at;
     const { error } = await supabase.from("injections").insert({
