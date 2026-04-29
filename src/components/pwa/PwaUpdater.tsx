@@ -5,6 +5,7 @@ const RELOAD_FLAG = "mounja-sw-reload-once";
 const reloadOnceForUpdate = () => {
   if (sessionStorage.getItem(RELOAD_FLAG) === "1") return;
   sessionStorage.setItem(RELOAD_FLAG, "1");
+  console.log("[PWA] new SW found, reloading");
   window.location.reload();
 };
 
@@ -29,7 +30,10 @@ const PwaUpdater = () => {
       registration?.update().catch((error) => console.error("SW update check error:", error));
 
     const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible") checkForUpdate();
+      if (document.visibilityState === "visible") {
+        console.log("[PWA] visibilitychange triggered, calling update()");
+        checkForUpdate();
+      }
     };
 
     const handleControllerChange = () => reloadOnceForUpdate();
@@ -37,6 +41,7 @@ const PwaUpdater = () => {
     navigator.serviceWorker
       .register("/sw.js", { updateViaCache: "none" })
       .then((registered) => {
+        console.log("[PWA] SW registered");
         registration = registered;
         sessionStorage.removeItem(RELOAD_FLAG);
 
