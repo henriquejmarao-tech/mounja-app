@@ -134,10 +134,6 @@ const Dashboard = () => {
     return days;
   }, [selectedDate]);
 
-  const monthLabel = useMemo(() => {
-    return selectedDate.toLocaleDateString("pt-BR", { month: "long", day: "numeric" });
-  }, [selectedDate]);
-
   // Refetch todayLog + hasPhotoToday when selected date changes
   useEffect(() => {
     if (!user) return;
