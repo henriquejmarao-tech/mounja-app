@@ -27,7 +27,6 @@ import CalendarDrawer from "@/components/dashboard/CalendarDrawer";
 import WhatsNewDrawer from "@/components/dashboard/WhatsNewDrawer";
 import WeightTrendsDrawer from "@/components/dashboard/WeightTrendsDrawer";
 import PushRequestBanner from "@/components/notifications/PushRequestBanner";
-import RetroactiveDateBanner from "@/components/RetroactiveDateBanner";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -400,8 +399,6 @@ const Dashboard = () => {
             onDismiss={handlePushDismiss}
           />
         )}
-
-        <RetroactiveDateBanner />
 
         {/* Week strip */}
         <div className="relative px-5 mt-2 mb-4">
