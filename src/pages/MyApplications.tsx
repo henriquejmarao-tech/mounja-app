@@ -19,6 +19,11 @@ const toDateTimeInput = (value?: string | null) => {
 };
 
 const dateTimeToIso = (value: string) => new Date(`${value}:00-03:00`).toISOString();
+const safeDateTimeToIso = (value: string) => {
+  if (!value) return null;
+  const date = new Date(`${value}:00-03:00`);
+  return Number.isNaN(date.getTime()) ? null : date.toISOString();
+};
 const doseNumber = (dose?: string | null) => (dose || "").replace(/[^0-9.,]/g, "").replace(",", ".");
 
 const ApplicationFormDialog = ({
@@ -42,9 +47,10 @@ const ApplicationFormDialog = ({
 
   const treatmentStart = profile?.mounjaro_start_date || null;
   const appliedDate = appliedAt.slice(0, 10);
-  const isFuture = dateTimeToIso(appliedAt) > new Date().toISOString();
+  const appliedIso = safeDateTimeToIso(appliedAt);
+  const isFuture = !!appliedIso && appliedIso > new Date().toISOString();
   const isBeforeTreatment = !!treatmentStart && appliedDate < treatmentStart;
-  const invalid = !appliedAt || !dose || isFuture || isBeforeTreatment;
+  const invalid = !appliedIso || !dose || isFuture || isBeforeTreatment;
 
   const handleSave = async () => {
     if (invalid) return;
@@ -52,7 +58,7 @@ const ApplicationFormDialog = ({
     try {
       const payload = {
         date: appliedDate,
-        applied_at: dateTimeToIso(appliedAt),
+        applied_at: appliedIso,
         medication,
         dose: `${Number(dose).toString()} mg`,
         site: site || null,
