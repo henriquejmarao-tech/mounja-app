@@ -84,6 +84,14 @@ const Dashboard = () => {
   const handleWeightSave = useCallback(async (weight: number) => {
     if (!user) return;
     const dateStr = selectedDateStr;
+    if (dateStr > localDateStr(new Date())) {
+      toast.error("Você não pode registrar peso futuro.");
+      return;
+    }
+    if (profile?.mounjaro_start_date && dateStr < profile.mounjaro_start_date) {
+      toast.error("A data não pode ser anterior ao início do tratamento.");
+      return;
+    }
     const { data } = await supabase.from("daily_logs").select("id").eq("user_id", user.id).eq("date", dateStr).limit(1);
     const existing = (data as any[])?.[0];
     if (existing) {
@@ -101,7 +109,7 @@ const Dashboard = () => {
     await refreshTodayLog();
     await refreshAppData();
     await checkAndMarkStreak();
-  }, [user, selectedDateStr, refreshTodayLog, refreshAppData, checkAndMarkStreak]);
+  }, [user, selectedDateStr, profile?.mounjaro_start_date, refreshTodayLog, refreshAppData, checkAndMarkStreak]);
 
   // Week strip data
   const weekDays = useMemo(() => {
