@@ -17,10 +17,11 @@ interface PhotoGalleryDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   initialIndex?: number;
+  uploadDate?: string;
   onPhotosChanged?: () => void;
 }
 
-const PhotoGalleryDrawer = ({ open, onOpenChange, initialIndex = 0, onPhotosChanged }: PhotoGalleryDrawerProps) => {
+const PhotoGalleryDrawer = ({ open, onOpenChange, initialIndex = 0, uploadDate, onPhotosChanged }: PhotoGalleryDrawerProps) => {
   const { user } = useAuth();
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [loading, setLoading] = useState(true);
@@ -28,7 +29,7 @@ const PhotoGalleryDrawer = ({ open, onOpenChange, initialIndex = 0, onPhotosChan
   const [uploading, setUploading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const todayStr = localDateStr(new Date());
+  const uploadDateStr = uploadDate || localDateStr(new Date());
 
   const fetchPhotos = useCallback(async () => {
     if (!user) return;
@@ -72,10 +73,10 @@ const PhotoGalleryDrawer = ({ open, onOpenChange, initialIndex = 0, onPhotosChan
     setUploading(true);
     try {
       const ext = file.name.split(".").pop() || "jpg";
-      const path = `${user.id}/${todayStr}-${Date.now()}.${ext}`;
+      const path = `${user.id}/${uploadDateStr}-${Date.now()}.${ext}`;
       const { error: uploadError } = await supabase.storage.from("progress-photos").upload(path, file, { upsert: true });
       if (uploadError) throw uploadError;
-      await supabase.from("progress_photos").insert({ user_id: user.id, date: todayStr, photo_url: path } as any);
+      await supabase.from("progress_photos").insert({ user_id: user.id, date: uploadDateStr, photo_url: path } as any);
       toast.success("Foto salva ✓");
       await fetchPhotos();
       onPhotosChanged?.();
@@ -84,7 +85,7 @@ const PhotoGalleryDrawer = ({ open, onOpenChange, initialIndex = 0, onPhotosChan
     }
     setUploading(false);
     e.target.value = "";
-  }, [user, todayStr, fetchPhotos, onPhotosChanged]);
+  }, [user, uploadDateStr, fetchPhotos, onPhotosChanged]);
 
   const handleDelete = useCallback(async (photo: Photo) => {
     if (!user) return;
