@@ -126,10 +126,12 @@ const AddMealDrawer = forwardRef<HTMLDivElement, AddMealDrawerProps>(
         if (fnErr) throw fnErr;
 
         // Auto-save the meal
+        const now = new Date();
+        const mealTime = new Date(`${date}T${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:00-03:00`).toISOString();
         const { error: insertErr } = await supabase.from("meal_logs").insert({
           user_id: userId,
           date,
-          meal_time: new Date().toISOString(),
+          meal_time: mealTime,
           photo_url: urlData.publicUrl,
           description: analysis?.description || "",
           calories: analysis?.total_calories || 0,
