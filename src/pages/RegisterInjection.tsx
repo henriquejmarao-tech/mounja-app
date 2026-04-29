@@ -120,9 +120,11 @@ const RegisterInjection = () => {
       const dose = `${doseValue} mg`;
       await setConfirmedApplication({
         date: localDateStr(today),
+        applied_at: new Date(`${localDateStr(today)}T${timeLabel}:00-03:00`).toISOString(),
+        medication,
         dose,
         site: selectedSiteLabel !== "Selecionar local" ? selectedSiteLabel : null,
-        notes: `Horário: ${timeLabel} | Medicamento: ${medication}`,
+        notes: null,
       });
       await refresh();
       toast.success("Aplicação registrada ✓");
