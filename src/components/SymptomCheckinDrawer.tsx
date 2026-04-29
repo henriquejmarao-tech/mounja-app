@@ -168,7 +168,7 @@ const SymptomCheckinDrawer = ({ open, onOpenChange, date, onCheckinSaved }: Symp
       toast.error("Erro ao salvar");
     }
     setSaving(false);
-  }, [user, selected, onOpenChange]);
+  }, [user, selected, date, onCheckinSaved, onOpenChange]);
 
   const hasSelection = Object.values(selected).some(Boolean);
 
