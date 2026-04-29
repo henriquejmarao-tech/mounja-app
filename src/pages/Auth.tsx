@@ -56,6 +56,8 @@ const savePendingTriageData = async (userId: string) => {
       await supabase.from("injections").insert({
         user_id: userId,
         date: data.lastApplicationDate,
+        applied_at: new Date(`${data.lastApplicationDate}T12:00:00-03:00`).toISOString(),
+        medication: data.medication || null,
         dose: currentDose,
         site: data.injectionSite || null,
         notes: "Registrado via triagem inicial",
