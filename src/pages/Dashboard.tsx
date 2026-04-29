@@ -1,5 +1,7 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
@@ -130,10 +132,6 @@ const Dashboard = () => {
       });
     }
     return days;
-  }, [selectedDate]);
-
-  const monthLabel = useMemo(() => {
-    return selectedDate.toLocaleDateString("pt-BR", { month: "long", day: "numeric" });
   }, [selectedDate]);
 
   // Refetch todayLog + hasPhotoToday when selected date changes
@@ -291,6 +289,28 @@ const Dashboard = () => {
   const showApplicationDayMode = isSelectedToday && (isTodayApplicationDay || todayHasInjection);
   const applicationDayCompleted = isSelectedToday && todayHasInjection;
 
+  const dashboardHeader = useMemo(() => {
+    if (selectedIsInPast) {
+      const title = format(selectedDate, "EEEE, d 'de' MMMM", { locale: ptBR }).replace("-feira", "");
+      return {
+        title: title.charAt(0).toUpperCase() + title.slice(1),
+        subtitle: "Visualizando dia anterior",
+      };
+    }
+
+    if (showApplicationDayMode) {
+      return {
+        title: "Hoje é dia de aplicação",
+        subtitle: "Mantenha sua consistência semanal",
+      };
+    }
+
+    return {
+      title: "Como você está hoje?",
+      subtitle: "Faça seu check-in diário",
+    };
+  }, [selectedDate, selectedIsInPast, showApplicationDayMode]);
+
   // Background: only special gradient when today is application day AND viewing today
   const heroGradient = showApplicationDayMode
     ? applicationDayCompleted
@@ -327,19 +347,13 @@ const Dashboard = () => {
             </div>
           )}
         </div>
-          {showApplicationDayMode && !applicationDayCompleted ? (
-            <div className="flex flex-col items-center">
-              <p className="text-sm font-bold text-foreground">Hoje é dia de aplicação</p>
-              <p className="text-[10px] text-muted-foreground font-medium">Mantenha sua consistência semanal</p>
-            </div>
-          ) : (
-            <button
-              onClick={() => setCalendarDrawerOpen(true)}
-              className="bg-muted/60 px-4 py-1.5 rounded-full active:scale-95 transition-all shadow-sm"
-            >
-              <p className="text-sm font-bold text-foreground">{monthLabel}</p>
-            </button>
-          )}
+          <button
+            onClick={() => setCalendarDrawerOpen(true)}
+            className="flex flex-col items-center active:scale-95 transition-transform"
+          >
+            <p className="text-sm font-bold text-foreground">{dashboardHeader.title}</p>
+            <p className="text-[10px] text-muted-foreground font-medium">{dashboardHeader.subtitle}</p>
+          </button>
           <button
             onClick={() => {
               setBellRead(true);
