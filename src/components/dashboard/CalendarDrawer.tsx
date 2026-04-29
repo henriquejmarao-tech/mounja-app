@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import WeightPickerDrawer from "@/components/WeightPickerDrawer";
 import PhotoDrawer from "@/components/PhotoDrawer";
 import SymptomCheckinDrawer from "@/components/SymptomCheckinDrawer";
+import { useSelectedDate } from "@/contexts/SelectedDateContext";
 
 interface CalendarDrawerProps {
   open: boolean;
@@ -25,9 +26,9 @@ interface DayData {
 const CalendarDrawer = ({ open, onOpenChange }: CalendarDrawerProps) => {
   const { user } = useAuth();
   const { setConfirmedApplication, refresh, dose } = useApplicationData();
+  const { selectedDate, setSelectedDate } = useSelectedDate();
   const navigate = useNavigate();
 
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [injectionDates, setInjectionDates] = useState<Record<string, any>>({});
   const [logDates, setLogDates] = useState<string[]>([]);
   const [dayData, setDayData] = useState<DayData>({ injection: null, hasLog: false });
@@ -235,10 +236,12 @@ const CalendarDrawer = ({ open, onOpenChange }: CalendarDrawerProps) => {
       <SymptomCheckinDrawer
         open={symptomDrawerOpen}
         onOpenChange={setSymptomDrawerOpen}
+        date={selectedDate}
       />
       <PhotoDrawer
         open={photoDrawerOpen}
         onOpenChange={setPhotoDrawerOpen}
+        date={selectedDate}
       />
     </>
   );
