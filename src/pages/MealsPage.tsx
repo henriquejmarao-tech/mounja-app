@@ -13,7 +13,6 @@ import MealCard from "@/components/meals/MealCard";
 import MealCreditsBar from "@/components/meals/MealCreditsBar";
 import LimitReachedSheet from "@/components/meals/LimitReachedSheet";
 import PremiumGateModal from "@/components/PremiumGateModal";
-import RetroactiveDateBanner from "@/components/RetroactiveDateBanner";
 import { useSelectedDate } from "@/contexts/SelectedDateContext";
 
 const DAYS_LABELS = ["S", "T", "Q", "Q", "S", "S", "D"];
@@ -317,8 +316,6 @@ const MealsPage = () => {
         <h1 className="text-xl font-bold text-foreground">Refeições · {todayLabel}</h1>
         <p className="text-sm text-muted-foreground mt-0.5">Vamos manter a consistência hoje</p>
       </div>
-
-      <RetroactiveDateBanner />
 
       {/* ── Credits Bar (free users) ── */}
       {isFree && <MealCreditsBar creditsUsed={creditsUsed} creditsMax={creditsMax} />}
