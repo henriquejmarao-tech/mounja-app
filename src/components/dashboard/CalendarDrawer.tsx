@@ -24,7 +24,7 @@ interface DayData {
 }
 
 const CalendarDrawer = ({ open, onOpenChange }: CalendarDrawerProps) => {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { setConfirmedApplication, refresh, dose } = useApplicationData();
   const { selectedDate, setSelectedDate } = useSelectedDate();
   const navigate = useNavigate();
@@ -82,6 +82,14 @@ const CalendarDrawer = ({ open, onOpenChange }: CalendarDrawerProps) => {
 
   const handleWeightSave = async (weight: number) => {
     if (!user) return;
+    if (dateStr > localDateStr(new Date())) {
+      toast.error("Você não pode registrar peso futuro.");
+      return;
+    }
+    if (profile?.mounjaro_start_date && dateStr < profile.mounjaro_start_date) {
+      toast.error("A data não pode ser anterior ao início do tratamento.");
+      return;
+    }
     const { data } = await supabase
       .from("daily_logs")
       .select("id")
