@@ -41,16 +41,8 @@ const ProgressPage = () => {
   const fetchData = useCallback(async () => {
     if (!user) return;
     setLoading(true);
-    const days = periodDays[period];
-    const since = days ? localDateStr(new Date(Date.now() - days * 86400000)) : undefined;
 
     let logsQ = supabase.from("daily_logs").select("date, weight").eq("user_id", user.id).not("weight", "is", null).order("date", { ascending: true });
-    let injQ = supabase.from("injections").select("date, dose, site").eq("user_id", user.id).order("date", { ascending: false });
-
-    if (since) {
-      logsQ = logsQ.gte("date", since);
-      injQ = injQ.gte("date", since);
-    }
 
     const [logsRes, photosRes] = await Promise.all([
       logsQ,
