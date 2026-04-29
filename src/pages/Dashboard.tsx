@@ -347,13 +347,35 @@ const Dashboard = () => {
             </div>
           )}
         </div>
-          <button
-            onClick={() => setCalendarDrawerOpen(true)}
-            className="flex flex-col items-center active:scale-95 transition-transform"
-          >
-            <p className="text-sm font-bold text-foreground">{dashboardHeader.title}</p>
+          <div className="flex flex-col items-center">
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={goToPreviousDate}
+                disabled={isPrevDateDisabled}
+                aria-label="Dia anterior"
+                className="w-7 h-7 flex items-center justify-center text-muted-foreground rounded-full active:scale-90 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:active:scale-100 hover:bg-muted/50"
+              >
+                <ChevronLeft className="w-5 h-5" strokeWidth={2.25} />
+              </button>
+              <button
+                onClick={() => setCalendarDrawerOpen(true)}
+                className="active:scale-95 transition-transform min-w-0"
+              >
+                <p className="text-sm font-bold text-foreground whitespace-nowrap">{dashboardHeader.title}</p>
+              </button>
+              <button
+                type="button"
+                onClick={goToNextDate}
+                disabled={isNextDateDisabled}
+                aria-label="Próximo dia"
+                className="w-7 h-7 flex items-center justify-center text-muted-foreground rounded-full active:scale-90 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:active:scale-100 hover:bg-muted/50"
+              >
+                <ChevronRight className="w-5 h-5" strokeWidth={2.25} />
+              </button>
+            </div>
             <p className="text-[10px] text-muted-foreground font-medium">{dashboardHeader.subtitle}</p>
-          </button>
+          </div>
           <button
             onClick={() => {
               setBellRead(true);
