@@ -1,13 +1,13 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { format } from "date-fns";
+import { addDays, format, subDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { usePlan } from "@/hooks/usePlan";
 import { useStreak } from "@/hooks/useStreak";
-import { Scale, Camera, ClipboardList, Lightbulb, Bell, Sparkles, Check, ChevronRight, Lock, CalendarClock } from "lucide-react";
+import { Scale, Camera, ClipboardList, Lightbulb, Bell, Sparkles, Check, ChevronLeft, ChevronRight, Lock, CalendarClock } from "lucide-react";
 import PremiumGateModal from "@/components/PremiumGateModal";
 import FireIcon from "@/components/FireIcon";
 import StreakModal from "@/components/StreakModal";
@@ -296,6 +296,20 @@ const Dashboard = () => {
       subtitle: isSelectedToday ? "Hoje" : selectedIsInPast ? "Dia anterior" : "",
     };
   }, [selectedDate, isSelectedToday, selectedIsInPast]);
+
+  const currentDateStr = localDateStr(new Date());
+  const isPrevDateDisabled = !!profile?.mounjaro_start_date && selectedDateStr <= profile.mounjaro_start_date;
+  const isNextDateDisabled = selectedDateStr >= currentDateStr;
+
+  const goToPreviousDate = useCallback(() => {
+    if (isPrevDateDisabled) return;
+    setSelectedDate(subDays(selectedDate, 1));
+  }, [isPrevDateDisabled, selectedDate, setSelectedDate]);
+
+  const goToNextDate = useCallback(() => {
+    if (isNextDateDisabled) return;
+    setSelectedDate(addDays(selectedDate, 1));
+  }, [isNextDateDisabled, selectedDate, setSelectedDate]);
 
   // Background: only special gradient when today is application day AND viewing today
   const heroGradient = showApplicationDayMode
