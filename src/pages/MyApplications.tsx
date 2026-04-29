@@ -205,7 +205,7 @@ const MyApplications = () => {
         </div>
       </div>
 
-      <ApplicationFormDialog open={adding} onOpenChange={setAdding} injection={null} />
+      {adding && <ApplicationFormDialog open={adding} onOpenChange={setAdding} injection={null} />}
       {editing && <ApplicationFormDialog open={!!editing} onOpenChange={(open) => !open && setEditing(null)} injection={editing} />}
 
       <Dialog open={!!deleting} onOpenChange={(open) => !open && setDeleting(null)}>
