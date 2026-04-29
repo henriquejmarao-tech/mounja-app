@@ -12,7 +12,15 @@ interface SelectedDateContextValue {
 const SelectedDateContext = createContext<SelectedDateContextValue | null>(null);
 
 export const SelectedDateProvider = ({ children }: { children: ReactNode }) => {
-  const [selectedDateState, setSelectedDateState] = useState(() => new Date());
+  const [selectedDateState, setSelectedDateState] = useState(() => {
+    const isReload = performance.getEntriesByType("navigation").some((entry) => (entry as PerformanceNavigationTiming).type === "reload");
+    if (isReload) {
+      sessionStorage.removeItem("mounja_selected_date");
+      return new Date();
+    }
+    const stored = sessionStorage.getItem("mounja_selected_date");
+    return stored ? new Date(`${stored}T12:00:00`) : new Date();
+  });
 
   const setSelectedDate = useCallback((date: Date) => {
     const next = new Date(date);
