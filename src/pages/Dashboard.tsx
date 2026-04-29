@@ -1,13 +1,13 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { format } from "date-fns";
+import { addDays, format, subDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { usePlan } from "@/hooks/usePlan";
 import { useStreak } from "@/hooks/useStreak";
-import { Scale, Camera, ClipboardList, Lightbulb, Bell, Sparkles, Check, ChevronRight, Lock, CalendarClock } from "lucide-react";
+import { Scale, Camera, ClipboardList, Lightbulb, Bell, Sparkles, Check, ChevronLeft, ChevronRight, Lock, CalendarClock } from "lucide-react";
 import PremiumGateModal from "@/components/PremiumGateModal";
 import FireIcon from "@/components/FireIcon";
 import StreakModal from "@/components/StreakModal";
@@ -297,6 +297,20 @@ const Dashboard = () => {
     };
   }, [selectedDate, isSelectedToday, selectedIsInPast]);
 
+  const currentDateStr = localDateStr(new Date());
+  const isPrevDateDisabled = !!profile?.mounjaro_start_date && selectedDateStr <= profile.mounjaro_start_date;
+  const isNextDateDisabled = selectedDateStr >= currentDateStr;
+
+  const goToPreviousDate = useCallback(() => {
+    if (isPrevDateDisabled) return;
+    setSelectedDate(subDays(selectedDate, 1));
+  }, [isPrevDateDisabled, selectedDate, setSelectedDate]);
+
+  const goToNextDate = useCallback(() => {
+    if (isNextDateDisabled) return;
+    setSelectedDate(addDays(selectedDate, 1));
+  }, [isNextDateDisabled, selectedDate, setSelectedDate]);
+
   // Background: only special gradient when today is application day AND viewing today
   const heroGradient = showApplicationDayMode
     ? applicationDayCompleted
@@ -333,13 +347,35 @@ const Dashboard = () => {
             </div>
           )}
         </div>
-          <button
-            onClick={() => setCalendarDrawerOpen(true)}
-            className="flex flex-col items-center active:scale-95 transition-transform"
-          >
-            <p className="text-sm font-bold text-foreground">{dashboardHeader.title}</p>
+          <div className="flex flex-col items-center">
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={goToPreviousDate}
+                disabled={isPrevDateDisabled}
+                aria-label="Dia anterior"
+                className="w-7 h-7 flex items-center justify-center text-muted-foreground rounded-full active:scale-90 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:active:scale-100 hover:bg-muted/50"
+              >
+                <ChevronLeft className="w-5 h-5" strokeWidth={2.25} />
+              </button>
+              <button
+                onClick={() => setCalendarDrawerOpen(true)}
+                className="active:scale-95 transition-transform min-w-0"
+              >
+                <p className="text-sm font-bold text-foreground whitespace-nowrap">{dashboardHeader.title}</p>
+              </button>
+              <button
+                type="button"
+                onClick={goToNextDate}
+                disabled={isNextDateDisabled}
+                aria-label="Próximo dia"
+                className="w-7 h-7 flex items-center justify-center text-muted-foreground rounded-full active:scale-90 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:active:scale-100 hover:bg-muted/50"
+              >
+                <ChevronRight className="w-5 h-5" strokeWidth={2.25} />
+              </button>
+            </div>
             <p className="text-[10px] text-muted-foreground font-medium">{dashboardHeader.subtitle}</p>
-          </button>
+          </div>
           <button
             onClick={() => {
               setBellRead(true);
