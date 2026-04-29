@@ -180,8 +180,6 @@ const ProgressPage = () => {
 
   return (
     <div className="min-h-screen pb-nav bg-background">
-      <RetroactiveDateBanner />
-
       {/* ── Weight Summary Hero ── */}
       <div
         className="relative"
@@ -261,8 +259,8 @@ const ProgressPage = () => {
           <TabsContent value="hoje" className="mt-4 animate-fade-in">
             <div className="bg-card rounded-[20px] p-5 shadow-card border border-border/30">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-base font-bold text-foreground">Foto de {selectedLabel}</h3>
-                <button onClick={() => { setGalleryInitialIndex(selectedPhotoIndex >= 0 ? selectedPhotoIndex : 0); setGalleryOpen(true); }} className="text-muted-foreground active:scale-95 transition-transform">
+                <h3 className="text-base font-bold text-foreground">Foto mais recente{latestPhotoLabel ? ` · ${latestPhotoLabel}` : ""}</h3>
+                <button onClick={() => { setGalleryInitialIndex(0); setGalleryOpen(true); }} className="text-muted-foreground active:scale-95 transition-transform">
                   <ChevronRight className="w-5 h-5" />
                 </button>
               </div>
@@ -292,7 +290,7 @@ const ProgressPage = () => {
                     <div className="w-14 h-14 rounded-full bg-muted/60 flex items-center justify-center">
                       <Camera className="w-7 h-7 text-muted-foreground/50" />
                     </div>
-                    <p className="text-sm text-muted-foreground font-medium">Nenhuma foto em {selectedLabel}</p>
+                    <p className="text-sm text-muted-foreground font-medium">Nenhuma foto registrada ainda</p>
                   </div>
 
                   {/* CTAs — camera dominant */}
