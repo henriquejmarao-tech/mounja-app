@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useMemo, useRef } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import WeightTrendsDrawer from "@/components/dashboard/WeightTrendsDrawer";
 import WeightPickerDrawer from "@/components/WeightPickerDrawer";
 import PhotoGalleryDrawer from "@/components/PhotoGalleryDrawer";
@@ -11,15 +11,12 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } fro
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import RetroactiveDateBanner from "@/components/RetroactiveDateBanner";
-import { useSelectedDate } from "@/contexts/SelectedDateContext";
 
 type Period = "30d" | "90d" | "180d" | "all";
 
 const ProgressPage = () => {
   const { user, profile, refreshProfile } = useAuth();
   const { dose, refresh: refreshAppData } = useApplicationData();
-  const { selectedDate, selectedDateStr } = useSelectedDate();
   const navigate = useNavigate();
 
   const [period, setPeriod] = useState<Period>("30d");
@@ -34,7 +31,7 @@ const ProgressPage = () => {
   const [galleryInitialIndex, setGalleryInitialIndex] = useState(0);
   const [uploading, setUploading] = useState(false);
   const [logWeightDrawer, setLogWeightDrawer] = useState(false);
-  const photoRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const currentDateStr = localDateStr(new Date());
 
   const periodDays: Record<Period, number | null> = { "30d": 30, "90d": 90, "180d": 180, all: null };
 
@@ -46,7 +43,7 @@ const ProgressPage = () => {
 
     const [logsRes, photosRes] = await Promise.all([
       logsQ,
-      supabase.from("progress_photos").select("id, photo_url, date, created_at").eq("user_id", user.id).order("created_at", { ascending: false }).limit(100),
+      supabase.from("progress_photos").select("id, photo_url, date, created_at").eq("user_id", user.id).order("date", { ascending: false }).order("created_at", { ascending: false }).limit(100),
     ]);
 
     const byDate = new Map<string, number>();
@@ -75,20 +72,18 @@ const ProgressPage = () => {
         return { id: p.id, url: data?.signedUrl || "", date: p.date };
       })
     );
-    setPhotos(photosWithUrls.filter((p) => p.url));
+    const visiblePhotos = photosWithUrls.filter((p) => p.url);
+    setPhotos(visiblePhotos);
 
-    setTodayPhoto(photosWithUrls.find((p) => p.url && p.date === selectedDateStr) || null);
+    setTodayPhoto(visiblePhotos[0] || null);
     setLoading(false);
-  }, [user, period, selectedDateStr]);
+  }, [user]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
-  const selectedLabel = selectedDate.toLocaleDateString("pt-BR", { day: "numeric", month: "long" });
-  const selectedPhotoIndex = photos.findIndex((photo) => photo.date === selectedDateStr);
-
-  useEffect(() => {
-    photoRefs.current[selectedDateStr]?.scrollIntoView({ behavior: "smooth", block: "center" });
-  }, [selectedDateStr, photos.length]);
+  const latestPhotoLabel = todayPhoto
+    ? new Date(todayPhoto.date + "T12:00:00").toLocaleDateString("pt-BR", { day: "numeric", month: "long" })
+    : null;
 
   const handlePhotoUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
