@@ -1,5 +1,7 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
@@ -290,6 +292,28 @@ const Dashboard = () => {
   // Application day mode ONLY for today
   const showApplicationDayMode = isSelectedToday && (isTodayApplicationDay || todayHasInjection);
   const applicationDayCompleted = isSelectedToday && todayHasInjection;
+
+  const dashboardHeader = useMemo(() => {
+    if (selectedIsInPast) {
+      const title = format(selectedDate, "EEEE, d 'de' MMMM", { locale: ptBR }).replace("-feira", "");
+      return {
+        title: title.charAt(0).toUpperCase() + title.slice(1),
+        subtitle: "Visualizando dia anterior",
+      };
+    }
+
+    if (showApplicationDayMode) {
+      return {
+        title: "Hoje é dia de aplicação",
+        subtitle: "Mantenha sua consistência semanal",
+      };
+    }
+
+    return {
+      title: "Como você está hoje?",
+      subtitle: "Faça seu check-in diário",
+    };
+  }, [selectedDate, selectedIsInPast, showApplicationDayMode]);
 
   // Background: only special gradient when today is application day AND viewing today
   const heroGradient = showApplicationDayMode
