@@ -13,7 +13,7 @@ interface PhotoDrawerProps {
 }
 
 const PhotoDrawer = ({ open, onOpenChange, date }: PhotoDrawerProps) => {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [uploading, setUploading] = useState(false);
   const [todayPhoto, setTodayPhoto] = useState<{ id: string; url: string; date: string } | null>(null);
   const [loadingPhoto, setLoadingPhoto] = useState(false);
@@ -58,6 +58,8 @@ const PhotoDrawer = ({ open, onOpenChange, date }: PhotoDrawerProps) => {
 
     setUploading(true);
     try {
+      if (dateStr > localDateStr(new Date())) throw new Error("Você não pode adicionar foto futura.");
+      if (profile?.mounjaro_start_date && dateStr < profile.mounjaro_start_date) throw new Error("A data não pode ser anterior ao início do tratamento.");
       const ext = file.name.split(".").pop() || "jpg";
       const path = `${user.id}/${dateStr}-${Date.now()}.${ext}`;
 
@@ -80,7 +82,7 @@ const PhotoDrawer = ({ open, onOpenChange, date }: PhotoDrawerProps) => {
       toast.error(err.message || "Erro ao enviar foto");
     }
     setUploading(false);
-  }, [user, dateStr, loadTodayPhoto]);
+  }, [user, dateStr, profile?.mounjaro_start_date, loadTodayPhoto]);
 
   const handleDelete = useCallback(async () => {
     if (!todayPhoto || !user) return;
@@ -105,7 +107,7 @@ const PhotoDrawer = ({ open, onOpenChange, date }: PhotoDrawerProps) => {
     }
   }, [todayPhoto, user]);
 
-  const formattedDate = new Date().toLocaleDateString("pt-BR", {
+  const formattedDate = new Date(dateStr + "T12:00:00").toLocaleDateString("pt-BR", {
     month: "short",
     day: "numeric",
     year: "numeric",
