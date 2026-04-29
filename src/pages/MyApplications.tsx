@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { cn, localDateStr, saoPauloDateStr, saoPauloTimeStr } from "@/lib/utils";
+import { saoPauloDateStr, saoPauloTimeStr } from "@/lib/utils";
 
 const injectionSites = ["Abdômen direito", "Abdômen esquerdo", "Coxa direita", "Coxa esquerda", "Braço direito", "Braço esquerdo"];
 const fallbackMedications = ["Mounjaro®", "Zepbound®", "Ozempic®", "Wegovy®", "Tirzepatida", "Semaglutida"];
@@ -18,7 +18,6 @@ const toDateTimeInput = (value?: string | null) => {
   return `${saoPauloDateStr(date)}T${saoPauloTimeStr(date)}`;
 };
 
-const dateTimeToIso = (value: string) => new Date(`${value}:00-03:00`).toISOString();
 const safeDateTimeToIso = (value: string) => {
   if (!value) return null;
   const date = new Date(`${value}:00-03:00`);
