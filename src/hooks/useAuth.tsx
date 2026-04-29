@@ -98,6 +98,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (currentDose && data.lastApplicationDate) {
         await supabase.from("injections").insert({
           user_id: userId, date: data.lastApplicationDate, dose: currentDose,
+          applied_at: new Date(`${data.lastApplicationDate}T12:00:00-03:00`).toISOString(),
+          medication: data.medication || null,
           site: data.injectionSite || null, notes: "Registrado via triagem inicial",
         });
       }

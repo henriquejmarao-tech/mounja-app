@@ -25,11 +25,18 @@ export interface RecentSymptoms {
 export interface ApplicationInjection {
   id: string;
   date: string;
+  applied_at: string | null;
+  medication: string | null;
   dose: string;
   site: string | null;
   notes: string | null;
   created_at?: string | null;
 }
+
+type ApplicationInput = Omit<ApplicationInjection, "id" | "created_at" | "applied_at" | "medication"> & {
+  applied_at?: string | null;
+  medication?: string | null;
+};
 
 export interface ApplicationWorkout {
   id: string;
@@ -45,7 +52,7 @@ interface ApplicationDataContextType {
   getCurrentDose: () => string | null;
   getLastConfirmedApplication: () => ApplicationInjection | null;
   getApplicationTimeline: () => ApplicationInjection[];
-  setConfirmedApplication: (injection: Omit<ApplicationInjection, "id">) => Promise<void>;
+  setConfirmedApplication: (injection: ApplicationInput) => Promise<void>;
   updateApplication: (id: string, data: Partial<Omit<ApplicationInjection, "id">>) => Promise<void>;
   deleteApplication: (id: string) => Promise<void>;
   recentSymptoms: RecentSymptoms;
@@ -104,14 +111,14 @@ export const ApplicationDataProvider = ({ children }: { children: ReactNode }) =
     const weekAgo = localDateStr(new Date(Date.now() - 7 * 86400000));
 
     const [injRes, logsRes, workoutsRes] = await Promise.all([
-      supabase.from("injections").select("*").eq("user_id", user.id).order("date", { ascending: false }),
+      supabase.from("injections").select("*").eq("user_id", user.id).order("applied_at", { ascending: false }).order("date", { ascending: false }),
       supabase.from("daily_logs").select("symptom_nausea, symptom_fatigue, symptom_headache, symptom_constipation, symptom_diarrhea, weight, date").eq("user_id", user.id).order("date", { ascending: false }).limit(14),
       supabase.from("workouts").select("*").eq("user_id", user.id).gte("date", weekAgo).order("date", { ascending: false }),
     ]);
 
     // ── Injections & Dose SSOT ──
     const allInj = ((injRes.data as any[]) || []).map((i: any) => ({
-      id: i.id, date: i.date, dose: i.dose, site: i.site, notes: i.notes, created_at: i.created_at,
+      id: i.id, date: i.date, applied_at: i.applied_at, medication: i.medication, dose: i.dose, site: i.site, notes: i.notes, created_at: i.created_at,
     })) as ApplicationInjection[];
 
     setInjections(allInj);
@@ -128,7 +135,7 @@ export const ApplicationDataProvider = ({ children }: { children: ReactNode }) =
     const canonicalDose: CanonicalDose = {
       currentDose: profileDose ?? lastConfirmed?.dose ?? null,
       unit: "mg",
-      lastApplicationAt: lastConfirmed?.created_at ?? (lastConfirmed ? new Date(`${lastConfirmed.date}T12:00:00`).toISOString() : null),
+      lastApplicationAt: lastConfirmed?.applied_at ?? lastConfirmed?.created_at ?? (lastConfirmed ? new Date(`${lastConfirmed.date}T12:00:00`).toISOString() : null),
       nextPlannedDose: profileDose ?? lastConfirmed?.dose ?? null,
       nextApplicationAt,
       applicationIntervalDays: intervalDays,
@@ -187,11 +194,12 @@ export const ApplicationDataProvider = ({ children }: { children: ReactNode }) =
   const getLastConfirmedApplication = useCallback(() => injections[0] || null, [injections]);
   const getApplicationTimeline = useCallback(() => injections, [injections]);
 
-  const setConfirmedApplication = useCallback(async (injection: Omit<ApplicationInjection, "id">) => {
+  const setConfirmedApplication = useCallback(async (injection: ApplicationInput) => {
     if (!user) return;
     const shouldPromptPush = injections.length === 0 && !(profile as any)?.push_permission_asked_at;
     const { error } = await supabase.from("injections").insert({
       user_id: user.id, date: injection.date, dose: injection.dose,
+      applied_at: injection.applied_at || null, medication: injection.medication || null,
       site: injection.site || null, notes: injection.notes || null,
     });
     if (error) throw error;

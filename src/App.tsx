@@ -26,6 +26,7 @@ import Community from "./pages/Community";
 import ManageGroups from "./pages/ManageGroups";
 import Application from "./pages/Application";
 import RegisterInjection from "./pages/RegisterInjection";
+import MyApplications from "./pages/MyApplications";
 import MyTriage from "./pages/MyTriage";
 import Profile from "./pages/Profile";
 import DoseHistory from "./pages/DoseHistory";
@@ -113,6 +114,7 @@ const AppRoutes = () => {
         <Route path="/comunidade/grupos" element={<ProtectedRoute><TriageGuard><ManageGroups /></TriageGuard></ProtectedRoute>} />
 
         <Route path="/aplicacao" element={<ProtectedRoute><TriageGuard><Application /></TriageGuard></ProtectedRoute>} />
+        <Route path="/aplicacoes" element={<ProtectedRoute><TriageGuard><MyApplications /></TriageGuard></ProtectedRoute>} />
         <Route path="/registrar-aplicacao" element={<ProtectedRoute><TriageGuard><RegisterInjection /></TriageGuard></ProtectedRoute>} />
         <Route path="/minha-triagem" element={<ProtectedRoute><TriageGuard><MyTriage /></TriageGuard></ProtectedRoute>} />
         <Route path="/perfil" element={<ProtectedRoute><TriageGuard><Profile /></TriageGuard></ProtectedRoute>} />

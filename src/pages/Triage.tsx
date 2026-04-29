@@ -443,6 +443,8 @@ const Triage = () => {
         if (currentDose && lastApplicationDate) {
           await supabase.from("injections").insert({
             user_id: session.user.id, date: lastApplicationDate, dose: currentDose,
+            applied_at: new Date(`${lastApplicationDate}T12:00:00-03:00`).toISOString(),
+            medication: medication || null,
             site: injectionSite || null, notes: "Registrado via triagem inicial",
           });
         }

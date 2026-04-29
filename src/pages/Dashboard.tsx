@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useApplicationData } from "@/hooks/useApplicationData";
 import { usePlan } from "@/hooks/usePlan";
 import { useStreak } from "@/hooks/useStreak";
-import { Scale, Camera, ClipboardList, Lightbulb, Bell, Sparkles, Check, ChevronRight, Lock } from "lucide-react";
+import { Scale, Camera, ClipboardList, Lightbulb, Bell, Sparkles, Check, ChevronRight, Lock, CalendarClock } from "lucide-react";
 import PremiumGateModal from "@/components/PremiumGateModal";
 import FireIcon from "@/components/FireIcon";
 import StreakModal from "@/components/StreakModal";
@@ -698,6 +698,25 @@ const Dashboard = () => {
       {/* ── Weight Trends ── */}
       <div className="px-5 mb-6 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
         <WeightTrendsCard weightHistory={weightHistory} onExpand={() => setWeightDrawerOpen(true)} onRegisterWeight={() => setWeightPickerOpen(true)} />
+      </div>
+
+      <div className="px-5 mb-6 animate-fade-in-up" style={{ animationDelay: "220ms" }}>
+        <button
+          onClick={() => navigate("/aplicacoes")}
+          className="w-full bg-card rounded-2xl p-5 border border-border/50 shadow-card active:scale-[0.98] transition-transform text-left relative overflow-hidden"
+        >
+          <div className="absolute top-0 left-0 right-0 h-1 gradient-hero" />
+          <div className="flex items-center gap-4">
+            <div className="w-11 h-11 rounded-xl gradient-hero flex items-center justify-center shrink-0">
+              <CalendarClock className="w-5 h-5 text-primary-foreground" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="text-base font-bold text-foreground">Suas aplicações</h3>
+              <p className="text-sm text-muted-foreground mt-1 leading-snug">Registre aplicações antigas ou ajuste o histórico do seu tratamento</p>
+            </div>
+            <ChevronRight className="w-5 h-5 text-muted-foreground/50 shrink-0" />
+          </div>
+        </button>
       </div>
 
 

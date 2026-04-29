@@ -379,28 +379,34 @@ export type Database = {
       }
       injections: {
         Row: {
+          applied_at: string | null
           created_at: string | null
           date: string
           dose: string
           id: string
+          medication: string | null
           notes: string | null
           site: string | null
           user_id: string
         }
         Insert: {
+          applied_at?: string | null
           created_at?: string | null
           date: string
           dose: string
           id?: string
+          medication?: string | null
           notes?: string | null
           site?: string | null
           user_id: string
         }
         Update: {
+          applied_at?: string | null
           created_at?: string | null
           date?: string
           dose?: string
           id?: string
+          medication?: string | null
           notes?: string | null
           site?: string | null
           user_id?: string
