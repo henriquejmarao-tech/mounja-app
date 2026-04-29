@@ -360,6 +360,8 @@ const Dashboard = () => {
           />
         )}
 
+        <RetroactiveDateBanner />
+
         {/* Week strip */}
         <div className="relative px-5 mt-2 mb-4">
           <div className="flex items-center justify-between">
