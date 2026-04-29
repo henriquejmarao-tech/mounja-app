@@ -199,6 +199,8 @@ const ProgressPage = () => {
 
   return (
     <div className="min-h-screen pb-nav bg-background">
+      <RetroactiveDateBanner />
+
       {/* ── Weight Summary Hero ── */}
       <div
         className="relative"
@@ -278,8 +280,8 @@ const ProgressPage = () => {
           <TabsContent value="hoje" className="mt-4 animate-fade-in">
             <div className="bg-card rounded-[20px] p-5 shadow-card border border-border/30">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-base font-bold text-foreground">Foto de hoje</h3>
-                <button onClick={() => { setGalleryInitialIndex(0); setGalleryOpen(true); }} className="text-muted-foreground active:scale-95 transition-transform">
+                <h3 className="text-base font-bold text-foreground">Foto de {selectedLabel}</h3>
+                <button onClick={() => { setGalleryInitialIndex(selectedPhotoIndex >= 0 ? selectedPhotoIndex : 0); setGalleryOpen(true); }} className="text-muted-foreground active:scale-95 transition-transform">
                   <ChevronRight className="w-5 h-5" />
                 </button>
               </div>
@@ -309,7 +311,7 @@ const ProgressPage = () => {
                     <div className="w-14 h-14 rounded-full bg-muted/60 flex items-center justify-center">
                       <Camera className="w-7 h-7 text-muted-foreground/50" />
                     </div>
-                    <p className="text-sm text-muted-foreground font-medium">Registre sua primeira foto hoje</p>
+                    <p className="text-sm text-muted-foreground font-medium">Nenhuma foto em {selectedLabel}</p>
                   </div>
 
                   {/* CTAs — camera dominant */}
@@ -386,7 +388,16 @@ const ProgressPage = () => {
                           <stop offset="100%" stopColor="hsl(340, 65%, 62%)" />
                         </linearGradient>
                       </defs>
-                      <Line type="monotone" dataKey="peso" stroke="url(#weightLineGrad)" strokeWidth={2.5} dot={{ r: 3, fill: "hsl(340, 65%, 62%)" }} />
+                      <Line
+                        type="monotone"
+                        dataKey="peso"
+                        stroke="url(#weightLineGrad)"
+                        strokeWidth={2.5}
+                        dot={(props: any) => {
+                          const active = props.payload?.date === selectedDateStr;
+                          return <circle cx={props.cx} cy={props.cy} r={active ? 6 : 3} fill={active ? "hsl(var(--primary))" : "hsl(340, 65%, 62%)"} stroke="hsl(var(--card))" strokeWidth={active ? 3 : 0} />;
+                        }}
+                      />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
@@ -414,7 +425,7 @@ const ProgressPage = () => {
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-base font-bold text-foreground">Fotos de progresso</h3>
                 <button
-                  onClick={() => { setGalleryInitialIndex(0); setGalleryOpen(true); }}
+                  onClick={() => { setGalleryInitialIndex(selectedPhotoIndex >= 0 ? selectedPhotoIndex : 0); setGalleryOpen(true); }}
                   className="text-xs font-medium text-muted-foreground flex items-center gap-0.5 active:scale-95 transition-transform"
                 >
                   Ver todas <ChevronRight className="w-3 h-3" />
@@ -423,11 +434,12 @@ const ProgressPage = () => {
 
               {photos.length > 0 ? (
                 <div className="grid grid-cols-2 gap-3">
-                  {photos.slice(0, 4).map((photo, idx) => (
+                  {photos.slice(0, 8).map((photo, idx) => (
                     <button
                       key={photo.id}
+                      ref={(node) => { photoRefs.current[photo.date] = node; }}
                       onClick={() => { setGalleryInitialIndex(idx); setGalleryOpen(true); }}
-                      className="flex flex-col gap-1 active:scale-[0.97] transition-transform"
+                      className={cn("flex flex-col gap-1 active:scale-[0.97] transition-transform rounded-2xl", photo.date === selectedDateStr && "ring-2 ring-primary ring-offset-2 ring-offset-background")}
                     >
                       <div className="rounded-2xl overflow-hidden aspect-[3/4] bg-muted">
                         <img src={photo.url} alt="Progresso" className="w-full h-full object-cover" />
