@@ -100,12 +100,13 @@ const ProgressPage = () => {
       await supabase.from("progress_photos").insert({ user_id: user.id, date: targetDate, photo_url: path } as any);
       toast.success("Foto salva ✓");
       await fetchData();
+      await refreshAppData();
     } catch (err: any) {
       toast.error(err.message || "Erro ao enviar foto");
     }
     setUploading(false);
     e.target.value = "";
-  }, [user, selectedDateStr, profile?.mounjaro_start_date, fetchData]);
+  }, [user, selectedDateStr, profile?.mounjaro_start_date, fetchData, refreshAppData]);
 
   const handleDeletePhoto = useCallback(async () => {
     if (!todayPhoto || !user) return;
@@ -117,10 +118,11 @@ const ProgressPage = () => {
       setTodayPhoto(null);
       toast.success("Foto removida");
       await fetchData();
+      await refreshAppData();
     } catch {
       toast.error("Erro ao remover");
     }
-  }, [todayPhoto, user, fetchData]);
+  }, [todayPhoto, user, fetchData, refreshAppData]);
 
   const initialWeight = profile?.current_weight;
   const currentWeight = useMemo(() => {
