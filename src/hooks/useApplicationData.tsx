@@ -60,6 +60,8 @@ interface ApplicationDataContextType {
   weeklyWorkoutCount: number;
   latestWeight: number | null;
   refresh: () => Promise<void>;
+  /** Bumps every time backend data changes — components can depend on it to refetch local state. */
+  dataVersion: number;
   loading: boolean;
 }
 
