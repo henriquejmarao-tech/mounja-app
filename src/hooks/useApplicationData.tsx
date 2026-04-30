@@ -90,6 +90,7 @@ const ApplicationDataContext = createContext<ApplicationDataContextType>({
   weeklyWorkoutCount: 0,
   latestWeight: null,
   refresh: async () => {},
+  dataVersion: 0,
   loading: true,
 });
 
@@ -103,6 +104,7 @@ export const ApplicationDataProvider = ({ children }: { children: ReactNode }) =
   const [weeklyWorkouts, setWeeklyWorkouts] = useState<ApplicationWorkout[]>([]);
   const [latestWeight, setLatestWeight] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
+  const [dataVersion, setDataVersion] = useState(0);
 
   const fetchAll = useCallback(async () => {
     if (!user) {
