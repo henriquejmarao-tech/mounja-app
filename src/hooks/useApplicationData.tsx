@@ -186,6 +186,7 @@ export const ApplicationDataProvider = ({ children }: { children: ReactNode }) =
     setWeeklyWorkouts(wk);
 
     setLoading(false);
+    setDataVersion(v => v + 1);
   }, [user, profile]);
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
@@ -236,7 +237,7 @@ export const ApplicationDataProvider = ({ children }: { children: ReactNode }) =
       dose, getCurrentDose, getLastConfirmedApplication, getApplicationTimeline,
       setConfirmedApplication, updateApplication, deleteApplication,
       recentSymptoms, weeklyWorkouts, weeklyWorkoutCount: weeklyWorkouts.length,
-      latestWeight, refresh: fetchAll, loading,
+      latestWeight, refresh: fetchAll, dataVersion, loading,
     }}>
       {children}
     </ApplicationDataContext.Provider>
