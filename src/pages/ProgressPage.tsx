@@ -91,12 +91,13 @@ const ProgressPage = () => {
     setUploading(true);
     try {
       const ext = file.name.split(".").pop() || "jpg";
-      if (currentDateStr > localDateStr(new Date())) throw new Error("Você não pode adicionar foto futura.");
-      if (profile?.mounjaro_start_date && currentDateStr < profile.mounjaro_start_date) throw new Error("A data não pode ser anterior ao início do tratamento.");
-      const path = `${user.id}/${currentDateStr}-${Date.now()}.${ext}`;
+      const targetDate = selectedDateStr;
+      if (targetDate > localDateStr(new Date())) throw new Error("Você não pode adicionar foto futura.");
+      if (profile?.mounjaro_start_date && targetDate < profile.mounjaro_start_date) throw new Error("A data não pode ser anterior ao início do tratamento.");
+      const path = `${user.id}/${targetDate}-${Date.now()}.${ext}`;
       const { error: uploadError } = await supabase.storage.from("progress-photos").upload(path, file, { upsert: true });
       if (uploadError) throw uploadError;
-      await supabase.from("progress_photos").insert({ user_id: user.id, date: currentDateStr, photo_url: path } as any);
+      await supabase.from("progress_photos").insert({ user_id: user.id, date: targetDate, photo_url: path } as any);
       toast.success("Foto salva ✓");
       await fetchData();
     } catch (err: any) {
@@ -104,7 +105,7 @@ const ProgressPage = () => {
     }
     setUploading(false);
     e.target.value = "";
-  }, [user, currentDateStr, profile?.mounjaro_start_date, fetchData]);
+  }, [user, selectedDateStr, profile?.mounjaro_start_date, fetchData]);
 
   const handleDeletePhoto = useCallback(async () => {
     if (!todayPhoto || !user) return;
@@ -166,13 +167,14 @@ const ProgressPage = () => {
 
   const saveLogWeight = async (weight: number) => {
     if (!user) return;
-    if (currentDateStr > localDateStr(new Date())) { toast.error("Você não pode registrar peso futuro."); return; }
-    if (profile?.mounjaro_start_date && currentDateStr < profile.mounjaro_start_date) { toast.error("A data não pode ser anterior ao início do tratamento."); return; }
-    const { data: existing } = await supabase.from("daily_logs").select("id").eq("user_id", user.id).eq("date", currentDateStr).limit(1);
+    const targetDate = selectedDateStr;
+    if (targetDate > localDateStr(new Date())) { toast.error("Você não pode registrar peso futuro."); return; }
+    if (profile?.mounjaro_start_date && targetDate < profile.mounjaro_start_date) { toast.error("A data não pode ser anterior ao início do tratamento."); return; }
+    const { data: existing } = await supabase.from("daily_logs").select("id").eq("user_id", user.id).eq("date", targetDate).limit(1);
     if (existing && existing.length > 0) {
       await supabase.from("daily_logs").update({ weight }).eq("id", existing[0].id);
     } else {
-      await supabase.from("daily_logs").insert({ user_id: user.id, date: currentDateStr, weight });
+      await supabase.from("daily_logs").insert({ user_id: user.id, date: targetDate, weight });
     }
     toast.success("Peso registrado ✓");
     await refreshProfile();
