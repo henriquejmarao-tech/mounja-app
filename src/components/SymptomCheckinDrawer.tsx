@@ -3,6 +3,7 @@ import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/u
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useApplicationData } from "@/hooks/useApplicationData";
 import { localDateStr } from "@/lib/utils";
 import { toast } from "sonner";
 import { Check } from "lucide-react";
@@ -69,6 +70,7 @@ interface SymptomCheckinDrawerProps {
 
 const SymptomCheckinDrawer = ({ open, onOpenChange, date, onCheckinSaved }: SymptomCheckinDrawerProps) => {
   const { user, profile } = useAuth();
+  const { refresh: refreshAppData } = useApplicationData();
   const [selected, setSelected] = useState<Record<string, boolean>>({});
   const [saving, setSaving] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -165,12 +167,13 @@ const SymptomCheckinDrawer = ({ open, onOpenChange, date, onCheckinSaved }: Symp
       toast.success("Check-in salvo ✓");
       setSelected({});
       onCheckinSaved?.();
+      await refreshAppData();
       onOpenChange(false);
     } catch (e: any) {
       toast.error(e.message || "Erro ao salvar");
     }
     setSaving(false);
-  }, [user, selected, date, profile?.mounjaro_start_date, onCheckinSaved, onOpenChange]);
+  }, [user, selected, date, profile?.mounjaro_start_date, onCheckinSaved, onOpenChange, refreshAppData]);
 
   const hasSelection = Object.values(selected).some(Boolean);
 

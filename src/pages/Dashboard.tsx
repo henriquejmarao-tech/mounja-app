@@ -31,7 +31,7 @@ import PushRequestBanner from "@/components/notifications/PushRequestBanner";
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, profile } = useAuth();
-  const { dose, latestWeight, refresh: refreshAppData } = useApplicationData();
+  const { dose, latestWeight, refresh: refreshAppData, dataVersion } = useApplicationData();
   const { selectedDate, selectedDateStr, setSelectedDate, isViewingToday } = useSelectedDate();
   const { hasAsked: hasAskedPush, loading: pushLoading, askPermission, markAsked } = usePushPermission();
   const { isFree } = usePlan();
@@ -145,7 +145,7 @@ const Dashboard = () => {
       setHasPhotoToday(((photoRes.data as any[]) || []).length > 0);
     };
     fetchForDate();
-  }, [user, selectedDateStr]);
+  }, [user, selectedDateStr, dataVersion]);
 
   useEffect(() => {
     if (!user) return;
@@ -176,7 +176,7 @@ const Dashboard = () => {
       setLoading(false);
     };
     fetchData();
-  }, [user, selectedDate]);
+  }, [user, selectedDate, dataVersion]);
 
   // Show streak modal once per day
   useEffect(() => {

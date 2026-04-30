@@ -60,6 +60,8 @@ interface ApplicationDataContextType {
   weeklyWorkoutCount: number;
   latestWeight: number | null;
   refresh: () => Promise<void>;
+  /** Bumps every time backend data changes — components can depend on it to refetch local state. */
+  dataVersion: number;
   loading: boolean;
 }
 
@@ -88,6 +90,7 @@ const ApplicationDataContext = createContext<ApplicationDataContextType>({
   weeklyWorkoutCount: 0,
   latestWeight: null,
   refresh: async () => {},
+  dataVersion: 0,
   loading: true,
 });
 
@@ -101,6 +104,7 @@ export const ApplicationDataProvider = ({ children }: { children: ReactNode }) =
   const [weeklyWorkouts, setWeeklyWorkouts] = useState<ApplicationWorkout[]>([]);
   const [latestWeight, setLatestWeight] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
+  const [dataVersion, setDataVersion] = useState(0);
 
   const fetchAll = useCallback(async () => {
     if (!user) {
@@ -182,6 +186,7 @@ export const ApplicationDataProvider = ({ children }: { children: ReactNode }) =
     setWeeklyWorkouts(wk);
 
     setLoading(false);
+    setDataVersion(v => v + 1);
   }, [user, profile]);
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
@@ -232,7 +237,7 @@ export const ApplicationDataProvider = ({ children }: { children: ReactNode }) =
       dose, getCurrentDose, getLastConfirmedApplication, getApplicationTimeline,
       setConfirmedApplication, updateApplication, deleteApplication,
       recentSymptoms, weeklyWorkouts, weeklyWorkoutCount: weeklyWorkouts.length,
-      latestWeight, refresh: fetchAll, loading,
+      latestWeight, refresh: fetchAll, dataVersion, loading,
     }}>
       {children}
     </ApplicationDataContext.Provider>

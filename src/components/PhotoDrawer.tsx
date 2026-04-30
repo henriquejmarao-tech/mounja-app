@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useApplicationData } from "@/hooks/useApplicationData";
 import { localDateStr } from "@/lib/utils";
 import { toast } from "sonner";
 import { Camera, Trash2, Shield } from "lucide-react";
@@ -14,6 +15,7 @@ interface PhotoDrawerProps {
 
 const PhotoDrawer = ({ open, onOpenChange, date }: PhotoDrawerProps) => {
   const { user, profile } = useAuth();
+  const { refresh: refreshAppData } = useApplicationData();
   const [uploading, setUploading] = useState(false);
   const [todayPhoto, setTodayPhoto] = useState<{ id: string; url: string; date: string } | null>(null);
   const [loadingPhoto, setLoadingPhoto] = useState(false);
@@ -78,11 +80,12 @@ const PhotoDrawer = ({ open, onOpenChange, date }: PhotoDrawerProps) => {
 
       toast.success("Foto salva ✓");
       await loadTodayPhoto();
+      await refreshAppData();
     } catch (err: any) {
       toast.error(err.message || "Erro ao enviar foto");
     }
     setUploading(false);
-  }, [user, dateStr, profile?.mounjaro_start_date, loadTodayPhoto]);
+  }, [user, dateStr, profile?.mounjaro_start_date, loadTodayPhoto, refreshAppData]);
 
   const handleDelete = useCallback(async () => {
     if (!todayPhoto || !user) return;
@@ -102,10 +105,11 @@ const PhotoDrawer = ({ open, onOpenChange, date }: PhotoDrawerProps) => {
 
       setTodayPhoto(null);
       toast.success("Foto removida");
+      await refreshAppData();
     } catch {
       toast.error("Erro ao remover");
     }
-  }, [todayPhoto, user]);
+  }, [todayPhoto, user, refreshAppData]);
 
   const formattedDate = new Date(dateStr + "T12:00:00").toLocaleDateString("pt-BR", {
     month: "short",
