@@ -11,12 +11,14 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } fro
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { useSelectedDate } from "@/contexts/SelectedDateContext";
 
 type Period = "30d" | "90d" | "180d" | "all";
 
 const ProgressPage = () => {
   const { user, profile, refreshProfile } = useAuth();
   const { dose, refresh: refreshAppData } = useApplicationData();
+  const { selectedDateStr } = useSelectedDate();
   const navigate = useNavigate();
 
   const [period, setPeriod] = useState<Period>("30d");
