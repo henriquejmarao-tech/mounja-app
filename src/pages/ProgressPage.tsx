@@ -17,7 +17,7 @@ type Period = "30d" | "90d" | "180d" | "all";
 
 const ProgressPage = () => {
   const { user, profile, refreshProfile } = useAuth();
-  const { dose, refresh: refreshAppData } = useApplicationData();
+  const { dose, refresh: refreshAppData, dataVersion } = useApplicationData();
   const { selectedDateStr } = useSelectedDate();
   const navigate = useNavigate();
 
@@ -79,7 +79,7 @@ const ProgressPage = () => {
     setLoading(false);
   }, [user]);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => { fetchData(); }, [fetchData, dataVersion]);
 
   const latestPhotoLabel = todayPhoto
     ? new Date(todayPhoto.date + "T12:00:00").toLocaleDateString("pt-BR", { day: "numeric", month: "long" })
