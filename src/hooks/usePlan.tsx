@@ -30,40 +30,20 @@ export const usePlan = (): PlanState => {
   const intervalRef = useRef<ReturnType<typeof setInterval>>();
 
   const checkSubscription = useCallback(async () => {
-    if (!user) {
-      setState({ isPremium: false, source: null, plan: "free", status: "free", subscriptionEnd: null, promoCode: null });
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const { data, error } = await supabase.functions.invoke("check-subscription");
-      if (error) throw error;
-
-      setState({
-        isPremium: data?.isPremium ?? false,
-        source: data?.source ?? null,
-        plan: data?.plan ?? "free",
-        status: data?.status ?? "free",
-        subscriptionEnd: data?.subscription_end ?? null,
-        promoCode: data?.promo_code ?? null,
-      });
-    } catch (err) {
-      console.error("Error checking subscription:", err);
-      // Don't reset to free on error — keep last known state
-    } finally {
-      setLoading(false);
-    }
-  }, [user]);
+    setState({
+      isPremium: true,
+      source: null,
+      plan: "premium",
+      status: "active",
+      subscriptionEnd: null,
+      promoCode: null,
+    });
+    setLoading(false);
+  }, []);
 
   useEffect(() => {
-    if (authLoading) return;
     checkSubscription();
-
-    // Poll every 60 seconds
-    intervalRef.current = setInterval(checkSubscription, 60000);
-    return () => clearInterval(intervalRef.current);
-  }, [checkSubscription, authLoading]);
+  }, [checkSubscription]);
 
   return {
     ...state,

@@ -255,15 +255,6 @@ const Tutorial = () => {
             <ChevronRight className="w-4 h-4" />
           </button>
 
-          {isLast && (
-            <button
-              onClick={() => navigate("/planos")}
-              className="w-full py-3 rounded-2xl text-sm font-semibold text-muted-foreground border border-border/50 bg-card active:scale-[0.97] transition-all flex items-center justify-center gap-2"
-            >
-              <Crown className="w-4 h-4" />
-              Ver planos
-            </button>
-          )}
         </div>
       </div>
     </div>

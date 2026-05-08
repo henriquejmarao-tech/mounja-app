@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {
   ChevronRight, LogOut, MessageSquare, Star, Send, Bug, Lightbulb, X,
-  Pill, Ruler, Share2, Star as StarOutline, HelpCircle, CreditCard,
+  Pill, Ruler, Share2, Star as StarOutline, HelpCircle,
   Sparkles, Heart, Check, Bell, Loader2,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -152,7 +152,7 @@ const Settings = () => {
           </p>
           <div className="bg-card rounded-[20px] border border-border/30 shadow-card divide-y divide-border/30 overflow-hidden">
             <MenuItem icon={Pill} iconColor="hsl(295, 45%, 55%)" label="Plano de tratamento" subtitle="Medicamento, dose e agenda" onClick={() => navigate("/plano-tratamento")} />
-            <MenuItem icon={CreditCard} iconColor="hsl(295, 45%, 55%)" label="Alterar plano" subtitle="Gerencie sua assinatura" onClick={() => navigate("/planos")} />
+            
             <MenuItem icon={Ruler} iconColor="hsl(295, 45%, 55%)" label="Atualizar altura" subtitle={profile?.height_cm ? `Atual: ${Number(profile.height_cm).toFixed(0)} cm` : "Defina sua altura"} onClick={openHeight} />
           </div>
         </div>

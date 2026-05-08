@@ -45,7 +45,7 @@ import SchedulePage from "./pages/treatment/SchedulePage";
 import MedicationAnalysis from "./pages/MedicationAnalysis";
 import SideEffectHistory from "./pages/SideEffectHistory";
 import HowToUse from "./pages/HowToUse";
-import SubscriptionPlans from "./pages/SubscriptionPlans";
+
 import Analytics from "./pages/Analytics";
 
 const queryClient = new QueryClient();
@@ -73,7 +73,7 @@ const TriageGuard = ({ children }: { children: React.ReactNode }) => {
     );
   }
   if (profile && !profile.triage_completed) return <Navigate to="/triagem" replace />;
-  if (profile && !profile.subscription_seen) return <Navigate to="/planos" replace />;
+  
   if (profile && (profile as any).tutorial_version_completed !== "v2") return <Navigate to="/tutorial" replace />;
   return <>{children}</>;
 };
@@ -97,7 +97,7 @@ const AppRoutes = () => {
         <Route path="/auth" element={user ? <Navigate to="/" replace /> : <Auth />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/triagem" element={<Triage />} />
-        <Route path="/planos" element={<ProtectedRoute><SubscriptionPlans /></ProtectedRoute>} />
+        
 
         {/* Protected routes */}
         <Route path="/" element={<ProtectedRoute><TriageGuard><Dashboard /></TriageGuard></ProtectedRoute>} />
