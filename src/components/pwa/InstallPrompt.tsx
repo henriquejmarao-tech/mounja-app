@@ -16,7 +16,7 @@ const isInStandaloneMode = () =>
   window.matchMedia("(display-mode: standalone)").matches ||
   (window.navigator as any).standalone === true;
 
-const DISMISS_KEY = "pwa-install-dismissed";
+
 
 const InstallPrompt = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
@@ -26,20 +26,19 @@ const InstallPrompt = () => {
 
   useEffect(() => {
     if (isInStandaloneMode()) return;
-    if (sessionStorage.getItem(DISMISS_KEY)) return;
 
     const iosDevice = isIos();
     setIsIosDevice(iosDevice);
 
     if (iosDevice) {
-      const timer = setTimeout(() => setShowPrompt(true), 2000);
-      return () => clearTimeout(timer);
+      setShowPrompt(true);
+      return;
     }
 
     const handler = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
-      setTimeout(() => setShowPrompt(true), 2000);
+      setShowPrompt(true);
     };
 
     window.addEventListener("beforeinstallprompt", handler);
@@ -60,7 +59,6 @@ const InstallPrompt = () => {
 
   const handleDismiss = () => {
     setShowPrompt(false);
-    sessionStorage.setItem(DISMISS_KEY, "1");
   };
 
   if (!showPrompt) return null;
