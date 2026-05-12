@@ -59,7 +59,6 @@ const InstallPrompt = () => {
 
   const handleDismiss = () => {
     setShowPrompt(false);
-    sessionStorage.setItem(DISMISS_KEY, "1");
   };
 
   if (!showPrompt) return null;
