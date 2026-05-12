@@ -1174,8 +1174,10 @@ const Triage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col relative"
+    <div className="bg-background flex flex-col relative"
       style={{
+        height: "100dvh",
+        minHeight: "100dvh",
         paddingTop: (questionSteps || step === 0) ? "calc(env(safe-area-inset-top, 0px) + 1rem)" : "env(safe-area-inset-top, 0px)",
       }}>
 
