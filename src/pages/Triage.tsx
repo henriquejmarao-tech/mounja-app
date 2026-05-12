@@ -1174,8 +1174,10 @@ const Triage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col relative"
+    <div className="bg-background flex flex-col relative"
       style={{
+        height: "100dvh",
+        minHeight: "100dvh",
         paddingTop: (questionSteps || step === 0) ? "calc(env(safe-area-inset-top, 0px) + 1rem)" : "env(safe-area-inset-top, 0px)",
       }}>
 
@@ -1200,10 +1202,12 @@ const Triage = () => {
         </div>
       )}
 
-      {renderStep()}
+      <div className="flex-1 min-h-0 overflow-y-auto flex flex-col">
+        {renderStep()}
+      </div>
 
       {showNextBtn && (
-        <div className="px-6 pb-8 pt-4 relative z-20" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 2rem)" }}>
+        <div className="px-6 pb-8 pt-4 relative z-20 flex-shrink-0 bg-background" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 1.25rem)" }}>
           <button onClick={next} disabled={!canAdvance() || saving}
             className={cn("w-full font-bold py-4 rounded-[28px] flex items-center justify-center gap-2 transition-all duration-300 active:scale-[0.98]",
               canAdvance()
