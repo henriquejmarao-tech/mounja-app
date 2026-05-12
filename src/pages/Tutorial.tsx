@@ -46,7 +46,6 @@ const slides: Slide[] = [
       { icon: Flame, text: "Acompanhe calorias" },
       { icon: Beef, text: "Controle proteína e fibra" },
     ],
-    premiumHint: "Disponível no plano premium",
   },
   {
     title: "Tenha clareza do\nseu tratamento",
