@@ -26,14 +26,13 @@ const InstallPrompt = () => {
 
   useEffect(() => {
     if (isInStandaloneMode()) return;
-    if (sessionStorage.getItem(DISMISS_KEY)) return;
 
     const iosDevice = isIos();
     setIsIosDevice(iosDevice);
 
     if (iosDevice) {
-      const timer = setTimeout(() => setShowPrompt(true), 2000);
-      return () => clearTimeout(timer);
+      setShowPrompt(true);
+      return;
     }
 
     const handler = (e: Event) => {
