@@ -56,7 +56,6 @@ const slides: Slide[] = [
       { icon: TrendingUp, text: "Receba insights da IA" },
       { icon: Sparkles, text: "Análise personalizada" },
     ],
-    premiumHint: "Recurso premium",
   },
   {
     title: "Pronto para\ncomeçar",
