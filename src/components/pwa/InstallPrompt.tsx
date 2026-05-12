@@ -38,7 +38,7 @@ const InstallPrompt = () => {
     const handler = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
-      setTimeout(() => setShowPrompt(true), 2000);
+      setShowPrompt(true);
     };
 
     window.addEventListener("beforeinstallprompt", handler);
