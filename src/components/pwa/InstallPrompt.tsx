@@ -16,7 +16,7 @@ const isInStandaloneMode = () =>
   window.matchMedia("(display-mode: standalone)").matches ||
   (window.navigator as any).standalone === true;
 
-const DISMISS_KEY = "pwa-install-dismissed";
+
 
 const InstallPrompt = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
